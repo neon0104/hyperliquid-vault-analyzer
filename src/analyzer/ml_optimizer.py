@@ -102,7 +102,7 @@ class EnhancedMLPortfolioOptimizer:
                 })
             
             # Trend metrics
-            equity = df['equity'].fillna(method='ffill').fillna(method='bfill')
+            equity = df['equity'].ffill().bfill()
             ma7 = equity.rolling(7, min_periods=1).mean()
             ma30 = equity.rolling(30, min_periods=1).mean()
             

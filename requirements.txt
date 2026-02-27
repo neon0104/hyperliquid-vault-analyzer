@@ -7,3 +7,5 @@ cvxpy>=1.6.0
 hyperliquid-python-sdk>=0.10.0
 python-dotenv>=1.0.1
 xlsxwriter
+scipy>=1.13.0
+requests>=2.31.0

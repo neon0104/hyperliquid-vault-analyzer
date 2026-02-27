@@ -459,8 +459,29 @@ class EnhancedVaultAnalyzer:
             # Calculate risk metrics
             risk_metrics = VaultMetrics.calculate_risk_metrics(hist_data)
             
-            # Generate predictions using ML optimizer
-            predictions = self.ml_optimizer.predict_expected_returns(hist_data)
+            # Train ML model on this vault's data, then predict
+            # predict_expected_returns returns (float, dict) tuple
+            predictions = None
+            try:
+                trained = self.ml_optimizer.train_model({vault_address: hist_data})
+                if trained:
+                    raw_pred = self.ml_optimizer.predict_expected_returns(hist_data)
+                    if raw_pred and raw_pred[0] is not None:
+                        pred_value, importances = raw_pred
+                        predictions = {
+                            'predicted_monthly_return': float(pred_value) * 100,
+                            'feature_importances': importances
+                        }
+            except Exception as pred_err:
+                print(f"Prediction skipped for {vault_address}: {pred_err}")
+
+            # Fallback: use APR-based estimate if ML failed
+            if predictions is None:
+                apr = vault_info.get('apr', 0)
+                predictions = {
+                    'predicted_monthly_return': apr / 12,
+                    'feature_importances': {}
+                }
             
             # Get user-specific data if available
             user_metrics = None

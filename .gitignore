@@ -31,7 +31,9 @@ ENV/
 *.swp
 *.swo
 
-# Project specific
+# Project specific — 보안 & 로컬 데이터
 config.json
 .env
 *.xlsx
+vault_data/snapshots/
+vault_data/reports/
