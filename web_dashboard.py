@@ -283,6 +283,8 @@ HTML = r"""
   </div>
   <div class="hd-right">
     <span class="badge-date" id="snap-date">{% if date %}분석일: {{ date }}{% else %}데이터 없음{% endif %}</span>
+    <a class="btn btn-outline" href="/portfolio">🔬 포트폴리오 분석</a>
+    <a class="btn btn-outline" href="/download-guide" download="집PC_설치가이드.txt">📄 설치가이드</a>
     <button class="btn btn-outline" onclick="location.reload()">🔄 새로고침</button>
     <button class="btn btn-primary" id="run-btn" onclick="runAnalysis()">⚡ 지금 분석 실행</button>
   </div>
@@ -360,6 +362,10 @@ HTML = r"""
       <div class="stk">최소 수익곡선등급</div>
       <div class="stv" style="color:#3498db">C 이상</div>
     </div>
+    <div class="st-item">
+      <div class="stk">필터: 리더 에쿼티</div>
+      <div class="stv" style="color:var(--accent2)">≥ 40%</div>
+    </div>
   </div>
 
   <!-- ── 추천 볼트 카드 ── -->
@@ -398,6 +404,10 @@ HTML = r"""
           <div class="mv" style="color:var(--accent2)">{{ "%.3f"|format(v.robustness_score) }}</div>
         </div>
         <div class="rec-metric">
+          <div class="mk">리더 에쿼티</div>
+          <div class="mv" style="color:var(--accent2)">{{ "%.1f"|format(v.leader_equity_ratio * 100) }}%</div>
+        </div>
+        <div class="rec-metric">
           <div class="mk">TVL</div>
           <div class="mv">${{ "{:,.0f}".format(v.tvl) }}</div>
         </div>
@@ -426,32 +436,40 @@ HTML = r"""
   </div>
   {% endif %}
 
-  <!-- ── 상위 20 볼트 테이블 ── -->
-  <p class="section-title">🏆 상위 20 볼트 (종합점수 기준)</p>
+  <!-- ── 상위 50 볼트 테이블 ── -->
+  <p class="section-title">🏆 상위 50 볼트 (입금 가능 · 종합점수 기준)</p>
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
           <th>순위</th>
           <th>볼트명</th>
+          <th>생성일</th>
+          <th>운영기간</th>
           <th>30일 APR</th>
           <th>샤프비율</th>
           <th>MDD</th>
           <th>수익곡선등급</th>
           <th>로버스트</th>
+          <th>리더 에쿼티</th>
           <th>TVL ($)</th>
           <th>종합점수</th>
           <th>입금</th>
         </tr>
       </thead>
       <tbody>
-        {% for v in vaults[:20] %}
+        {% set deposit_vaults = vaults | selectattr('allow_deposits', 'true') | list %}
+        {% for v in deposit_vaults[:50] %}
         <tr>
           <td class="rank-num">{{ v.rank }}</td>
           <td class="vault-nm">{{ v.name }}</td>
+          <td class="neu" style="font-size:0.78rem; white-space:nowrap">{{ v.get('created_at', '-') }}</td>
+          <td class="{% if v.get('age_days', 0) >= 180 %}pos{% elif v.get('age_days', 0) >= 60 %}neu{% else %}neg{% endif %}" style="text-align:right">
+            {{ v.get('age_days', 0) }}일
+          </td>
           <td class="{% if v.apr_30d > 0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
           <td class="{% if v.sharpe_ratio > 0 %}pos{% else %}neg{% endif %}">{{ "%.2f"|format(v.sharpe_ratio) }}</td>
-          <td class="{% if v.max_drawdown < 20 %}pos{% elif v.max_drawdown < 40 %}neu{% else %}neg{% endif %}">{{ "%.1f"|format(v.max_drawdown) }}%</td>
+          <td class="{% if v.max_drawdown < 20 %}pos{% elif v.max_drawdown < 50 %}neu{% else %}neg{% endif %}">{{ "%.1f"|format(v.max_drawdown) }}%</td>
           <td>
             {% if v.equity_curve_grade != '-' %}
             <span class="grade-badge" style="background:{{ v.grade_color }}22; color:{{ v.grade_color }}">
@@ -461,6 +479,9 @@ HTML = r"""
           </td>
           <td class="{% if v.robustness_score >= 0.6 %}pos{% elif v.robustness_score >= 0.35 %}neu{% else %}neg{% endif %}">
             {{ "%.3f"|format(v.robustness_score) }}
+          </td>
+          <td class="{% if v.leader_equity_ratio >= 0.4 %}pos{% else %}neu{% endif %}">
+            {{ "%.1f"|format(v.leader_equity_ratio * 100) }}%
           </td>
           <td>${{ "{:,.0f}".format(v.tvl) }}</td>
           <td style="font-weight:700; color:var(--accent)">{{ "%.2f"|format(v.score) }}</td>
@@ -580,7 +601,7 @@ def index():
     else:
         stats = dict(total=len(vaults), avg_mdd=0, avg_sharpe=0, avg_robustness=0, median_apr=0)
 
-    # 추천 볼트 (robustness 필터)
+    # 추천 볼트 (robustness 필터) - 최대 30개로 상한 확장
     from analyze_top_vaults import get_recommendations
     recs_raw = get_recommendations(vaults, top_k=10)
 
@@ -605,6 +626,406 @@ def index():
         date=date, reports=reports)
 
 
+
+# ── 포트폴리오 분석 페이지 ──────────────────────────────────────────────────
+@app.route("/portfolio")
+def portfolio_page():
+    try:
+        from portfolio_engine import run_portfolio_analysis
+        d = run_portfolio_analysis(top_k=25, max_corr=0.55)
+    except Exception as e:
+        return render_template_string(PORTFOLIO_HTML, err=str(e), d=None, bt_json="null")
+    if "error" in d:
+        return render_template_string(PORTFOLIO_HTML, err=d["error"], d=None, bt_json="null")
+    pfs = d["portfolios"]
+    min_len = min(len(pfs[k]["backtest"].get("equity_curve",[1])) for k in pfs)
+    import json as _j
+    bt_json = _j.dumps({
+        "sh": pfs["max_sharpe"]["backtest"].get("equity_curve",[])[:min_len],
+        "mv": pfs["min_variance"]["backtest"].get("equity_curve",[])[:min_len],
+        "rp": pfs["risk_parity"]["backtest"].get("equity_curve",[])[:min_len],
+        "cv": pfs["min_cvar"]["backtest"].get("equity_curve",[])[:min_len],
+    })
+    return render_template_string(PORTFOLIO_HTML, err=None, d=d, bt_json=bt_json)
+
+
+
+
+
+# ── 포트폴리오 분석 페이지 ──────────────────────────────────────────────────
+PORTFOLIO_HTML = """
+<!DOCTYPE html><html lang="ko">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>포트폴리오 분석</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b0f1a;--card:#131928;--card2:#1a2340;--border:#243050;
+      --accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;
+      --danger:#e74c3c;--warn:#f39c12;--success:#27ae60;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+header{background:linear-gradient(135deg,#0d1b40,#111e3d);border-bottom:1px solid var(--border);
+       padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
+       position:sticky;top:0;z-index:100;}
+header h1{font-size:1.1rem;font-weight:700;}header p{font-size:.72rem;color:var(--muted);}
+.back{background:transparent;border:1px solid var(--border);color:var(--text);
+      padding:8px 16px;border-radius:8px;font-size:.82rem;text-decoration:none;}
+.back:hover{border-color:var(--accent);background:var(--card2);}
+main{max-width:1400px;margin:0 auto;padding:24px 20px;}
+.sec{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;
+     margin:28px 0 12px;display:flex;align-items:center;gap:8px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.sc .k{font-size:.68rem;color:var(--muted);text-transform:uppercase;}
+.sc .v{font-size:1.4rem;font-weight:800;margin-top:4px;}
+.pfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px;}
+.pfc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;}
+.pfc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sh::before{background:linear-gradient(90deg,#4f8ef7,#1abc9c);}
+.mv::before{background:linear-gradient(90deg,#27ae60,#1abc9c);}
+.rp::before{background:linear-gradient(90deg,#f39c12,#e74c3c);}
+.cv::before{background:linear-gradient(90deg,#9b59b6,#3498db);}
+.pt{font-size:1rem;font-weight:700;margin-bottom:12px;}
+.pr{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:6px;}
+.pr .pk{color:var(--muted);} .pr .pv{font-weight:600;}
+.pos{color:var(--success);} .neg{color:var(--danger);} .neu{color:var(--muted);}
+.tbw{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--card2);}
+th{padding:10px 12px;text-align:left;font-size:.68rem;font-weight:600;color:var(--muted);
+   letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
+td{padding:9px 12px;font-size:.78rem;border-top:1px solid var(--border);}
+tr:hover td{background:rgba(79,142,247,.04);}
+.ct{border-collapse:collapse;font-size:.65rem;}
+.ct th,.ct td{padding:4px 7px;border:1px solid var(--border);text-align:center;white-space:nowrap;}
+.ct th{background:var(--card2);color:var(--muted);}
+.cw{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
+.err{text-align:center;padding:60px;color:var(--muted);}
+</style></head>
+<body>
+<header>
+  <div><h1>🔬 포트폴리오 최적화 분석</h1><p>저상관 볼트 · 4가지 최적화 · 백테스팅 · 원금보호</p></div>
+  <a class="back" href="/">← 메인으로</a>
+</header>
+<main>
+{% if err %}
+  <div class="err"><p style="font-size:1.1rem">⚠️ {{ err }}</p>
+    <p style="margin-top:12px;font-size:.85rem">먼저 메인 페이지에서 <strong>지금 분석 실행</strong>을 눌러 데이터를 생성하세요.</p>
+  </div>
+{% else %}
+  <p class="sec">📊 분석 현황 ({{ d.date }})</p>
+  <div class="sg">
+    <div class="sc"><div class="k">전체 볼트</div><div class="v" style="color:var(--accent)">{{ d.n_total }}</div></div>
+    <div class="sc"><div class="k">PnL 유효</div><div class="v">{{ d.n_valid }}</div></div>
+    <div class="sc"><div class="k">필터 통과</div><div class="v">{{ d.n_filtered }}</div></div>
+    <div class="sc"><div class="k">저상관 선택</div><div class="v" style="color:var(--accent2)">{{ d.n_selected }}</div></div>
+    <div class="sc"><div class="k">분석 기간</div><div class="v">{{ d.analysis_days }}일</div></div>
+    <div class="sc"><div class="k">히스토리</div><div class="v">{{ d.history_days }}일</div></div>
+  </div>
+  <p class="sec">💼 포트폴리오 최적화 비교 ($100,000 기준)</p>
+  <div class="pfg">
+  {% for key, pf in d.portfolios.items() %}
+  {% set bt=pf.backtest %} {% set st=pf.stats %}
+  {% set cls={'max_sharpe':'sh','min_variance':'mv','risk_parity':'rp','min_cvar':'cv'} %}
+  <div class="pfc {{ cls[key] }}">
+    <div class="pt">{{ pf.emoji }} {{ pf.label }}</div>
+    <div class="pr"><span class="pk">예상 연수익</span>
+      <span class="pv {% if st.annual_return_pct>0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(st.annual_return_pct) }}%</span></div>
+    <div class="pr"><span class="pk">연 변동성</span><span class="pv">{{ "%.1f"|format(st.annual_vol_pct) }}%</span></div>
+    <div class="pr"><span class="pk">샤프비율</span>
+      <span class="pv {% if st.sharpe>1 %}pos{% elif st.sharpe>0 %}neu{% else %}neg{% endif %}">{{ "%.2f"|format(st.sharpe) }}</span></div>
+    <div style="height:1px;background:var(--border);margin:8px 0"></div>
+    <div class="pr"><span class="pk">백테스팅 수익</span>
+      <span class="pv {% if bt.total_profit>0 %}pos{% else %}neg{% endif %}">${{ "{:,.0f}".format(bt.total_profit) }}</span></div>
+    <div class="pr"><span class="pk">총 수익률</span>
+      <span class="pv {% if bt.total_return_pct>0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(bt.total_return_pct) }}%</span></div>
+    <div class="pr"><span class="pk">최대낙폭 MDD</span>
+      <span class="pv {% if bt.max_drawdown_pct<10 %}pos{% elif bt.max_drawdown_pct<25 %}neu{% else %}neg{% endif %}">{{ "%.1f"|format(bt.max_drawdown_pct) }}%</span></div>
+  </div>
+  {% endfor %}
+  </div>
+  <p class="sec">📈 백테스팅 Equity Curve</p>
+  <div class="cw"><canvas id="btc" height="90"></canvas></div>
+  <p class="sec">⭐ 저상관 선택 볼트 (상관 55% 미만)</p>
+  <div class="tbw"><table>
+    <thead><tr><th>#</th><th>볼트명</th><th>APR 30d</th><th>Sharpe</th><th>MDD</th>
+      <th>Robust</th><th>등급</th>
+      <th style="color:#4f8ef7">MaxSharpe</th><th style="color:#27ae60">MinVar</th>
+      <th style="color:#f39c12">RiskParity</th><th style="color:#9b59b6">MinCVaR</th><th>TVL</th></tr></thead>
+    <tbody>
+    {% for v in d.selected_vaults %}
+    <tr>
+      <td class="neu">{{ loop.index }}</td>
+      <td style="font-weight:600">{{ v.name[:22] }}</td>
+      <td class="{% if v.apr_30d>0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
+      <td class="{% if v.sharpe_ratio>1 %}pos{% elif v.sharpe_ratio>0 %}neu{% else %}neg{% endif %}">{{ "%.2f"|format(v.sharpe_ratio) }}</td>
+      <td class="{% if v.max_drawdown<15 %}pos{% elif v.max_drawdown<25 %}neu{% else %}neg{% endif %}">{{ "%.1f"|format(v.max_drawdown) }}%</td>
+      <td class="{% if v.robustness_score>=0.6 %}pos{% elif v.robustness_score>=0.35 %}neu{% else %}neg{% endif %}">{{ "%.3f"|format(v.robustness_score) }}</td>
+      <td>{{ v.equity_curve_grade.split("(")[0].strip() if v.equity_curve_grade != "-" else "-" }}</td>
+      <td style="color:#4f8ef7;font-weight:600">{{ "%.1f"|format(v.alloc_sh) }}%</td>
+      <td style="color:#27ae60;font-weight:600">{{ "%.1f"|format(v.alloc_mv) }}%</td>
+      <td style="color:#f39c12;font-weight:600">{{ "%.1f"|format(v.alloc_rp) }}%</td>
+      <td style="color:#9b59b6;font-weight:600">{{ "%.1f"|format(v.alloc_cv) }}%</td>
+      <td>${{ "{:,.0f}".format(v.tvl) }}</td>
+    </tr>
+    {% endfor %}
+    </tbody></table></div>
+  <p class="sec">🔗 상관관계 행렬 — 🔴 높음(>0.7) 🟡 중간(0.4~0.7) 🟢 낮음(<0.4) 🔵 음의상관</p>
+  <div class="card" style="overflow-x:auto">
+  <table class="ct"><thead><tr><th></th>
+    {% for n in d.corr_selected.names %}<th title="{{ n }}">{{ n[:9] }}</th>{% endfor %}
+  </tr></thead><tbody>
+  {% for i in range(d.corr_selected.names|length) %}
+  <tr><th style="text-align:left">{{ d.corr_selected.names[i][:9] }}</th>
+    {% for j in range(d.corr_selected.names|length) %}
+    {% set v=d.corr_selected.matrix[i][j] %}
+    {% if i==j %}<td style="background:#1a2340;color:var(--muted)">1.00</td>
+    {% elif v>0.7 %}<td style="background:rgba(231,76,60,.35);font-weight:600">{{ "%.2f"|format(v) }}</td>
+    {% elif v>0.4 %}<td style="background:rgba(243,156,18,.2)">{{ "%.2f"|format(v) }}</td>
+    {% elif v>0.0 %}<td style="background:rgba(39,174,96,.15)">{{ "%.2f"|format(v) }}</td>
+    {% else %}<td style="background:rgba(26,188,156,.2)">{{ "%.2f"|format(v) }}</td>
+    {% endif %}
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody></table></div>
+{% endif %}
+</main>
+<script>
+{% if not err %}
+const bcd={{ bt_json }};
+new Chart(document.getElementById('btc').getContext('2d'),{
+  type:'line',
+  data:{labels:Array.from({length:bcd.sh.length},(_,i)=>i),datasets:[
+    {label:'📈 Max Sharpe',   data:bcd.sh,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,.08)', tension:.3,pointRadius:0,borderWidth:2},
+    {label:'🛡 Min Variance', data:bcd.mv,borderColor:'#27ae60',backgroundColor:'rgba(39,174,96,.08)',   tension:.3,pointRadius:0,borderWidth:2},
+    {label:'⚖ Risk Parity',  data:bcd.rp,borderColor:'#f39c12',backgroundColor:'rgba(243,156,18,.08)',  tension:.3,pointRadius:0,borderWidth:2},
+    {label:'🔒 Min CVaR',    data:bcd.cv,borderColor:'#9b59b6',backgroundColor:'rgba(155,89,182,.08)',  tension:.3,pointRadius:0,borderWidth:2},
+  ]},
+  options:{responsive:true,
+    plugins:{legend:{labels:{color:'#e8eaf0',usePointStyle:true}},
+             tooltip:{mode:'index',intersect:false,backgroundColor:'#131928',borderColor:'#243050',borderWidth:1}},
+    scales:{x:{display:false},
+            y:{grid:{color:'rgba(36,48,80,.6)'},ticks:{color:'#7b8db0',callback:v=>'$'+Number(v).toLocaleString()}}}}
+});
+{% endif %}
+</script>
+</body></html>
+"""
+
+@app.route("/filtered-vaults")
+def filtered_vaults_page():
+    """필터 통과/탈락 전체 목록 페이지"""
+    try:
+        from portfolio_engine import run_portfolio_analysis
+        d = run_portfolio_analysis(top_k=10, max_corr=0.55)
+    except Exception as e:
+        return f"<pre>오류: {e}</pre>", 500
+    if "error" in d:
+        return f"<pre>오류: {d['error']}</pre>", 500
+
+    details = d.get("filter_details", [])
+    passed  = [v for v in details if v.get("_filter_pass")]
+    failed  = [v for v in details if not v.get("_filter_pass")]
+    # 탈락 이유 분류
+    for v in failed:
+        reasons = []
+        if not v.get("allow_deposits", True):
+            reasons.append("입금불가")
+        lr = v.get("leader_equity_ratio", -1)
+        if 0 <= lr < 0.40:
+            reasons.append(f"리더에쿼티 {lr:.0%}<40%")
+        elif lr < 0:
+            reasons.append("리더에쿼티 미확인")
+        v["_reason"] = " / ".join(reasons) if reasons else "기준미달"
+
+    FVHTML = """<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>필터 통과 목록</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f1a;--card:#131928;--card2:#1a2340;--border:#243050;
+      --accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;
+      --danger:#e74c3c;--warn:#f39c12;--success:#27ae60;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+header{background:linear-gradient(135deg,#0d1b40,#111e3d);border-bottom:1px solid var(--border);
+       padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
+       position:sticky;top:0;z-index:100;}
+header h1{font-size:1.1rem;font-weight:700;}
+header p{font-size:.72rem;color:var(--muted);}
+.back{background:transparent;border:1px solid var(--border);color:var(--text);
+      padding:8px 16px;border-radius:8px;font-size:.82rem;text-decoration:none;}
+.back:hover{border-color:var(--accent);}
+main{max-width:1500px;margin:0 auto;padding:24px 20px;}
+.tab-bar{display:flex;gap:12px;margin-bottom:20px;}
+.tab{padding:10px 24px;border-radius:10px;font-size:.85rem;font-weight:600;
+     cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--muted);}
+.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));
+            color:#fff;border-color:transparent;}
+.panel{display:none;}.panel.show{display:block;}
+.sg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:14px 20px;min-width:140px;}
+.sc .k{font-size:.68rem;color:var(--muted);text-transform:uppercase;}
+.sc .v{font-size:1.4rem;font-weight:800;margin-top:4px;}
+.sec{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.08em;
+     text-transform:uppercase;margin:24px 0 10px;display:flex;align-items:center;gap:8px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+.tbw{background:var(--card);border:1px solid var(--border);border-radius:14px;
+     overflow-x:auto;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--card2);}
+th{padding:9px 11px;text-align:left;font-size:.65rem;font-weight:600;color:var(--muted);
+   letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
+td{padding:8px 11px;font-size:.76rem;border-top:1px solid var(--border);}
+tr:hover td{background:rgba(79,142,247,.04);}
+.pos{color:var(--success);} .neg{color:var(--danger);} .neu{color:var(--muted);}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.65rem;font-weight:700;}
+.badge-ok{background:rgba(39,174,96,.2);color:#27ae60;}
+.badge-no{background:rgba(231,76,60,.15);color:#e74c3c;}
+.badge-warn{background:rgba(243,156,18,.15);color:#f39c12;}
+input[type=text]{background:var(--card2);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:8px 14px;font-size:.82rem;width:260px;margin-bottom:14px;}
+input[type=text]:focus{outline:none;border-color:var(--accent);}
+</style></head>
+<body>
+<header>
+  <div>
+    <h1>🔍 필터 통과 상세 목록</h1>
+    <p>입금가능 · 리더에쿼티 ≥40% 기준 — PnL 데이터 보유 {{ total }}개 볼트 분석</p>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <a class="back" href="/portfolio">← 포트폴리오</a>
+    <a class="back" href="/">← 메인</a>
+  </div>
+</header>
+<main>
+  <div class="sg">
+    <div class="sc"><div class="k">PnL 보유 볼트</div>
+      <div class="v" style="color:var(--accent)">{{ total }}</div></div>
+    <div class="sc"><div class="k">✅ 필터 통과</div>
+      <div class="v" style="color:var(--success)">{{ n_pass }}</div></div>
+    <div class="sc"><div class="k">❌ 필터 탈락</div>
+      <div class="v" style="color:var(--danger)">{{ n_fail }}</div></div>
+    <div class="sc"><div class="k">입금불가로 탈락</div>
+      <div class="v" style="color:var(--warn)">{{ n_no_deposit }}</div></div>
+    <div class="sc"><div class="k">리더에쿼티 미달</div>
+      <div class="v" style="color:var(--warn)">{{ n_no_leader }}</div></div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active" onclick="showTab('pass',this)">✅ 통과 ({{ n_pass }}개)</div>
+    <div class="tab"        onclick="showTab('fail',this)">❌ 탈락 ({{ n_fail }}개)</div>
+  </div>
+
+  <!-- 통과 목록 -->
+  <div id="panel-pass" class="panel show">
+    <input type="text" id="search-pass" oninput="filterTable('tbl-pass',this.value)"
+           placeholder="볼트명 / 주소 검색...">
+    <div class="tbw"><table id="tbl-pass">
+      <thead><tr>
+        <th>순위</th><th>볼트명</th><th>리더에쿼티</th><th>리더예치($)</th>
+        <th>30일APR</th><th>Sharpe</th><th>MDD</th><th>Robust</th><th>등급</th>
+        <th>TVL($)</th><th>점수</th><th>데이터</th>
+      </tr></thead>
+      <tbody>
+      {% for v in passed %}
+      <tr>
+        <td class="neu">{{ v.rank }}</td>
+        <td style="font-weight:600;max-width:200px">{{ v.name }}</td>
+        <td>
+          {% if v.leader_equity_ratio >= 0 %}
+            <span class="badge {% if v.leader_equity_ratio >= 0.4 %}badge-ok{% else %}badge-no{% endif %}">
+              {{ "%.0f"|format(v.leader_equity_ratio * 100) }}%
+            </span>
+          {% else %}
+            <span class="badge badge-warn">미확인</span>
+          {% endif %}
+        </td>
+        <td class="neu">${{ "{:,.0f}".format(v.leader_equity_usd) if v.leader_equity_usd else "-" }}</td>
+        <td class="{% if v.apr_30d > 0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
+        <td class="{% if v.sharpe_ratio > 1 %}pos{% elif v.sharpe_ratio > 0 %}neu{% else %}neg{% endif %}">
+          {{ "%.2f"|format(v.sharpe_ratio) }}</td>
+        <td class="{% if v.max_drawdown < 15 %}pos{% elif v.max_drawdown < 35 %}neu{% else %}neg{% endif %}">
+          {{ "%.1f"|format(v.max_drawdown) }}%</td>
+        <td class="{% if v.robustness_score >= 0.6 %}pos{% elif v.robustness_score >= 0.35 %}neu{% else %}neg{% endif %}">
+          {{ "%.3f"|format(v.robustness_score) }}</td>
+        <td>{{ v.equity_curve_grade.split("(")[0].strip() if v.equity_curve_grade != "-" else "-" }}</td>
+        <td>${{ "{:,.0f}".format(v.tvl) }}</td>
+        <td style="color:var(--accent);font-weight:700">{{ "%.2f"|format(v.score) }}</td>
+        <td class="neu">{{ v.data_points }}pt</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- 탈락 목록 -->
+  <div id="panel-fail" class="panel">
+    <input type="text" id="search-fail" oninput="filterTable('tbl-fail',this.value)"
+           placeholder="볼트명 / 주소 검색...">
+    <div class="tbw"><table id="tbl-fail">
+      <thead><tr>
+        <th>순위</th><th>볼트명</th><th>탈락 이유</th><th>리더에쿼티</th>
+        <th>입금</th><th>30일APR</th><th>MDD</th><th>Robust</th><th>TVL($)</th>
+      </tr></thead>
+      <tbody>
+      {% for v in failed %}
+      <tr>
+        <td class="neu">{{ v.rank }}</td>
+        <td style="font-weight:600;max-width:180px">{{ v.name }}</td>
+        <td><span class="badge badge-no">{{ v._reason }}</span></td>
+        <td>
+          {% if v.leader_equity_ratio >= 0 %}
+            <span class="badge badge-no">{{ "%.0f"|format(v.leader_equity_ratio * 100) }}%</span>
+          {% else %}
+            <span class="badge badge-warn">미확인</span>
+          {% endif %}
+        </td>
+        <td>{% if v.allow_deposits %}<span class="pos">✓</span>
+            {% else %}<span class="neg">✗</span>{% endif %}</td>
+        <td class="{% if v.apr_30d > 0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
+        <td>{{ "%.1f"|format(v.max_drawdown) }}%</td>
+        <td class="neu">{{ "%.3f"|format(v.robustness_score) }}</td>
+        <td>${{ "{:,.0f}".format(v.tvl) }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</main>
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('show');
+  el.classList.add('active');
+}
+function filterTable(tblId, q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('#' + tblId + ' tbody tr').forEach(row => {
+    row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+</body></html>"""
+
+    n_no_deposit = sum(1 for v in failed if not v.get("allow_deposits", True))
+    n_no_leader  = sum(1 for v in failed if v.get("allow_deposits", True))  # 입금은 되지만 리더 에쿼티 미달
+
+    return render_template_string(FVHTML,
+        passed=passed, failed=failed,
+        total=len(details),
+        n_pass=len(passed), n_fail=len(failed),
+        n_no_deposit=n_no_deposit, n_no_leader=n_no_leader,
+    )
+
+
 @app.route("/download/<filename>")
 def download(filename):
     """Excel 파일 다운로드"""
@@ -617,6 +1038,78 @@ def download(filename):
         as_attachment=True,
         download_name=safe_name,
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+
+@app.route("/download-guide")
+def download_guide():
+    """집 PC 설치 가이드 다운로드"""
+    lines = [
+        "집 PC 설치 가이드 - Hyperliquid Vault Analyzer",
+        "================================================",
+        "",
+        "STEP 1 - Python 설치 확인",
+        "  터미널에서 실행: python --version",
+        "  OK: Python 3.10 이상 -> 다음 단계로",
+        "  없으면 -> https://python.org/downloads 에서 설치",
+        "           (설치 중 [Add Python to PATH] 반드시 체크!)",
+        "",
+        "STEP 2 - Git 설치 확인",
+        "  터미널에서 실행: git --version",
+        "  없으면 -> https://git-scm.com 에서 설치",
+        "",
+        "STEP 3 - 프로젝트 클론 (코드 가져오기)",
+        "  PowerShell에서 실행:",
+        r"  git clone https://github.com/neon0104/hyperliquid-vault-analyzer.git C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer",
+        "",
+        "STEP 4 - 폴더 이동 & 패키지 설치",
+        r"  cd C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer",
+        "  pip install -r requirements.txt",
+        "  (약 2~5분 소요)",
+        "",
+        "STEP 5 - API 키 설정",
+        "  copy config.example.json config.json",
+        "",
+        "  config.json 파일을 메모장으로 열어서 수정:",
+        '  {',
+        '      "account_address": "여기에_지갑주소_입력",',
+        '      "secret_key": "여기에_시크릿키_입력"',
+        '  }',
+        "  (지갑주소/시크릿키는 회사 PC의 config.json에서 복사)",
+        "",
+        "STEP 6 - 실행!",
+        "  python web_dashboard.py",
+        "",
+        "  브라우저에서 http://localhost:5000 자동으로 열림",
+        "  -> [지금 분석 실행] 버튼 클릭 (2~5분 소요)",
+        "  -> [다운로드] 로 Excel 다운로드",
+        "",
+        "================================================",
+        " 매일 사용하는 명령어",
+        "================================================",
+        "",
+        "  코드 최신본 받기 (작업 시작 전): git pull origin master",
+        "  대시보드 시작:                  python web_dashboard.py",
+        "  분석만 실행 (CLI):              python analyze_top_vaults.py",
+        "  MDD 25% 미만으로만 분석:        python analyze_top_vaults.py --mdd 25",
+        "",
+        "================================================",
+        " 자주 있는 문제",
+        "================================================",
+        "",
+        "  git 명령어 없음  -> https://git-scm.com 설치",
+        "  pip 오류         -> python -m pip install -r requirements.txt",
+        "  포트 5000 충돌   -> 다른 프로그램 종료 후 재실행",
+        "  브라우저 안 열림 -> 직접 http://localhost:5000 입력",
+        "",
+        "  GitHub repo: https://github.com/neon0104/hyperliquid-vault-analyzer",
+    ]
+    guide_content = "\n".join(lines)
+    from flask import Response
+    return Response(
+        guide_content.encode("utf-8"),
+        mimetype="text/plain; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename*=UTF-8''%EC%A7%91PC_%EC%84%A4%EC%B9%98%EA%B0%80%EC%9D%B4%EB%93%9C.txt"}
     )
 
 

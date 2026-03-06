@@ -6,7 +6,8 @@ Hyperliquid 상위 200 볼트 분석기  (Robust Curve Edition)
 - TVL 기준 상위 200개 선별
 - 매일 스냅샷 저장 → 일별 변화 추적
 - ★ 로버스트 수익곡선 분석 (R², 단조성, MDD회복력)
-- TVL > $12,000 + MDD ≤ 25% 필터
+- TVL 상위 200개 전체 대상 (TVL 최소값 제한 없음)
+- MDD 제한 없음 (종합점수 기반 선별)
 - 투자 추천 및 $100K 포트폴리오 배분
 - 월별 리밸런싱 조언
 - Excel 리포트 자동 생성
@@ -33,11 +34,12 @@ if sys.platform == "win32":
 # ── 설정 ──────────────────────────────────────────────────────────────────────
 TOP_N          = 200       # 분석할 볼트 수
 MAX_WORKERS    = 10        # 병렬 스레드 수
-MIN_TVL        = 12_000    # 최소 TVL ($) — $12,000 이상만 분석
-TOP_RECS       = 10        # 최종 추천 볼트 수
+MIN_TVL        = 0         # TVL 최소값 제한 없음 (상위 200위 전체 대상)
+TOP_RECS       = 10        # 추천 포트폴리오 볼트 수
 SIM_AMOUNT     = 100_000   # 시뮬레이션 투자금 ($)
-MAX_MDD        = 25.0      # 최대 허용 MDD (%) — 이 이상은 추천 제외
-MIN_ROBUSTNESS = 0.35      # 최소 로버스트니스 점수 (0~1) — 수익곡선 품질 기준
+MAX_MDD           = 100.0  # MDD 제한 없음 (전 종목 대상)
+MIN_ROBUSTNESS    = 0.35   # 최소 로버스트니스 점수 (0~1) — 수익곡선 품질 기준
+MIN_LEADER_EQUITY = 0.40   # ★ 리더 에쿼티 최소 비율 (40% = skin-in-the-game 필터)
 
 STATS_URL = "https://stats-data.hyperliquid.xyz/Mainnet/vaults"
 API_URL   = constants.MAINNET_API_URL
@@ -107,15 +109,13 @@ def fetch_top_vaults(top_n=TOP_N):
         s   = v.get("summary", {})
         rel = s.get("relationship", {})
         rel_type = rel.get("type", "normal") if isinstance(rel, dict) else "normal"
-        tvl = sf(s.get("tvl", 0))
         if (rel_type == "normal"
-                and not s.get("isClosed", False)
-                and tvl >= MIN_TVL):
+                and not s.get("isClosed", False)):
             valid.append({"summary": s, "apr_raw": sf(v.get("apr", 0)), "pnls": v.get("pnls", [])})
 
     valid.sort(key=lambda x: sf(x["summary"].get("tvl", 0)), reverse=True)
     top = valid[:top_n]
-    print(f"  User Vault (normal) + TVL >= ${MIN_TVL:,}: {len(valid)}개 -> 상위 {len(top)}개 선별")
+    print(f"  User Vault (normal) TVL 상위 {len(top)}개 선별 (총 {len(valid)}개 중)")
     return top
 
 
@@ -147,31 +147,57 @@ def analyze_vault_from_stats(v_data, info_client):
     apr_raw = v_data.get("apr_raw", 0)  # 이미 소수 형태 (0.15 = 15%)
     apr_pct = apr_raw * 100
 
+    # ★ 볼트 생성 시간/날짜
+    create_ms = s.get("createTimeMillis", 0)
+    if create_ms:
+        created_dt = datetime.utcfromtimestamp(create_ms / 1000)
+        created_at = created_dt.strftime("%Y-%m-%d")
+        age_days   = (datetime.utcnow() - created_dt).days
+    else:
+        created_at = "-"
+        age_days   = 0
+
     # PnL 시계열 분석
     metrics = _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct)
 
     # allowDeposits 확인 (vaultDetails API 사용)
-    allow_deposits = True
+    # allowDeposits + ★ 리더 에쿼티 비율 계산
+    allow_deposits      = True
+    leader_equity_ratio = 0.0
+    leader_equity_usd   = 0.0
+    num_followers       = 0
     try:
         details = info_client.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
         if details and isinstance(details, dict):
             allow_deposits = details.get("allowDeposits", True)
-            # followers 수도 가져오기
-            followers = details.get("followers", [])
-            num_followers = len(followers)
-        else:
-            num_followers = 0
+            followers      = details.get("followers", [])
+            num_followers  = len(followers)
+
+            # ★ 사용자 요청: 리더 에쿼티 비율 (leaderFraction 필드가 리더의 지분 비율임)
+            leader_equity_ratio = sf(details.get("leaderFraction"), 0.0)
+            leader_equity_usd   = round(leader_equity_ratio * tvl, 2)
+            
+            # 리더가 followers 목록에 없을 수 있으므로(UI에서 별도 처리), 전체 팔로워 수에 리더(+1) 고려
+            if leader_equity_ratio > 0:
+                num_followers += 1
     except Exception:
-        num_followers = 0
+        pass
 
     return {
-        "address":       addr,
-        "name":          s.get("name", "Unknown")[:40],
-        "leader":        s.get("leader", ""),
-        "tvl":           tvl,
-        "num_followers": num_followers,
-        "allow_deposits": allow_deposits,
-        "apr_pct":       round(apr_pct, 2),
+        "address":             addr,
+        "name":                s.get("name", "Unknown")[:40],
+        "leader":              s.get("leader", ""),
+        "tvl":                 tvl,
+        "num_followers":       num_followers,
+        "allow_deposits":      allow_deposits,
+        "leader_equity_ratio": leader_equity_ratio,   # ★ 리더 본인 예치 비율
+        "leader_equity_usd":   leader_equity_usd,     # ★ 리더 예치 금액($)
+        "created_at":          created_at,            # ★ 볼트 생성일
+        "age_days":            age_days,              # ★ 볼트 운영일수
+        "apr_pct":             round(apr_pct, 2),
+        # ★ 포트폴리오 엔진 (상관분석/백테스팅)에서 사용
+        "alltime_pnl":         alltime_pnl,
+        "month_pnl":           month_pnl,
         **metrics,
     }
 
@@ -269,17 +295,43 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct):
         std_r  = float(np.std(returns))
         sharpe = float(np.clip((mean_r / std_r) * np.sqrt(252) if std_r > 0 else 0, -5, 5))
 
-        # 최대 낙폭
-        cumulative = np.cumsum(diffs)
-        rolling_max = np.maximum.accumulate(cumulative)
-        dd = rolling_max - cumulative
-        max_dd = float(np.max(dd) / (tvl + 1e-9) * 100) if tvl > 0 else 0.0
-        max_dd = float(np.clip(max_dd, 0, 100))
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # 최대 낙폭 (MDD) — 사용자 제안 공식
+        #   MDD = (Peak PnL - Trough PnL) / Peak PnL × 100
+        #
+        # * Peak PnL   : 누적 PnL 시계열의 최고점
+        # * Trough PnL : 해당 피크 이후의 최저점
+        #
+        # 엣지케이스:
+        #   - Peak PnL = 0 (시작점) → 분모 0 방지:
+        #     처음부터 손실 난 경우(3xBTC류), TVL 기준으로 fallback
+        #   - Peak PnL > 0 → 정식 공식 적용
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        pnl_curve    = np.array(alltime_pnl, dtype=float)
+        rolling_peak = np.maximum.accumulate(pnl_curve)  # 각 시점 최고 PnL
+        dd_arr       = rolling_peak - pnl_curve           # 각 시점 낙폭 ($)
+
+        max_dd_dollar = float(np.max(dd_arr))
+
+        # Peak PnL (분모): 전체 기간 최고 PnL
+        peak_pnl = float(np.max(pnl_curve))
+
+        if peak_pnl > 0:
+            # 정식 공식: (Peak - Trough) / Peak
+            # Trough = Peak - max_dd_dollar
+            max_dd = max_dd_dollar / peak_pnl * 100
+        else:
+            # peak PnL이 0 이하 (처음부터 손실) → TVL 기준 fallback
+            max_dd = max_dd_dollar / (tvl + 1e-9) * 100
+
+        max_dd        = max(0.0, round(max_dd, 2))
+        max_dd_dollar = max(0.0, round(max_dd_dollar, 2))
 
         pnl_alltime = float(arr[-1] - arr[0])
         base["vol_score"]    = round(vol, 2)
         base["sharpe_ratio"] = round(sharpe, 3)
         base["max_drawdown"] = round(max_dd, 2)
+        base["max_dd_dollar"] = round(max_dd_dollar, 2)  # 절대 손실액($)
         base["pnl_alltime"]  = round(pnl_alltime, 2)
         base["data_points"]  = len(alltime_pnl)
 
@@ -344,14 +396,32 @@ def run_analysis(top_n=TOP_N):
             except Exception:
                 failed += 1
 
-    print(f"  완료: 성공 {len(results)}개 / 실패 {failed}개")
+    print(f"  완료: 분석 시도 {len(top_vaults)}개 / 성공 {len(results)}개 / 실패 {failed}개")
 
-    results.sort(key=lambda x: x["score"], reverse=True)
-    for i, v in enumerate(results):
+    # ★ 2단계 - 필터링 (입금 가능 / 리더 에쿼티 40%↑ / 초기 손실 없음)
+    # APR 음수 볼트도 상위 50개 테이블에 포함 (포트폴리오 추천에서만 APR 필터 적용)
+    print("  [필터] 입금 가능 / 리더 에쿼티 40%↑ / 초기 손실 없음 볼트 선별 중...")
+    filtered_results = []
+    for v in results:
+        if not v.get("allow_deposits", True):
+            continue
+        if v.get("leader_equity_ratio", 0) < 0.4:
+            continue
+        # ★ 핵심 필터: alltime_pnl 최솟값이 0 미만이면 초기 손실 발생 → 제외
+        pnl_arr = v.get("alltime_pnl", [])
+        if pnl_arr and min(pnl_arr) < 0:
+            continue
+        filtered_results.append(v)
+
+    print(f"  [필터 결과] {len(results)}개 중 {len(filtered_results)}개 통과")
+
+    # ★ 사용자 요청: 3단계 - 필터링 후 종합점수 기준으로 랭킹 부여
+    filtered_results.sort(key=lambda x: x["score"], reverse=True)
+    for i, v in enumerate(filtered_results):
         v["rank"] = i + 1
 
-    save_snapshot(results)
-    return results
+    save_snapshot(filtered_results)
+    return filtered_results
 
 
 # ── 일별 변화 비교 ────────────────────────────────────────────────────────────
@@ -378,60 +448,74 @@ def compute_daily_changes(today_data, yesterday_data):
 
 
 # ── 투자 추천 ─────────────────────────────────────────────────────────────────
-def get_recommendations(vault_data, top_k=TOP_RECS, max_mdd=MAX_MDD, min_robustness=MIN_ROBUSTNESS):
+def _calc_undervalue_score(v):
     """
-    ★ 강화된 필터 기준:
-      1) 입금 가능
-      2) TVL >= MIN_TVL ($12,000)
-      3) Sharpe > 0  (리스크 대비 양의 수익)
-      4) APR_30d > 0 (최근 30일 수익 양수)
-      5) MDD <= max_mdd (기본 35% 이하 — 낙폭 관리)
-      6) robustness_score >= min_robustness (수익곡선 안정성)
+    ★ 저평가 점수 (1달 기준 저평가 여부)
+    - 전체기간 APR(annualized) / 12 = 장기 평균 월수익률
+    - 최근 30일 monthly_return = 현재 월수익률
+    - 장기 평균 > 현재 → 저평가 상태 → 비중 증가
+    반환: 0.5(고평가) ~ 3.0(저평가)
     """
-    # 1차: 모든 기준 적용
+    alltime_monthly = v.get("apr_pct", 0) / 12.0    # 전체기간 환산 월수익률
+    recent_monthly  = v.get("monthly_return", 0)     # 최근 30일 월수익률
+    if alltime_monthly <= 0 or recent_monthly <= 0:
+        return 1.0  # 기준 없으면 중립
+    ratio = alltime_monthly / max(recent_monthly, 0.1)
+    return float(np.clip(ratio, 0.5, 3.0))
+
+
+def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNESS,
+                         min_leader_equity=MIN_LEADER_EQUITY):
+    """
+    ★ 필터 기준:
+      1) 입금 가능 (allowDeposits)
+      2) 리더 에쿼티 >= 40% (skin-in-the-game: 리더 본인이 40% 이상 예치)
+      3) robustness_score >= min_robustness (수익곡선 안정성)
+      (MDD 제한 없음 — 요구사항 4번)
+    ★ 배분 기준:
+      Robustness × 저평가점수 (1달 기준, 장기평균 대비 현재 저조 = 진입 적기)
+    """
+    # 1차: 모든 기준 적용 (APR > 0 필수)
     eligible = [
         v for v in vault_data
         if v.get("allow_deposits", True)
-        and v.get("tvl", 0) >= MIN_TVL
-        and v.get("sharpe_ratio", -99) > 0
-        and v.get("apr_30d", 0) > 0
-        and v.get("max_drawdown", 999) <= max_mdd
+        and v.get("leader_equity_ratio", 0) >= min_leader_equity
         and v.get("robustness_score", 0.0) >= min_robustness
+        and v.get("apr_30d", 0) > 0          # ★ 최근 30일 수익 양수만
     ]
+    print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}+로버스트≥{min_robustness:.2f}+APR>0): {len(eligible)}개")
 
-    # 2차: 필터 완화 — robustness 기준만 낮춰서 재시도
+    # 2차: robustness 기준만 완화 (APR > 0은 유지)
     if len(eligible) < top_k:
         fallback_rob = min_robustness * 0.5
         eligible = [
             v for v in vault_data
             if v.get("allow_deposits", True)
-            and v.get("tvl", 0) >= MIN_TVL
-            and v.get("max_drawdown", 999) <= max_mdd
+            and v.get("leader_equity_ratio", 0) >= min_leader_equity
             and v.get("robustness_score", 0.0) >= fallback_rob
+            and v.get("apr_30d", 0) > 0      # ★ APR > 0 유지
         ]
-        print(f"  [주의] 필터 완화 적용: robustness >= {fallback_rob:.2f}, MDD <= {max_mdd}%")
+        print(f"  [주의] 2차 완화: robustness >= {fallback_rob:.2f} → {len(eligible)}개")
 
-    # 3차: MDD만 유지, 최소 볼트 수 보장
+    # 3차: 리더 에쿼티 데이터 미확인 볼트까지 포함 (APR > 0은 항상 유지)
     if len(eligible) < 3:
-        eligible = [
-            v for v in vault_data
-            if v.get("allow_deposits", True)
-            and v.get("tvl", 0) >= MIN_TVL
-            and v.get("max_drawdown", 999) <= max_mdd
-        ]
-        print(f"  [주의] 최소 필터 적용: MDD <= {max_mdd}%만 유지")
+        eligible = [v for v in vault_data if v.get("allow_deposits", True) and v.get("apr_30d", 0) > 0]
+        print(f"  [주의] 3차 최소 필터(입금가능+APR>0): {len(eligible)}개")
 
     eligible.sort(key=lambda x: x["score"], reverse=True)
     recs = eligible[:top_k]
 
-    # ★ 배분 가중치: 종합점수 × robustness 보정
-    #   robustness가 높을수록 더 많이 배분
-    combined = np.array([
-        max(v["score"], 0.01) * (0.5 + v.get("robustness_score", 0.3) * 0.5)
+    # ★ 배분 가중치: Robustness × 저평가점수
+    #   - 꾸준한 볼트(robustness 高) + 현재 일시 저조(undervalue 高) = 높은 비중
+    for v in recs:
+        v["undervalue_score"] = round(_calc_undervalue_score(v), 3)
+
+    raw_w = np.array([
+        v.get("robustness_score", 0.3) * v["undervalue_score"]
         for v in recs
     ])
-    shifted = combined - combined.min() + 0.1
-    weights = shifted / shifted.sum() * 100
+    raw_w = np.clip(raw_w, 0.01, None)
+    weights = raw_w / raw_w.sum() * 100
     for v, w in zip(recs, weights):
         v["suggested_allocation"] = round(float(w), 1)
 
@@ -776,11 +860,12 @@ def print_summary(vault_data, changes, recommendations, rebalancing, date_str):
 def main():
     parser = argparse.ArgumentParser(description="Hyperliquid 상위 볼트 분석기")
     parser.add_argument("--force", action="store_true", help="캐시 무시하고 새로 분석")
-    parser.add_argument("--mdd",   type=float, default=MAX_MDD,
-                        help=f"최대 허용 MDD %% (기본: {MAX_MDD})")
     parser.add_argument("--min-robustness", type=float, default=MIN_ROBUSTNESS,
                         dest="min_robustness",
                         help=f"최소 로버스트니스 점수 0~1 (기본: {MIN_ROBUSTNESS})")
+    parser.add_argument("--min-leader", type=float, default=MIN_LEADER_EQUITY,
+                        dest="min_leader",
+                        help=f"리더 에쿼티 최소 비율 (기본: {MIN_LEADER_EQUITY})")
     args = parser.parse_args()
 
     t0 = time.time()
@@ -813,12 +898,20 @@ def main():
     print(f"  {'어제 대비 변화 계산 완료' if yday else '첫 실행 또는 어제 데이터 없음'}")
 
     # 3. 투자 추천
-    print(f"\n[3/5] 투자 추천 계산...  (MDD≤{args.mdd}%, 로버스트≥{args.min_robustness:.2f})")
+    print(f"\n[3/5] 투자 추천 계산...  (리더에쿼티≥{MIN_LEADER_EQUITY:.0%}, 로버스트≥{args.min_robustness:.2f}, MDD제한없음)")
     recommendations = get_recommendations(
         vault_data, top_k=TOP_RECS,
-        max_mdd=args.mdd, min_robustness=args.min_robustness
+        min_robustness=args.min_robustness,
+        min_leader_equity=MIN_LEADER_EQUITY
     )
     print(f"  추천 볼트 {len(recommendations)}개 선정")
+
+    # 3-1. ★ 포트폴리오 일별 추적 업데이트
+    try:
+        from portfolio_engine import update_portfolio_tracking
+        update_portfolio_tracking(recommendations, date_str, SIM_AMOUNT)
+    except Exception as _pe:
+        print(f"  [추적] 포트폴리오 기록 스킵: {_pe}")
 
     # 4. 현재 포트폴리오 조회
     print(f"\n[4/5] 현재 포트폴리오 조회...")

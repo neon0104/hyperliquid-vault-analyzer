@@ -37,3 +37,15 @@ config.json
 *.xlsx
 vault_data/snapshots/
 vault_data/reports/
+
+# 디버깅 / 임시 스크립트
+check_*.py
+debug_*.py
+dump_*.py
+hunt_*.py
+inspect_*.py
+patch_*.py
+probe_*.py
+test_*.py
+verify_*.py
+fix_*.py
