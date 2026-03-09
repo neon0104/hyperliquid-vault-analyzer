@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-03-09T09:10:45.399186",
+  "analysis_date": "2026-03-09",
+  "total_invested": 0.0,
+  "estimated_monthly": 0.0,
+  "estimated_annual": 0.0,
+  "holdings": [],
+  "recommendations": [
+    {
+      "name": "HyperSonic",
+      "address": "0x071a1341c9d00a5537ff4bf8289049f045fe3abb",
+      "apr_30d": 354.1,
+      "mdd": 46.73,
+      "robustness": 0.299,
+      "grade": "D  (불안정)",
+      "sharpe": 5.0,
+      "tvl": 27876.0,
+      "allocation": 0,
+      "leader_equity": 97.9,
+      "age_days": 43
+    },
+    {
+      "name": "Realist Capital",
+      "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+      "apr_30d": 146.73,
+      "mdd": 12.05,
+      "robustness": 0.711,
+      "grade": "A  (우수)",
+      "sharpe": 5.0,
+      "tvl": 49753.0,
+      "allocation": 0,
+      "leader_equity": 97.0,
+      "age_days": 363
+    },
+    {
+      "name": "Spiffy",
+      "address": "0x6ee75f1da817dccc144498b8a958d1199ae040d3",
+      "apr_30d": 48.63,
+      "mdd": 38.6,
+      "robustness": 0.515,
+      "grade": "B  (양호)",
+      "sharpe": 5.0,
+      "tvl": 43244.0,
+      "allocation": 0,
+      "leader_equity": 96.9,
+      "age_days": 170
+    },
+    {
+      "name": "69 Jump Street",
+      "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+      "apr_30d": 30.07,
+      "mdd": 37.81,
+      "robustness": 0.553,
+      "grade": "B  (양호)",
+      "sharpe": 5.0,
+      "tvl": 522934.0,
+      "allocation": 0,
+      "leader_equity": 62.4,
+      "age_days": 416
+    },
+    {
+      "name": "L/S Momentum Strategy",
+      "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
+      "apr_30d": 124.02,
+      "mdd": 77.86,
+      "robustness": 0.356,
+      "grade": "C  (보통)",
+      "sharpe": 4.598,
+      "tvl": 16963.0,
+      "allocation": 0,
+      "leader_equity": 79.1,
+      "age_days": 156
+    },
+    {
+      "name": "AILAB TEST URTRA'",
+      "address": "0x21edf2d791f626ee69352120e7f6e2fbb0f48cf1",
+      "apr_30d": 16.04,
+      "mdd": 48.36,
+      "robustness": 0.177,
+      "grade": "D  (불안정)",
+      "sharpe": 4.091,
+      "tvl": 413731.0,
+      "allocation": 0,
+      "leader_equity": 73.0,
+      "age_days": 55
+    }
+  ],
+  "market": {
+    "avg_apr": -61.3,
+    "median_apr": -15.7,
+    "avg_sharpe": 4.05,
+    "avg_mdd": 43.0,
+    "vault_count": 15
+  },
+  "needs_rebalance": false
+}
