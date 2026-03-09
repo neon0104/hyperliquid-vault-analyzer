@@ -1,0 +1,689 @@
+{
+  "2026-03-04": {
+    "portfolio_value": 100264.93,
+    "daily_pnl": 264.93,
+    "daily_return_pct": 0.2649,
+    "cumulative_pnl": 264.93,
+    "cumulative_pct": 0.2649,
+    "max_equity_ever": 100264.93,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3691,
+    "n_vaults": 30,
+    "vaults": [
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 3.2,
+        "apr_30d": 317.8,
+        "robustness": 0.4076,
+        "undervalue": 1.36,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Not In Employment Education or",
+        "address": "0x4cb5f4d145cd16460932bbb9b871bb6fd5db97e3",
+        "alloc_pct": 4.9,
+        "apr_30d": 232.69,
+        "robustness": 0.6819,
+        "undervalue": 1.241,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 4.7,
+        "apr_30d": 188.74,
+        "robustness": 0.8895,
+        "undervalue": 0.917,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "pmalt",
+        "address": "0x4dec0a851849056e259128464ef28ce78afa27f6",
+        "alloc_pct": 4.0,
+        "apr_30d": 175.43,
+        "robustness": 0.5862,
+        "undervalue": 1.171,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Overdose",
+        "address": "0xe67dbf2d051106b42104c1a6631af5e5a458b682",
+        "alloc_pct": 2.9,
+        "apr_30d": 168.76,
+        "robustness": 0.5387,
+        "undervalue": 0.939,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Gucky_2coin_1dot75x",
+        "address": "0x3a6747c8e913085e243a2c22d188dafa8c6a612a",
+        "alloc_pct": 4.7,
+        "apr_30d": 113.77,
+        "robustness": 0.739,
+        "undervalue": 1.105,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 3.5,
+        "apr_30d": 138.14,
+        "robustness": 0.5386,
+        "undervalue": 1.13,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Probot 5/9/12",
+        "address": "0x697bc3dd77539fa84156d0e1c95287ea5524fd6b",
+        "alloc_pct": 3.7,
+        "apr_30d": 125.69,
+        "robustness": 0.5717,
+        "undervalue": 1.117,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Gucky_1coin_1dot5x",
+        "address": "0xd2f03635901956b950737bbf02463dfad9f2e9e1",
+        "alloc_pct": 3.6,
+        "apr_30d": 141.27,
+        "robustness": 0.5442,
+        "undervalue": 1.134,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 2.8,
+        "apr_30d": 129.8,
+        "robustness": 0.4257,
+        "undervalue": 1.121,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 4.3,
+        "apr_30d": 91.92,
+        "robustness": 0.7136,
+        "undervalue": 1.045,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "alloc_pct": 4.9,
+        "apr_30d": 64.0,
+        "robustness": 0.791,
+        "undervalue": 1.057,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 4.2,
+        "apr_30d": 60.89,
+        "robustness": 0.6871,
+        "undervalue": 1.054,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "OnlyShorts",
+        "address": "0x61b1cf5c2d7c4bf6d5db14f36651b2242e7cba0a",
+        "alloc_pct": 4.6,
+        "apr_30d": 42.13,
+        "robustness": 0.7723,
+        "undervalue": 1.03,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Robustos",
+        "address": "0x9ce25db757351d29a1ee1ee34d73a263dcb33fbf",
+        "alloc_pct": 5.2,
+        "apr_30d": 10.96,
+        "robustness": 0.9352,
+        "undervalue": 0.95,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 1.9,
+        "apr_30d": 107.84,
+        "robustness": 0.2946,
+        "undervalue": 1.098,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "LowRiskCryptoGainer",
+        "address": "0xd57c9295947b5a616a3933344ef03a1ad67318ea",
+        "alloc_pct": 4.2,
+        "apr_30d": 26.75,
+        "robustness": 0.7274,
+        "undervalue": 0.994,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Spiffy",
+        "address": "0x6ee75f1da817dccc144498b8a958d1199ae040d3",
+        "alloc_pct": 2.6,
+        "apr_30d": 98.09,
+        "robustness": 0.5151,
+        "undervalue": 0.877,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Sentiment Edge",
+        "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+        "alloc_pct": 4.4,
+        "apr_30d": -4.02,
+        "robustness": 0.7494,
+        "undervalue": 1.0,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 2.5,
+        "apr_30d": 85.03,
+        "robustness": 0.3929,
+        "undervalue": 1.076,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 2.5,
+        "apr_30d": 58.06,
+        "robustness": 0.4165,
+        "undervalue": 1.05,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 2.9,
+        "apr_30d": 24.21,
+        "robustness": 0.581,
+        "undervalue": 0.868,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "ASTEROID",
+        "address": "0x9a28b01435ca5c4b39a79ae2c27fce01292a7f39",
+        "alloc_pct": 2.7,
+        "apr_30d": 13.42,
+        "robustness": 0.4652,
+        "undervalue": 1.01,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "shortStragey",
+        "address": "0xb4d96c7387a45fa2cb170fa1436a86640ab00eb1",
+        "alloc_pct": 1.5,
+        "apr_30d": 18.09,
+        "robustness": 0.4752,
+        "undervalue": 0.534,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "L/S Momentum Strategy",
+        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
+        "alloc_pct": 1.8,
+        "apr_30d": 131.14,
+        "robustness": 0.3069,
+        "undervalue": 1.033,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "[ Systemic Strategies ] ♾️ Hyp",
+        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+        "alloc_pct": 2.7,
+        "apr_30d": 122.03,
+        "robustness": 0.4285,
+        "undervalue": 1.076,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Silentist BALANCE",
+        "address": "0xd56c2517f2c2fb040cd20259490c7511493d4ed5",
+        "alloc_pct": 1.8,
+        "apr_30d": 9.01,
+        "robustness": 0.3155,
+        "undervalue": 1.008,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "alloc_pct": 2.4,
+        "apr_30d": 95.74,
+        "robustness": 0.3818,
+        "undervalue": 1.083,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Lo",
+        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+        "alloc_pct": 1.9,
+        "apr_30d": 1.18,
+        "robustness": 0.3296,
+        "undervalue": 0.983,
+        "leader_eq": 0.0
+      },
+      {
+        "name": "Jay Pennies to Jay Dollars",
+        "address": "0x3b4f22366857da94f9346f88eac84718c8a8d48d",
+        "alloc_pct": 2.8,
+        "apr_30d": 1.58,
+        "robustness": 0.5207,
+        "undervalue": 0.91,
+        "leader_eq": 0.0
+      }
+    ]
+  },
+  "2026-03-05": {
+    "portfolio_value": 100344.19,
+    "daily_pnl": 79.26,
+    "daily_return_pct": 0.079,
+    "cumulative_pnl": 344.19,
+    "cumulative_pct": 0.3442,
+    "max_equity_ever": 100344.19,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5496,
+    "n_vaults": 30,
+    "vaults": [
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 4.6,
+        "apr_30d": 306.28,
+        "robustness": 0.4137,
+        "undervalue": 1.343,
+        "leader_eq": 0.8552338713864716
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 4.9,
+        "apr_30d": 111.92,
+        "robustness": 0.5391,
+        "undervalue": 1.102,
+        "leader_eq": 0.5609206878270999
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 6.1,
+        "apr_30d": 88.18,
+        "robustness": 0.7136,
+        "undervalue": 1.042,
+        "leader_eq": 0.9814985744832552
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 3.8,
+        "apr_30d": 91.09,
+        "robustness": 0.4292,
+        "undervalue": 1.082,
+        "leader_eq": 0.4967269438988708
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 2.7,
+        "apr_30d": 107.67,
+        "robustness": 0.2947,
+        "undervalue": 1.099,
+        "leader_eq": 0.9127039767573704
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 4.2,
+        "apr_30d": 28.17,
+        "robustness": 0.5803,
+        "undervalue": 0.873,
+        "leader_eq": 0.5869002733434108
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "alloc_pct": 3.5,
+        "apr_30d": 118.69,
+        "robustness": 0.3824,
+        "undervalue": 1.106,
+        "leader_eq": 0.45208192312627427
+      },
+      {
+        "name": "Spiffy",
+        "address": "0x6ee75f1da817dccc144498b8a958d1199ae040d3",
+        "alloc_pct": 3.6,
+        "apr_30d": 44.16,
+        "robustness": 0.5154,
+        "undervalue": 0.844,
+        "leader_eq": 0.9665984458439616
+      },
+      {
+        "name": "Silentist BALANCE",
+        "address": "0xd56c2517f2c2fb040cd20259490c7511493d4ed5",
+        "alloc_pct": 3.2,
+        "apr_30d": 8.49,
+        "robustness": 0.3821,
+        "undervalue": 1.004,
+        "leader_eq": 1.0000000000000002
+      },
+      {
+        "name": "Jay Pennies to Jay Dollars",
+        "address": "0x3b4f22366857da94f9346f88eac84718c8a8d48d",
+        "alloc_pct": 3.8,
+        "apr_30d": 3.79,
+        "robustness": 0.5206,
+        "undervalue": 0.891,
+        "leader_eq": 0.920748803253206
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 3.2,
+        "apr_30d": -0.9,
+        "robustness": 0.3925,
+        "undervalue": 1.0,
+        "leader_eq": 0.7793744294323863
+      },
+      {
+        "name": "AILAB TEST URTRA'",
+        "address": "0x21edf2d791f626ee69352120e7f6e2fbb0f48cf1",
+        "alloc_pct": 2.1,
+        "apr_30d": 5.93,
+        "robustness": 0.2735,
+        "undervalue": 0.944,
+        "leader_eq": 0.7274404967760771
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 6.8,
+        "apr_30d": -82.61,
+        "robustness": 0.8184,
+        "undervalue": 1.0,
+        "leader_eq": 0.6788060025975685
+      },
+      {
+        "name": "Rising Star",
+        "address": "0x5e3e83cf2fba6e57586a73a5fa3643507c82f8b2",
+        "alloc_pct": 3.8,
+        "apr_30d": 204.76,
+        "robustness": 0.3823,
+        "undervalue": 1.206,
+        "leader_eq": 0.4429927815701288
+      },
+      {
+        "name": "JizzJazz",
+        "address": "0x82eba5dc675279cb5967952f0c4b5184505eb17c",
+        "alloc_pct": 1.8,
+        "apr_30d": 0.06,
+        "robustness": 0.432,
+        "undervalue": 0.5,
+        "leader_eq": 0.9559897799079606
+      },
+      {
+        "name": "Orion",
+        "address": "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01",
+        "alloc_pct": 1.7,
+        "apr_30d": 75.63,
+        "robustness": 0.1981,
+        "undervalue": 1.068,
+        "leader_eq": 0.5168033423336129
+      },
+      {
+        "name": "[ Sidelined ] Market Neutral 1",
+        "address": "0xf4ab2cb15b7b3fa298555b801e9f5772ba8f8891",
+        "alloc_pct": 2.6,
+        "apr_30d": -14.4,
+        "robustness": 0.315,
+        "undervalue": 1.0,
+        "leader_eq": 0.792068347114715
+      },
+      {
+        "name": "Symphony",
+        "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+        "alloc_pct": 2.9,
+        "apr_30d": -7.28,
+        "robustness": 0.3492,
+        "undervalue": 1.0,
+        "leader_eq": 0.5900458162465785
+      },
+      {
+        "name": "WDA | MCLS",
+        "address": "0x73e5c11a8a9820afb1a25aa89787ba025b84e60e",
+        "alloc_pct": 2.8,
+        "apr_30d": 23.16,
+        "robustness": 0.3479,
+        "undervalue": 0.968,
+        "leader_eq": 0.6357518394814714
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 3.7,
+        "apr_30d": 42.7,
+        "robustness": 0.4363,
+        "undervalue": 1.037,
+        "leader_eq": 0.9075660133413732
+      },
+      {
+        "name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "alloc_pct": 3.4,
+        "apr_30d": 113.71,
+        "robustness": 0.3688,
+        "undervalue": 1.1,
+        "leader_eq": 0.9992956534827764
+      },
+      {
+        "name": "TEA",
+        "address": "0x208268096df2e76df84d50f5c4bf4d61d9c190d4",
+        "alloc_pct": 3.1,
+        "apr_30d": -25.45,
+        "robustness": 0.3694,
+        "undervalue": 1.0,
+        "leader_eq": 0.47733961973780736
+      },
+      {
+        "name": "Goon Edging",
+        "address": "0x2431edfcb662e6ff6deab113cc91878a0b53fb0f",
+        "alloc_pct": 3.4,
+        "apr_30d": -29.84,
+        "robustness": 0.4146,
+        "undervalue": 1.0,
+        "leader_eq": 0.4803637803337233
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 4.5,
+        "apr_30d": -203.36,
+        "robustness": 0.5391,
+        "undervalue": 1.0,
+        "leader_eq": 0.9620096283137072
+      },
+      {
+        "name": "ski lambo beach ",
+        "address": "0x66e541024ca4c50b8f6c0934b8947c487d211661",
+        "alloc_pct": 4.0,
+        "apr_30d": -286.95,
+        "robustness": 0.4895,
+        "undervalue": 1.0,
+        "leader_eq": 0.8395472727802549
+      },
+      {
+        "name": "HyperTwin - Blue Whale",
+        "address": "0x9a3006e0b7ffacf11729103098ff16fa6e17bd24",
+        "alloc_pct": 2.2,
+        "apr_30d": -47.87,
+        "robustness": 0.2671,
+        "undervalue": 1.0,
+        "leader_eq": 0.9928906803492012
+      },
+      {
+        "name": "Excelsior Protocol",
+        "address": "0x7cf9f8d8015f76b21c0b7be1b7c2293ceeda09bc",
+        "alloc_pct": 1.7,
+        "apr_30d": 77.36,
+        "robustness": 0.2828,
+        "undervalue": 0.73,
+        "leader_eq": 0.623217144476194
+      },
+      {
+        "name": "hidden marko fund",
+        "address": "0xc497f1f8840dd65affbab1a610b6e558844743d4",
+        "alloc_pct": 2.7,
+        "apr_30d": 129.77,
+        "robustness": 0.2886,
+        "undervalue": 1.116,
+        "leader_eq": 0.9989977897245682
+      },
+      {
+        "name": "[ Sidelined ] Market Neutral 2",
+        "address": "0x257acedf61ffd72abfcde8332a13a1d015930051",
+        "alloc_pct": 1.7,
+        "apr_30d": -33.36,
+        "robustness": 0.2073,
+        "undervalue": 1.0,
+        "leader_eq": 0.8484907027554243
+      },
+      {
+        "name": "Storm",
+        "address": "0xae08a2282d969bd0c4bf63a626ab8f8e6200022d",
+        "alloc_pct": 1.5,
+        "apr_30d": 24.57,
+        "robustness": 0.1769,
+        "undervalue": 1.02,
+        "leader_eq": 1.0
+      }
+    ]
+  },
+  "2026-03-06": {
+    "portfolio_value": 100193.0,
+    "daily_pnl": -151.19,
+    "daily_return_pct": -0.1507,
+    "cumulative_pnl": 193.0,
+    "cumulative_pct": 0.193,
+    "max_equity_ever": 100344.19,
+    "mdd_pct": 0.1507,
+    "risk_score": 0.6832,
+    "n_vaults": 12,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 14.0,
+        "apr_30d": 109.93,
+        "robustness": 0.7116,
+        "undervalue": 1.075,
+        "leader_eq": 0.9712446715589385
+      },
+      {
+        "name": "Spiffy",
+        "address": "0x6ee75f1da817dccc144498b8a958d1199ae040d3",
+        "alloc_pct": 7.7,
+        "apr_30d": 74.05,
+        "robustness": 0.4847,
+        "undervalue": 0.865,
+        "leader_eq": 0.9644099643029355
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 8.7,
+        "apr_30d": 26.05,
+        "robustness": 0.5491,
+        "undervalue": 0.869,
+        "leader_eq": 0.5885443337814573
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 14.6,
+        "apr_30d": -88.61,
+        "robustness": 0.7975,
+        "undervalue": 1.0,
+        "leader_eq": 0.6845044073515285
+      },
+      {
+        "name": "L/S Momentum Strategy",
+        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
+        "alloc_pct": 6.7,
+        "apr_30d": 112.66,
+        "robustness": 0.343,
+        "undervalue": 1.059,
+        "leader_eq": 0.786642472477321
+      },
+      {
+        "name": "[ Sidelined ] Market Neutral 1",
+        "address": "0xf4ab2cb15b7b3fa298555b801e9f5772ba8f8891",
+        "alloc_pct": 7.4,
+        "apr_30d": -15.51,
+        "robustness": 0.4017,
+        "undervalue": 1.0,
+        "leader_eq": 0.792068347114715
+      },
+      {
+        "name": "AILAB TEST URTRA'",
+        "address": "0x21edf2d791f626ee69352120e7f6e2fbb0f48cf1",
+        "alloc_pct": 4.5,
+        "apr_30d": -19.54,
+        "robustness": 0.2428,
+        "undervalue": 1.0,
+        "leader_eq": 0.7276174405975243
+      },
+      {
+        "name": "Symphony",
+        "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+        "alloc_pct": 5.5,
+        "apr_30d": 1.76,
+        "robustness": 0.3735,
+        "undervalue": 0.8,
+        "leader_eq": 0.5900458162465785
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 10.0,
+        "apr_30d": -145.63,
+        "robustness": 0.5463,
+        "undervalue": 1.0,
+        "leader_eq": 0.9620096283137072
+      },
+      {
+        "name": "TEA",
+        "address": "0x208268096df2e76df84d50f5c4bf4d61d9c190d4",
+        "alloc_pct": 6.8,
+        "apr_30d": -19.68,
+        "robustness": 0.3726,
+        "undervalue": 1.0,
+        "leader_eq": 0.47733961973780736
+      },
+      {
+        "name": "Super Saiyan 孫悟空",
+        "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
+        "alloc_pct": 7.0,
+        "apr_30d": -273.32,
+        "robustness": 0.3792,
+        "undervalue": 1.0,
+        "leader_eq": 0.9846316459191048
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 7.2,
+        "apr_30d": -500.0,
+        "robustness": 0.3921,
+        "undervalue": 1.0,
+        "leader_eq": 0.9804002433908786
+      }
+    ]
+  }
+}

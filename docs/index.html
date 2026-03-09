@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="Hyperliquid Vault 포트폴리오 대시보드 — 24시간 모니터링">
+  <title>📊 HyperVault Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080d18; --card: #0f1629; --card2: #141e35;
+      --border: #1e2d50; --accent: #4f8ef7; --accent2: #1abc9c;
+      --text: #e8eaf0; --muted: #6b7fa8;
+      --danger: #e74c3c; --warn: #f39c12; --success: #27ae60;
+      --purple: #9b59b6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', sans-serif; min-height: 100vh;
+      padding-bottom: 24px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #090f22, #0d1830);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+    .header-row { display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 1.1rem; font-weight: 800; }
+    .logo span { color: var(--accent); }
+    .update-time { font-size: .68rem; color: var(--muted); margin-top: 3px; }
+    .refresh-btn {
+      background: var(--card2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px; padding: 7px 12px;
+      font-size: .78rem; cursor: pointer; font-family: inherit;
+      transition: all .2s;
+    }
+    .refresh-btn:active { transform: scale(.95); }
+
+    /* ── Tab Bar ── */
+    .tabs {
+      display: flex; gap: 4px; padding: 12px 16px;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex: 0 0 auto; padding: 8px 14px; border-radius: 8px;
+      font-size: .78rem; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--muted); transition: all .2s; white-space: nowrap;
+    }
+    .tab.active {
+      background: var(--accent); color: #fff;
+      border-color: var(--accent);
+    }
+
+    main { padding: 16px; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Status Banner ── */
+    .banner {
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .banner.ok     { background: rgba(39,174,96,.12); border: 1px solid var(--success); }
+    .banner.warn   { background: rgba(243,156,18,.12); border: 1px solid var(--warn); }
+    .banner.danger { background: rgba(231,76,60,.15); border: 1px solid var(--danger); }
+    .banner .bicon { font-size: 1.8rem; }
+    .banner .btitle { font-weight: 700; font-size: .9rem; }
+    .banner .bsub   { font-size: .73rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── Countdown ── */
+    .countdown {
+      background: linear-gradient(135deg, #0a1228, #0d1632);
+      border: 1px solid var(--accent); border-radius: 12px;
+      padding: 12px 16px; margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .countdown .cd-label { font-size: .72rem; color: var(--muted); text-transform: uppercase; }
+    .countdown .cd-num { font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+    .countdown .cd-sub { font-size: .68rem; color: var(--muted); }
+
+    /* ── Stats Grid ── */
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px;
+    }
+    .stat .sk { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .stat .sv { font-size: 1.25rem; font-weight: 800; margin-top: 5px; }
+    .stat .sdesc { font-size: .65rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── Section Label ── */
+    .sec-label {
+      font-size: .68rem; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .1em; margin: 14px 0 8px;
+    }
+
+    /* ── Holding Card ── */
+    .holding {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;
+      position: relative; transition: border-color .2s;
+    }
+    .holding.danger { border-color: var(--danger); }
+    .holding .hname { font-weight: 700; font-size: .88rem; margin-bottom: 10px; padding-right: 55px; }
+    .hrow { display: flex; justify-content: space-between; font-size: .76rem; margin-bottom: 5px; }
+    .hrow .hk { color: var(--muted); }
+    .hrow .hv { font-weight: 600; }
+    .pct-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+    .pct-bar .fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .pct-label { text-align: right; font-size: .65rem; color: var(--muted); margin-top: 3px; }
+    .badge {
+      position: absolute; top: 12px; right: 12px;
+      font-size: .62rem; font-weight: 700; padding: 2px 8px; border-radius: 5px;
+    }
+    .badge-danger { background: rgba(231,76,60,.2); border: 1px solid var(--danger); color: var(--danger); }
+    .badge-ok     { background: rgba(39,174,96,.15); border: 1px solid var(--success); color: var(--success); }
+
+    /* ── Rec Card ── */
+    .rec {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; margin-bottom: 10px;
+    }
+    .rec .rank-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .rec .rank-num {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: var(--accent); color: #fff;
+      font-size: .72rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rec .rname { font-weight: 700; font-size: .85rem; flex: 1; }
+    .rec .alloc {
+      font-size: .72rem; font-weight: 700; color: var(--accent);
+      background: rgba(79,142,247,.12); padding: 3px 8px; border-radius: 5px;
+    }
+    .rec-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .rec-metric { text-align: center; background: var(--card2); border-radius: 8px; padding: 7px 4px; }
+    .rec-metric .rm-k { font-size: .6rem; color: var(--muted); }
+    .rec-metric .rm-v { font-size: .82rem; font-weight: 700; margin-top: 2px; }
+
+    /* ── Market Card ── */
+    .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mcard {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px; text-align: center;
+    }
+    .mcard .mk { font-size: .65rem; color: var(--muted); text-transform: uppercase; }
+    .mcard .mv { font-size: 1.1rem; font-weight: 800; margin-top: 4px; }
+
+    /* ── Colors ── */
+    .c-accent  { color: var(--accent); }
+    .c-accent2 { color: var(--accent2); }
+    .c-success { color: var(--success); }
+    .c-danger  { color: var(--danger); }
+    .c-warn    { color: var(--warn); }
+    .c-muted   { color: var(--muted); }
+
+    /* ── Empty ── */
+    .empty {
+      text-align: center; padding: 40px 20px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; margin-bottom: 14px;
+    }
+    .empty .eicon { font-size: 2rem; margin-bottom: 10px; }
+    .empty p { font-size: .82rem; color: var(--muted); }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+      background: var(--card2); border: 1px solid var(--accent);
+      border-radius: 10px; padding: 10px 20px;
+      font-size: .82rem; z-index: 999; display: none;
+      white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+
+    /* ── Loading ── */
+    .loading { text-align: center; padding: 60px; }
+    .spinner {
+      width: 36px; height: 36px; border: 3px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 1s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Address bar ── */
+    .addr {
+      font-size: .65rem; color: var(--muted); font-family: monospace;
+      word-break: break-all; margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <div class="logo">⚡ <span>HyperVault</span></div>
+      <div class="update-time" id="update-time">로딩 중...</div>
+    </div>
+    <button class="refresh-btn" onclick="loadData()">🔄 새로고침</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('portfolio')">💼 포트폴리오</div>
+  <div class="tab" onclick="switchTab('recommend')">⭐ 추천 볼트</div>
+  <div class="tab" onclick="switchTab('market')">📈 시장현황</div>
+</div>
+
+<main>
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p style="color:var(--muted);font-size:.85rem">데이터 로딩 중...</p>
+  </div>
+
+  <!-- 포트폴리오 탭 -->
+  <div class="page active" id="tab-portfolio"></div>
+
+  <!-- 추천 볼트 탭 -->
+  <div class="page" id="tab-recommend"></div>
+
+  <!-- 시장현황 탭 -->
+  <div class="page" id="tab-market"></div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ── 데이터 소스 설정 ──────────────────────────────────────────────────────────
+// GitHub Pages로 배포 후 이 URL이 자동으로 같은 repo의 data.json을 가리킴
+const DATA_URL = './data.json';
+
+let data = null;
+
+// ── 유틸 ──────────────────────────────────────────────────────────────────────
+const fmt  = n => '$' + Number(n).toLocaleString(undefined, {maximumFractionDigits: 0});
+const fmtP = n => (n > 0 ? '+' : '') + Number(n).toFixed(1) + '%';
+const aprColor = n => n > 10 ? 'var(--success)' : n > 0 ? 'var(--accent2)' : 'var(--danger)';
+const mddColor = n => n < 10 ? 'var(--success)' : n < 20 ? 'var(--warn)' : 'var(--danger)';
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── 데이터 로드 ───────────────────────────────────────────────────────────────
+async function loadData() {
+  document.getElementById('loading').style.display = 'block';
+  document.querySelectorAll('.page').forEach(p => p.innerHTML = '');
+  try {
+    const r = await fetch(DATA_URL + '?t=' + Date.now());
+    if (!r.ok) throw new Error('데이터 없음');
+    data = await r.json();
+    document.getElementById('loading').style.display = 'none';
+    render();
+    document.getElementById('update-time').textContent =
+      '분석: ' + (data.analysis_date || '-') + ' · ' +
+      new Date().toLocaleTimeString('ko-KR');
+  } catch(e) {
+    document.getElementById('loading').innerHTML =
+      '<div class="eicon">⚠️</div><p style="color:var(--muted)">데이터를 불러올 수 없습니다.<br>GitHub Actions가 실행된 후 접근 가능합니다.</p>';
+  }
+}
+
+// ── 렌더링 ────────────────────────────────────────────────────────────────────
+function render() {
+  renderPortfolio();
+  renderRecommend();
+  renderMarket();
+}
+
+function renderPortfolio() {
+  const d = data;
+  let html = '';
+
+  // 상태 배너
+  if (d.needs_rebalance) {
+    html += `<div class="banner warn">
+      <div class="bicon">⚠️</div>
+      <div><div class="btitle">리밸런싱 권고</div>
+      <div class="bsub">위험 볼트가 감지되었습니다. 점검하세요.</div></div></div>`;
+  } else if (d.holdings && d.holdings.length > 0) {
+    html += `<div class="banner ok">
+      <div class="bicon">✅</div>
+      <div><div class="btitle">포트폴리오 정상</div>
+      <div class="bsub">분석일: ${d.analysis_date || '-'}</div></div></div>`;
+  }
+
+  // 수익 통계
+  if (d.total_invested > 0) {
+    const annualPct = d.total_invested > 0 ? (d.estimated_annual / d.total_invested * 100) : 0;
+    html += `<div class="stats">
+      <div class="stat">
+        <div class="sk">총 투자금</div>
+        <div class="sv c-accent">${fmt(d.total_invested)}</div>
+        <div class="sdesc">현재 배분 총액</div>
+      </div>
+      <div class="stat">
+        <div class="sk">예상 월수익</div>
+        <div class="sv c-accent2">${fmt(d.estimated_monthly)}</div>
+        <div class="sdesc">연 ${annualPct.toFixed(1)}% 수익률</div>
+      </div>
+      <div class="stat">
+        <div class="sk">예상 연수익</div>
+        <div class="sv c-accent2">${fmt(d.estimated_annual)}</div>
+        <div class="sdesc">연환산 수익</div>
+      </div>
+      <div class="stat">
+        <div class="sk">보유 볼트</div>
+        <div class="sv">${(d.holdings||[]).length}<span style="font-size:.8rem;color:var(--muted)">개</span></div>
+        <div class="sdesc">분산 투자 중</div>
+      </div>
+    </div>`;
+
+    // 보유 볼트 목록
+    html += '<div class="sec-label">📌 보유 볼트</div>';
+    (d.holdings || []).forEach(h => {
+      const ac = aprColor(h.apr_30d), mc = mddColor(h.mdd);
+      html += `<div class="holding${h.danger ? ' danger' : ''}">
+        <div class="badge ${h.danger ? 'badge-danger' : 'badge-ok'}">${h.danger ? '⚠️ 주의' : '✅ 정상'}</div>
+        <div class="hname">${h.name}</div>
+        <div class="hrow"><span class="hk">투자금액</span><span class="hv">${fmt(h.invested_usd)}</span></div>
+        <div class="hrow"><span class="hk">30일 APR</span><span class="hv" style="color:${ac}">${fmtP(h.apr_30d)}</span></div>
+        <div class="hrow"><span class="hk">최대 낙폭</span><span class="hv" style="color:${mc}">${h.mdd.toFixed(1)}%</span></div>
+        <div class="hrow"><span class="hk">예상 월수익</span><span class="hv c-accent2">${fmt(h.monthly_est)}</span></div>
+        <div class="hrow"><span class="hk">곡선 등급</span><span class="hv c-accent">${h.grade}</span></div>
+        <div class="pct-bar"><div class="fill" style="width:${Math.min(h.pct,100)}%"></div></div>
+        <div class="pct-label">포트폴리오 비중: ${h.pct.toFixed(1)}%</div>
+      </div>`;
+    });
+  } else {
+    html += `<div class="empty">
+      <div class="eicon">💼</div>
+      <p>포트폴리오가 설정되지 않았습니다.<br>
+      vault_data/my_portfolio.json 파일에<br>투자 현황을 입력하세요.</p>
+    </div>`;
+  }
+
+  document.getElementById('tab-portfolio').innerHTML = html;
+}
+
+function renderRecommend() {
+  const recs = data.recommendations || [];
+  let html = `<div class="banner ok">
+    <div class="bicon">⭐</div>
+    <div><div class="btitle">AI 추천 포트폴리오</div>
+    <div class="bsub">MDD≤20%, 리더에쿼티≥40%, APR>0 필터 적용</div></div></div>`;
+
+  if (recs.length === 0) {
+    html += '<div class="empty"><div class="eicon">🔍</div><p>추천 볼트가 없습니다.</p></div>';
+  } else {
+    html += '<div class="sec-label">추천 순위 (종합점수 기준)</div>';
+    recs.forEach((r, i) => {
+      const ac = aprColor(r.apr_30d), mc = mddColor(r.mdd);
+      const rankColor = i === 0 ? '#f1c40f' : i === 1 ? '#bdc3c7' : i === 2 ? '#cd7f32' : 'var(--accent)';
+      html += `<div class="rec">
+        <div class="rank-row">
+          <div class="rank-num" style="background:${rankColor};${i<3?'color:#000':''}">${i+1}</div>
+          <div class="rname">${r.name}</div>
+          ${r.allocation > 0 ? `<div class="alloc">${r.allocation}%</div>` : ''}
+        </div>
+        <div class="rec-grid">
+          <div class="rec-metric">
+            <div class="rm-k">30일 APR</div>
+            <div class="rm-v" style="color:${ac}">${fmtP(r.apr_30d)}</div>
+          </div>
+          <div class="rec-metric">
+            <div class="rm-k">최대낙폭</div>
+            <div class="rm-v" style="color:${mc}">${r.mdd.toFixed(1)}%</div>
+          </div>
+          <div class="rec-metric">
+            <div class="rm-k">안정도</div>
+            <div class="rm-v c-accent">${r.grade.split(' ')[0]}</div>
+          </div>
+          <div class="rec-metric">
+            <div class="rm-k">샤프비율</div>
+            <div class="rm-v">${r.sharpe.toFixed(2)}</div>
+          </div>
+          <div class="rec-metric">
+            <div class="rm-k">TVL</div>
+            <div class="rm-v c-muted">${r.tvl >= 1000000 ? (r.tvl/1000000).toFixed(1)+'M' : (r.tvl/1000).toFixed(0)+'K'}</div>
+          </div>
+          <div class="rec-metric">
+            <div class="rm-k">리더지분</div>
+            <div class="rm-v c-accent2">${r.leader_equity.toFixed(0)}%</div>
+          </div>
+        </div>
+        <div class="addr">${r.address}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('tab-recommend').innerHTML = html;
+}
+
+function renderMarket() {
+  const m = data.market || {};
+  let html = `<div class="banner ok">
+    <div class="bicon">📈</div>
+    <div><div class="btitle">시장 현황</div>
+    <div class="bsub">분석일: ${data.analysis_date || '-'} · 총 ${m.vault_count || 0}개 볼트</div></div></div>`;
+
+  html += `<div class="market-grid">
+    <div class="mcard">
+      <div class="mk">평균 30일 APR</div>
+      <div class="mv" style="color:${aprColor(m.avg_apr||0)}">${(m.avg_apr||0).toFixed(1)}%</div>
+    </div>
+    <div class="mcard">
+      <div class="mk">중앙값 APR</div>
+      <div class="mv" style="color:${aprColor(m.median_apr||0)}">${(m.median_apr||0).toFixed(1)}%</div>
+    </div>
+    <div class="mcard">
+      <div class="mk">평균 샤프비율</div>
+      <div class="mv c-accent">${(m.avg_sharpe||0).toFixed(2)}</div>
+    </div>
+    <div class="mcard">
+      <div class="mk">평균 MDD</div>
+      <div class="mv" style="color:${mddColor(m.avg_mdd||0)}">${(m.avg_mdd||0).toFixed(1)}%</div>
+    </div>
+  </div>`;
+
+  html += `<div class="sec-label" style="margin-top:20px">⏰ 업데이트 일정</div>
+  <div class="holding">
+    <div class="hrow"><span class="hk">자동 분석</span><span class="hv c-accent">매일 09:00 KST</span></div>
+    <div class="hrow"><span class="hk">플랫폼</span><span class="hv">GitHub Actions</span></div>
+    <div class="hrow"><span class="hk">비용</span><span class="hv c-success">$0 (완전 무료)</span></div>
+    <div class="hrow"><span class="hk">마지막 분석</span><span class="hv">${data.analysis_date || '-'}</span></div>
+    <div class="hrow"><span class="hk">데이터 생성</span><span class="hv c-muted" style="font-size:.7rem">${data.generated_at ? new Date(data.generated_at).toLocaleString('ko-KR') : '-'}</span></div>
+  </div>`;
+
+  document.getElementById('tab-market').innerHTML = html;
+}
+
+// 자동 갱신 (5분)
+loadData();
+setInterval(loadData, 300000);
+</script>
+</body>
+</html>

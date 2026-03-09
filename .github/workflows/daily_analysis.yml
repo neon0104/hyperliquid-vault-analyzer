@@ -1,0 +1,48 @@
+name: Daily Vault Analysis
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 매일 09:00 KST (UTC 00:00)
+  workflow_dispatch:        # 수동 실행 가능
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # 결과를 repo에 커밋
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run vault analysis
+        run: |
+          python analyze_top_vaults.py --force
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Export dashboard data
+        run: |
+          python export_dashboard_data.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Commit results to repo
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add docs/data.json vault_data/snapshots/ || true
+          git diff --staged --quiet || git commit -m "chore: daily vault analysis $(date +'%Y-%m-%d')"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

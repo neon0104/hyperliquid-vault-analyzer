@@ -8,6 +8,7 @@ Hyperliquid Vault Analyzer — 웹 대시보드
 
 import os, sys, json, glob, subprocess, threading
 from datetime import datetime
+from pathlib import Path
 from flask import Flask, render_template_string, send_file, jsonify, request, redirect, url_for
 
 if sys.platform == "win32":
@@ -15,13 +16,38 @@ if sys.platform == "win32":
 
 app = Flask(__name__)
 
-DATA_DIR      = "vault_data"
-SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
-REPORTS_DIR   = os.path.join(DATA_DIR, "reports")
+DATA_DIR       = "vault_data"
+SNAPSHOTS_DIR  = os.path.join(DATA_DIR, "snapshots")
+REPORTS_DIR    = os.path.join(DATA_DIR, "reports")
+STATUS_FILE    = os.path.join(DATA_DIR, "status.json")
+PORTFOLIO_FILE = os.path.join(DATA_DIR, "my_portfolio.json")
+STOP_FLAG      = "emergency_stop.flag"
 
 # ── 분석 상태 관리 ────────────────────────────────────────────────────────────
 _analysis_running = False
 _analysis_log     = []
+
+def load_status_file() -> dict:
+    """scheduler.py가 기록한 status.json 읽기"""
+    try:
+        if os.path.exists(STATUS_FILE):
+            with open(STATUS_FILE, encoding="utf-8") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+def load_portfolio_file() -> dict:
+    try:
+        if os.path.exists(PORTFOLIO_FILE):
+            with open(PORTFOLIO_FILE, encoding="utf-8") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+def is_emergency_stopped() -> bool:
+    return os.path.exists(STOP_FLAG)
 
 def today_str():
     return datetime.now().strftime("%Y-%m-%d")
@@ -1139,6 +1165,364 @@ def run_analysis():
 @app.route("/analysis-status")
 def analysis_status():
     return jsonify(running=_analysis_running)
+
+
+# ── 모바일 & API 라우트 ────────────────────────────────────────────────────────
+
+@app.route("/api/status")
+def api_status():
+    """모바일 앱 / 외부에서 포트폴리오 상태 조회 JSON API"""
+    status  = load_status_file()
+    stopped = is_emergency_stopped()
+    portfolio = load_portfolio_file()
+
+    vaults, date = get_latest_snapshot()
+    vault_map = {v["address"]: v for v in (vaults or [])}
+
+    holdings = []
+    total_invested = 0.0
+    total_monthly_est = 0.0
+    for addr, usd in portfolio.items():
+        v = vault_map.get(addr, {})
+        apr = v.get("apr_30d", 0)
+        monthly = usd * apr / 100 / 12
+        total_invested += usd
+        total_monthly_est += monthly
+        holdings.append({
+            "address": addr,
+            "name": v.get("name", addr[:12] + "..."),
+            "invested_usd": round(usd, 2),
+            "pct": 0,
+            "apr_30d": apr,
+            "mdd": v.get("max_drawdown", 0),
+            "monthly_est": round(monthly, 2),
+            "danger": v.get("max_drawdown", 0) > 20 or apr < 0,
+        })
+    for h in holdings:
+        h["pct"] = round(h["invested_usd"] / total_invested * 100, 1) if total_invested else 0
+
+    return jsonify({
+        "emergency_stopped": stopped,
+        "scheduler_running": status.get("scheduler_running", False),
+        "last_run_date":     status.get("last_run_date"),
+        "last_run_status":   status.get("last_run_status"),
+        "next_run":          status.get("next_run"),
+        "days_to_rebalance": status.get("days_to_rebalance", 30),
+        "needs_rebalance":   status.get("needs_rebalance", False),
+        "rebalance_reason":  status.get("rebalance_reason", ""),
+        "total_invested":    round(total_invested, 2),
+        "estimated_monthly": round(total_monthly_est, 2),
+        "estimated_annual":  round(total_monthly_est * 12, 2),
+        "holdings":          holdings,
+        "recent_alerts":     status.get("recent_alerts", []),
+        "vault_count":       status.get("vault_count", 0),
+        "analysis_date":     date,
+    })
+
+
+@app.route("/emergency-stop", methods=["POST"])
+def emergency_stop():
+    """긴급 중단 — 플래그 파일 생성"""
+    reason = request.json.get("reason", "Dashboard emergency stop") if request.is_json else "Dashboard emergency stop"
+    with open(STOP_FLAG, "w", encoding="utf-8") as f:
+        json.dump({"reason": reason, "time": datetime.now().isoformat()}, f)
+    return jsonify(status="stopped", message="긴급 중단 완료")
+
+
+@app.route("/emergency-clear", methods=["POST"])
+def emergency_clear():
+    """긴급 중단 해제"""
+    if os.path.exists(STOP_FLAG):
+        os.remove(STOP_FLAG)
+    return jsonify(status="cleared", message="긴급 중단 해제 완료")
+
+
+@app.route("/set-portfolio", methods=["POST"])
+def set_portfolio():
+    """포트폴리오 설정 저장 {address: usd_amount}"""
+    data = request.get_json(silent=True) or {}
+    portfolio = data.get("portfolio", {})
+    if not isinstance(portfolio, dict):
+        return jsonify(error="portfolio must be a dict"), 422
+    os.makedirs(DATA_DIR, exist_ok=True)
+    with open(PORTFOLIO_FILE, "w", encoding="utf-8") as f:
+        json.dump(portfolio, f, ensure_ascii=False, indent=2)
+    return jsonify(status="ok", message="포트폴리오 저장 완료")
+
+
+MOBILE_HTML = r"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>📊 내 포트폴리오</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b0f1a;--card:#131928;--card2:#1a2340;--border:#243050;
+          --accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;
+          --danger:#e74c3c;--warn:#f39c12;--success:#27ae60;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+         min-height:100vh;padding-bottom:80px;}
+    header{background:linear-gradient(135deg,#0d1b40,#111e3d);
+           border-bottom:1px solid var(--border);padding:16px 20px;
+           display:flex;align-items:center;justify-content:space-between;
+           position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
+    header h1{font-size:1rem;font-weight:700;}
+    header p{font-size:.68rem;color:var(--muted);}
+    .back{color:var(--muted);text-decoration:none;font-size:.85rem;}
+    main{padding:16px;}
+    /* 상태 배너 */
+    .status-banner{border-radius:12px;padding:14px 16px;margin-bottom:16px;
+                   display:flex;align-items:center;gap:12px;}
+    .status-banner.ok  {background:rgba(39,174,96,.15);border:1px solid #27ae60;}
+    .status-banner.warn{background:rgba(243,156,18,.15);border:1px solid #f39c12;}
+    .status-banner.danger{background:rgba(231,76,60,.2);border:1px solid #e74c3c;}
+    .status-banner .icon{font-size:1.8rem;}
+    .status-banner .st-title{font-weight:700;font-size:.9rem;}
+    .status-banner .st-sub{font-size:.78rem;color:var(--muted);margin-top:2px;}
+    /* 통계 카드 그리드 */
+    .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
+    .stat-card .sk{font-size:.68rem;color:var(--muted);text-transform:uppercase;}
+    .stat-card .sv{font-size:1.3rem;font-weight:800;margin-top:4px;}
+    /* 홀딩 카드 */
+    .holding-card{background:var(--card);border:1px solid var(--border);
+                  border-radius:12px;padding:14px 16px;margin-bottom:10px;position:relative;}
+    .holding-card.danger{border-color:var(--danger);}
+    .holding-card .hname{font-weight:700;font-size:.9rem;margin-bottom:8px;padding-right:50px;}
+    .holding-row{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px;}
+    .holding-row .hk{color:var(--muted);}
+    .holding-row .hv{font-weight:600;}
+    .pct-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;}
+    .pct-bar .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;}
+    .danger-badge{position:absolute;top:12px;right:12px;
+                  background:rgba(231,76,60,.2);border:1px solid var(--danger);
+                  color:var(--danger);font-size:.65rem;font-weight:700;
+                  padding:2px 7px;border-radius:5px;}
+    /* 긴급중단 버튼 */
+    .emergency-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;
+                   background:var(--card);border-top:1px solid var(--border);
+                   display:flex;gap:10px;}
+    .btn-emergency{flex:1;background:linear-gradient(135deg,#e74c3c,#c0392b);
+                   color:#fff;border:none;border-radius:10px;padding:14px;
+                   font-size:.9rem;font-weight:700;cursor:pointer;transition:all.2s;}
+    .btn-emergency:active{transform:scale(.97);}
+    .btn-home{flex:0 0 44px;background:var(--card2);border:1px solid var(--border);
+              border-radius:10px;display:flex;align-items:center;justify-content:center;
+              font-size:1.3rem;cursor:pointer;text-decoration:none;}
+    /* 알림 */
+    .alerts-section{margin-top:16px;}
+    .alert-item{background:var(--card2);border:1px solid var(--border);
+                border-radius:10px;padding:12px;margin-bottom:8px;font-size:.78rem;}
+    .alert-item .at{color:var(--muted);font-size:.68rem;margin-bottom:4px;}
+    .alert-item.WARN{border-left:3px solid var(--warn);}
+    .alert-item.ERROR{border-left:3px solid var(--danger);}
+    .alert-item.INFO{border-left:3px solid var(--accent);}
+    /* 리밸런싱 카운트다운 */
+    .countdown{background:linear-gradient(135deg,#0d1b40,#111e3d);
+               border:1px solid var(--accent);border-radius:12px;
+               padding:14px 16px;margin-bottom:16px;text-align:center;}
+    .countdown .cd-num{font-size:2rem;font-weight:800;color:var(--accent);}
+    .countdown .cd-label{font-size:.75rem;color:var(--muted);}
+    .pos{color:var(--success);} .neg{color:var(--danger);} .warn-c{color:var(--warn);}
+    /* 토스트 */
+    #toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);
+           background:#131928;border:1px solid var(--accent);border-radius:10px;
+           padding:12px 20px;font-size:.85rem;z-index:999;display:none;
+           white-space:nowrap;}
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>📊 내 포트폴리오</h1>
+    <p id="last-updated">로딩 중...</p>
+  </div>
+  <a class="back" href="/">← 메인</a>
+</header>
+<main>
+  <div id="content">
+    <div style="text-align:center;padding:60px;color:var(--muted)">
+      <div style="font-size:2rem;margin-bottom:12px">⏳</div>
+      <p>데이터 로딩 중...</p>
+    </div>
+  </div>
+</main>
+<div class="emergency-bar">
+  <a class="btn-home" href="/">🏠</a>
+  <button class="btn-emergency" id="stop-btn" onclick="emergencyStop()">🔴 긴급 중단</button>
+</div>
+<div id="toast"></div>
+
+<script>
+let statusData = null;
+let stopped = false;
+
+function fmt(n){return '$'+Number(n).toLocaleString(undefined,{maximumFractionDigits:0});}
+function fmtPct(n){return (n>0?'+':'')+n.toFixed(1)+'%';}
+
+async function loadStatus(){
+  try{
+    const r = await fetch('/api/status');
+    statusData = await r.json();
+    stopped = statusData.emergency_stopped;
+    renderPage();
+  }catch(e){
+    document.getElementById('content').innerHTML=
+      '<div style="text-align:center;padding:40px;color:var(--muted)">⚠️ 서버 연결 실패</div>';
+  }
+}
+
+function renderPage(){
+  const d = statusData;
+  let html = '';
+
+  // 비상 상태 배너
+  if(d.emergency_stopped){
+    html += `<div class="status-banner danger">
+      <div class="icon">🔴</div>
+      <div><div class="st-title">긴급 중단 상태</div>
+      <div class="st-sub">모든 자동 분석이 중단되었습니다</div></div></div>`;
+  } else if(d.needs_rebalance){
+    html += `<div class="status-banner warn">
+      <div class="icon">⚠️</div>
+      <div><div class="st-title">리밸런싱 권고</div>
+      <div class="st-sub">${d.rebalance_reason||'포트폴리오 조정이 필요합니다'}</div></div></div>`;
+  } else {
+    html += `<div class="status-banner ok">
+      <div class="icon">✅</div>
+      <div><div class="st-title">포트폴리오 정상</div>
+      <div class="st-sub">마지막 분석: ${d.last_run_date||'없음'}</div></div></div>`;
+  }
+
+  // 리밸런싱 카운트다운
+  const days = d.days_to_rebalance || 30;
+  const dColor = days<=3?'var(--danger)':days<=7?'var(--warn)':'var(--accent)';
+  html += `<div class="countdown">
+    <div class="cd-num" style="color:${dColor}">${days}일</div>
+    <div class="cd-label">30일 리밸런싱까지</div>
+  </div>`;
+
+  // 통계
+  html += `<div class="stats-row">
+    <div class="stat-card">
+      <div class="sk">총 투자금</div>
+      <div class="sv" style="color:var(--accent)">${fmt(d.total_invested||0)}</div>
+    </div>
+    <div class="stat-card">
+      <div class="sk">예상 월수익</div>
+      <div class="sv" style="color:var(--accent2)">${fmt(d.estimated_monthly||0)}</div>
+    </div>
+    <div class="stat-card">
+      <div class="sk">예상 연수익</div>
+      <div class="sv" style="color:var(--accent2)">${fmt(d.estimated_annual||0)}</div>
+    </div>
+    <div class="stat-card">
+      <div class="sk">분석 볼트 수</div>
+      <div class="sv">${d.vault_count||0}<span style="font-size:.8rem;color:var(--muted)">개</span></div>
+    </div>
+  </div>`;
+
+  // 보유 볼트
+  if(d.holdings && d.holdings.length > 0){
+    html += '<p style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📌 보유 볼트</p>';
+    d.holdings.forEach(h=>{
+      const aprColor = h.apr_30d>0?'var(--success)':'var(--danger)';
+      const mddColor = h.mdd<15?'var(--success)':h.mdd<25?'var(--warn)':'var(--danger)';
+      html += `<div class="holding-card${h.danger?' danger':''}">
+        ${h.danger?'<div class="danger-badge">⚠️ 주의</div>':''}
+        <div class="hname">${h.name}</div>
+        <div class="holding-row"><span class="hk">투자금액</span><span class="hv">${fmt(h.invested_usd)}</span></div>
+        <div class="holding-row"><span class="hk">30일 APR</span>
+          <span class="hv" style="color:${aprColor}">${fmtPct(h.apr_30d)}</span></div>
+        <div class="holding-row"><span class="hk">MDD</span>
+          <span class="hv" style="color:${mddColor}">${h.mdd.toFixed(1)}%</span></div>
+        <div class="holding-row"><span class="hk">예상 월수익</span>
+          <span class="hv" style="color:var(--accent2)">${fmt(h.monthly_est)}</span></div>
+        <div class="pct-bar"><div class="fill" style="width:${Math.min(h.pct,100)}%"></div></div>
+        <div style="text-align:right;font-size:.68rem;color:var(--muted);margin-top:4px">${h.pct.toFixed(1)}%</div>
+      </div>`;
+    });
+  } else {
+    html += `<div style="text-align:center;padding:30px;color:var(--muted);
+              background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px">
+      <div style="font-size:1.5rem;margin-bottom:8px">💼</div>
+      <p style="font-size:.85rem">포트폴리오 미설정</p>
+      <p style="font-size:.75rem;margin-top:6px">vault_data/my_portfolio.json 에 투자 현황 입력</p>
+    </div>`;
+  }
+
+  // 최근 알림
+  if(d.recent_alerts && d.recent_alerts.length > 0){
+    html += '<p style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">🔔 최근 알림</p>';
+    html += '<div class="alerts-section">';
+    d.recent_alerts.forEach(a=>{
+      const t = a.time ? new Date(a.time).toLocaleString('ko-KR') : '';
+      html += `<div class="alert-item ${a.level||'INFO'}">
+        <div class="at">${t} · ${a.level}</div>
+        <div style="font-weight:600">${a.title}</div>
+        <div style="color:var(--muted);margin-top:2px">${a.message}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
+  document.getElementById('last-updated').textContent =
+    '업데이트: ' + new Date().toLocaleString('ko-KR');
+
+  // 긴급중단 버튼 라벨
+  const btn = document.getElementById('stop-btn');
+  if(d.emergency_stopped){
+    btn.textContent = '✅ 긴급중단 해제';
+    btn.style.background = 'linear-gradient(135deg,#27ae60,#1abc9c)';
+    btn.onclick = emergencyClear;
+  } else {
+    btn.textContent = '🔴 긴급 중단';
+    btn.style.background = 'linear-gradient(135deg,#e74c3c,#c0392b)';
+    btn.onclick = emergencyStop;
+  }
+}
+
+async function emergencyStop(){
+  if(!confirm('⚠️ 정말 긴급 중단하시겠습니까?\n자동 분석이 중단됩니다.')) return;
+  try{
+    await fetch('/emergency-stop',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({reason:'Mobile dashboard emergency stop'})});
+    showToast('🔴 긴급 중단 완료');
+    setTimeout(loadStatus, 1000);
+  }catch(e){showToast('오류: 서버 연결 실패');}
+}
+
+async function emergencyClear(){
+  if(!confirm('✅ 긴급 중단을 해제하시겠습니까?')) return;
+  try{
+    await fetch('/emergency-clear',{method:'POST'});
+    showToast('✅ 긴급 중단 해제 완료');
+    setTimeout(loadStatus, 1000);
+  }catch(e){showToast('오류: 서버 연결 실패');}
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display='block';
+  setTimeout(()=>{t.style.display='none';}, 3000);
+}
+
+// 초기 로드 + 30초마다 자동 갱신
+loadStatus();
+setInterval(loadStatus, 30000);
+</script>
+</body></html>"""
+
+
+@app.route("/portfolio-status")
+@app.route("/m")          # ← 단축 URL
+@app.route("/mobile")     # ← 별명
+def portfolio_status_page():
+    """모바일 최적화 포트폴리오 현황 페이지"""
+    return MOBILE_HTML
 
 
 # ── 실행 ────────────────────────────────────────────────────────────────────
