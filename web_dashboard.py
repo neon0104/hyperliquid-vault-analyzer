@@ -9,6 +9,7 @@ Hyperliquid Vault Analyzer — 웹 대시보드
 import os, sys, json, glob, subprocess, threading
 from datetime import datetime
 from pathlib import Path
+from threading import Lock
 from flask import Flask, render_template_string, send_file, jsonify, request, redirect, url_for
 
 if sys.platform == "win32":
@@ -26,6 +27,7 @@ STOP_FLAG      = "emergency_stop.flag"
 # ── 분석 상태 관리 ────────────────────────────────────────────────────────────
 _analysis_running = False
 _analysis_log     = []
+_analysis_lock    = Lock()
 
 def load_status_file() -> dict:
     """scheduler.py가 기록한 status.json 읽기"""
@@ -95,6 +97,7 @@ HTML = r"""
   <title>Hyperliquid Vault Analyzer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
     :root {
       --bg:       #0b0f1a;
@@ -462,6 +465,12 @@ HTML = r"""
   </div>
   {% endif %}
 
+  <!-- ── APR 분포 차트 (ECharts) ── -->
+  <p class="section-title">📊 볼트 APR 분포</p>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:32px;">
+    <div id="apr-dist-chart" style="height:220px;"></div>
+  </div>
+
   <!-- ── 상위 50 볼트 테이블 ── -->
   <p class="section-title">🏆 상위 50 볼트 (입금 가능 · 종합점수 기준)</p>
   <div class="table-wrap">
@@ -560,29 +569,98 @@ HTML = r"""
     <div class="spinner"></div>
     <h3>분석 실행 중...</h3>
     <p>약 2~5분 소요됩니다.<br>200개 볼트 데이터를 수집하고 있습니다.</p>
-    <p style="margin-top:16px; font-size:0.75rem; color:var(--muted);">완료되면 자동으로 새로고침됩니다.</p>
+    <p id="run-log" style="margin-top:12px; font-size:0.72rem; color:var(--accent2); min-height:18px;">준비 중...</p>
+    <p style="margin-top:8px; font-size:0.72rem; color:var(--muted);">완료되면 자동으로 새로고침됩니다.</p>
   </div>
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+
+// ── APR 분포 차트 ECharts (/chart_data API) ──────────────────────────────
+(function(){
+  const el = document.getElementById('apr-dist-chart');
+  if (!el) return;
+  // 컨테이너 크기 명시
+  el.style.width  = '100%';
+  el.style.height = '240px';
+  const chart = echarts.init(el, null, {renderer:'canvas'});
+  chart.showLoading({text:'로딩 중...',textColor:'#7b8db0',maskColor:'rgba(11,15,26,.7)',color:'#4f8ef7'});
+
+  fetch('/chart_data')
+    .then(r => r.json())
+    .then(d => {
+      chart.hideLoading();
+      if (d.error) {
+        el.innerHTML = '<p style="color:#7b8db0;text-align:center;padding:60px">데이터 없음 — 분석 먼저 실행하세요</p>';
+        return;
+      }
+      const hist = d.apr_hist;
+      const colors = hist.labels.map(l => {
+        const v = parseFloat(l);
+        if (v < 0)   return 'rgba(231,76,60,.85)';
+        if (v < 10)  return 'rgba(243,156,18,.85)';
+        if (v < 30)  return 'rgba(79,142,247,.85)';
+        return 'rgba(26,188,156,.85)';
+      });
+      chart.setOption({
+        backgroundColor: 'transparent',
+        tooltip: {
+          trigger:'axis', axisPointer:{type:'shadow'},
+          backgroundColor:'#131928', borderColor:'#243050', borderWidth:1,
+          textStyle:{color:'#e8eaf0'},
+          formatter: params => `<b>${params[0].name}</b>&nbsp; ${params[0].value}개 볼트`
+        },
+        grid: {top:16, left:52, right:16, bottom:68, containLabel:false},
+        xAxis: {
+          type:'category', data: hist.labels,
+          axisLabel:{color:'#7b8db0', fontSize:10, rotate:45, interval:1},
+          axisLine:{lineStyle:{color:'#243050'}}
+        },
+        yAxis: {
+          type:'value',
+          splitLine:{lineStyle:{color:'rgba(36,48,80,.55)'}},
+          axisLabel:{color:'#7b8db0'}, axisLine:{lineStyle:{color:'#243050'}}
+        },
+        series: [{
+          type:'bar', data: hist.counts, barWidth:'75%',
+          itemStyle:{color: p => colors[p.dataIndex], borderRadius:[3,3,0,0]},
+          emphasis:{itemStyle:{opacity:1, shadowBlur:8, shadowColor:'rgba(79,142,247,.5)'}},
+          label:{show:true, position:'top', color:'#7b8db0', fontSize:9,
+                 formatter: p => p.value > 0 ? p.value : ''}
+        }]
+      });
+      chart.resize();
+    })
+    .catch(() => { chart.hideLoading(); });
+  window.addEventListener('resize', () => chart.resize());
+})();
+
+}); // DOMContentLoaded
+
+// ── 분석 실행 ────────────────────────────────────────────────────────────────
 function runAnalysis() {
-  document.getElementById('run-overlay').classList.add('show');
-  document.getElementById('run-btn').disabled = true;
+  const overlay = document.getElementById('run-overlay');
+  const btn = document.getElementById('run-btn');
+  const logEl = document.getElementById('run-log');
+  overlay.classList.add('show');
+  btn.disabled = true;
+  if (logEl) logEl.textContent = '분석 시작 중...';
 
   fetch('/run-analysis', { method: 'POST' })
     .then(r => r.json())
     .then(d => {
-      if (d.status === 'started') {
+      if (d.status === 'started' || d.status === 'already_running') {
         pollStatus();
       } else {
-        alert('분석 시작 실패: ' + d.message);
-        document.getElementById('run-overlay').classList.remove('show');
-        document.getElementById('run-btn').disabled = false;
+        alert('분석 시작 실패: ' + (d.message || '알 수 없는 오류'));
+        overlay.classList.remove('show');
+        btn.disabled = false;
       }
     })
     .catch(() => {
-      document.getElementById('run-overlay').classList.remove('show');
-      document.getElementById('run-btn').disabled = false;
+      overlay.classList.remove('show');
+      btn.disabled = false;
     });
 }
 
@@ -590,13 +668,17 @@ function pollStatus() {
   fetch('/analysis-status')
     .then(r => r.json())
     .then(d => {
+      const logEl = document.getElementById('run-log');
+      if (logEl && d.log && d.log.length > 0) {
+        logEl.textContent = d.log[d.log.length - 1];
+      }
       if (d.running) {
-        setTimeout(pollStatus, 3000);
+        setTimeout(pollStatus, 2000);
       } else {
         location.reload();
       }
     })
-    .catch(() => setTimeout(pollStatus, 5000));
+    .catch(() => setTimeout(pollStatus, 4000));
 }
 </script>
 </body>
@@ -684,7 +766,7 @@ PORTFOLIO_HTML = """
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>포트폴리오 분석</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <style>
 :root{--bg:#0b0f1a;--card:#131928;--card2:#1a2340;--border:#243050;
       --accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;
@@ -773,8 +855,10 @@ tr:hover td{background:rgba(79,142,247,.04);}
   </div>
   {% endfor %}
   </div>
-  <p class="sec">📈 백테스팅 Equity Curve</p>
-  <div class="cw"><canvas id="btc" height="90"></canvas></div>
+  <p class="sec">📈 백테스팅 Equity Curve (인터랙티브 · 줌 가능)</p>
+  <div class="cw" id="equity-chart" style="height:340px;width:100%;display:block;"></div>
+  <p class="sec">📊 포트폴리오별 성과 비교 (APR · MDD · Sharpe)</p>
+  <div class="cw" id="bar-chart" style="height:280px;width:100%;display:block;"></div>
   <p class="sec">⭐ 저상관 선택 볼트 (상관 55% 미만)</p>
   <div class="tbw"><table>
     <thead><tr><th>#</th><th>볼트명</th><th>APR 30d</th><th>Sharpe</th><th>MDD</th>
@@ -822,21 +906,115 @@ tr:hover td{background:rgba(79,142,247,.04);}
 </main>
 <script>
 {% if not err %}
-const bcd={{ bt_json }};
-new Chart(document.getElementById('btc').getContext('2d'),{
-  type:'line',
-  data:{labels:Array.from({length:bcd.sh.length},(_,i)=>i),datasets:[
-    {label:'📈 Max Sharpe',   data:bcd.sh,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,.08)', tension:.3,pointRadius:0,borderWidth:2},
-    {label:'🛡 Min Variance', data:bcd.mv,borderColor:'#27ae60',backgroundColor:'rgba(39,174,96,.08)',   tension:.3,pointRadius:0,borderWidth:2},
-    {label:'⚖ Risk Parity',  data:bcd.rp,borderColor:'#f39c12',backgroundColor:'rgba(243,156,18,.08)',  tension:.3,pointRadius:0,borderWidth:2},
-    {label:'🔒 Min CVaR',    data:bcd.cv,borderColor:'#9b59b6',backgroundColor:'rgba(155,89,182,.08)',  tension:.3,pointRadius:0,borderWidth:2},
-  ]},
-  options:{responsive:true,
-    plugins:{legend:{labels:{color:'#e8eaf0',usePointStyle:true}},
-             tooltip:{mode:'index',intersect:false,backgroundColor:'#131928',borderColor:'#243050',borderWidth:1}},
-    scales:{x:{display:false},
-            y:{grid:{color:'rgba(36,48,80,.6)'},ticks:{color:'#7b8db0',callback:v=>'$'+Number(v).toLocaleString()}}}}
-});
+const bcd = {{ bt_json }};
+
+document.addEventListener('DOMContentLoaded', function() {
+
+// ── 1. Equity Curve — ECharts (인터랙티브 · 줌 · 툴팁) ─────────────────────
+(function(){
+  const elEc = document.getElementById('equity-chart');
+  if (!elEc) return;
+  elEc.style.width  = '100%';
+  elEc.style.height = '340px';
+  const ec = echarts.init(elEc, null, {renderer:'canvas'});
+  const labels = Array.from({length: bcd.sh.length}, (_, i) => i);
+  ec.setOption({
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis', axisPointer: {type:'cross',lineStyle:{color:'#4f8ef7',opacity:.5}},
+      backgroundColor:'#131928', borderColor:'#243050', borderWidth:1,
+      textStyle:{color:'#e8eaf0', fontSize:12},
+      formatter: params => {
+        let s = '<b>Day ' + params[0].axisValue + '</b><br/>';
+        params.forEach(p => {
+          s += `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span>`
+            + p.seriesName + ': <b>$' + Number(p.value).toLocaleString('en-US', {maximumFractionDigits:0}) + '</b><br/>';
+        });
+        return s;
+      }
+    },
+    legend: {
+      data:['📈 Max Sharpe','🛡 Min Variance','⚖ Risk Parity','🔒 Min CVaR'],
+      textStyle:{color:'#e8eaf0'}, bottom:0, itemGap:20,
+      icon: 'roundRect', itemWidth:14, itemHeight:4
+    },
+    dataZoom: [
+      {type:'inside', xAxisIndex:0, start:0, end:100},
+      {type:'slider',  xAxisIndex:0, start:0, end:100, bottom:36,
+       borderColor:'#243050', fillerColor:'rgba(79,142,247,.1)',
+       handleStyle:{color:'#4f8ef7'}, textStyle:{color:'#7b8db0'},
+       height:20}
+    ],
+    grid: {top:20, left:70, right:20, bottom:100, containLabel:false},
+    xAxis: {type:'category', data:labels, show:false},
+    yAxis: {
+      type:'value', splitLine:{lineStyle:{color:'rgba(36,48,80,.6)'}},
+      axisLabel:{color:'#7b8db0', formatter: v => '$' + (v/1000).toFixed(0) + 'K'},
+      axisLine:{lineStyle:{color:'#243050'}}
+    },
+    series: [
+      {name:'📈 Max Sharpe',   type:'line', data:bcd.sh, smooth:true, symbol:'none',
+       lineStyle:{color:'#4f8ef7',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(79,142,247,.25)'},{offset:1,color:'rgba(79,142,247,0)'}]}}},
+      {name:'🛡 Min Variance', type:'line', data:bcd.mv, smooth:true, symbol:'none',
+       lineStyle:{color:'#27ae60',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(39,174,96,.2)'},{offset:1,color:'rgba(39,174,96,0)'}]}}},
+      {name:'⚖ Risk Parity',  type:'line', data:bcd.rp, smooth:true, symbol:'none',
+       lineStyle:{color:'#f39c12',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(243,156,18,.2)'},{offset:1,color:'rgba(243,156,18,0)'}]}}},
+      {name:'🔒 Min CVaR',    type:'line', data:bcd.cv, smooth:true, symbol:'none',
+       lineStyle:{color:'#9b59b6',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(155,89,182,.2)'},{offset:1,color:'rgba(155,89,182,0)'}]}}},
+    ]
+  });
+  window.addEventListener('resize', () => ec.resize());
+  setTimeout(() => ec.resize(), 100);
+})();
+
+// ── 2. 포트폴리오별 성과 Bar Chart ───────────────────────────────────────────
+(function(){
+  const elBc = document.getElementById('bar-chart');
+  if (!elBc) return;
+  elBc.style.width  = '100%';
+  elBc.style.height = '280px';
+  const pf_labels = ['Max Sharpe', 'Min Variance', 'Risk Parity', 'Min CVaR'];
+  const apr_data  = [
+    {% for key, pf in d.portfolios.items() %}{{ pf.stats.annual_return_pct }}{% if not loop.last %},{% endif %}{% endfor %}
+  ];
+  const mdd_data  = [
+    {% for key, pf in d.portfolios.items() %}{{ pf.backtest.max_drawdown_pct }}{% if not loop.last %},{% endif %}{% endfor %}
+  ];
+  const sharpe_data = [
+    {% for key, pf in d.portfolios.items() %}{{ pf.stats.sharpe }}{% if not loop.last %},{% endif %}{% endfor %}
+  ];
+
+  const bc = echarts.init(elBc, null, {renderer:'canvas'});
+  bc.setOption({
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger:'axis', axisPointer:{type:'shadow'},
+      backgroundColor:'#131928', borderColor:'#243050', borderWidth:1,
+      textStyle:{color:'#e8eaf0'}
+    },
+    legend: {data:['APR (%)','MDD (%)','Sharpe×10'], textStyle:{color:'#e8eaf0'}, bottom:0, itemGap:16},
+    grid: {top:16, left:60, right:20, bottom:60, containLabel:false},
+    xAxis: {type:'category', data:pf_labels,
+      axisLabel:{color:'#7b8db0', fontSize:11}, axisLine:{lineStyle:{color:'#243050'}}},
+    yAxis: {type:'value', splitLine:{lineStyle:{color:'rgba(36,48,80,.6)'}},
+      axisLabel:{color:'#7b8db0'}, axisLine:{lineStyle:{color:'#243050'}}},
+    series: [
+      {name:'APR (%)', type:'bar', data: apr_data, barWidth:'22%',
+       itemStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#4f8ef7'},{offset:1,color:'#1a5fd1'}]}, borderRadius:[4,4,0,0]},
+       label:{show:true, position:'top', color:'#4f8ef7', fontSize:11, formatter: v => v.value.toFixed(1)+'%'}},
+      {name:'MDD (%)', type:'bar', data: mdd_data, barWidth:'22%',
+       itemStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#e74c3c'},{offset:1,color:'#a52a2a'}]}, borderRadius:[4,4,0,0]},
+       label:{show:true, position:'top', color:'#e74c3c', fontSize:11, formatter: v => v.value.toFixed(1)+'%'}},
+      {name:'Sharpe×10', type:'bar', data: sharpe_data.map(v => +(v*10).toFixed(2)), barWidth:'22%',
+       itemStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#1abc9c'},{offset:1,color:'#0d8a6f'}]}, borderRadius:[4,4,0,0]},
+       label:{show:true, position:'top', color:'#1abc9c', fontSize:11, formatter: v => (v.value/10).toFixed(2)}},
+    ]
+  });
+  window.addEventListener('resize', () => bc.resize());
+  setTimeout(() => bc.resize(), 100);
+})();
+
+}); // DOMContentLoaded
 {% endif %}
 </script>
 </body></html>
@@ -1052,6 +1230,53 @@ function filterTable(tblId, q) {
     )
 
 
+# ── /chart_data API (Task 4e) ────────────────────────────────────────────────
+@app.route("/chart_data")
+def chart_data():
+    """ECharts용 차트 데이터 JSON API"""
+    vaults, date = get_latest_snapshot()
+    if not vaults:
+        return jsonify({"error": "no_data", "date": None})
+
+    import numpy as np
+    valid = [v for v in vaults if v.get("data_points", 0) >= 3]
+
+    # APR 분포
+    apr_vals = [v["apr_30d"] for v in valid]
+    # 히스토그램 bin (5% 간격, -20~100 범위)
+    bins = list(range(-20, 101, 5))
+    hist, _ = np.histogram(apr_vals, bins=bins)
+    apr_hist = {
+        "labels": [f"{b}~{b+5}%" for b in bins[:-1]],
+        "counts": hist.tolist(),
+    }
+
+    # 상위 20 볼트 APR / Sharpe / MDD
+    deposit = [v for v in vaults if v.get("allow_deposits")]
+    top20 = sorted(deposit, key=lambda v: v.get("score", 0), reverse=True)[:20]
+    bar_data = {
+        "names":  [v["name"][:16] for v in top20],
+        "apr":    [round(float(v.get("apr_30d", 0)), 2)   for v in top20],
+        "mdd":    [round(float(v.get("max_drawdown", 0)), 2) for v in top20],
+        "sharpe": [round(float(v.get("sharpe_ratio", 0)), 3) for v in top20],
+    }
+
+    # 요약 통계
+    stats = {}
+    if valid:
+        stats["total"]       = len(vaults)
+        stats["avg_apr"]     = round(float(np.mean(apr_vals)), 2)
+        stats["median_apr"]  = round(float(np.median(apr_vals)), 2)
+        stats["pct_positive"] = round(sum(1 for a in apr_vals if a > 0) / len(apr_vals) * 100, 1)
+
+    return jsonify({
+        "date":     date,
+        "stats":    stats,
+        "apr_hist": apr_hist,
+        "bar_data": bar_data,
+    })
+
+
 @app.route("/download/<filename>")
 def download(filename):
     """Excel 파일 다운로드"""
@@ -1140,31 +1365,48 @@ def download_guide():
 
 
 @app.route("/run-analysis", methods=["POST"])
-def run_analysis():
-    global _analysis_running
-    if _analysis_running:
-        return jsonify(status="already_running", message="이미 분석이 실행 중입니다.")
+def run_analysis_route():
+    global _analysis_running, _analysis_log
+    with _analysis_lock:
+        if _analysis_running:
+            return jsonify(status="already_running", message="이미 분석이 실행 중입니다.", log=_analysis_log[-5:])
 
     def _run():
-        global _analysis_running
+        global _analysis_running, _analysis_log
         _analysis_running = True
+        _analysis_log = ["분석 시작..."];
         try:
-            subprocess.run(
-                [sys.executable, "analyze_top_vaults.py", "--force"],
+            proc = subprocess.Popen(
+                [sys.executable, "-u", "analyze_top_vaults.py", "--force"],
                 cwd=os.path.dirname(os.path.abspath(__file__)),
-                capture_output=True, text=True, encoding="utf-8", errors="replace"
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                text=True, encoding="utf-8", errors="replace"
             )
+            for line in proc.stdout:
+                line = line.rstrip()
+                if line:
+                    _analysis_log.append(line)
+                    if len(_analysis_log) > 200:
+                        _analysis_log = _analysis_log[-200:]
+            proc.wait()
+        except Exception as e:
+            _analysis_log.append(f"오류: {e}")
         finally:
             _analysis_running = False
 
-    thread = threading.Thread(target=_run, daemon=True)
-    thread.start()
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
     return jsonify(status="started")
 
 
 @app.route("/analysis-status")
 def analysis_status():
-    return jsonify(running=_analysis_running)
+    return jsonify(running=_analysis_running, log=_analysis_log[-10:])
+
+
+@app.route("/analysis-log")
+def analysis_log_route():
+    return jsonify(running=_analysis_running, log=_analysis_log)
 
 
 # ── 모바일 & API 라우트 ────────────────────────────────────────────────────────
