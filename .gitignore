@@ -49,3 +49,12 @@ probe_*.py
 test_*.py
 verify_*.py
 fix_*.py
+__check_fixes.py
+
+# 민감 데이터 (지갑 주소 포함)
+vault_data/my_portfolio.json
+vault_data/daily_sim.json
+vault_data/portfolio_history.json
+vault_data/status.json
+debug.log
+*.log

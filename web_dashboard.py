@@ -1416,7 +1416,20 @@ def api_status():
     """모바일 앱 / 외부에서 포트폴리오 상태 조회 JSON API"""
     status  = load_status_file()
     stopped = is_emergency_stopped()
-    portfolio = load_portfolio_file()
+
+    # my_portfolio.json 로드 (구형/신형 형식 모두 지원)
+    raw_portfolio = load_portfolio_file()
+    if isinstance(raw_portfolio, dict) and "positions" in raw_portfolio:
+        # 신형: fetch_my_portfolio.py 저장 형식
+        positions = raw_portfolio.get("positions", {})
+        hl_holdings = raw_portfolio.get("holdings", [])
+    else:
+        # 구형: {주소: 금액} 단순 dict
+        positions = raw_portfolio
+        hl_holdings = []
+
+    # holdings 이름 맵 (신형 데이터에서 이름 가져오기)
+    hl_name_map = {h.get("vault_address", ""): h.get("name", "") for h in hl_holdings}
 
     vaults, date = get_latest_snapshot()
     vault_map = {v["address"]: v for v in (vaults or [])}
@@ -1424,21 +1437,23 @@ def api_status():
     holdings = []
     total_invested = 0.0
     total_monthly_est = 0.0
-    for addr, usd in portfolio.items():
-        v = vault_map.get(addr, {})
-        apr = v.get("apr_30d", 0)
+    for addr, usd in positions.items():
+        usd = float(usd)  # 문자열/숫자 모두 처리
+        v   = vault_map.get(addr, {})
+        apr = float(v.get("apr_30d", 0))
         monthly = usd * apr / 100 / 12
-        total_invested += usd
+        total_invested    += usd
         total_monthly_est += monthly
+        name = v.get("name") or hl_name_map.get(addr) or addr[:12] + "..."
         holdings.append({
-            "address": addr,
-            "name": v.get("name", addr[:12] + "..."),
+            "address":      addr,
+            "name":         name,
             "invested_usd": round(usd, 2),
-            "pct": 0,
-            "apr_30d": apr,
-            "mdd": v.get("max_drawdown", 0),
-            "monthly_est": round(monthly, 2),
-            "danger": v.get("max_drawdown", 0) > 20 or apr < 0,
+            "pct":          0,
+            "apr_30d":      apr,
+            "mdd":          float(v.get("max_drawdown", 0)),
+            "monthly_est":  round(monthly, 2),
+            "danger":       float(v.get("max_drawdown", 0)) > 20 or apr < 0,
         })
     for h in holdings:
         h["pct"] = round(h["invested_usd"] / total_invested * 100, 1) if total_invested else 0
@@ -1459,6 +1474,7 @@ def api_status():
         "recent_alerts":     status.get("recent_alerts", []),
         "vault_count":       status.get("vault_count", 0),
         "analysis_date":     date,
+        "is_configured":     len(positions) > 0,
     })
 
 
