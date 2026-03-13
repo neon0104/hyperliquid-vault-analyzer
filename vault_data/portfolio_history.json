@@ -685,5 +685,108 @@
         "leader_eq": 0.9804002433908786
       }
     ]
+  },
+  "2026-03-12": {
+    "portfolio_value": 100312.16,
+    "daily_pnl": 119.16,
+    "daily_return_pct": 0.1189,
+    "cumulative_pnl": 312.16,
+    "cumulative_pct": 0.3122,
+    "max_equity_ever": 100344.19,
+    "mdd_pct": 0.0319,
+    "risk_score": 0.453,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 14.7,
+        "apr_30d": 148.29,
+        "robustness": 0.7113,
+        "undervalue": 1.133,
+        "leader_eq": 0.9701598910140082
+      },
+      {
+        "name": "Spiffy",
+        "address": "0x6ee75f1da817dccc144498b8a958d1199ae040d3",
+        "alloc_pct": 16.1,
+        "apr_30d": 47.82,
+        "robustness": 0.8463,
+        "undervalue": 1.038,
+        "leader_eq": 0.9688705291990191
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 16.9,
+        "apr_30d": 32.5,
+        "robustness": 0.9009,
+        "undervalue": 1.027,
+        "leader_eq": 0.9021594473109668
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 14.7,
+        "apr_30d": 2.31,
+        "robustness": 0.8515,
+        "undervalue": 0.947,
+        "leader_eq": 0.6978721889279592
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 8.8,
+        "apr_30d": 37.23,
+        "robustness": 0.555,
+        "undervalue": 0.867,
+        "leader_eq": 0.6243660558444218
+      },
+      {
+        "name": "HyperSonic",
+        "address": "0x071a1341c9d00a5537ff4bf8289049f045fe3abb",
+        "alloc_pct": 2.6,
+        "apr_30d": 120.92,
+        "robustness": 0.285,
+        "undervalue": 0.5,
+        "leader_eq": 0.9785001833513354
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 5.4,
+        "apr_30d": 8.08,
+        "robustness": 0.587,
+        "undervalue": 0.5,
+        "leader_eq": 0.9854666579389325
+      },
+      {
+        "name": "[ Sidelined ] Market Neutral 1",
+        "address": "0xf4ab2cb15b7b3fa298555b801e9f5772ba8f8891",
+        "alloc_pct": 7.5,
+        "apr_30d": 4.35,
+        "robustness": 0.4242,
+        "undervalue": 0.97,
+        "leader_eq": 0.8257772538380743
+      },
+      {
+        "name": "AILAB TEST URTRA'",
+        "address": "0x21edf2d791f626ee69352120e7f6e2fbb0f48cf1",
+        "alloc_pct": 6.6,
+        "apr_30d": 8.93,
+        "robustness": 0.3629,
+        "undervalue": 0.998,
+        "leader_eq": 0.7301316137014426
+      },
+      {
+        "name": "Prudentia Asset Management",
+        "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+        "alloc_pct": 6.6,
+        "apr_30d": 4.65,
+        "robustness": 0.3622,
+        "undervalue": 0.998,
+        "leader_eq": 1.0
+      }
+    ]
   }
 }

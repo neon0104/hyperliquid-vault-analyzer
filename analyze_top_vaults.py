@@ -398,30 +398,28 @@ def run_analysis(top_n=TOP_N):
 
     print(f"  완료: 분석 시도 {len(top_vaults)}개 / 성공 {len(results)}개 / 실패 {failed}개")
 
-    # ★ 2단계 - 필터링 (입금 가능 / 리더 에쿼티 40%↑ / 초기 손실 없음)
-    # APR 음수 볼트도 상위 50개 테이블에 포함 (포트폴리오 추천에서만 APR 필터 적용)
-    print("  [필터] 입금 가능 / 리더 에쿼티 40%↑ / 초기 손실 없음 볼트 선별 중...")
-    filtered_results = []
+    # ★ 2단계 - 필터링 여부 표시 (입금 가능 / 리더 에쿼티 40%↑ / 초기 손실 없음)
+    # 실제 데이터 유실 방지를 위해 전체 결과를 저장하되, 필터 통과 여부만 체크함
     for v in results:
-        if not v.get("allow_deposits", True):
-            continue
-        if v.get("leader_equity_ratio", 0) < 0.4:
-            continue
-        # ★ 핵심 필터: alltime_pnl 최솟값이 0 미만이면 초기 손실 발생 → 제외
+        ok_deposit = v.get("allow_deposits", True)
+        ok_leader  = v.get("leader_equity_ratio", 0) >= 0.4
+        
+        # 초기 손실 필터: alltime_pnl 최솟값이 0 미만이면 제외
         pnl_arr = v.get("alltime_pnl", [])
-        if pnl_arr and min(pnl_arr) < 0:
-            continue
-        filtered_results.append(v)
+        ok_no_loss = not (pnl_arr and min(pnl_arr) < 0)
+        
+        v["_filter_pass"] = ok_deposit and ok_leader and ok_no_loss
+        v["_ok_deposit"] = ok_deposit
+        v["_ok_leader"] = ok_leader
+        v["_ok_no_loss"] = ok_no_loss
 
-    print(f"  [필터 결과] {len(results)}개 중 {len(filtered_results)}개 통과")
-
-    # ★ 사용자 요청: 3단계 - 필터링 후 종합점수 기준으로 랭킹 부여
-    filtered_results.sort(key=lambda x: x["score"], reverse=True)
-    for i, v in enumerate(filtered_results):
+    # ★ 3단계 - 종합점수 기준으로 전체 랭킹 부여
+    results.sort(key=lambda x: x["score"], reverse=True)
+    for i, v in enumerate(results):
         v["rank"] = i + 1
 
-    save_snapshot(filtered_results)
-    return filtered_results
+    save_snapshot(results)
+    return results
 
 
 # ── 일별 변화 비교 ────────────────────────────────────────────────────────────
@@ -475,13 +473,14 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
     ★ 배분 기준:
       Robustness × 저평가점수 (1달 기준, 장기평균 대비 현재 저조 = 진입 적기)
     """
-    # 1차: 모든 기준 적용 (APR > 0 필수)
+    # 1차: 모든 기준 적용 (APR > 0 필수 + 초기 손실 없음 추가)
     eligible = [
         v for v in vault_data
         if v.get("allow_deposits", True)
         and v.get("leader_equity_ratio", 0) >= min_leader_equity
         and v.get("robustness_score", 0.0) >= min_robustness
         and v.get("apr_30d", 0) > 0          # ★ 최근 30일 수익 양수만
+        and v.get("_ok_no_loss", True)       # ★ 초기 손실 없는 볼트만 추천
     ]
     print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}+로버스트≥{min_robustness:.2f}+APR>0): {len(eligible)}개")
 

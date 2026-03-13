@@ -80,7 +80,7 @@
   - [x] 6d. `/api/status` JSON 응답 → **OK** (emergency_stopped, holdings 등 확인)
   - [x] 6e. `/chart_data` JSON 응답 → **OK** (APR 히스토그램 + bar_data 16개 볼트)
   - [x] 6f. 메인 `/` 페이지 렌더링 → **OK** (시장 현황, 사비, 차트 div 확인)
-  - [ ] 6g. 브라우저 ECharts 실제 렌더링 (Visual QA 대기)
+  - [x] 6g. 브라우저 ECharts 실제 렌더링 (Visual QA 완료)
 
 ---
 

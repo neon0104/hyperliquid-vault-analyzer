@@ -33,7 +33,7 @@ def load_latest_snapshot():
     paths = sorted(Path(SNAPSHOTS_DIR).glob("*.json"), reverse=True)
     if not paths:
         return None, None
-    with open(paths[0], encoding="utf-8") as f:
+    with open(str(paths[0]), encoding="utf-8") as f:
         return json.load(f), paths[0].stem
 
 def load_all_history(max_days=90):
@@ -45,7 +45,7 @@ def load_all_history(max_days=90):
         date = p.stem
         dates.append(date)
         try:
-            with open(p, encoding="utf-8") as f:
+            with open(str(p), encoding="utf-8") as f:
                 day = json.load(f)
         except Exception:
             continue
@@ -273,7 +273,7 @@ def load_portfolio_history():
     if not os.path.exists(PORTFOLIO_HISTORY_FILE):
         return {}
     try:
-        with open(PORTFOLIO_HISTORY_FILE, encoding="utf-8") as f:
+        with open(str(PORTFOLIO_HISTORY_FILE), encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return {}
@@ -282,7 +282,7 @@ def load_portfolio_history():
 def save_portfolio_history(history):
     """포트폴리오 이력 저장"""
     os.makedirs(DATA_DIR, exist_ok=True)
-    with open(PORTFOLIO_HISTORY_FILE, "w", encoding="utf-8") as f:
+    with open(str(PORTFOLIO_HISTORY_FILE), "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2, default=float)
 
 

@@ -16,7 +16,7 @@
 | GET /chart_data | ✅ PASS | APR 히스토그램 16개 볼트 |
 | GET / (메인) | ✅ PASS | 모든 섹션 렌더링 |
 | GET /portfolio | ✅ PASS | portfolio_engine 연결 |
-| ECharts 브라우저 Visual | 🔄 NEXT | 데이터 수집 후 확인 예정 |
+| ECharts/Chart.js 브라우저 Visual | ✅ PASS | 모든 차트 정상 렌더링 확인 |
 
 ### /api/status 응답 확인:
 ```json
