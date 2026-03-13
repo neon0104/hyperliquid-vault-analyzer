@@ -191,6 +191,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
                 <option value="10">Under 10%</option>
                 <option value="20">Under 20%</option>
                 <option value="30">Under 30%</option>
+                <option value="40">Under 40%</option>
                 <option value="50">Under 50%</option>
             </select>
         </div>
