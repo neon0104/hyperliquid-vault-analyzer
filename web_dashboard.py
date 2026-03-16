@@ -335,7 +335,8 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
                 <small style="color:var(--muted)">≈ {{ "{:,.1f}".format(v.tvl * 1400 / 100000000) }} 억원</small>
             </td>
             <td style="text-align:center;">
-                <span class="badge" style="background:rgba(26,188,156,0.1);color:var(--accent2)">{{ (v.leader_equity_ratio * 100)|round(1) }}%</span>
+                <span class="badge" style="background:rgba(26,188,156,0.1);color:var(--accent2)">{{ (v.leader_equity_ratio * 100)|round(1) }}%</span><br>
+                <small style="color:var(--muted)">≈ {{ "{:,.1f}".format(v.leader_equity_usd * 1400 / 100000000) }} 억원</small>
             </td>
             <td>
                 <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(v.pnl_alltime) }}</span>
