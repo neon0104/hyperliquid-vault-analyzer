@@ -88,15 +88,28 @@ def index():
             cm = round(v.get("max_drawdown", 0) - p.get("max_drawdown", 0), 2)
             cp = round(v.get("pnl_alltime", 0) - p.get("pnl_alltime", 0), 2)
             
+            cv = round(v.get("tvl", 0) - p.get("tvl", 0), 2)
+            ce = round((v.get("leader_equity_ratio", 0) - p.get("leader_equity_ratio", 0)) * 100, 2)
+            csh = round(v.get("sharpe_ratio", 0) - p.get("sharpe_ratio", 0), 3)
+            
             v["chg"] = {
                 "rank_val": abs(cr), "rank_dir": "▲" if cr > 0 else "▼" if cr < 0 else "-", "rank_col": "var(--success)" if cr > 0 else "var(--danger)" if cr < 0 else "var(--muted)",
                 "score_val": abs(cs), "score_dir": "▲" if cs > 0 else "▼" if cs < 0 else "-", "score_col": "var(--success)" if cs > 0 else "var(--danger)" if cs < 0 else "var(--muted)",
                 "mdd_val": abs(cm), "mdd_dir": "▲" if cm > 0 else "▼" if cm < 0 else "-", "mdd_col": "var(--danger)" if cm > 0 else "var(--success)" if cm < 0 else "var(--muted)",
-                "pnl_val": abs(cp), "pnl_dir": "▲" if cp > 0 else "▼" if cp < 0 else "-", "pnl_col": "var(--success)" if cp > 0 else "var(--danger)" if cp < 0 else "var(--muted)"
+                "pnl_val": abs(cp), "pnl_dir": "▲" if cp > 0 else "▼" if cp < 0 else "-", "pnl_col": "var(--success)" if cp > 0 else "var(--danger)" if cp < 0 else "var(--muted)",
+                "tvl_val": abs(cv), "tvl_dir": "▲" if cv > 0 else "▼" if cv < 0 else "-", "tvl_col": "var(--success)" if cv > 0 else "var(--danger)" if cv < 0 else "var(--muted)",
+                "eq_val": abs(ce), "eq_dir": "▲" if ce > 0 else "▼" if ce < 0 else "-", "eq_col": "var(--success)" if ce > 0 else "var(--danger)" if ce < 0 else "var(--muted)",
+                "sharpe_val": abs(csh), "sharpe_dir": "▲" if csh > 0 else "▼" if csh < 0 else "-", "sharpe_col": "var(--success)" if csh > 0 else "var(--danger)" if csh < 0 else "var(--muted)"
             }
             v["has_history"] = True
         else:
             v["has_history"] = False
+            
+        if v.get("apr_pct") and v.get("age_days"):
+            v["alltime_roi_pct"] = round(v.get("apr_pct", 0) * (v.get("age_days", 0) / 365.0), 1)
+        else:
+            v["alltime_roi_pct"] = 0.0
+
     
     avg_mdd = sum(v.get("max_drawdown", 0) for v in vaults) / len(vaults) if vaults else 0
     stats = {
@@ -195,6 +208,15 @@ td{padding:15px;border-top:1px solid var(--border);font-size:0.9rem;}
 canvas{max-height:400px;width:100% !important;}
 table a{text-decoration:none; color:inherit; transition: color 0.2s;}
 table a:hover{color:var(--accent) !important; text-decoration:underline;}
+
+.modal { display:none; position:fixed; z-index:999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); justify-content:center; align-items:center; }
+.modal-content { background:var(--card); width:500px; max-width:90%; border-radius:16px; border:1px solid var(--border); padding:24px; box-shadow:0 8px 32px rgba(0,0,0,0.5); position:relative; animation:slideIn 0.3s forwards; }
+@keyframes slideIn { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+.modal-close { position:absolute; top:20px; right:20px; cursor:pointer; font-size:1.5rem; color:var(--muted); transition:0.2s;}
+.modal-close:hover { color:#fff; }
+.score-breakdown { background:rgba(255,255,255,0.02); padding:15px; border-radius:10px; margin-top:15px; display:grid; gap:10px; }
+.score-row { display:flex; justify-content:space-between; font-size:0.9rem; border-bottom:1px dashed var(--border); padding-bottom:5px; }
+.history-row { display:flex; justify-content:space-between; font-size:0.95rem; margin-bottom:8px; padding:8px; background:rgba(0,0,0,0.2); border-radius:8px;}
 """
 
 EMPTY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMON_STYLE + """</style></head>
@@ -288,7 +310,8 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
                 <span class="badge" style="background:rgba(26,188,156,0.1);color:var(--accent2)">{{ (v.leader_equity_ratio * 100)|round(1) }}%</span>
             </td>
             <td>
-                <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.3f}".format(v.pnl_alltime) }}</span><br>
+                <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.3f}".format(v.pnl_alltime) }}</span>
+                <span style="font-size:0.8rem; color:var(--accent2); margin-left:4px;">({{ "{:,.1f}".format(v.alltime_roi_pct) }}%)</span><br>
                 <small style="color:var(--muted)">({{ "{:,.2f}".format(v.pnl_alltime * 1400 / 100000000) }} 억원)</small>
                 {% if v.has_history and v.chg.pnl_val != 0 %}
                     <br><small style="color:{{ v.chg.pnl_col }}">{{ v.chg.pnl_dir }} ${{ "{:,.2f}".format(v.chg.pnl_val) }}</small>
@@ -302,8 +325,8 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
             </td>
             <td style="color:var(--accent); font-weight:600;">{{ v.sharpe_ratio }}</td>
             <td style="color:var(--success); font-weight:600;">{{ v.apr_30d }}%</td>
-            <td>
-                <span class="badge" style="background:rgba(79,142,247,0.1);color:var(--accent);font-size:0.9rem;">{{ v.score }}</span>
+            <td style="cursor:pointer;" onclick="showVaultDetails('{{v.address}}')">
+                <span class="badge" style="background:rgba(79,142,247,0.1);color:var(--accent);font-size:0.9rem;border:1px solid rgba(79,142,247,0.3);transition:0.2s;" onmouseover="this.style.background='rgba(79,142,247,0.2)'" onmouseout="this.style.background='rgba(79,142,247,0.1)'">{{ v.score }}</span>
                 {% if v.has_history and v.chg.score_val != 0 %}
                     <br><small style="color:{{ v.chg.score_col }}">{{ v.chg.score_dir }} {{ "{:,.3f}".format(v.chg.score_val) }}</small>
                 {% endif %}
@@ -321,7 +344,91 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
     </table>
 </div>
 
+<!-- Vault Details Modal -->
+<div id="vaultModal" class="modal" onclick="if(event.target === this) closeModal()">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">×</span>
+        <h2 id="modalTitle" style="color:var(--accent2); margin-bottom:5px;">Vault DETAILS</h2>
+        <p style="color:var(--muted); font-size:0.85rem; margin-bottom:20px;">Performance tracking & Score breakdown</p>
+        
+        <div style="margin-bottom:20px;">
+            <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">📈 Change vs Prev. Snapshot</h4>
+            <div id="modalHistory"></div>
+        </div>
+        
+        <div>
+            <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">🧮 Score Calculation</h4>
+            <div class="score-breakdown" id="modalScore"></div>
+            <p style="color:var(--muted); font-size:0.75rem; margin-top:10px; text-align:right;">Score = (Sharpe×2.0) + (APR/50) - (MDD/30) + (Robustness×3.0)</p>
+        </div>
+    </div>
+</div>
+
 <script>
+const vaultConfig = {
+    {% for v in vaults %}
+    "{{v.address}}": {
+        "name": "{{v.name}}",
+        "score": {{v.score}},
+        "calc_sharpe": {{v.sharpe_ratio}},
+        "calc_apr": {{v.apr_30d}},
+        "calc_mdd": {{v.max_drawdown}},
+        "calc_rob": {{v.robustness_score | default(0)}},
+        "has_history": {{ 'true' if v.has_history else 'false' }},
+        "chg": {
+            "TVL (USD)": { "dir": "{{v.chg.tvl_dir if v.has_history else '-'}}", "val": "{{v.chg.tvl_val if v.has_history else 0}}", "col": "{{v.chg.tvl_col if v.has_history else '#fff'}}" },
+            "Leader EQ (%)": { "dir": "{{v.chg.eq_dir if v.has_history else '-'}}", "val": "{{v.chg.eq_val if v.has_history else 0}}", "col": "{{v.chg.eq_col if v.has_history else '#fff'}}" },
+            "All-time PnL ($)": { "dir": "{{v.chg.pnl_dir if v.has_history else '-'}}", "val": "{{v.chg.pnl_val if v.has_history else 0}}", "col": "{{v.chg.pnl_col if v.has_history else '#fff'}}" },
+            "Max Drawdown (%)": { "dir": "{{v.chg.mdd_dir if v.has_history else '-'}}", "val": "{{v.chg.mdd_val if v.has_history else 0}}", "col": "{{v.chg.mdd_col if v.has_history else '#fff'}}" },
+            "Sharpe Ratio": { "dir": "{{v.chg.sharpe_dir if v.has_history else '-'}}", "val": "{{v.chg.sharpe_val if v.has_history else 0}}", "col": "{{v.chg.sharpe_col if v.has_history else '#fff'}}" },
+            "Total Score": { "dir": "{{v.chg.score_dir if v.has_history else '-'}}", "val": "{{v.chg.score_val if v.has_history else 0}}", "col": "{{v.chg.score_col if v.has_history else '#fff'}}" },
+        }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+
+function showVaultDetails(address) {
+    const data = vaultConfig[address];
+    if(!data) return;
+    
+    document.getElementById('modalTitle').innerText = data.name + " Details";
+    
+    // History
+    let histHTML = "";
+    if(data.has_history) {
+        for(let key in data.chg) {
+            let item = data.chg[key];
+            histHTML += `<div class="history-row"><span>${key}</span> <strong style="color:${item.col}">${item.dir} ${item.val}</strong></div>`;
+        }
+    } else {
+        histHTML = `<div style="color:var(--muted); font-size:0.9rem; text-align:center; padding:10px;">신규 편입되어 과거 비교 데이터가 없습니다.</div>`;
+    }
+    document.getElementById('modalHistory').innerHTML = histHTML;
+    
+    // Score
+    let sharpeTerm = (data.calc_sharpe * 2.0).toFixed(3);
+    let aprTerm = (data.calc_apr / 50.0).toFixed(3);
+    let mddTerm = (data.calc_mdd / 30.0).toFixed(3);
+    let robTerm = (data.calc_rob * 3.0).toFixed(3);
+    
+    document.getElementById('modalScore').innerHTML = `
+        <div class="score-row"><span>🟢 Sharpe (${data.calc_sharpe}) × 2.0</span> <strong>+${sharpeTerm}</strong></div>
+        <div class="score-row"><span>🟢 30d APR (${data.calc_apr}%) ÷ 50.0</span> <strong>+${aprTerm}</strong></div>
+        <div class="score-row"><span>🔴 Max MDD (${data.calc_mdd}%) ÷ 30.0</span> <strong style="color:var(--danger)">-${mddTerm}</strong></div>
+        <div class="score-row"><span>🟢 Robustness (${data.calc_rob}) × 3.0</span> <strong>+${robTerm}</strong></div>
+        <div class="score-row" style="margin-top:10px; border-top:2px solid var(--border); padding-top:10px; font-size:1.1rem;">
+            <span style="color:var(--accent); font-weight:800;">총점 (Total Score)</span>
+            <strong style="color:var(--accent);">${data.score}</strong>
+        </div>
+    `;
+    
+    document.getElementById('vaultModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('vaultModal').style.display = 'none';
+}
+
 function filterTable() {
     const leaderMin = parseFloat(document.getElementById('leaderFilter').value);
     const mddMax = parseFloat(document.getElementById('mddFilter').value);
