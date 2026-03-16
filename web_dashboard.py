@@ -69,18 +69,37 @@ def get_historical_snapshots():
                     prev_vaults[p["address"]] = p
         except: pass
         
-    return latest, latest_date, prev_vaults, prev_date
+    vault_hist = {}
+    for f in reversed(files):
+        dt = os.path.basename(f)[:-5]
+        try:
+            with open(str(f), encoding="utf-8") as fd:
+                data = json.load(fd)
+                for v in data:
+                    addr = v["address"]
+                    if addr not in vault_hist:
+                        vault_hist[addr] = {"dates": [], "mdd": [], "sharpe": [], "robust": [], "score": []}
+                    vault_hist[addr]["dates"].append(dt[5:]) 
+                    vault_hist[addr]["mdd"].append(v.get("max_drawdown", 0))
+                    vault_hist[addr]["sharpe"].append(v.get("sharpe_ratio", 0))
+                    vault_hist[addr]["robust"].append(v.get("robustness_score", 0))
+                    vault_hist[addr]["score"].append(v.get("score", 0))
+        except: pass
+        
+    return latest, latest_date, prev_vaults, prev_date, vault_hist
 
 # ── 라우트 ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
 def index():
-    vaults, date, prev_vaults, prev_date = get_historical_snapshots()
+    vaults, date, prev_vaults, prev_date, vault_hist = get_historical_snapshots()
     if not vaults:
         return render_template_string(EMPTY_HTML)
         
     for i, v in enumerate(vaults):
         v["rank"] = v.get("rank", i+1)
+        v["history"] = vault_hist.get(v["address"], {})
+
         if prev_vaults and v["address"] in prev_vaults:
             p = prev_vaults[v["address"]]
             cr = p["rank"] - v["rank"]
@@ -100,6 +119,15 @@ def index():
                 "tvl_val": abs(cv), "tvl_dir": "▲" if cv > 0 else "▼" if cv < 0 else "-", "tvl_col": "var(--success)" if cv > 0 else "var(--danger)" if cv < 0 else "var(--muted)",
                 "eq_val": abs(ce), "eq_dir": "▲" if ce > 0 else "▼" if ce < 0 else "-", "eq_col": "var(--success)" if ce > 0 else "var(--danger)" if ce < 0 else "var(--muted)",
                 "sharpe_val": abs(csh), "sharpe_dir": "▲" if csh > 0 else "▼" if csh < 0 else "-", "sharpe_col": "var(--success)" if csh > 0 else "var(--danger)" if csh < 0 else "var(--muted)"
+            }
+            def pt(c, pr): return round((c - pr) / abs(pr) * 100, 2) if pr != 0 else 0
+            v["chg_pct"] = {
+                "tvl": pt(v.get("tvl", 0), p.get("tvl", 0)),
+                "eq": pt(v.get("leader_equity_ratio", 0), p.get("leader_equity_ratio", 0)),
+                "pnl": pt(v.get("pnl_alltime", 0), p.get("pnl_alltime", 0)),
+                "mdd": pt(v.get("max_drawdown", 0), p.get("max_drawdown", 0)),
+                "sharpe": pt(v.get("sharpe_ratio", 0), p.get("sharpe_ratio", 0)),
+                "score": pt(v.get("score", 0), p.get("score", 0))
             }
             v["has_history"] = True
         else:
@@ -210,7 +238,7 @@ table a{text-decoration:none; color:inherit; transition: color 0.2s;}
 table a:hover{color:var(--accent) !important; text-decoration:underline;}
 
 .modal { display:none; position:fixed; z-index:999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); justify-content:center; align-items:center; }
-.modal-content { background:var(--card); width:500px; max-width:90%; border-radius:16px; border:1px solid var(--border); padding:24px; box-shadow:0 8px 32px rgba(0,0,0,0.5); position:relative; animation:slideIn 0.3s forwards; }
+.modal-content { background:var(--card); width:1100px; max-width:95%; border-radius:16px; border:1px solid var(--border); padding:24px; box-shadow:0 8px 32px rgba(0,0,0,0.5); position:relative; animation:slideIn 0.3s forwards; max-height:90vh; overflow-y:auto; }
 @keyframes slideIn { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
 .modal-close { position:absolute; top:20px; right:20px; cursor:pointer; font-size:1.5rem; color:var(--muted); transition:0.2s;}
 .modal-close:hover { color:#fff; }
@@ -310,11 +338,11 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
                 <span class="badge" style="background:rgba(26,188,156,0.1);color:var(--accent2)">{{ (v.leader_equity_ratio * 100)|round(1) }}%</span>
             </td>
             <td>
-                <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.3f}".format(v.pnl_alltime) }}</span>
+                <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(v.pnl_alltime) }}</span>
                 <span style="font-size:0.8rem; color:var(--accent2); margin-left:4px;">({{ "{:,.1f}".format(v.alltime_roi_pct) }}%)</span><br>
                 <small style="color:var(--muted)">({{ "{:,.2f}".format(v.pnl_alltime * 1400 / 100000000) }} 억원)</small>
                 {% if v.has_history and v.chg.pnl_val != 0 %}
-                    <br><small style="color:{{ v.chg.pnl_col }}">{{ v.chg.pnl_dir }} ${{ "{:,.2f}".format(v.chg.pnl_val) }}</small>
+                    <br><small style="color:{{ v.chg.pnl_col }}">{{ v.chg.pnl_dir }} ${{ "{:,.0f}".format(v.chg.pnl_val) }}</small>
                 {% endif %}
             </td>
             <td>
@@ -351,15 +379,43 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
         <h2 id="modalTitle" style="color:var(--accent2); margin-bottom:5px;">Vault DETAILS</h2>
         <p style="color:var(--muted); font-size:0.85rem; margin-bottom:20px;">Performance tracking & Score breakdown</p>
         
-        <div style="margin-bottom:20px;">
-            <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">📈 Change vs Prev. Snapshot</h4>
-            <div id="modalHistory"></div>
+        <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">
+            <div style="flex:1;">
+                <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">📈 All-time PnL Curve (USD)</h4>
+                <div style="height:250px;"><canvas id="modalPnlChart"></canvas></div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:20px;">
+                <div>
+                    <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">⚖️ Change vs Prev. Snapshot (%)</h4>
+                    <div style="height:120px;"><canvas id="modalChgChart"></canvas></div>
+                    <div id="modalNewIndicator" style="display:none; color:var(--muted); text-align:center; padding:10px 0;">신규 편입 (과거 데이터 없음)</div>
+                </div>
+                <div>
+                    <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">🧮 Score Breakdown</h4>
+                    <div style="height:120px;"><canvas id="modalScoreChart"></canvas></div>
+                    <p style="color:var(--muted); font-size:0.75rem; margin-top:5px; text-align:right;">Score = (+Sharpe×2) (+APR/50) (-MDD/30) (+Rob×3)</p>
+                </div>
+            </div>
         </div>
         
-        <div>
-            <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">🧮 Score Calculation</h4>
-            <div class="score-breakdown" id="modalScore"></div>
-            <p style="color:var(--muted); font-size:0.75rem; margin-top:10px; text-align:right;">Score = (Sharpe×2.0) + (APR/50) - (MDD/30) + (Robustness×3.0)</p>
+        <h4 style="color:var(--accent2); margin-top:30px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">📊 Historical Trend</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:15px; margin-bottom:10px;">
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">🏅 Score</div>
+                <div style="height:140px;"><canvas id="modalTrendScoreChart"></canvas></div>
+            </div>
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">📉 MDD (%)</div>
+                <div style="height:140px;"><canvas id="modalTrendMddChart"></canvas></div>
+            </div>
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">✨ Sharpe Ratio</div>
+                <div style="height:140px;"><canvas id="modalTrendSharpeChart"></canvas></div>
+            </div>
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">🛡️ Robustness</div>
+                <div style="height:140px;"><canvas id="modalTrendRobustChart"></canvas></div>
+            </div>
         </div>
     </div>
 </div>
@@ -375,17 +431,14 @@ const vaultConfig = {
         "calc_mdd": {{v.max_drawdown}},
         "calc_rob": {{v.robustness_score | default(0)}},
         "has_history": {{ 'true' if v.has_history else 'false' }},
-        "chg": {
-            "TVL (USD)": { "dir": "{{v.chg.tvl_dir if v.has_history else '-'}}", "val": "{{v.chg.tvl_val if v.has_history else 0}}", "col": "{{v.chg.tvl_col if v.has_history else '#fff'}}" },
-            "Leader EQ (%)": { "dir": "{{v.chg.eq_dir if v.has_history else '-'}}", "val": "{{v.chg.eq_val if v.has_history else 0}}", "col": "{{v.chg.eq_col if v.has_history else '#fff'}}" },
-            "All-time PnL ($)": { "dir": "{{v.chg.pnl_dir if v.has_history else '-'}}", "val": "{{v.chg.pnl_val if v.has_history else 0}}", "col": "{{v.chg.pnl_col if v.has_history else '#fff'}}" },
-            "Max Drawdown (%)": { "dir": "{{v.chg.mdd_dir if v.has_history else '-'}}", "val": "{{v.chg.mdd_val if v.has_history else 0}}", "col": "{{v.chg.mdd_col if v.has_history else '#fff'}}" },
-            "Sharpe Ratio": { "dir": "{{v.chg.sharpe_dir if v.has_history else '-'}}", "val": "{{v.chg.sharpe_val if v.has_history else 0}}", "col": "{{v.chg.sharpe_col if v.has_history else '#fff'}}" },
-            "Total Score": { "dir": "{{v.chg.score_dir if v.has_history else '-'}}", "val": "{{v.chg.score_val if v.has_history else 0}}", "col": "{{v.chg.score_col if v.has_history else '#fff'}}" },
-        }
+        "alltime_pnl": {{ v.alltime_pnl | default([]) | tojson }},
+        "chg_pct": {{ v.chg_pct | default({}) | tojson }},
+        "trend_hist": {{ v.history | tojson }}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
 };
+
+let modalCharts = {};
 
 function showVaultDetails(address) {
     const data = vaultConfig[address];
@@ -393,35 +446,134 @@ function showVaultDetails(address) {
     
     document.getElementById('modalTitle').innerText = data.name + " Details";
     
-    // History
-    let histHTML = "";
-    if(data.has_history) {
-        for(let key in data.chg) {
-            let item = data.chg[key];
-            histHTML += `<div class="history-row"><span>${key}</span> <strong style="color:${item.col}">${item.dir} ${item.val}</strong></div>`;
-        }
+    // Destroy existing charts
+    Object.values(modalCharts).forEach(c => c.destroy());
+    modalCharts = {};
+    
+    // 1. PNL Curve
+    const pnlCtx = document.getElementById('modalPnlChart').getContext('2d');
+    if(data.alltime_pnl && data.alltime_pnl.length > 0) {
+        modalCharts.pnl = new Chart(pnlCtx, {
+            type: 'line',
+            data: {
+                labels: data.alltime_pnl.map((_, i) => i+1),
+                datasets: [{
+                    label: 'Cumulative PnL ($)',
+                    data: data.alltime_pnl,
+                    borderColor: '#1abc9c',
+                    backgroundColor: 'rgba(26,188,156,0.1)',
+                    fill: true,
+                    tension: 0.1,
+                    pointRadius: 0,
+                    pointHitRadius: 10
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { display: false } }
+            }
+        });
     } else {
-        histHTML = `<div style="color:var(--muted); font-size:0.9rem; text-align:center; padding:10px;">신규 편입되어 과거 비교 데이터가 없습니다.</div>`;
+        modalCharts.pnl = new Chart(pnlCtx, { type: 'line', data: {labels:['No Data'], datasets:[{data:[0]}]}, options:{plugins:{legend:{display:false}}} });
     }
-    document.getElementById('modalHistory').innerHTML = histHTML;
     
-    // Score
-    let sharpeTerm = (data.calc_sharpe * 2.0).toFixed(3);
-    let aprTerm = (data.calc_apr / 50.0).toFixed(3);
-    let mddTerm = (data.calc_mdd / 30.0).toFixed(3);
-    let robTerm = (data.calc_rob * 3.0).toFixed(3);
+    // 2. Daily Change Bar Chart
+    const chgCtx = document.getElementById('modalChgChart').getContext('2d');
+    if (data.has_history && data.chg_pct && Object.keys(data.chg_pct).length > 0) {
+        document.getElementById('modalChgChart').style.display = 'block';
+        document.getElementById('modalNewIndicator').style.display = 'none';
+        modalCharts.chg = new Chart(chgCtx, {
+            type: 'bar',
+            data: {
+                labels: ['TVL', 'L_Eq', 'PnL', 'MDD', 'Sharpe', 'Score'],
+                datasets: [{
+                    label: '% Change',
+                    data: [data.chg_pct.tvl, data.chg_pct.eq, data.chg_pct.pnl, data.chg_pct.mdd, data.chg_pct.sharpe, data.chg_pct.score],
+                    backgroundColor: function(context) {
+                        return context.raw >= 0 ? 'rgba(46,204,113,0.8)' : 'rgba(231,76,60,0.8)';
+                    },
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { suggestedMin: -5, suggestedMax: 5 } }
+            }
+        });
+    } else {
+        document.getElementById('modalChgChart').style.display = 'none';
+        document.getElementById('modalNewIndicator').style.display = 'block';
+    }
+
+    // 3. Score Breakdown (Horizontal Bar)
+    const scoreCtx = document.getElementById('modalScoreChart').getContext('2d');
+    let sharpeVal = data.calc_sharpe * 2.0;
+    let aprVal = data.calc_apr / 50.0;
+    let mddVal = data.calc_mdd / 30.0; // penalty
+    let robVal = data.calc_rob * 3.0;
+
+    modalCharts.score = new Chart(scoreCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Sharpe', 'APR', 'MDD Pen.', 'Robust'],
+            datasets: [{
+                label: 'Points',
+                data: [sharpeVal, aprVal, -mddVal, robVal],
+                backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6'],
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 4. Trend Charts (Score, MDD, Sharpe, Robustness)
+    function buildTrendChart(ctxId, label, dataArr, datesArr, bgColor, borderColor) {
+        const ctx = document.getElementById(ctxId).getContext('2d');
+        if(!dataArr || dataArr.length === 0) {
+            return new Chart(ctx, { type:'line', data:{labels:['No Data'], datasets:[{data:[0]}]}, options:{plugins:{legend:{display:false}}} });
+        }
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: datesArr,
+                datasets: [{
+                    label: label,
+                    data: dataArr,
+                    borderColor: borderColor,
+                    backgroundColor: bgColor,
+                    fill: true,
+                    tension: 0.2,
+                    pointRadius: 3,
+                    pointBackgroundColor: borderColor
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: { 
+                    x: { display: true, ticks: { font: { size: 9 }, color: 'var(--muted)', maxRotation:45 } },
+                    y: { display: true, ticks: { font: { size: 9 }, color: 'var(--muted)' } }
+                }
+            }
+        });
+    }
+
+    let tDates = data.trend_hist && data.trend_hist.dates ? data.trend_hist.dates : [];
     
-    document.getElementById('modalScore').innerHTML = `
-        <div class="score-row"><span>🟢 Sharpe (${data.calc_sharpe}) × 2.0</span> <strong>+${sharpeTerm}</strong></div>
-        <div class="score-row"><span>🟢 30d APR (${data.calc_apr}%) ÷ 50.0</span> <strong>+${aprTerm}</strong></div>
-        <div class="score-row"><span>🔴 Max MDD (${data.calc_mdd}%) ÷ 30.0</span> <strong style="color:var(--danger)">-${mddTerm}</strong></div>
-        <div class="score-row"><span>🟢 Robustness (${data.calc_rob}) × 3.0</span> <strong>+${robTerm}</strong></div>
-        <div class="score-row" style="margin-top:10px; border-top:2px solid var(--border); padding-top:10px; font-size:1.1rem;">
-            <span style="color:var(--accent); font-weight:800;">총점 (Total Score)</span>
-            <strong style="color:var(--accent);">${data.score}</strong>
-        </div>
-    `;
-    
+    modalCharts.tScore = buildTrendChart('modalTrendScoreChart', 'Score', data.trend_hist ? data.trend_hist.score : [], tDates, 'rgba(79,142,247,0.1)', '#4f8ef7');
+    modalCharts.tMdd = buildTrendChart('modalTrendMddChart', 'MDD', data.trend_hist ? data.trend_hist.mdd : [], tDates, 'rgba(231,76,60,0.1)', '#e74c3c');
+    modalCharts.tSharpe = buildTrendChart('modalTrendSharpeChart', 'Sharpe', data.trend_hist ? data.trend_hist.sharpe : [], tDates, 'rgba(52,152,219,0.1)', '#3498db');
+    modalCharts.tRobust = buildTrendChart('modalTrendRobustChart', 'Robustness', data.trend_hist ? data.trend_hist.robust : [], tDates, 'rgba(155,89,182,0.1)', '#9b59b6');
+
     document.getElementById('vaultModal').style.display = 'flex';
 }
 
