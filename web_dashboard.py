@@ -48,17 +48,62 @@ def send_discord(msg):
 
 # ── 라우트 ────────────────────────────────────────────────────────────────────
 
+def get_historical_snapshots():
+    files = sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json")), reverse=True)
+    if not files: return [], None, {}, None
+    try:
+        with open(str(files[0]), encoding="utf-8") as f:
+            latest = json.load(f)
+            latest_date = os.path.basename(files[0])[:-5]
+    except: return [], None, {}, None
+    
+    prev_vaults = {}
+    prev_date = None
+    if len(files) > 1:
+        try:
+            with open(str(files[1]), encoding="utf-8") as f:
+                prev_data = json.load(f)
+                prev_date = os.path.basename(files[1])[:-5]
+                for i, p in enumerate(prev_data):
+                    p["rank"] = p.get("rank", i+1)
+                    prev_vaults[p["address"]] = p
+        except: pass
+        
+    return latest, latest_date, prev_vaults, prev_date
+
+# ── 라우트 ────────────────────────────────────────────────────────────────────
+
 @app.route("/")
 def index():
-    vaults, date = get_latest_snapshot()
+    vaults, date, prev_vaults, prev_date = get_historical_snapshots()
     if not vaults:
         return render_template_string(EMPTY_HTML)
+        
+    for i, v in enumerate(vaults):
+        v["rank"] = v.get("rank", i+1)
+        if prev_vaults and v["address"] in prev_vaults:
+            p = prev_vaults[v["address"]]
+            cr = p["rank"] - v["rank"]
+            cs = round(v.get("score", 0) - p.get("score", 0), 3)
+            cm = round(v.get("max_drawdown", 0) - p.get("max_drawdown", 0), 2)
+            cp = round(v.get("pnl_alltime", 0) - p.get("pnl_alltime", 0), 2)
+            
+            v["chg"] = {
+                "rank_val": abs(cr), "rank_dir": "▲" if cr > 0 else "▼" if cr < 0 else "-", "rank_col": "var(--success)" if cr > 0 else "var(--danger)" if cr < 0 else "var(--muted)",
+                "score_val": abs(cs), "score_dir": "▲" if cs > 0 else "▼" if cs < 0 else "-", "score_col": "var(--success)" if cs > 0 else "var(--danger)" if cs < 0 else "var(--muted)",
+                "mdd_val": abs(cm), "mdd_dir": "▲" if cm > 0 else "▼" if cm < 0 else "-", "mdd_col": "var(--danger)" if cm > 0 else "var(--success)" if cm < 0 else "var(--muted)",
+                "pnl_val": abs(cp), "pnl_dir": "▲" if cp > 0 else "▼" if cp < 0 else "-", "pnl_col": "var(--success)" if cp > 0 else "var(--danger)" if cp < 0 else "var(--muted)"
+            }
+            v["has_history"] = True
+        else:
+            v["has_history"] = False
     
     avg_mdd = sum(v.get("max_drawdown", 0) for v in vaults) / len(vaults) if vaults else 0
     stats = {
         "total": len(vaults),
         "avg_apr": sum(v.get("apr_30d", 0) for v in vaults) / len(vaults) if vaults else 0,
-        "avg_mdd": round(avg_mdd, 2)
+        "avg_mdd": round(avg_mdd, 2),
+        "prev_date": prev_date
     }
     return render_template_string(MAIN_HTML, vaults=vaults, date=date, stats=stats)
 
@@ -164,7 +209,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
 <a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/backtest">⏪ Backtest</a><a class="btn" href="/discord">🔔 Discord</a>
 </div></header><main>
 <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
-<div class="card stat-box"><div class="stat-label">Analysis Date</div><div class="stat-val" style="color:#fff">{{date}}</div></div>
+<div class="card stat-box"><div class="stat-label">Analysis Date</div><div class="stat-val" style="color:#fff">{{date}} <small style="font-size:0.8rem;color:var(--muted)">{% if stats.prev_date %}(vs {{stats.prev_date}}){% endif %}</small></div></div>
 <div class="card stat-box"><div class="stat-label">Active Vaults</div><div class="stat-val">{{stats.total}}</div></div>
 <div class="card stat-box"><div class="stat-label">Avg 30D APR</div><div class="stat-val" style="color:var(--success)">{{stats.avg_apr|round(1)}}%</div></div>
 <div class="card stat-box"><div class="stat-label">Avg MDD</div><div class="stat-val" style="color:var(--danger)">{{stats.avg_mdd}}%</div></div>
@@ -224,7 +269,16 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
         <tbody>
         {% for v in vaults %}
         <tr data-leader="{{ v.leader_equity_ratio }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}">
-            <td>#{{v.rank or loop.index}}</td>
+            <td>
+                #{{v.rank}}<br>
+                {% if v.has_history and v.chg.rank_val != 0 %}
+                    <small style="color:{{ v.chg.rank_col }}; font-weight:bold;">{{ v.chg.rank_dir }} {{ v.chg.rank_val }}</small>
+                {% elif v.has_history %}
+                    <small style="color:var(--muted)">-</small>
+                {% else %}
+                    <span class="badge" style="background:rgba(241,196,15,0.1);color:#f1c40f;">NEW</span>
+                {% endif %}
+            </td>
             <td><a href="https://app.hyperliquid.xyz/vaults/{{v.address}}" target="_blank"><b>{{v.name}}</b></a><br><small style="color:var(--muted)">{{v.address[:10]}}..</small></td>
             <td>
                 <span style="font-weight:600;">${{ "{:,.0f}".format(v.tvl) }}</span><br>
@@ -236,11 +290,24 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
             <td>
                 <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.3f}".format(v.pnl_alltime) }}</span><br>
                 <small style="color:var(--muted)">({{ "{:,.2f}".format(v.pnl_alltime * 1400 / 100000000) }} 억원)</small>
+                {% if v.has_history and v.chg.pnl_val != 0 %}
+                    <br><small style="color:{{ v.chg.pnl_col }}">{{ v.chg.pnl_dir }} ${{ "{:,.2f}".format(v.chg.pnl_val) }}</small>
+                {% endif %}
             </td>
-            <td style="color:var(--danger); font-weight:600;">{{ v.max_drawdown }}%</td>
+            <td>
+                <span style="color:var(--danger); font-weight:600;">{{ v.max_drawdown }}%</span>
+                {% if v.has_history and v.chg.mdd_val != 0 %}
+                    <br><small style="color:{{ v.chg.mdd_col }}">{{ v.chg.mdd_dir }} {{ v.chg.mdd_val }}%p</small>
+                {% endif %}
+            </td>
             <td style="color:var(--accent); font-weight:600;">{{ v.sharpe_ratio }}</td>
             <td style="color:var(--success); font-weight:600;">{{ v.apr_30d }}%</td>
-            <td><span class="badge" style="background:rgba(79,142,247,0.1);color:var(--accent);font-size:0.9rem;">{{ v.score }}</span></td>
+            <td>
+                <span class="badge" style="background:rgba(79,142,247,0.1);color:var(--accent);font-size:0.9rem;">{{ v.score }}</span>
+                {% if v.has_history and v.chg.score_val != 0 %}
+                    <br><small style="color:{{ v.chg.score_col }}">{{ v.chg.score_dir }} {{ "{:,.3f}".format(v.chg.score_val) }}</small>
+                {% endif %}
+            </td>
             <td style="text-align:center;">
                 {% if v.allow_deposits %}
                 <span class="badge bg-success">OPEN</span>
