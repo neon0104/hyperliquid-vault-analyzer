@@ -788,5 +788,108 @@
         "leader_eq": 1.0
       }
     ]
+  },
+  "2026-03-17": {
+    "portfolio_value": 100593.91,
+    "daily_pnl": 281.75,
+    "daily_return_pct": 0.2809,
+    "cumulative_pnl": 593.91,
+    "cumulative_pct": 0.5939,
+    "max_equity_ever": 100593.91,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4268,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 12.4,
+        "apr_30d": 136.3,
+        "robustness": 0.9423,
+        "undervalue": 0.755,
+        "leader_eq": 0.9740735631635874
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 8.7,
+        "apr_30d": 310.84,
+        "robustness": 0.414,
+        "undervalue": 1.207,
+        "leader_eq": 0.8785901877239637
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 7.9,
+        "apr_30d": 72.83,
+        "robustness": 0.908,
+        "undervalue": 0.5,
+        "leader_eq": 0.9854666579309753
+      },
+      {
+        "name": "Orion",
+        "address": "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01",
+        "alloc_pct": 8.5,
+        "apr_30d": 187.44,
+        "robustness": 0.4109,
+        "undervalue": 1.185,
+        "leader_eq": 0.5168033423336129
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 6.6,
+        "apr_30d": 147.42,
+        "robustness": 0.3319,
+        "undervalue": 1.14,
+        "leader_eq": 0.9022503508949163
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 14.4,
+        "apr_30d": 28.33,
+        "robustness": 0.8593,
+        "undervalue": 0.957,
+        "leader_eq": 0.6978721889279592
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 9.6,
+        "apr_30d": 103.53,
+        "robustness": 0.5003,
+        "undervalue": 1.094,
+        "leader_eq": 0.7552991978040412
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 10.5,
+        "apr_30d": 44.71,
+        "robustness": 0.5934,
+        "undervalue": 1.015,
+        "leader_eq": 0.561874943148578
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 12.8,
+        "apr_30d": 26.97,
+        "robustness": 0.7142,
+        "undervalue": 1.022,
+        "leader_eq": 0.8983595296711195
+      },
+      {
+        "name": "[ Sidelined ] Market Neutral 1",
+        "address": "0xf4ab2cb15b7b3fa298555b801e9f5772ba8f8891",
+        "alloc_pct": 8.6,
+        "apr_30d": 58.08,
+        "robustness": 0.4861,
+        "undervalue": 1.007,
+        "leader_eq": 0.8257772538380743
+      }
+    ]
   }
 }
