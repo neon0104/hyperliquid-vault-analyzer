@@ -189,24 +189,32 @@ def api_discord_save():
 @app.route("/m")
 @app.route("/my-portfolio")
 def my_portfolio_gui():
+    import portfolio_tracker
     p = load_portfolio_config()
-    vaults, date = get_latest_snapshot()
-    v_map = {v["address"]: v for v in vaults} if vaults else {}
+    snaps = portfolio_tracker.load_snapshots_all()
     
-    holdings = []
-    total_val = 0
-    for addr, amt in p.get("positions", {}).items():
-        v = v_map.get(addr, {"name": "Unknown", "apr_30d": 0, "max_drawdown": 0})
-        holdings.append({
-            "address": addr,
-            "name": v["name"],
-            "amount": amt,
-            "apr": v.get("apr_30d", 0),
-            "mdd": v.get("max_drawdown", 0)
-        })
-        total_val += amt
+    port_calc = portfolio_tracker.calc_my_portfolio(p.get("positions", {}), p.get("invest_date"), snaps)
+    
+    if not port_calc or not port_calc.get("holdings"):
+        return render_template_string(MY_HTML, holdings=[], total=0, capital=p.get("total_capital", 100000), pnl=0, pnl_pct=0, net_pnl=0, net_pct=0, days=0)
         
-    return render_template_string(MY_HTML, holdings=holdings, total=total_val, capital=p.get("total_capital", 100000))
+    holdings = port_calc["holdings"]
+    total_val = port_calc["total_value"]
+    total_inv = port_calc["total_invested"]
+    total_pnl = port_calc["total_pnl"]
+    net_pnl_after_fee = total_pnl * 0.9 if total_pnl > 0 else total_pnl
+    total_pct = total_pnl / total_inv * 100 if total_inv > 0 else 0
+    net_pct = net_pnl_after_fee / total_inv * 100 if total_inv > 0 else 0
+    
+    return render_template_string(MY_HTML, 
+                                  holdings=holdings, 
+                                  total=round(total_val), 
+                                  capital=round(total_inv), 
+                                  pnl=round(total_pnl), 
+                                  pnl_pct=round(total_pct, 2),
+                                  net_pnl=round(net_pnl_after_fee), 
+                                  net_pct=round(net_pct, 2),
+                                  days=port_calc["days_held"])
 
 # ── HTML 템플릿 ───────────────────────────────────────────────────────────────
 
@@ -721,22 +729,36 @@ MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMO
 <div class="grid" style="grid-template-columns: 2fr 1fr;">
 <div class="card"><h3>Current Positions</h3>
 {% if holdings %}
-<table><thead><tr><th>Vault</th><th>Invested</th><th>Weight</th><th>APR</th><th>MDD</th></tr></thead><tbody>
-{% for h in holdings %}<tr><td><a href="https://app.hyperliquid.xyz/vaults/{{h.address}}" target="_blank"><b>{{h.name}}</b></a><br><small style="color:var(--muted)">{{h.address[:12]}}...</small></td><td>${{h.amount|int}}</td><td>{{(h.amount/total*100)|round(1)}}%</td><td style="color:var(--success)">{{h.apr}}%</td><td style="color:var(--danger)">{{h.mdd}}%</td></tr>{% endfor %}
+<table><thead><tr><th>Vault</th><th>Invested / Weight</th><th>Holding Period</th><th>APR / MDD</th><th>Gross PnL</th><th>Est. Value</th></tr></thead><tbody>
+{% for h in holdings %}<tr>
+<td><a href="https://app.hyperliquid.xyz/vaults/{{h.address}}" target="_blank"><b>{{h.name}}</b></a><br><small style="color:var(--muted)">{{h.address[:12]}}...</small></td>
+<td>${{ "{:,.0f}".format(h.invested_usd) }}<br><small style="color:var(--accent2)">{{ h.weight_pct }}%</small></td>
+<td>{{ h.days_held }} Days</td>
+<td><span style="color:var(--success)">{{ h.apr_30d }}%</span><br><small style="color:var(--danger)">{{ h.mdd }}%</small></td>
+<td><span style="color:{{ 'var(--success)' if h.pnl >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(h.pnl) }}</span><br><small style="color:{{ 'var(--success)' if h.pnl_pct >= 0 else 'var(--danger)' }}">{{ h.pnl_pct }}%</small></td>
+<td style="font-weight:600; color:#fff;">${{ "{:,.0f}".format(h.est_value) }}</td>
+</tr>{% endfor %}
 </tbody></table>
 {% else %}
 <p style="padding:40px;text-align:center;color:var(--muted);">No positions found. Update <code>my_portfolio.json</code> to track your holdings.</p>
 {% endif %}
 </div>
-<div class="card"><h3>Summary</h3>
-<div style="margin-bottom:25px;">
-<div class="stat-label">Total Invested</div><div class="stat-val">$ {{total|int}}</div>
+<div class="card"><h3>Performance Summary</h3>
+<div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+<div class="stat-label">Total Invested</div><div class="stat-val" style="color:#fff;">$ {{ "{:,.0f}".format(capital) }}</div>
+</div>
+<div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+<div class="stat-label">Holding Period</div><div class="stat-val" style="color:var(--muted);">{{ days }} Days</div>
+</div>
+<div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+<div class="stat-label">Gross PnL (Before Fees)</div>
+<div class="stat-val" style="color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }}">$ {{ "{:,.0f}".format(pnl) }}</div>
+<div style="text-align:center; font-size:0.9rem; color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }};">{{ pnl_pct }}%</div>
 </div>
 <div style="margin-bottom:25px;">
-<div class="stat-label">Initial Capital</div><div class="stat-val" style="color:#fff">$ {{capital|int}}</div>
-</div>
-<div style="margin-bottom:25px;">
-<div class="stat-label">All-time PnL</div><div class="stat-val" style="color:{{ 'var(--success)' if total >= capital else 'var(--danger)' }}">{{ (((total/capital)-1)*100)|round(2) }}%</div>
+<div class="stat-label">Net PnL (After 10% Fee)</div>
+<div class="stat-val" style="color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }}; font-size:2.2rem;">$ {{ "{:,.0f}".format(net_pnl) }}</div>
+<div style="text-align:center; font-size:0.95rem; font-weight:600; color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }};">{{ net_pct }}%</div>
 </div>
 <a class="btn btn-primary" style="display:block;text-align:center;margin:0;" href="/portfolio">View Rebalancing Advice</a>
 </div></div></main></body></html>"""

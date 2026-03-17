@@ -1,6 +1,10 @@
 {
   "_comment": "내 실제 포트폴리오 - 볼트주소: 투자금액(USD). 아래 예시를 참고해 직접 수정하세요.",
-  "positions": {},
+  "positions": {
+    "0x3bd6460a4f5c531d2df649f854a8e2e283de520b": 50000,
+    "0xfdb03a251ea76eeab8623ad9f000add6ef08da62": 30000,
+    "0x815e9854b7c84bb07cba56aa8de001a1dbfece06": 20000
+  },
   "invest_date": "2026-03-12",
   "total_capital": 100000
 }
