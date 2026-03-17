@@ -728,7 +728,26 @@ function save(){
 MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
 <header><h1>📱 My Portfolio</h1><a class="btn" href="/">← Back</a></header>
 <main>
-<div class="grid" style="grid-template-columns: 2fr 1FR;">
+<div style="display: flex; flex-direction: column; gap: 20px;">
+<div class="card"><h3>Performance Summary</h3>
+<div style="height:250px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;"><canvas id="histChart"></canvas></div>
+<div class="grid" style="grid-template-columns: repeat(3, 1fr); text-align: center; gap: 15px;">
+  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px;">
+    <div class="stat-label">Total Invested (Holding Period)</div>
+    <div class="stat-val" style="color:#fff; font-size:1.6rem;">$ {{ "{:,.0f}".format(capital) }} <small style="font-size:0.9rem; color:var(--muted); font-weight:400;">({{ days }} Days)</small></div>
+  </div>
+  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px;">
+    <div class="stat-label">Gross PnL (Before Fees)</div>
+    <div class="stat-val" style="color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }}; font-size:1.6rem;">$ {{ "{:,.0f}".format(pnl) }}</div>
+    <div style="font-size:0.9rem; margin-top:5px; color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }};">{{ pnl_pct }}%</div>
+  </div>
+  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px; border: 1px solid var(--accent2);">
+    <div class="stat-label" style="color:var(--accent2);">Net Return / Final Payout</div>
+    <div class="stat-val" style="color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }}; font-size:2rem;">$ {{ "{:,.0f}".format(capital + net_pnl) }}</div>
+    <div style="font-size:1rem; font-weight:600; margin-top:5px; color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }};">Net PnL: $ {{ "{:,.0f}".format(net_pnl) }} ({{ net_pct }}%)</div>
+  </div>
+</div>
+</div>
 <div class="card"><h3>Current Positions</h3>
 {% if holdings %}
 <table><thead><tr><th>Vault</th><th>Invested / Weight</th><th>Holding Period</th><th>APR / MDD</th><th>Gross PnL</th><th>Net Final Payout<br><small>(After 10% Fee)</small></th></tr></thead><tbody>
@@ -749,23 +768,7 @@ MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https
 <p style="padding:40px;text-align:center;color:var(--muted);">No positions found. Update <code>my_portfolio.json</code> to track your holdings.</p>
 {% endif %}
 </div>
-<div class="card"><h3>Performance Summary</h3>
-<div style="height:200px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;"><canvas id="histChart"></canvas></div>
-<div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-<div class="stat-label">Total Invested (Holding Period)</div>
-<div class="stat-val" style="color:#fff;">$ {{ "{:,.0f}".format(capital) }} <small style="font-size:0.9rem; color:var(--muted); font-weight:400;">({{ days }} Days)</small></div>
-</div>
-<div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-<div class="stat-label">Gross PnL (Before Fees)</div>
-<div class="stat-val" style="color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }}">$ {{ "{:,.0f}".format(pnl) }} <small style="font-size:0.9rem; font-weight:400;">({{ pnl_pct }}%)</small></div>
-</div>
-<div style="margin-bottom:25px;">
-<div class="stat-label">Net Return / Final Payout</div>
-<div class="stat-val" style="color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }}; font-size:2.2rem;">$ {{ "{:,.0f}".format(capital + net_pnl) }}</div>
-<div style="text-align:center; font-size:1.1rem; font-weight:600; color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }};">Net PnL: $ {{ "{:,.0f}".format(net_pnl) }} ({{ net_pct }}%)</div>
-</div>
-<a class="btn btn-primary" style="display:block;text-align:center;margin:0;" href="/portfolio">View Rebalancing Advice</a>
-</div></div></main>
+</div></main>
 <script>
 {% if hist_dates and hist_vals %}
 const ctx = document.getElementById('histChart').getContext('2d');
