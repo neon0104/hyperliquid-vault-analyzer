@@ -624,8 +624,23 @@ document.addEventListener('DOMContentLoaded', filterTable);
 PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
 <header><div><h1>🔬 Portfolio Analysis</h1></div><a class="btn" href="/">← Back</a></header>
 <main>
+<div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-bottom: 25px; border:1px solid var(--accent2); display:flex; align-items:center; gap:20px;">
+  <div style="flex-grow:1;">
+    <h3 style="margin:0; color:var(--accent2); display:flex; align-items:center; gap:10px;">
+      💡 Custom Investment Simulation
+    </h3>
+    <p style="margin:5px 0 0 0; font-size:0.9rem; color:var(--muted);">Enter your desired investment amount to see exact allocations and profit projections based on our historical analysis.</p>
+  </div>
+  <div>
+    <div style="position: relative; display: flex; align-items: center;">
+      <span style="position: absolute; left: 15px; font-weight: bold; color: #fff;">$</span>
+      <input type="number" id="simAmount" value="100000" step="1000" min="1000" style="width: 200px; padding: 12px 12px 12px 30px; font-size: 1.2rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align: right;">
+    </div>
+  </div>
+</div>
+
 {% if d.portfolio_summary %}
-<div class="card"><h3>Historical Tracking (Simulated)</h3>
+<div class="card"><h3>Historical Tracking (Trailing 90 Days Sim)</h3>
 <div style="height:350px;"><canvas id="historyChart"></canvas></div>
 <div class="grid" style="margin-top:20px;">
 <div class="stat-box"><div class="stat-label">Cumulative Return</div><div class="stat-val" style="color:var(--success)">{{d.portfolio_summary.cumulative_pct}}%</div></div>
@@ -639,20 +654,30 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src
 <div style="display:flex;justify-content:space-between;font-size:0.85rem;color:var(--muted);">
 <span>Vol: {{p.stats.annual_vol_pct}}%</span><span>Sharpe: {{p.stats.sharpe}}</span><span>MDD: {{p.backtest.max_drawdown_pct}}%</span>
 </div><div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
-{% for vname, w in p.stats.weights.items() %}{% if w > 5 %}<div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;"><span>{{vname[:20]}}</span><span>{{w}}%</span></div>{% endif %}{% endfor %}
+{% for vname, w in p.stats.weights.items() %}{% if w > 5 %}
+<div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px; padding-bottom:4px; border-bottom:1px dashed rgba(255,255,255,0.1);">
+  <span style="font-weight:600;"><a href="https://app.hyperliquid.xyz/vaults/{{vname[:42]}}" target="_blank" style="color:#fff;">{{vname[:42]}}</a></span>
+  <div style="text-align:right;">
+    <span style="color:var(--accent2); font-weight:800; margin-right:15px;">{{w}}%</span>
+    <span class="alloc-dollar" data-weight="{{w}}" style="color:#fff;">$0</span>
+  </div>
+</div>
+{% endif %}{% endfor %}
 </div></div>{% endfor %}</div></div></main>
 <script>
 {% if d.portfolio_summary %}
 const ctx = document.getElementById('historyChart').getContext('2d');
 const dates = {{ d.portfolio_summary.value_series | map(attribute=0) | list | tojson }};
-const values = {{ d.portfolio_summary.value_series | map(attribute=1) | list | tojson }};
-new Chart(ctx, {
+const baseValues = {{ d.portfolio_summary.value_series | map(attribute=1) | list | tojson }};
+const BASE_CAPITAL = 100000; // Simulated originally at 100k
+
+let chartInstance = new Chart(ctx, {
   type: 'line',
   data: {
     labels: dates,
     datasets: [{
       label: 'Portfolio Value ($)',
-      data: values,
+      data: baseValues,
       borderColor: '#1abc9c',
       backgroundColor: 'rgba(26, 188, 156, 0.1)',
       fill: true,
@@ -666,11 +691,34 @@ new Chart(ctx, {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      x: { grid: { display: false }, ticks: { color: '#7b8db0', maxRotation: 0 } },
-      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7b8db0' } }
+      x: { grid: { display: false }, ticks: { color: '#7b8db0', maxRotation: 0, font: {size: 10} } },
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } } }
     }
   }
 });
+
+function updateSimulation() {
+  const simInputStr = document.getElementById('simAmount').value;
+  let simAmount = parseFloat(simInputStr);
+  if(isNaN(simAmount) || simAmount <= 0) simAmount = BASE_CAPITAL;
+  
+  // Update Chart
+  const ratio = simAmount / BASE_CAPITAL;
+  const newValues = baseValues.map(v => v * ratio);
+  chartInstance.data.datasets[0].data = newValues;
+  chartInstance.update();
+
+  // Update Allocation Dollars
+  document.querySelectorAll('.alloc-dollar').forEach(el => {
+    const weight = parseFloat(el.getAttribute('data-weight')) || 0;
+    const alloc = (simAmount * weight / 100).toFixed(0);
+    el.innerText = `\$${parseInt(alloc).toLocaleString()}`;
+  });
+}
+
+document.getElementById('simAmount').addEventListener('input', updateSimulation);
+updateSimulation(); // init bounds
+
 {% endif %}
 </script></body></html>"""
 
