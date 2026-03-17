@@ -65,18 +65,27 @@ for item in (equities or []):
 
 print(f"\n총 투자금: ${total:,.4f}")
 
-# vault_data/my_portfolio.json 저장
-os.makedirs("vault_data", exist_ok=True)
+# my_portfolio.json 저장 (기존 정보 유지)
+pf_path = "my_portfolio.json"
+old_data = {}
+if os.path.exists(pf_path):
+    with open(pf_path, encoding="utf-8") as f:
+        try:
+            old_data = json.load(f)
+        except:
+            pass
+
 pf_data = {
+    "_comment": old_data.get("_comment", "내 실제 로드된 포트폴리오"),
     "account_address": user_addr,
     "fetched_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
-    "total_invested_usd": round(total, 4),
-    "holdings": holdings,
-    # rebalance_engine이 읽는 형식 (vault_address -> usd amount)
+    "total_capital": old_data.get("total_capital", round(total, 4)),
+    "invest_date": old_data.get("invest_date", datetime.now().strftime("%Y-%m-%d")),
     "positions": portfolio,
 }
-with open("vault_data/my_portfolio.json", "w", encoding="utf-8") as f:
+
+with open(pf_path, "w", encoding="utf-8") as f:
     json.dump(pf_data, f, ensure_ascii=False, indent=2)
 
-print("\nvault_data/my_portfolio.json 저장 완료")
+print("\nmy_portfolio.json 저장 완료")
 print(json.dumps(pf_data, ensure_ascii=False, indent=2))
