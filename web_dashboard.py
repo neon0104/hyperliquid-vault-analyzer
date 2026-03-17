@@ -214,7 +214,9 @@ def my_portfolio_gui():
                                   pnl_pct=round(total_pct, 2),
                                   net_pnl=round(net_pnl_after_fee), 
                                   net_pct=round(net_pct, 2),
-                                  days=port_calc["days_held"])
+                                  days=port_calc["days_held"],
+                                  hist_dates=port_calc.get("history_dates", []),
+                                  hist_vals=port_calc.get("history_values", []))
 
 # ── HTML 템플릿 ───────────────────────────────────────────────────────────────
 
@@ -723,20 +725,24 @@ function save(){
 }
 </script></body></html>"""
 
-MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMON_STYLE + """</style></head><body>
+MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
 <header><h1>📱 My Portfolio</h1><a class="btn" href="/">← Back</a></header>
 <main>
-<div class="grid" style="grid-template-columns: 2fr 1fr;">
+<div class="grid" style="grid-template-columns: 2fr 1FR;">
 <div class="card"><h3>Current Positions</h3>
 {% if holdings %}
-<table><thead><tr><th>Vault</th><th>Invested / Weight</th><th>Holding Period</th><th>APR / MDD</th><th>Gross PnL</th><th>Est. Value</th></tr></thead><tbody>
-{% for h in holdings %}<tr>
+<table><thead><tr><th>Vault</th><th>Invested / Weight</th><th>Holding Period</th><th>APR / MDD</th><th>Gross PnL</th><th>Net Final Payout<br><small>(After 10% Fee)</small></th></tr></thead><tbody>
+{% for h in holdings %}
+{% set h_net_pnl = h.pnl * 0.9 if h.pnl > 0 else h.pnl %}
+{% set h_net_pct = h_net_pnl / h.invested_usd * 100 if h.invested_usd > 0 else 0 %}
+{% set h_final_val = h.invested_usd + h_net_pnl %}
+<tr>
 <td><a href="https://app.hyperliquid.xyz/vaults/{{h.address}}" target="_blank"><b>{{h.name}}</b></a><br><small style="color:var(--muted)">{{h.address[:12]}}...</small></td>
 <td>${{ "{:,.0f}".format(h.invested_usd) }}<br><small style="color:var(--accent2)">{{ h.weight_pct }}%</small></td>
 <td>{{ h.days_held }} Days</td>
 <td><span style="color:var(--success)">{{ h.apr_30d }}%</span><br><small style="color:var(--danger)">{{ h.mdd }}%</small></td>
 <td><span style="color:{{ 'var(--success)' if h.pnl >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(h.pnl) }}</span><br><small style="color:{{ 'var(--success)' if h.pnl_pct >= 0 else 'var(--danger)' }}">{{ h.pnl_pct }}%</small></td>
-<td style="font-weight:600; color:#fff;">${{ "{:,.0f}".format(h.est_value) }}</td>
+<td style="font-weight:600; color:#fff;">${{ "{:,.0f}".format(h_final_val) }}<br><small style="color:{{ 'var(--success)' if h_net_pct >= 0 else 'var(--danger)' }}">{{ h_net_pct | round(2) }}%</small></td>
 </tr>{% endfor %}
 </tbody></table>
 {% else %}
@@ -744,24 +750,52 @@ MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMO
 {% endif %}
 </div>
 <div class="card"><h3>Performance Summary</h3>
+<div style="height:200px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;"><canvas id="histChart"></canvas></div>
 <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-<div class="stat-label">Total Invested</div><div class="stat-val" style="color:#fff;">$ {{ "{:,.0f}".format(capital) }}</div>
-</div>
-<div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-<div class="stat-label">Holding Period</div><div class="stat-val" style="color:var(--muted);">{{ days }} Days</div>
+<div class="stat-label">Total Invested (Holding Period)</div>
+<div class="stat-val" style="color:#fff;">$ {{ "{:,.0f}".format(capital) }} <small style="font-size:0.9rem; color:var(--muted); font-weight:400;">({{ days }} Days)</small></div>
 </div>
 <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
 <div class="stat-label">Gross PnL (Before Fees)</div>
-<div class="stat-val" style="color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }}">$ {{ "{:,.0f}".format(pnl) }}</div>
-<div style="text-align:center; font-size:0.9rem; color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }};">{{ pnl_pct }}%</div>
+<div class="stat-val" style="color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }}">$ {{ "{:,.0f}".format(pnl) }} <small style="font-size:0.9rem; font-weight:400;">({{ pnl_pct }}%)</small></div>
 </div>
 <div style="margin-bottom:25px;">
-<div class="stat-label">Net PnL (After 10% Fee)</div>
-<div class="stat-val" style="color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }}; font-size:2.2rem;">$ {{ "{:,.0f}".format(net_pnl) }}</div>
-<div style="text-align:center; font-size:0.95rem; font-weight:600; color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }};">{{ net_pct }}%</div>
+<div class="stat-label">Net Return / Final Payout</div>
+<div class="stat-val" style="color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }}; font-size:2.2rem;">$ {{ "{:,.0f}".format(capital + net_pnl) }}</div>
+<div style="text-align:center; font-size:1.1rem; font-weight:600; color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }};">Net PnL: $ {{ "{:,.0f}".format(net_pnl) }} ({{ net_pct }}%)</div>
 </div>
 <a class="btn btn-primary" style="display:block;text-align:center;margin:0;" href="/portfolio">View Rebalancing Advice</a>
-</div></div></main></body></html>"""
+</div></div></main>
+<script>
+{% if hist_dates and hist_vals %}
+const ctx = document.getElementById('histChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ hist_dates | tojson }},
+        datasets: [{
+            label: 'Est. Portfolio Value ($)',
+            data: {{ hist_vals | tojson }},
+            borderColor: '#1abc9c',
+            backgroundColor: 'rgba(26, 188, 156, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 2
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { display: false },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'var(--muted)', font: { size: 9 } } }
+        }
+    }
+});
+{% endif %}
+</script>
+</body></html>"""
 
 if __name__ == "__main__":
     print("🚀 Hyperliquid Dashboard Pro v3.1 - Port 5001")

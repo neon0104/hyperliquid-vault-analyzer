@@ -119,12 +119,45 @@ def calc_my_portfolio(positions, invest_date, snapshots):
             "pnl_pct":      round(pnl_pct, 2),
             "monthly_est":  round(monthly_est, 2),
             "is_danger":    (mdd > 30 or apr_30d < -5),
+            "_first_pnl":   first_snap_pnl
         })
 
     holdings.sort(key=lambda x: x["pnl"], reverse=True)
     total_val  = sum(h["est_value"] for h in holdings)
     total_pnl  = total_val - total_inv
     total_pct  = total_pnl / total_inv * 100 if total_inv > 0 else 0
+
+    # Build history series
+    hist_dates = [d for d in dates if not invest_date or d >= invest_date]
+    hist_values = []
+    
+    for d in hist_dates:
+        daily_total = 0
+        for h in holdings:
+            addr = h["address"]
+            amt = h["invested_usd"]
+            if not h["_first_pnl"]:
+                # If no starting snapshot, guess value based on linear APR
+                try:
+                    start_dt = datetime.strptime(invest_date, "%Y-%m-%d") if invest_date else datetime.now()
+                    d_dt = datetime.strptime(d, "%Y-%m-%d")
+                    days_gap = max(0, (d_dt - start_dt).days)
+                except: days_gap = 0
+                daily_r = h["apr_30d"] / 100 / 365
+                daily_total += amt * ((1 + daily_r) ** days_gap)
+                continue
+                
+            _, start_pnl_val, start_tvl = h["_first_pnl"]
+            v_snap_d = snapshots[d].get(addr, {})
+            if v_snap_d and v_snap_d.get("alltime_pnl"):
+                d_pnl_val = v_snap_d["alltime_pnl"][-1]
+                pnl_diff = d_pnl_val - start_pnl_val
+                my_share = amt / max(start_tvl, 1)
+                daily_total += amt + (pnl_diff * my_share)
+            else:
+                # Missing snapshot for this day, assume value hasn't changed from best known
+                daily_total += h["est_value"]
+        hist_values.append(round(daily_total, 2))
 
     return {
         "total_invested": round(total_inv, 2),
@@ -138,6 +171,8 @@ def calc_my_portfolio(positions, invest_date, snapshots):
         "invest_date":    invest_date,
         "analysis_date":  latest_dt,
         "days_held":      holdings[0]["days_held"] if holdings else 0,
+        "history_dates":  hist_dates,
+        "history_values": hist_values
     }
 
 
