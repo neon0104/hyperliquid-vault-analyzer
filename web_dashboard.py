@@ -161,15 +161,39 @@ def portfolio_page():
 def backtest_gui():
     return render_template_string(BACKTEST_HTML)
 
-@app.route("/api/backtest")
-def api_backtest():
-    # 실제 백테스트 결과는 portfolio_engine에서 가져오는 것이 좋지만, 일단 간단하게
+@app.route("/api/simulate", methods=["POST"])
+def api_simulate():
+    data = request.json or {}
+    start_date = data.get("start_date")
+    sim_amount = float(data.get("amount", 100000))
+    ptype = data.get("ptype", "max_sharpe")
+
     from portfolio_engine import run_portfolio_analysis
-    d = run_portfolio_analysis(top_k=15)
+    import portfolio_tracker
+
+    d = run_portfolio_analysis()
     if "error" in d: return jsonify(d)
+
+    # get weights for chosen portfolio
+    st = d["portfolios"].get(ptype, {}).get("stats", {})
+    weights = st.get("weights", {})
     
-    # 대표로 'max_sharpe' 결과 반환
-    res = d["portfolios"]["max_sharpe"]["backtest"]
+    # map names to address
+    name_to_addr = {v["name"]: v["address"] for v in d["selected_vaults"]}
+    
+    recs = []
+    for nm, w in weights.items():
+        if w > 0:
+            recs.append({
+                "name": nm,
+                "address": name_to_addr.get(nm, ""),
+                "suggested_allocation": w
+            })
+            
+    snaps = portfolio_tracker.load_snapshots_all()
+    res = portfolio_tracker.simulate_rec_backtest(recs, snaps, start_date, sim_amount)
+    
+    if not res: return jsonify({"error": "데이터 또는 시뮬레이션 결과가 없습니다."})
     return jsonify(res)
 
 @app.route("/discord")
@@ -648,6 +672,35 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src
 <div class="stat-box"><div class="stat-label">Sharpe Ratio</div><div class="stat-val" style="color:var(--accent)">{{d.portfolio_summary.sharpe_ratio}}</div></div>
 </div></div>
 {% endif %}
+
+<div class="card" style="margin-bottom:25px; border-left:4px solid var(--accent)">
+  <h3>⏳ Time-Travel Simulator</h3>
+  <p style="margin:-10px 0 20px 0; font-size:0.9rem; color:var(--muted);">Test the historical performance of any recommended strategy with your chosen starting date and investment amount.</p>
+  <div style="display:flex; gap:15px; margin-bottom:20px; align-items:center;">
+    <select id="simPtype" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+      <option value="max_sharpe">Maximum Sharpe Strategy</option>
+      <option value="min_variance">Minimum Variance Strategy</option>
+      <option value="risk_parity">Risk Parity Strategy</option>
+      <option value="min_cvar">CVaR (Capital Protection) Strategy</option>
+    </select>
+    <select id="simDate" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+      {% for dt in d.history_dates | reverse %}
+        <option value="{{dt}}">Invested on: {{dt}}</option>
+      {% endfor %}
+    </select>
+    <button onclick="runBacktest()" class="btn btn-primary" style="margin:0; padding:10px 20px;">Run Simulation</button>
+  </div>
+  
+  <div id="btResult" style="display:none; margin-top:30px; padding-top:20px; border-top:1px solid var(--border);">
+    <div class="grid" style="margin-bottom:20px;">
+      <div class="stat-box"><div class="stat-label">Simulated PnL</div><div class="stat-val" id="btPnl" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Net ROI</div><div class="stat-val" id="btPct" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Final Value</div><div class="stat-val" id="btVal" style="color:var(--accent)">-</div></div>
+    </div>
+    <div style="height:350px;"><canvas id="btChart"></canvas></div>
+  </div>
+</div>
+
 <div class="card"><h2>Recommended Portfolios</h2><div class="grid">
 {% for k, p in d.portfolios.items() %}<div class="card" style="margin-bottom:0; border-left:4px solid var(--accent2)">
 <h4 style="color:var(--accent); text-transform:uppercase;">{{p.label}} {{p.emoji}}</h4><p style="font-size:1.6rem;font-weight:800;margin:15px 0;">{{p.stats.annual_return_pct}}% <small style="font-size:0.8rem;color:var(--muted);font-weight:400;">Expected APR</small></p>
@@ -715,11 +768,69 @@ function updateSimulation() {
     el.innerText = `\$${parseInt(alloc).toLocaleString()}`;
   });
 }
-
 document.getElementById('simAmount').addEventListener('input', updateSimulation);
 updateSimulation(); // init bounds
-
 {% endif %}
+
+let btChartInstance = null;
+function runBacktest() {
+  const ptype = document.getElementById('simPtype').value;
+  const start_date = document.getElementById('simDate').value;
+  const amount = parseFloat(document.getElementById('simAmount').value) || 100000;
+  
+  const btn = document.querySelector('button[onclick="runBacktest()"]');
+  btn.innerText = "Simulating...";
+  
+  fetch('/api/simulate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ptype, start_date, amount})
+  })
+  .then(r => r.json())
+  .then(res => {
+    btn.innerText = "Run Simulation";
+    if(res.error) { alert(res.error); return; }
+    
+    document.getElementById('btResult').style.display = 'block';
+    
+    const pnl = res.total_pnl;
+    document.getElementById('btPnl').innerHTML = (pnl >= 0 ? '+' : '') + '$' + pnl.toLocaleString();
+    document.getElementById('btPnl').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('btPct').innerText = (pnl >= 0 ? '+' : '') + res.total_pnl_pct + '%';
+    document.getElementById('btPct').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('btVal').innerText = '$' + res.total_value.toLocaleString();
+    
+    const ctx = document.getElementById('btChart').getContext('2d');
+    if(btChartInstance) btChartInstance.destroy();
+    btChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: res.history_dates,
+        datasets: [{
+          label: 'Simulated Value ($)',
+          data: res.history_values,
+          borderColor: '#4f8ef7',
+          backgroundColor: 'rgba(79, 142, 247, 0.15)',
+          fill: true, tension: 0.3, borderWidth: 3, pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { 
+          x: { display: false }, 
+          y: { grid: { color: 'rgba(255,255,255,0.05)'}, ticks:{color:'#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } }}
+        }
+      }
+    });
+  })
+  .catch(err => {
+    btn.innerText = "Run Simulation";
+    alert("Simulation failed.");
+  });
+}
 </script></body></html>"""
 
 BACKTEST_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>

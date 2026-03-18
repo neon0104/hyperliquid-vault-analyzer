@@ -202,9 +202,9 @@ def simulate_rec_backtest(recs, snapshots, start_date=None, sim_amount=100000.0)
         p_s = v_s.get("alltime_pnl", []) if v_s else []
         p_e = v_e.get("alltime_pnl", []) if v_e else []
 
-        if p_s and p_e and tvl > 0:
+        if p_s and p_e and tvl_e > 0:
             pnl_diff = p_e[-1] - p_s[-1]
-            my_pnl   = pnl_diff * (amount / tvl)
+            my_pnl   = pnl_diff * (amount / tvl_e)
         else:
             # APR 추정
             try:
@@ -213,7 +213,7 @@ def simulate_rec_backtest(recs, snapshots, start_date=None, sim_amount=100000.0)
                 days    = max(1, (d_end - d_start).days)
             except Exception:
                 days = 1
-            apr      = float(v.get("apr_30d", 0))
+            apr      = float(v.get("apr_30d", v_e.get("apr_30d", v_s.get("apr_30d", 0))))
             my_pnl   = amount * apr / 100 / 365 * days
 
         results.append({
@@ -229,6 +229,48 @@ def simulate_rec_backtest(recs, snapshots, start_date=None, sim_amount=100000.0)
     results.sort(key=lambda x: x["pnl"], reverse=True)
     total_pnl = sum(r["pnl"] for r in results)
 
+    # ── 시계열 백테스트 (history) ──
+    # If start_date isn't in dates, still create points from start_date to earliest snap date?
+    # To keep it simple, we just use available snap dates plus start_date if it's missing.
+    hist_dates = [d for d in dates if d >= start_date and d <= end_date]
+    if start_date not in hist_dates:
+        hist_dates.insert(0, start_date)
+        
+    hist_values = []
+    
+    for d in hist_dates:
+        d_val = 0
+        snap_d = snapshots.get(d, {})
+        for v in recs:
+            addr   = v.get("address", "")
+            alloc  = v.get("suggested_allocation", 0) / 100
+            amt    = sim_amount * alloc
+            
+            v_start = start_snap.get(addr, {})
+            p_s = v_start.get("alltime_pnl", []) if v_start else []
+            tvl_s = float(v_start.get("tvl", 0)) if v_start else 0
+
+            v_d = snap_d.get(addr, {})
+            p_d = v_d.get("alltime_pnl", []) if v_d else []
+            
+            v_e = end_snap.get(addr, {})
+            
+            if p_s and p_d and tvl_s > 0:
+                pnl_diff = p_d[-1] - p_s[-1]
+                my_pnl_d = pnl_diff * (amt / tvl_s)
+            else:
+                try:
+                    ds = datetime.strptime(start_date, "%Y-%m-%d")
+                    dd = datetime.strptime(d, "%Y-%m-%d")
+                    days_gap = max(0, (dd - ds).days)
+                except: days_gap = 0
+                apr = float(v.get("apr_30d", v_d.get("apr_30d", v_e.get("apr_30d", 0))))
+                my_pnl_d = amt * apr / 100 / 365 * days_gap
+
+            d_val += amt + my_pnl_d
+
+        hist_values.append(round(d_val, 2))
+
     return {
         "start_date":    start_date,
         "end_date":      end_date,
@@ -237,4 +279,6 @@ def simulate_rec_backtest(recs, snapshots, start_date=None, sim_amount=100000.0)
         "total_pnl_pct": round(total_pnl / sim_amount * 100, 2),
         "total_value":   round(sim_amount + total_pnl, 2),
         "holdings":      results,
+        "history_dates": hist_dates,
+        "history_values": hist_values
     }
