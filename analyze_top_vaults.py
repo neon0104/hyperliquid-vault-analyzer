@@ -372,7 +372,8 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct):
 
 # ── 전체 분석 실행 ────────────────────────────────────────────────────────────
 def run_analysis(top_n=TOP_N):
-    top_vaults = fetch_top_vaults(top_n)
+    # 디파짓 불가능한 볼트를 배제하기 위해 넉넉하게 2배수(400개)를 가져온 뒤 필터링합니다.
+    top_vaults = fetch_top_vaults(top_n * 2)
     if not top_vaults:
         return []
 
@@ -398,28 +399,31 @@ def run_analysis(top_n=TOP_N):
 
     print(f"  완료: 분석 시도 {len(top_vaults)}개 / 성공 {len(results)}개 / 실패 {failed}개")
 
-    # ★ 2단계 - 필터링 여부 표시 (입금 가능 / 리더 에쿼티 40%↑ / 초기 손실 없음)
-    # 실제 데이터 유실 방지를 위해 전체 결과를 저장하되, 필터 통과 여부만 체크함
-    for v in results:
-        ok_deposit = v.get("allow_deposits", True)
+    # 파일 용량 낭비 방지: 디파짓 불가능한(allow_deposits=False) 볼트는 여기서 완전 제외
+    open_results = [v for v in results if v.get("allow_deposits", True)]
+    
+    # 제외 후, 원래 의도대로 TVL 상위 top_n개(200개)만 추림
+    open_results.sort(key=lambda x: x["tvl"], reverse=True)
+    final_results = open_results[:top_n]
+
+    # ★ 2단계 - 필터링 여부 표시 (리더 에쿼티 40%↑ / 초기 손실 없음)
+    for v in final_results:
         ok_leader  = v.get("leader_equity_ratio", 0) >= 0.4
-        
-        # 초기 손실 필터: alltime_pnl 최솟값이 0 미만이면 제외
         pnl_arr = v.get("alltime_pnl", [])
         ok_no_loss = not (pnl_arr and min(pnl_arr) < 0)
         
-        v["_filter_pass"] = ok_deposit and ok_leader and ok_no_loss
-        v["_ok_deposit"] = ok_deposit
+        v["_filter_pass"] = ok_leader and ok_no_loss
+        v["_ok_deposit"] = True  # 이미 위에서 필터링됨
         v["_ok_leader"] = ok_leader
         v["_ok_no_loss"] = ok_no_loss
 
     # ★ 3단계 - 종합점수 기준으로 전체 랭킹 부여
-    results.sort(key=lambda x: x["score"], reverse=True)
-    for i, v in enumerate(results):
+    final_results.sort(key=lambda x: x["score"], reverse=True)
+    for i, v in enumerate(final_results):
         v["rank"] = i + 1
 
-    save_snapshot(results)
-    return results
+    save_snapshot(final_results)
+    return final_results
 
 
 # ── 일별 변화 비교 ────────────────────────────────────────────────────────────
