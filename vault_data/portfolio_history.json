@@ -891,5 +891,211 @@
         "leader_eq": 0.8257772538380743
       }
     ]
+  },
+  "2026-03-19": {
+    "portfolio_value": 100997.37,
+    "daily_pnl": 403.46,
+    "daily_return_pct": 0.4011,
+    "cumulative_pnl": 997.37,
+    "cumulative_pct": 0.9974,
+    "max_equity_ever": 100997.37,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4671,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 8.6,
+        "apr_30d": 270.49,
+        "robustness": 0.9085,
+        "undervalue": 0.5,
+        "leader_eq": 0.9842425697091041
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 15.3,
+        "apr_30d": 202.33,
+        "robustness": 0.9406,
+        "undervalue": 0.853,
+        "leader_eq": 0.9286581624907866
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 15.9,
+        "apr_30d": 47.66,
+        "robustness": 0.8594,
+        "undervalue": 0.971,
+        "leader_eq": 0.6978453890170978
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 10.4,
+        "apr_30d": 155.98,
+        "robustness": 0.4772,
+        "undervalue": 1.149,
+        "leader_eq": 0.4967269438988708
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 9.5,
+        "apr_30d": 239.84,
+        "robustness": 0.3997,
+        "undervalue": 1.25,
+        "leader_eq": 0.7179622138901115
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 5.2,
+        "apr_30d": 441.65,
+        "robustness": 0.3266,
+        "undervalue": 0.843,
+        "leader_eq": 0.9339845435323191
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 11.2,
+        "apr_30d": 38.94,
+        "robustness": 0.5673,
+        "undervalue": 1.035,
+        "leader_eq": 0.8968241322217215
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 8.8,
+        "apr_30d": 78.99,
+        "robustness": 0.4336,
+        "undervalue": 1.071,
+        "leader_eq": 0.613744059261767
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 6.8,
+        "apr_30d": 90.99,
+        "robustness": 0.3319,
+        "undervalue": 1.082,
+        "leader_eq": 0.9022178005606748
+      },
+      {
+        "name": "[ Sidelined ] Market Neutral 1",
+        "address": "0xf4ab2cb15b7b3fa298555b801e9f5772ba8f8891",
+        "alloc_pct": 8.2,
+        "apr_30d": 62.5,
+        "robustness": 0.4284,
+        "undervalue": 1.011,
+        "leader_eq": 0.8257772538380743
+      }
+    ]
+  },
+  "2026-03-20": {
+    "portfolio_value": 101418.45,
+    "daily_pnl": 421.08,
+    "daily_return_pct": 0.4169,
+    "cumulative_pnl": 1418.45,
+    "cumulative_pct": 1.4185,
+    "max_equity_ever": 101418.45,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3941,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 7.8,
+        "apr_30d": 492.64,
+        "robustness": 0.9078,
+        "undervalue": 0.53,
+        "leader_eq": 0.9816407398651482
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 13.4,
+        "apr_30d": 208.85,
+        "robustness": 0.9403,
+        "undervalue": 0.879,
+        "leader_eq": 0.9105371206748077
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 14.7,
+        "apr_30d": 53.89,
+        "robustness": 0.8617,
+        "undervalue": 1.047,
+        "leader_eq": 0.652260627025879
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 12.8,
+        "apr_30d": 24.01,
+        "robustness": 0.7704,
+        "undervalue": 1.021,
+        "leader_eq": 0.9112753756805644
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 9.0,
+        "apr_30d": 254.95,
+        "robustness": 0.4359,
+        "undervalue": 1.27,
+        "leader_eq": 0.7179622138901115
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 4.9,
+        "apr_30d": 517.74,
+        "robustness": 0.3269,
+        "undervalue": 0.923,
+        "leader_eq": 0.9180068947654849
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.6,
+        "apr_30d": 4.23,
+        "robustness": 0.546,
+        "undervalue": 0.857,
+        "leader_eq": 0.6260686560269767
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 9.2,
+        "apr_30d": 149.26,
+        "robustness": 0.4952,
+        "undervalue": 1.142,
+        "leader_eq": 0.4445639764666406
+      },
+      {
+        "name": "Prudentia Asset Management",
+        "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+        "alloc_pct": 12.3,
+        "apr_30d": 44.16,
+        "robustness": 0.7315,
+        "undervalue": 1.038,
+        "leader_eq": 1.0
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 8.2,
+        "apr_30d": 85.0,
+        "robustness": 0.468,
+        "undervalue": 1.077,
+        "leader_eq": 0.613744059261767
+      }
+    ]
   }
 }

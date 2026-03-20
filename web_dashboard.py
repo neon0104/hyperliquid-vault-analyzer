@@ -157,38 +157,45 @@ def portfolio_page():
         return f"<body style='background:#0b0f1a;color:#e74c3c;padding:40px;'><h2>⚠️ 분석 에러</h2><p>{e}</p></body>"
     return render_template_string(PORTFOLIO_HTML, d=d)
 
-@app.route("/backtest")
-def backtest_gui():
-    return render_template_string(BACKTEST_HTML)
-
 @app.route("/api/simulate", methods=["POST"])
 def api_simulate():
     data = request.json or {}
     start_date = data.get("start_date")
     sim_amount = float(data.get("amount", 100000))
     ptype = data.get("ptype", "max_sharpe")
+    custom_vaults = data.get("custom_vaults")
 
-    from portfolio_engine import run_portfolio_analysis
     import portfolio_tracker
-
-    d = run_portfolio_analysis()
-    if "error" in d: return jsonify(d)
-
-    # get weights for chosen portfolio
-    st = d["portfolios"].get(ptype, {}).get("stats", {})
-    weights = st.get("weights", {})
     
-    # map names to address
-    name_to_addr = {v["name"]: v["address"] for v in d["selected_vaults"]}
-    
-    recs = []
-    for nm, w in weights.items():
-        if w > 0:
-            recs.append({
-                "name": nm,
-                "address": name_to_addr.get(nm, ""),
-                "suggested_allocation": w
-            })
+    if custom_vaults:
+        recs = []
+        for cv in custom_vaults:
+            if float(cv.get("weight", 0)) > 0:
+                recs.append({
+                    "name": cv.get("name", ""),
+                    "address": cv.get("address", ""),
+                    "suggested_allocation": float(cv.get("weight", 0))
+                })
+    else:
+        from portfolio_engine import run_portfolio_analysis
+        d = run_portfolio_analysis()
+        if "error" in d: return jsonify(d)
+
+        # get weights for chosen portfolio
+        st = d["portfolios"].get(ptype, {}).get("stats", {})
+        weights = st.get("weights", {})
+        
+        # map names to address
+        name_to_addr = {v["name"]: v["address"] for v in d["selected_vaults"]}
+        
+        recs = []
+        for nm, w in weights.items():
+            if w > 0:
+                recs.append({
+                    "name": nm,
+                    "address": name_to_addr.get(nm, ""),
+                    "suggested_allocation": w
+                })
             
     snaps = portfolio_tracker.load_snapshots_all()
     res = portfolio_tracker.simulate_rec_backtest(recs, snaps, start_date, sim_amount)
@@ -290,7 +297,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>""" + COMMON_STYLE + """</style></head>
 <body><header><div><h1 style="background:linear-gradient(90deg, #4f8ef7, #1abc9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">HL Vault Analyzer Pro v3.1</h1></div><div>
-<a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/backtest">⏪ Backtest</a><a class="btn" href="/discord">🔔 Discord</a>
+<a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/discord">🔔 Discord</a>
 </div></header><main>
 <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
 <div class="card stat-box"><div class="stat-label">Analysis Date</div><div class="stat-val" style="color:#fff">{{date}} <small style="font-size:0.8rem;color:var(--muted)">{% if stats.prev_date %}(vs {{stats.prev_date}}){% endif %}</small></div></div>
@@ -304,33 +311,18 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
     </div>
     <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; border:1px solid var(--border);">
         <div>
-            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Leader Eq Min:</label>
-            <select id="leaderFilter" onchange="filterTable()" style="padding:8px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
-                <option value="0">All</option>
-                <option value="0.1">10%+</option>
-                <option value="0.2">20%+</option>
-                <option value="0.3">30%+</option>
-                <option value="0.4">40%+</option>
-            </select>
+            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Leader Eq Min (%):</label>
+            <input type="number" id="leaderFilter" oninput="filterTable()" placeholder="e.g. 10" style="padding:8px; width:100px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
         </div>
         <div>
-            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Max MDD:</label>
-            <select id="mddFilter" onchange="filterTable()" style="padding:8px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
-                <option value="999">All</option>
-                <option value="10">Under 10%</option>
-                <option value="20">Under 20%</option>
-                <option value="30">Under 30%</option>
-                <option value="40">Under 40%</option>
-                <option value="50">Under 50%</option>
-            </select>
+            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Max MDD (%):</label>
+            <input type="number" id="mddFilter" oninput="filterTable()" placeholder="e.g. 20" style="padding:8px; width:100px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
         </div>
         <div>
-            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Deposits:</label>
-            <select id="depositFilter" onchange="filterTable()" style="padding:8px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
-                <option value="all">All</option>
-                <option value="open">Open Only</option>
-            </select>
+            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Min TVL ($):</label>
+            <input type="number" id="tvlFilter" oninput="filterTable()" placeholder="e.g. 10000" style="padding:8px; width:120px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
         </div>
+
     </div>
 </div>
 
@@ -352,7 +344,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
         </thead>
         <tbody>
         {% for v in vaults %}
-        <tr data-leader="{{ v.leader_equity_ratio }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}">
+        <tr data-leader="{{ v.leader_equity_ratio }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}" data-tvl="{{ v.tvl }}">
             <td>
                 #{{v.rank}}<br>
                 {% if v.has_history and v.chg.rank_val != 0 %}
@@ -617,22 +609,28 @@ function closeModal() {
 }
 
 function filterTable() {
-    const leaderMin = parseFloat(document.getElementById('leaderFilter').value);
-    const mddMax = parseFloat(document.getElementById('mddFilter').value);
-    const depositType = document.getElementById('depositFilter').value;
+    let leaderMin = parseFloat(document.getElementById('leaderFilter').value);
+    if(isNaN(leaderMin)) leaderMin = 0; else leaderMin = leaderMin / 100.0;
+    
+    let mddMax = parseFloat(document.getElementById('mddFilter').value);
+    if(isNaN(mddMax)) mddMax = 999;
+    
+    let tvlMin = parseFloat(document.getElementById('tvlFilter').value);
+    if(isNaN(tvlMin)) tvlMin = 0;
+    
     const rows = document.querySelectorAll('#vaultTable tbody tr');
     let count = 0;
     
     rows.forEach(row => {
         const leader = parseFloat(row.getAttribute('data-leader'));
-        const deposit = row.getAttribute('data-deposit');
         const mdd = parseFloat(row.getAttribute('data-mdd'));
+        const tvl = parseFloat(row.getAttribute('data-tvl'));
         
         const leaderMatch = leader >= leaderMin;
-        const depositMatch = (depositType === 'all') || (deposit === depositType);
         const mddMatch = mdd <= mddMax;
+        const tvlMatch = tvl >= tvlMin;
         
-        if (leaderMatch && depositMatch && mddMatch) {
+        if (leaderMatch && mddMatch && tvlMatch) {
             row.style.display = '';
             count++;
         } else {
@@ -672,6 +670,47 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src
 <div class="stat-box"><div class="stat-label">Sharpe Ratio</div><div class="stat-val" style="color:var(--accent)">{{d.portfolio_summary.sharpe_ratio}}</div></div>
 </div></div>
 {% endif %}
+
+<div class="card" style="margin-bottom:25px; border-left:4px solid #f39c12">
+  <h3>🎯 Custom Portfolio Builder</h3>
+  <p style="margin:-10px 0 20px 0; font-size:0.9rem; color:var(--muted);">선택한 볼트와 비중으로 커스텀 포트폴리오를 구성하고 백테스트를 수행해보세요.</p>
+  
+  <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
+    <select id="customVaultSelect" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px; flex:1;">
+      {% for v in d.filter_details %}
+        <option value="{{v.address}}">{{v.name}} (APR: {{v.apr_30d}}%, MDD: {{v.max_drawdown}}%)</option>
+      {% endfor %}
+    </select>
+    <input type="number" id="customVaultWeight" placeholder="비중 (%)" style="padding:10px; width:100px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+    <button onclick="addCustomVault()" class="btn btn-primary" style="margin:0; padding:10px 20px;">+ 추가</button>
+  </div>
+  
+  <div id="customVaultList" style="margin-bottom:20px; background:rgba(0,0,0,0.2); padding:15px; border-radius:8px; min-height:50px;">
+    <!-- Selected vaults will appear here -->
+  </div>
+  
+  <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+    <select id="customSimDate" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+      {% for dt in d.history_dates | reverse %}
+        <option value="{{dt}}">투자 시작일: {{dt}}</option>
+      {% endfor %}
+    </select>
+    <div style="position: relative; display: flex; align-items: center;">
+      <span style="position: absolute; left: 15px; font-weight: bold; color: #fff;">$</span>
+      <input type="number" id="customSimAmount" value="100000" step="1000" style="width: 150px; padding: 10px 10px 10px 30px; font-size: 1rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px;">
+    </div>
+    <button onclick="runCustomBacktest()" class="btn" style="background:#f39c12; color:#fff; border-color:#f39c12; margin:0; padding:10px 20px;">▶ 검증 및 시뮬레이션</button>
+  </div>
+  
+  <div id="cbtResult" style="display:none; margin-top:30px; padding-top:20px; border-top:1px solid var(--border);">
+    <div class="grid" style="margin-bottom:20px;">
+      <div class="stat-box"><div class="stat-label">Simulated PnL</div><div class="stat-val" id="cbtPnl" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Net ROI</div><div class="stat-val" id="cbtPct" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Final Value</div><div class="stat-val" id="cbtVal" style="color:var(--accent)">-</div></div>
+    </div>
+    <div style="height:350px;"><canvas id="cbtChart"></canvas></div>
+  </div>
+</div>
 
 <div class="card" style="margin-bottom:25px; border-left:4px solid var(--accent)">
   <h3>⏳ Time-Travel Simulator</h3>
@@ -771,6 +810,110 @@ function updateSimulation() {
 document.getElementById('simAmount').addEventListener('input', updateSimulation);
 updateSimulation(); // init bounds
 {% endif %}
+
+let customVaults = [];
+let cbtChartInstance = null;
+
+function addCustomVault() {
+  const sel = document.getElementById('customVaultSelect');
+  const address = sel.value;
+  const name = sel.options[sel.selectedIndex].text.split(' (')[0];
+  const weight = parseFloat(document.getElementById('customVaultWeight').value);
+  
+  if(!weight || weight <= 0) { alert('정확한 비중(%)을 입력하세요.'); return; }
+  
+  customVaults.push({ address, name, weight });
+  renderCustomVaultList();
+  document.getElementById('customVaultWeight').value = '';
+}
+
+function removeCustomVault(idx) {
+  customVaults.splice(idx, 1);
+  renderCustomVaultList();
+}
+
+function renderCustomVaultList() {
+  const container = document.getElementById('customVaultList');
+  if(customVaults.length === 0) { container.innerHTML = '<span style="color:var(--muted)">추가된 볼트가 없습니다. Total: 0%</span>'; return; }
+  
+  let html = '';
+  let sum = 0;
+  customVaults.forEach((v, i) => {
+    sum += v.weight;
+    html += `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed var(--border);">
+      <span>${v.name} <small style="color:var(--muted)">- ${v.address.substring(0,8)}...</small></span>
+      <span>
+        <strong style="color:var(--accent2); margin-right:15px">${v.weight}%</strong>
+        <button onclick="removeCustomVault(${i})" style="background:none; border:none; color:var(--danger); cursor:pointer;">❌</button>
+      </span>
+    </div>`;
+  });
+  html += `<div style="text-align:right; margin-top:10px; font-weight:bold; color:${Math.abs(sum-100)<0.1?'var(--success)':'var(--danger)'}">총 비중: ${sum}%</div>`;
+  container.innerHTML = html;
+}
+renderCustomVaultList();
+
+function runCustomBacktest() {
+  if(customVaults.length === 0) { alert('최소 하나의 볼트를 추가하세요.'); return; }
+  const total = customVaults.reduce((a, b) => a + b.weight, 0);
+  if(Math.abs(total - 100) > 0.1) { alert('총 비중은 100%가 되어야 합니다. 현재: ' + total + '%'); return; }
+  
+  const start_date = document.getElementById('customSimDate').value;
+  const amount = parseFloat(document.getElementById('customSimAmount').value) || 100000;
+  
+  const btn = document.querySelector('button[onclick="runCustomBacktest()"]');
+  btn.innerText = "Simulating...";
+  
+  fetch('/api/simulate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ custom_vaults: customVaults, start_date, amount })
+  })
+  .then(r => r.json())
+  .then(res => {
+    btn.innerText = "▶ 검증 및 시뮬레이션";
+    if(res.error) { alert(res.error); return; }
+    
+    document.getElementById('cbtResult').style.display = 'block';
+    
+    const pnl = res.total_pnl;
+    document.getElementById('cbtPnl').innerHTML = (pnl >= 0 ? '+' : '') + '$' + pnl.toLocaleString();
+    document.getElementById('cbtPnl').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('cbtPct').innerText = (pnl >= 0 ? '+' : '') + res.total_pnl_pct + '%';
+    document.getElementById('cbtPct').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('cbtVal').innerText = '$' + res.total_value.toLocaleString();
+    
+    const ctx = document.getElementById('cbtChart').getContext('2d');
+    if(cbtChartInstance) cbtChartInstance.destroy();
+    cbtChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: res.history_dates,
+        datasets: [{
+          label: 'Custom Portfolio Value ($)',
+          data: res.history_values,
+          borderColor: '#f39c12',
+          backgroundColor: 'rgba(243, 156, 18, 0.15)',
+          fill: true, tension: 0.3, borderWidth: 3, pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { 
+          x: { display: false }, 
+          y: { grid: { color: 'rgba(255,255,255,0.05)'}, ticks:{color:'#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } }}
+        }
+      }
+    });
+  })
+  .catch(err => {
+    btn.innerText = "▶ 검증 및 시뮬레이션";
+    alert("시뮬레이션 통신 실패.");
+  });
+}
 
 let btChartInstance = null;
 function runBacktest() {

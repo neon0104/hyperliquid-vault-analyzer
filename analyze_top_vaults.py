@@ -127,20 +127,21 @@ def analyze_vault_from_stats(v_data, info_client):
     if not addr:
         return None
 
-    # ── PnL 시계열로 메트릭 계산 ──────────────────────────────────────────
     # allTime pnl 배열: 누적 PnL 값들
     alltime_pnl = []
-    for period_name, vals in v_data.get("pnls", []):
-        if period_name == "allTime":
-            alltime_pnl = [sf(x) for x in vals]
-            break
-
-    # 30일 pnl 배열
     month_pnl = []
+    week_pnl = []
+    day_pnl = []
     for period_name, vals in v_data.get("pnls", []):
-        if period_name == "month":
-            month_pnl = [sf(x) for x in vals]
-            break
+        parsed = [sf(x) for x in vals]
+        if period_name == "allTime":
+            alltime_pnl = parsed
+        elif period_name == "month":
+            month_pnl = parsed
+        elif period_name == "week":
+            week_pnl = parsed
+        elif period_name == "day":
+            day_pnl = parsed
 
     # TVL 기반으로 수익률 계산
     tvl = sf(s.get("tvl", 0))
@@ -158,7 +159,8 @@ def analyze_vault_from_stats(v_data, info_client):
         age_days   = 0
 
     # PnL 시계열 분석
-    metrics = _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct)
+    metrics = _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct,
+                                day_pnl=day_pnl, week_pnl=week_pnl)
 
     # allowDeposits 확인 (vaultDetails API 사용)
     # allowDeposits + ★ 리더 에쿼티 비율 계산
@@ -182,6 +184,20 @@ def analyze_vault_from_stats(v_data, info_client):
                 num_followers += 1
     except Exception:
         pass
+
+    # ★ 사용자 요청 (TVL 금액 + 에쿼티 금액 절대값 중심의 가중치 보정)
+    # 리더 지분율(%)보다 리더가 꽂아넣은 '진짜 돈의 크기(USD)'가 안정성의 핵심이라는 보스의 철학 반영!
+    # TVL 150억에 리더 8억(5%)(엄청난 안정성) >>> TVL 천만원에 리더 800만원(80%)(작업장)
+    
+    # 1. 오직 '리더 예치 금액(USD)'의 절대량만으로 시너지 점수를 계산 (Log10 스케일)
+    # $8,000 -> 3.9 * 2 = 7.8점 가산
+    # $600,000 -> 5.77 * 2 = 11.54점 가산
+    sitg_bonus = float(np.log10(max(leader_equity_usd, 1))) * 2.0
+    
+    # 2. 비율 집중도 보너스는 전면 폐기하고, 자본의 무게감(TVL 전체 규모)에서 약간의 가산점 부여 (TVL $1M 당 +0.5)
+    tvl_scale_bonus = float(np.log10(max(sf(tvl), 1))) * 0.5
+    
+    metrics["score"] = round(metrics.get("score", 0.0) + sitg_bonus + tvl_scale_bonus, 3)
 
     return {
         "address":             addr,
@@ -270,8 +286,10 @@ def _calc_robustness(alltime_pnl, tvl):
     return result
 
 
-def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct):
-    """PnL 배열에서 리스크/성과 지표 계산 (로버스트니스 포함)"""
+def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct, day_pnl=None, week_pnl=None):
+    """PnL 배열에서 리스크/성과 지표 계산 (로버스트니스 포함, 정밀 MDD)"""
+    if day_pnl is None: day_pnl = []
+    if week_pnl is None: week_pnl = []
     base = dict(
         vol_score=0.0, sharpe_ratio=0.0, max_drawdown=0.0,
         apr_30d=0.0, monthly_return=0.0,
@@ -293,7 +311,13 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct):
         vol    = float(np.std(returns) * np.sqrt(252) * 100) if len(returns) > 1 else 0.0
         mean_r = float(np.mean(returns))
         std_r  = float(np.std(returns))
-        sharpe = float(np.clip((mean_r / std_r) * np.sqrt(252) if std_r > 0 else 0, -5, 5))
+        
+        # 1번 옵션: 최소 변동성 안전 쿠션 (연환산 2% 변동성을 일간 값으로 적용)
+        # 변동성이 0에 수렴하여 샤프 비율이 비현실적으로 폭발하는 현상 방지.
+        cushion_daily = 0.02 / np.sqrt(252)
+        safe_std_r = std_r + cushion_daily
+        
+        sharpe = float(np.clip((mean_r / safe_std_r) * np.sqrt(252), -50, 50))
 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # 최대 낙폭 (MDD) — 사용자 제안 공식
@@ -326,6 +350,33 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct):
 
         max_dd        = max(0.0, round(max_dd, 2))
         max_dd_dollar = max(0.0, round(max_dd_dollar, 2))
+
+        # ★ 정밀 MDD: day/week/month 기간별 데이터에서도 MDD를 계산하여 최악값 사용
+        # allTime은 11개 포인트로 압축되어 중간 낙폭이 묻히는 문제 해결
+        def _period_mdd_pct(pnl_arr, base_tvl):
+            """단기 PnL 배열에서 MDD(%)를 계산 — TVL 기준으로 통일"""
+            if len(pnl_arr) < 3:
+                return 0.0, 0.0
+            c = np.array(pnl_arr, dtype=float)
+            rp = np.maximum.accumulate(c)
+            dd = rp - c
+            mdd_d = float(np.max(dd))
+            # 단기 기간(day/week/month) PnL은 해당 기간 내 상대 변동이므로
+            # 항상 TVL 기준으로 MDD% 산출 (분모 일관성)
+            mdd_p = mdd_d / (base_tvl + 1e-9) * 100
+            return max(0.0, round(mdd_p, 2)), max(0.0, round(mdd_d, 2))
+
+        # 각 기간별 MDD 계산
+        mdd_candidates = [(max_dd, max_dd_dollar)]  # allTime 기본값
+        for period_arr in [day_pnl, week_pnl, month_pnl]:
+            if period_arr:
+                p_mdd, p_mdd_d = _period_mdd_pct(period_arr, tvl)
+                mdd_candidates.append((p_mdd, p_mdd_d))
+
+        # 최악의 MDD(아픈 기억)를 채택
+        best = max(mdd_candidates, key=lambda x: x[0])
+        max_dd = best[0]
+        max_dd_dollar = best[1]
 
         pnl_alltime = float(arr[-1] - arr[0])
         base["vol_score"]    = round(vol, 2)
@@ -372,8 +423,8 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct):
 
 # ── 전체 분석 실행 ────────────────────────────────────────────────────────────
 def run_analysis(top_n=TOP_N):
-    # 디파짓 불가능한 볼트를 배제하기 위해 넉넉하게 2배수(400개)를 가져온 뒤 필터링합니다.
-    top_vaults = fetch_top_vaults(top_n * 2)
+    # 디파짓 불가능한 볼트를 배제하고 200개를 확실히 채우기 위해 5배수(1000개)를 가져옵니다.
+    top_vaults = fetch_top_vaults(top_n * 5)
     if not top_vaults:
         return []
 
@@ -406,9 +457,15 @@ def run_analysis(top_n=TOP_N):
     open_results.sort(key=lambda x: x["tvl"], reverse=True)
     final_results = open_results[:top_n]
 
-    # ★ 2단계 - 필터링 여부 표시 (리더 에쿼티 40%↑ / 초기 손실 없음)
+    # ★ 2단계 - 필터링 여부 표시 (안정성 평가)
+    # 1안/2안 폐기: 비율(Ratio) 중심이 아니라 절대금액(USD) 중심으로 패러다임 전환
+    # 조건: 리더가 최소 $30,000 (약 4천만원) 이상 꽂아넣었거나, 
+    #       (소자본이더라도) 리더 에쿼티가 최소 30% 이상이면서 $5,000 이상일 것
     for v in final_results:
-        ok_leader  = v.get("leader_equity_ratio", 0) >= 0.4
+        leader_usd = v.get("leader_equity_usd", 0)
+        leader_rat = v.get("leader_equity_ratio", 0)
+        ok_leader  = leader_usd >= 30000 or (leader_rat >= 0.3 and leader_usd >= 5000)
+        
         pnl_arr = v.get("alltime_pnl", [])
         ok_no_loss = not (pnl_arr and min(pnl_arr) < 0)
         
