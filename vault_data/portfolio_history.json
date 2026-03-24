@@ -1097,5 +1097,108 @@
         "leader_eq": 0.613744059261767
       }
     ]
+  },
+  "2026-03-24": {
+    "portfolio_value": 102089.33,
+    "daily_pnl": 670.88,
+    "daily_return_pct": 0.6615,
+    "cumulative_pnl": 2089.33,
+    "cumulative_pct": 2.0893,
+    "max_equity_ever": 102089.33,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4453,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 7.4,
+        "apr_30d": 433.65,
+        "robustness": 0.8588,
+        "undervalue": 0.534,
+        "leader_eq": 0.9281346445058539
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 16.0,
+        "apr_30d": 170.24,
+        "robustness": 0.9401,
+        "undervalue": 1.049,
+        "leader_eq": 0.757084153175773
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 14.5,
+        "apr_30d": 45.84,
+        "robustness": 0.8628,
+        "undervalue": 1.039,
+        "leader_eq": 0.6413243483380671
+      },
+      {
+        "name": "HyperSonic",
+        "address": "0x071a1341c9d00a5537ff4bf8289049f045fe3abb",
+        "alloc_pct": 4.1,
+        "apr_30d": 847.33,
+        "robustness": 0.5103,
+        "undervalue": 0.5,
+        "leader_eq": 0.9737545721096319
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 9.8,
+        "apr_30d": 158.27,
+        "robustness": 0.5262,
+        "undervalue": 1.152,
+        "leader_eq": 0.4417560273740056
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 10.8,
+        "apr_30d": 294.76,
+        "robustness": 0.5027,
+        "undervalue": 1.326,
+        "leader_eq": 0.692255034775082
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 13.3,
+        "apr_30d": 13.97,
+        "robustness": 0.8063,
+        "undervalue": 1.015,
+        "leader_eq": 0.47134042882003313
+      },
+      {
+        "name": "AI ATM",
+        "address": "0x4944589914a1ddef29f5f1f2094cfa212a3a3d20",
+        "alloc_pct": 11.4,
+        "apr_30d": 267.31,
+        "robustness": 0.5469,
+        "undervalue": 1.286,
+        "leader_eq": 0.8184571100594104
+      },
+      {
+        "name": "[ Tachyon ] HYPE ",
+        "address": "0x131ab0c5032079bb9286ffc1828e11d5931e77bb",
+        "alloc_pct": 3.5,
+        "apr_30d": 465.07,
+        "robustness": 0.4293,
+        "undervalue": 0.5,
+        "leader_eq": 0.9386158510593675
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 9.0,
+        "apr_30d": 497.51,
+        "robustness": 0.3255,
+        "undervalue": 1.708,
+        "leader_eq": 0.5843887364774426
+      }
+    ]
   }
 }
