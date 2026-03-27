@@ -152,7 +152,11 @@ def index():
 def portfolio_page():
     try:
         from portfolio_engine import run_portfolio_analysis
-        d = run_portfolio_analysis(top_k=25, max_corr=0.55)
+        addr_param = request.args.get("addresses", "")
+        addresses = [a.strip() for a in addr_param.split(",") if a.strip()] if addr_param else None
+        d = run_portfolio_analysis(top_k=25, max_corr=0.55, addresses=addresses)
+        d["user_selected_mode"] = bool(addresses)
+        d["user_selected_count"] = len(addresses) if addresses else 0
     except Exception as e:
         return f"<body style='background:#0b0f1a;color:#e74c3c;padding:40px;'><h2>⚠️ 분석 에러</h2><p>{e}</p></body>"
     return render_template_string(PORTFOLIO_HTML, d=d)
@@ -306,8 +310,12 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
 <div class="card stat-box"><div class="stat-label">Avg MDD</div><div class="stat-val" style="color:var(--danger)">{{stats.avg_mdd}}%</div></div>
 </div>
 <div class="card" style="margin-bottom:15px;">
-    <div style="margin-bottom:15px;">
+    <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
         <h3>Top Vaults (All 200) <span id="matchCount" style="color:var(--accent2); font-size:1rem; margin-left:10px; background:rgba(26,188,156,0.1); padding:4px 10px; border-radius:10px;"></span></h3>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span id="selCount" style="color:var(--accent); font-size:0.9rem; font-weight:600;">0/20 selected</span>
+            <button id="btnAnalyzeSelected" onclick="goAnalyzeSelected()" class="btn btn-primary" style="margin:0; padding:10px 20px; opacity:0.5; pointer-events:none;" disabled>🔬 선택한 볼트로 분석</button>
+        </div>
     </div>
     <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; border:1px solid var(--border);">
         <div>
@@ -322,7 +330,8 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
             <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Min TVL ($):</label>
             <input type="number" id="tvlFilter" oninput="filterTable()" placeholder="e.g. 10000" style="padding:8px; width:120px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
         </div>
-
+        <button onclick="selectAllVisible()" class="btn" style="margin:0; padding:8px 14px; font-size:0.8rem;">✅ 보이는 항목 전체선택</button>
+        <button onclick="clearSelection()" class="btn" style="margin:0; padding:8px 14px; font-size:0.8rem;">❌ 선택 해제</button>
     </div>
 </div>
 
@@ -330,6 +339,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
     <table id="vaultTable">
         <thead>
             <tr>
+                <th style="width:40px; text-align:center;">✓</th>
                 <th>Rank</th>
                 <th>Vault Name</th>
                 <th>TVL (USD/KRW)</th>
@@ -344,7 +354,8 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
         </thead>
         <tbody>
         {% for v in vaults %}
-        <tr data-leader="{{ v.leader_equity_ratio }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}" data-tvl="{{ v.tvl }}">
+        <tr data-leader="{{ v.leader_equity_ratio }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}" data-tvl="{{ v.tvl }}" data-address="{{v.address}}">
+            <td style="text-align:center;"><input type="checkbox" class="vault-cb" data-address="{{v.address}}" onchange="updateSelectionCount()" style="width:18px;height:18px;cursor:pointer;accent-color:var(--accent2);"></td>
             <td>
                 #{{v.rank}}<br>
                 {% if v.has_history and v.chg.rank_val != 0 %}
@@ -635,10 +646,65 @@ function filterTable() {
             count++;
         } else {
             row.style.display = 'none';
+            // 숨겨진 행 체크박스 해제
+            const cb = row.querySelector('.vault-cb');
+            if(cb) cb.checked = false;
         }
     });
     document.getElementById('matchCount').innerText = `${count} vaults matched`;
+    updateSelectionCount();
 }
+
+function updateSelectionCount() {
+    const checked = document.querySelectorAll('.vault-cb:checked');
+    const count = checked.length;
+    document.getElementById('selCount').innerText = `${count}/20 selected`;
+    const btn = document.getElementById('btnAnalyzeSelected');
+    if(count >= 2 && count <= 20) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.pointerEvents = 'none';
+    }
+    // 20개 초과 방지
+    if(count > 20) {
+        alert('최대 20개까지 선택 가능합니다.');
+        // 마지막 체크한 것 해제
+        const allCbs = document.querySelectorAll('.vault-cb:checked');
+        allCbs[allCbs.length - 1].checked = false;
+        updateSelectionCount();
+    }
+}
+
+function selectAllVisible() {
+    const rows = document.querySelectorAll('#vaultTable tbody tr');
+    let selected = 0;
+    // 먼저 모든 체크박스 해제
+    document.querySelectorAll('.vault-cb').forEach(cb => cb.checked = false);
+    rows.forEach(row => {
+        if(row.style.display !== 'none' && selected < 20) {
+            const cb = row.querySelector('.vault-cb');
+            if(cb) { cb.checked = true; selected++; }
+        }
+    });
+    updateSelectionCount();
+}
+
+function clearSelection() {
+    document.querySelectorAll('.vault-cb').forEach(cb => cb.checked = false);
+    updateSelectionCount();
+}
+
+function goAnalyzeSelected() {
+    const checked = document.querySelectorAll('.vault-cb:checked');
+    if(checked.length < 2) { alert('최소 2개 이상 선택해주세요.'); return; }
+    const addresses = Array.from(checked).map(cb => cb.getAttribute('data-address'));
+    window.location.href = '/portfolio?addresses=' + addresses.join(',');
+}
+
 document.addEventListener('DOMContentLoaded', filterTable);
 </script>
 </main></body></html>"""
@@ -646,6 +712,16 @@ document.addEventListener('DOMContentLoaded', filterTable);
 PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
 <header><div><h1>🔬 Portfolio Analysis</h1></div><a class="btn" href="/">← Back</a></header>
 <main>
+{% if d.user_selected_mode %}
+<div style="background:rgba(79,142,247,0.15); padding:15px 20px; border-radius:12px; margin-bottom:20px; border:1px solid var(--accent); display:flex; align-items:center; gap:15px;">
+  <span style="font-size:1.5rem;">🎯</span>
+  <div>
+    <strong style="color:var(--accent);">사용자 선택 모드</strong>
+    <span style="color:var(--muted); margin-left:10px;">메인 페이지에서 선택한 <b style="color:#fff;">{{d.user_selected_count}}개</b> 볼트만으로 분석하였습니다.</span>
+  </div>
+  <a href="/portfolio" class="btn" style="margin-left:auto; padding:8px 16px;">📊 전체 분석 보기</a>
+</div>
+{% endif %}
 <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-bottom: 25px; border:1px solid var(--accent2); display:flex; align-items:center; gap:20px;">
   <div style="flex-grow:1;">
     <h3 style="margin:0; color:var(--accent2); display:flex; align-items:center; gap:10px;">
@@ -653,11 +729,12 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src
     </h3>
     <p style="margin:5px 0 0 0; font-size:0.9rem; color:var(--muted);">Enter your desired investment amount to see exact allocations and profit projections based on our historical analysis.</p>
   </div>
-  <div>
+  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
     <div style="position: relative; display: flex; align-items: center;">
       <span style="position: absolute; left: 15px; font-weight: bold; color: #fff;">$</span>
-      <input type="number" id="simAmount" value="100000" step="1000" min="1000" style="width: 200px; padding: 12px 12px 12px 30px; font-size: 1.2rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align: right;">
+      <input type="text" id="simAmount" value="100,000" oninput="formatAmountInput(this); updateSimulation();" style="width: 200px; padding: 12px 12px 12px 30px; font-size: 1.2rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align: right;">
     </div>
+    <span id="simAmountKRW" style="font-size:0.85rem; color:var(--accent2); font-weight:600;">≈ ₩140,000,000</span>
   </div>
 </div>
 
@@ -695,9 +772,12 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src
         <option value="{{dt}}">투자 시작일: {{dt}}</option>
       {% endfor %}
     </select>
-    <div style="position: relative; display: flex; align-items: center;">
-      <span style="position: absolute; left: 15px; font-weight: bold; color: #fff;">$</span>
-      <input type="number" id="customSimAmount" value="100000" step="1000" style="width: 150px; padding: 10px 10px 10px 30px; font-size: 1rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px;">
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <div style="position: relative; display: flex; align-items: center;">
+        <span style="position: absolute; left: 15px; font-weight: bold; color: #fff;">$</span>
+        <input type="text" id="customSimAmount" value="100,000" oninput="formatAmountInput(this); updateCustomKRW();" style="width: 170px; padding: 10px 10px 10px 30px; font-size: 1rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align:right;">
+      </div>
+      <span id="customSimAmountKRW" style="font-size:0.8rem; color:var(--accent2);">≈ ₩140,000,000</span>
     </div>
     <button onclick="runCustomBacktest()" class="btn" style="background:#f39c12; color:#fff; border-color:#f39c12; margin:0; padding:10px 20px;">▶ 검증 및 시뮬레이션</button>
   </div>
@@ -740,22 +820,188 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src
   </div>
 </div>
 
-<div class="card"><h2>Recommended Portfolios</h2><div class="grid">
-{% for k, p in d.portfolios.items() %}<div class="card" style="margin-bottom:0; border-left:4px solid var(--accent2)">
-<h4 style="color:var(--accent); text-transform:uppercase;">{{p.label}} {{p.emoji}}</h4><p style="font-size:1.6rem;font-weight:800;margin:15px 0;">{{p.stats.annual_return_pct}}% <small style="font-size:0.8rem;color:var(--muted);font-weight:400;">Expected APR</small></p>
-<div style="display:flex;justify-content:space-between;font-size:0.85rem;color:var(--muted);">
-<span>Vol: {{p.stats.annual_vol_pct}}%</span><span>Sharpe: {{p.stats.sharpe}}</span><span>MDD: {{p.backtest.max_drawdown_pct}}%</span>
-</div><div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
-{% for vname, w in p.stats.weights.items() %}{% if w > 5 %}
-<div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px; padding-bottom:4px; border-bottom:1px dashed rgba(255,255,255,0.1);">
-  <span style="font-weight:600;"><a href="https://app.hyperliquid.xyz/vaults/{{vname[:42]}}" target="_blank" style="color:#fff;">{{vname[:42]}}</a></span>
-  <div style="text-align:right;">
-    <span style="color:var(--accent2); font-weight:800; margin-right:15px;">{{w}}%</span>
-    <span class="alloc-dollar" data-weight="{{w}}" style="color:#fff;">$0</span>
+<!-- ── 📊 선택된 볼트 상세 비교 ── -->
+<div class="card" style="margin-bottom:25px;">
+  <h2 style="margin-bottom:5px;">📊 분석 대상 볼트 비교</h2>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:15px;">선택된 {{d.n_selected}}개 볼트의 핵심 지표를 비교합니다. 색상은 상대적 우위를 나타냅니다.</p>
+  <div style="overflow-x:auto;">
+  <table style="min-width:900px;">
+    <thead><tr>
+      <th>Vault</th>
+      <th style="text-align:center;">30d APR</th>
+      <th style="text-align:center;">Sharpe</th>
+      <th style="text-align:center;">MDD</th>
+      <th style="text-align:center;">Robustness</th>
+      <th style="text-align:center;">TVL</th>
+      <th style="text-align:center;">Score</th>
+      <th style="text-align:center;">📈 Max Sharpe</th>
+      <th style="text-align:center;">🛡️ Min Var</th>
+      <th style="text-align:center;">⚖️ Risk Parity</th>
+      <th style="text-align:center;">🔒 CVaR</th>
+    </tr></thead>
+    <tbody>
+    {% for v in d.selected_vaults %}
+    <tr>
+      <td><a href="https://app.hyperliquid.xyz/vaults/{{v.address}}" target="_blank"><b>{{v.name[:25]}}</b></a></td>
+      <td style="text-align:center; color:var(--success); font-weight:600;">{{v.apr_30d}}%</td>
+      <td style="text-align:center; color:var(--accent);">{{v.sharpe_ratio}}</td>
+      <td style="text-align:center; color:var(--danger);">{{v.max_drawdown}}%</td>
+      <td style="text-align:center;"><span style="color:{{'var(--success)' if v.robustness_score >= 0.7 else 'var(--danger)' if v.robustness_score < 0.4 else '#f39c12'}}">{{v.robustness_score}}</span></td>
+      <td style="text-align:center;">${{"{:,.0f}".format(v.tvl)}}</td>
+      <td style="text-align:center; font-weight:800; color:var(--accent);">{{v.score}}</td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_sh > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_sh > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_sh > 15 else 'var(--muted)'}};">{{v.alloc_sh}}%</span></td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_mv > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_mv > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_mv > 15 else 'var(--muted)'}};">{{v.alloc_mv}}%</span></td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_rp > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_rp > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_rp > 15 else 'var(--muted)'}};">{{v.alloc_rp}}%</span></td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_cv > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_cv > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_cv > 15 else 'var(--muted)'}};">{{v.alloc_cv}}%</span></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
   </div>
 </div>
-{% endif %}{% endfor %}
-</div></div>{% endfor %}</div></div></main>
+
+<!-- ── 💡 전략 비교 설명 ── -->
+<div class="card" style="margin-bottom:25px;">
+  <h2 style="margin-bottom:5px;">💡 왜 이렇게 추천했는가?</h2>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:20px;">4가지 전략은 각각 다른 투자 철학을 반영합니다. 본인의 성향에 맞는 전략을 선택하세요.</p>
+  <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+  {% for k, p in d.portfolios.items() %}
+  <div class="card" style="margin-bottom:0; border-left:4px solid {{'var(--accent)' if k == 'max_sharpe' else 'var(--accent2)' if k == 'min_variance' else '#f39c12' if k == 'risk_parity' else '#e74c3c'}};">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h4 style="color:var(--accent);">{{p.emoji}} {{p.label}}</h4>
+      <span style="font-size:1.8rem; font-weight:800; color:var(--success);">{{p.stats.annual_return_pct}}%</span>
+    </div>
+
+    <!-- 전략 설명 -->
+    <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; margin-bottom:12px; font-size:0.85rem; line-height:1.6;">
+    {% if k == 'max_sharpe' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 위험 대비 수익이 가장 높은 조합을 찾습니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">Sharpe가 높은 볼트에 집중 배분합니다. 수익률은 높지만 특정 볼트에 쏠릴 수 있어 하락 시 타격이 클 수 있습니다.</p>
+    {% elif k == 'min_variance' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 포트폴리오 전체의 변동성을 최소화합니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">MDD가 낮고 변동성이 작은 볼트에 집중합니다. 수익률은 낮지만 안정적이며, 서로 반대로 움직이는 볼트끼리 조합해 변동을 상쇄합니다.</p>
+    {% elif k == 'risk_parity' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 각 볼트가 포트폴리오 위험에 동일하게 기여하도록 배분합니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">변동성이 큰 볼트는 비중을 줄이고, 안정적인 볼트는 비중을 높입니다. 어떤 한 볼트가 전체 위험을 지배하지 않도록 균형을 맞춥니다.</p>
+    {% elif k == 'min_cvar' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 최악의 손실 시나리오(하위 5%)를 최소화합니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">원금 보호를 최우선으로 합니다. 꼬리 위험(tail risk)이 적은 볼트를 선호하며, "최악의 날에도 얼마나 덜 잃을 수 있는가"에 집중합니다.</p>
+    {% endif %}
+    </div>
+
+    <!-- 지표 비교 -->
+    <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:8px; text-align:center; margin-bottom:12px;">
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">연 수익률</div>
+        <div style="font-size:1.1rem; font-weight:800; color:var(--success);">{{p.stats.annual_return_pct}}%</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">변동성</div>
+        <div style="font-size:1.1rem; font-weight:800; color:#f39c12;">{{p.stats.annual_vol_pct}}%</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">Sharpe</div>
+        <div style="font-size:1.1rem; font-weight:800; color:var(--accent);">{{p.stats.sharpe}}</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">Max MDD</div>
+        <div style="font-size:1.1rem; font-weight:800; color:var(--danger);">{{p.backtest.max_drawdown_pct}}%</div>
+      </div>
+    </div>
+
+    <!-- 비중 배분 -->
+    <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px;">
+    {% for vname, w in p.stats.weights.items() %}{% if w > 3 %}
+    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; margin-bottom:4px; padding:4px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+      <span style="font-weight:600; max-width:55%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{vname[:30]}}</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:80px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+          <div style="width:{{w * 2.86}}%; height:100%; background:var(--accent2); border-radius:3px;"></div>
+        </div>
+        <span style="color:var(--accent2); font-weight:800; min-width:40px; text-align:right;">{{w}}%</span>
+        <span class="alloc-dollar" data-weight="{{w}}" style="color:#fff; min-width:60px; text-align:right;">$0</span>
+      </div>
+    </div>
+    {% endif %}{% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  </div>
+</div>
+
+<!-- ── 🔗 상관관계 인사이트 ── -->
+{% if d.corr_selected %}
+<div class="card" style="margin-bottom:25px;">
+  <h2 style="margin-bottom:5px;">🔗 상관관계 분석</h2>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:15px;">볼트 간 상관관계가 낮을수록 분산 효과가 큽니다. 빨간색은 같이 움직이는 볼트, 파란색은 반대로 움직이는 볼트입니다.</p>
+  <div style="overflow-x:auto;">
+  <table style="min-width:600px; font-size:0.75rem;">
+    <thead><tr><th></th>
+    {% for n in d.corr_selected.names %}<th style="text-align:center; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.65rem;" title="{{n}}">{{n[:12]}}</th>{% endfor %}
+    </tr></thead>
+    <tbody>
+    {% for i in range(d.corr_selected.names | length) %}
+    <tr>
+      <td style="font-weight:600; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.7rem;" title="{{d.corr_selected.names[i]}}">{{d.corr_selected.names[i][:12]}}</td>
+      {% for j in range(d.corr_selected.names | length) %}
+      {% set val = d.corr_selected.matrix[i][j] %}
+      <td style="text-align:center; padding:6px; background:{{'rgba(231,76,60,' ~ (val * 0.4) ~ ')' if val > 0.3 else 'rgba(79,142,247,' ~ ((-val) * 0.5) ~ ')' if val < -0.1 else 'rgba(255,255,255,0.02)'}}; font-weight:{{'700' if val|abs > 0.5 else '400'}}; color:{{'var(--danger)' if val > 0.5 else 'var(--accent)' if val < -0.1 else 'var(--muted)'}}; font-size:0.75rem;">
+        {% if i == j %}<span style="color:var(--muted);">-</span>{% else %}{{val}}{% endif %}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  <!-- 상관관계 해석 -->
+  <div style="margin-top:15px; background:rgba(255,255,255,0.03); padding:15px; border-radius:8px; font-size:0.85rem; line-height:1.7;">
+    <p style="margin:0; color:var(--text);"><b>📖 읽는 법:</b></p>
+    <ul style="margin:5px 0 0 0; padding-left:20px; color:var(--muted);">
+      <li><span style="color:var(--danger);">빨간 숫자 (0.5 이상)</span> = 두 볼트가 같이 오르고 같이 내림 → 분산 효과 ❌</li>
+      <li><span style="color:var(--accent);">파란 숫자 (음수)</span> = 반대로 움직임 → 분산 효과 ✅ (이상적)</li>
+      <li><span style="color:var(--muted);">회색 숫자 (0 근처)</span> = 독립적 움직임 → 분산 효과 ✅</li>
+    </ul>
+    <p style="margin:10px 0 0 0; color:var(--accent2);"><b>💡 포인트:</b> 상관관계 0.5 이상인 볼트 조합은 동시에 투자 시 위험이 겹칩니다. 시스템은 상관 {{d.corr_selected.matrix[0][1] if d.corr_selected.names|length > 1 else 0}} 이하의 저상관 조합을 우선 선택했습니다.</p>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── 📝 종합 분석 가이드 ── -->
+<div class="card" style="margin-bottom:25px; border-left:4px solid var(--accent2);">
+  <h2 style="margin-bottom:5px;">📝 투자 전략 가이드</h2>
+  <div style="font-size:0.9rem; line-height:1.8; color:var(--muted);">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:10px;">
+      <div style="background:rgba(46,204,113,0.05); padding:15px; border-radius:10px; border:1px solid rgba(46,204,113,0.2);">
+        <p style="margin:0; color:var(--success); font-weight:600;">✅ 공격적 투자자 (수익 우선)</p>
+        <p style="margin:8px 0 0 0;">→ <b>최대 샤프 📈</b> 전략 추천<br>
+        높은 Sharpe 볼트에 집중, 수익률 극대화.<br>
+        <span style="color:var(--danger);">⚠️ MDD {{d.portfolios.max_sharpe.backtest.max_drawdown_pct}}% 감수 필요</span></p>
+      </div>
+      <div style="background:rgba(26,188,156,0.05); padding:15px; border-radius:10px; border:1px solid rgba(26,188,156,0.2);">
+        <p style="margin:0; color:var(--accent2); font-weight:600;">🛡️ 안정형 투자자 (원금 보호)</p>
+        <p style="margin:8px 0 0 0;">→ <b>원금보호 CVaR 🔒</b> 또는 <b>최소분산 🛡️</b> 추천<br>
+        최악의 시나리오를 최소화, 변동성 억제.<br>
+        <span style="color:var(--success);">MDD {{d.portfolios.min_cvar.backtest.max_drawdown_pct}}%로 제한</span></p>
+      </div>
+      <div style="background:rgba(243,156,18,0.05); padding:15px; border-radius:10px; border:1px solid rgba(243,156,18,0.2);">
+        <p style="margin:0; color:#f39c12; font-weight:600;">⚖️ 균형형 투자자</p>
+        <p style="margin:8px 0 0 0;">→ <b>위험 균형 ⚖️</b> 전략 추천<br>
+        모든 볼트가 위험에 균등 기여, 특정 볼트 의존도 낮음.<br>
+        수익과 안정의 중간 지점.</p>
+      </div>
+      <div style="background:rgba(79,142,247,0.05); padding:15px; border-radius:10px; border:1px solid rgba(79,142,247,0.2);">
+        <p style="margin:0; color:var(--accent); font-weight:600;">🧠 분석 기간</p>
+        <p style="margin:8px 0 0 0;">본 분석은 <b>최근 {{d.analysis_days}}일</b> 데이터를 기반으로 합니다.<br>
+        {{d.n_selected}}개 볼트가 저상관 기준으로 최종 선택되었으며,<br>
+        전체 {{d.n_filtered}}개 필터 통과 중 선별되었습니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
 <script>
 {% if d.portfolio_summary %}
 const ctx = document.getElementById('historyChart').getContext('2d');
@@ -789,10 +1035,39 @@ let chartInstance = new Chart(ctx, {
   }
 });
 
+const KRW_RATE = 1400;
+
+function parseAmountValue(el) {
+  return parseFloat(el.value.replace(/,/g, '')) || 0;
+}
+
+function formatAmountInput(el) {
+  const cursor = el.selectionStart;
+  const oldLen = el.value.length;
+  const raw = el.value.replace(/[^0-9]/g, '');
+  const num = parseInt(raw) || 0;
+  el.value = num.toLocaleString();
+  const newLen = el.value.length;
+  const newCursor = cursor + (newLen - oldLen);
+  el.setSelectionRange(newCursor, newCursor);
+}
+
+function updateKRWDisplay(inputId, krwId) {
+  const val = parseAmountValue(document.getElementById(inputId));
+  const krw = val * KRW_RATE;
+  document.getElementById(krwId).innerText = '≈ ₩' + Math.round(krw).toLocaleString();
+}
+
+function updateCustomKRW() {
+  updateKRWDisplay('customSimAmount', 'customSimAmountKRW');
+}
+
 function updateSimulation() {
-  const simInputStr = document.getElementById('simAmount').value;
-  let simAmount = parseFloat(simInputStr);
-  if(isNaN(simAmount) || simAmount <= 0) simAmount = BASE_CAPITAL;
+  let simAmount = parseAmountValue(document.getElementById('simAmount'));
+  if(simAmount <= 0) simAmount = BASE_CAPITAL;
+  
+  // Update KRW
+  updateKRWDisplay('simAmount', 'simAmountKRW');
   
   // Update Chart
   const ratio = simAmount / BASE_CAPITAL;
@@ -807,7 +1082,6 @@ function updateSimulation() {
     el.innerText = `\$${parseInt(alloc).toLocaleString()}`;
   });
 }
-document.getElementById('simAmount').addEventListener('input', updateSimulation);
 updateSimulation(); // init bounds
 {% endif %}
 
@@ -859,7 +1133,7 @@ function runCustomBacktest() {
   if(Math.abs(total - 100) > 0.1) { alert('총 비중은 100%가 되어야 합니다. 현재: ' + total + '%'); return; }
   
   const start_date = document.getElementById('customSimDate').value;
-  const amount = parseFloat(document.getElementById('customSimAmount').value) || 100000;
+  const amount = parseAmountValue(document.getElementById('customSimAmount')) || 100000;
   
   const btn = document.querySelector('button[onclick="runCustomBacktest()"]');
   btn.innerText = "Simulating...";
@@ -919,7 +1193,7 @@ let btChartInstance = null;
 function runBacktest() {
   const ptype = document.getElementById('simPtype').value;
   const start_date = document.getElementById('simDate').value;
-  const amount = parseFloat(document.getElementById('simAmount').value) || 100000;
+  const amount = parseAmountValue(document.getElementById('simAmount')) || 100000;
   
   const btn = document.querySelector('button[onclick="runBacktest()"]');
   btn.innerText = "Simulating...";

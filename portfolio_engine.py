@@ -434,13 +434,19 @@ def get_portfolio_summary(history=None):
     }
 
 # ── 메인 분석 ─────────────────────────────────────────────────────────────────
-def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90):
-    """전체 포트폴리오 분석 실행"""
+def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90, addresses=None):
+    """전체 포트폴리오 분석 실행. addresses가 주어지면 해당 주소 볼트만 분석."""
     vaults, date = load_latest_snapshot()
     if not vaults:
         return {"error": "스냅샷 없음. 먼저 분석을 실행하세요."}
 
     print(f"  [PE] 스냅샷: {len(vaults)}개 볼트 ({date})")
+
+    # ★ 사용자 선택 주소가 있으면 해당 볼트만 필터
+    if addresses:
+        addr_set = set(addresses)
+        vaults = [v for v in vaults if v.get("address", "") in addr_set]
+        print(f"  [PE] 사용자 선택 볼트: {len(vaults)}개 (요청: {len(addr_set)}개)")
 
     # alltime_pnl 있는 볼트만
     valid = [v for v in vaults
@@ -459,19 +465,21 @@ def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90):
         # 리더 에쿼티 데이터가 없는 경우(0.0) → 데이터 부족으로 일단 통과
         leader_ratio = v.get("leader_equity_ratio", -1)
         ok_leader_pass = (leader_ratio < 0 or leader_ratio >= MIN_LEADER_EQ)
+        # 사용자가 직접 선택한 볼트는 필터 무조건 통과
+        user_selected = bool(addresses)
         filter_details.append({
             **v,
             "_ok_deposit":     ok_deposit,
             "_ok_leader":      ok_leader,
             "_leader_ratio":   leader_ratio,
-            "_filter_pass":    ok_deposit and ok_leader_pass,
+            "_filter_pass":    user_selected or (ok_deposit and ok_leader_pass),
         })
 
     filtered = [v for v in filter_details if v["_filter_pass"]]
-    if len(filtered) < 5:
+    if not addresses and len(filtered) < 5:
         filtered = [v for v in filter_details if v.get("allow_deposits", True)]
         print(f"  [PE] 리더에쿼티 데이터 부족 → 입금가능 폴백: {len(filtered)}개")
-    print(f"  [PE] 기본 필터 통과: {len(filtered)}개 (입금가능+리더에쿼티≥{MIN_LEADER_EQ:.0%})")
+    print(f"  [PE] 기본 필터 통과: {len(filtered)}개 {'(사용자 선택 모드)' if addresses else f'(입금가능+리더에쿼티≥{MIN_LEADER_EQ:.0%})'}")
 
     # 수익률 행렬
     all_sel, R = build_returns_matrix(filtered, min_pts, max_pts)
