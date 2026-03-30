@@ -1200,5 +1200,108 @@
         "leader_eq": 0.5843887364774426
       }
     ]
+  },
+  "2026-03-30": {
+    "portfolio_value": 102528.52,
+    "daily_pnl": 439.19,
+    "daily_return_pct": 0.4302,
+    "cumulative_pnl": 2528.52,
+    "cumulative_pct": 2.5285,
+    "max_equity_ever": 102528.52,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3741,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 9.2,
+        "apr_30d": 1067.63,
+        "robustness": 0.8747,
+        "undervalue": 0.67,
+        "leader_eq": 0.98090685252486
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 14.4,
+        "apr_30d": 133.75,
+        "robustness": 0.9143,
+        "undervalue": 1.008,
+        "leader_eq": 0.7629666633855937
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 13.3,
+        "apr_30d": 38.27,
+        "robustness": 0.8277,
+        "undervalue": 1.032,
+        "leader_eq": 0.6413709378131646
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.5,
+        "apr_30d": 150.95,
+        "robustness": 0.4774,
+        "undervalue": 1.144,
+        "leader_eq": 0.9772240785673154
+      },
+      {
+        "name": "Prudentia Asset Management",
+        "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+        "alloc_pct": 13.8,
+        "apr_30d": 62.53,
+        "robustness": 0.8355,
+        "undervalue": 1.055,
+        "leader_eq": 1.0
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 8.6,
+        "apr_30d": 2.79,
+        "robustness": 0.5823,
+        "undervalue": 0.949,
+        "leader_eq": 0.6267503549927808
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 5.3,
+        "apr_30d": 28.19,
+        "robustness": 0.6258,
+        "undervalue": 0.543,
+        "leader_eq": 0.8855706244069691
+      },
+      {
+        "name": "Relative Value Strategies",
+        "address": "0x131398cf559514af8531ce246de9817decb4bd90",
+        "alloc_pct": 13.7,
+        "apr_30d": 11.71,
+        "robustness": 0.8724,
+        "undervalue": 1.005,
+        "leader_eq": 1.0
+      },
+      {
+        "name": "DaoScience Quant",
+        "address": "0x08dcbb771f997544f2015f8530e50a234ab71818",
+        "alloc_pct": 7.3,
+        "apr_30d": 81.64,
+        "robustness": 0.4372,
+        "undervalue": 1.074,
+        "leader_eq": 1.0000000000000002
+      },
+      {
+        "name": "L/S Momentum Strategy",
+        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
+        "alloc_pct": 5.9,
+        "apr_30d": 62.63,
+        "robustness": 0.3869,
+        "undervalue": 0.972,
+        "leader_eq": 0.832161025293811
+      }
+    ]
   }
 }
