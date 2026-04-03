@@ -106,17 +106,31 @@ def build_vault_changes(v, prev_vaults):
 
 
 # ── 포트폴리오 분석 (pre-compute) ──────────────────────────────────────
-def run_portfolio(max_pts=90):
-    """portfolio_engine.py의 run_portfolio_analysis를 실행하여 결과를 dict로 반환"""
+def run_portfolio_for_date(snapshot_date=None):
+    """특정 날짜 스냅샷으로 포트폴리오 분석 실행"""
     try:
         from portfolio_engine import run_portfolio_analysis
-        return run_portfolio_analysis(top_k=25, max_corr=0.55, max_pts=max_pts)
+        return run_portfolio_analysis(top_k=25, max_corr=0.55, snapshot_date=snapshot_date)
     except Exception as e:
-        print(f"  [WARN] Portfolio analysis failed (max_pts={max_pts}): {e}")
+        print(f"  [WARN] Portfolio analysis failed ({snapshot_date}): {e}")
         return None
 
-def export_portfolio_result(portfolio_data):
-    """포트폴리오 분석 결과를 JSON 내보내기용 dict로 변환"""
+
+def get_valid_snapshot_dates():
+    """유효한 스냅샷 날짜 목록 반환 (손상 파일 제외)"""
+    files = sorted(glob.glob(str(SNAPSHOTS_DIR / "*.json")))
+    valid = []
+    for f in files:
+        size = os.path.getsize(f)
+        if size < 50000:  # 50KB 미만은 손상/부분 데이터
+            print(f"  [Export] Skipping {Path(f).stem} (size: {size:,}B - damaged/partial)")
+            continue
+        valid.append(Path(f).stem)
+    return valid
+
+
+def export_portfolio_result(portfolio_data, slim=False):
+    """포트폴리오 분석 결과를 JSON 내보내기용 dict로 변환. slim=True이면 큰 데이터 생략."""
     if not portfolio_data or "error" in portfolio_data:
         return None
     pf = portfolio_data
@@ -131,9 +145,12 @@ def export_portfolio_result(portfolio_data):
         "selected_vaults": pf.get("selected_vaults", []),
         "corr_selected": pf.get("corr_selected", {}),
         "portfolios": {},
-        "history_dates": pf.get("history_dates", []),
-        "portfolio_summary": pf.get("portfolio_summary", {}),
-        "filter_details": [
+    }
+    # 전체 데이터는 최신 날짜에만 포함 (파일 크기 절약)
+    if not slim:
+        result["history_dates"] = pf.get("history_dates", [])
+        result["portfolio_summary"] = pf.get("portfolio_summary", {})
+        result["filter_details"] = [
             {
                 "name": fd.get("name", ""),
                 "address": fd.get("address", ""),
@@ -141,8 +158,7 @@ def export_portfolio_result(portfolio_data):
                 "max_drawdown": fd.get("max_drawdown", 0),
             }
             for fd in pf.get("filter_details", [])
-        ],
-    }
+        ]
     for key, p in pf.get("portfolios", {}).items():
         result["portfolios"][key] = {
             "label": p.get("label", ""),
@@ -307,25 +323,28 @@ def main():
         "prev_date": prev_date,
     }
 
-    # ── 포트폴리오 분석 (여러 기간 사전 계산) ──
-    PERIODS = [10, 30, 60, 90]
-    portfolio_periods = {}
-    portfolio_export = None  # 기본 (가장 긴 기간)
+    # ── 포트폴리오 분석 (날짜별 사전 계산) ──
+    valid_dates = get_valid_snapshot_dates()
+    portfolio_by_date = {}
+    portfolio_export = None
 
-    for max_pts in PERIODS:
-        print(f"  [Export] Running portfolio analysis (max_pts={max_pts})...")
-        pf_data = run_portfolio(max_pts=max_pts)
-        pf_export = export_portfolio_result(pf_data)
-        if pf_export:
-            portfolio_periods[str(max_pts)] = pf_export
-            print(f"  [Export] Period {max_pts}d: {pf_export.get('n_selected', 0)} vaults, {pf_export.get('analysis_days', 0)} days")
+    print(f"  [Export] Valid snapshot dates: {valid_dates}")
+    for snap_date in valid_dates:
+        is_latest = (snap_date == date_str)
+        print(f"  [Export] Running portfolio analysis for {snap_date}{'  ★ latest' if is_latest else ''}...")
+        pf_data = run_portfolio_for_date(snapshot_date=snap_date)
+        pf_export_item = export_portfolio_result(pf_data, slim=not is_latest)
+        if pf_export_item:
+            portfolio_by_date[snap_date] = pf_export_item
+            print(f"  [Export] {snap_date}: {pf_export_item.get('n_selected', 0)} vaults, "
+                  f"{pf_export_item.get('analysis_days', 0)} data points")
         else:
-            print(f"  [Export] Period {max_pts}d: skipped (insufficient data)")
+            print(f"  [Export] {snap_date}: skipped (analysis failed)")
 
-    # 기본 포트폴리오 = 첫 번째 성공한 결과
-    if portfolio_periods:
-        default_key = list(portfolio_periods.keys())[-1]  # 가장 긴 기간
-        portfolio_export = portfolio_periods[default_key]
+    # 기본 포트폴리오 = 최신 날짜
+    if portfolio_by_date:
+        latest_key = list(portfolio_by_date.keys())[-1]  # 가장 최근 날짜
+        portfolio_export = portfolio_by_date[latest_key]
 
     # ── 내 포트폴리오 ──
     my_portfolio = load_my_portfolio(vault_map)
@@ -351,7 +370,8 @@ def main():
         "stats": stats,
         "vaults": export_vaults,
         "portfolio": portfolio_export,
-        "portfolio_periods": portfolio_periods,
+        "portfolio_by_date": portfolio_by_date,
+        "available_dates": valid_dates,
         "my_portfolio": my_portfolio,
         "market": market,
     }

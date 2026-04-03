@@ -232,38 +232,46 @@ function showVaultDetails(address) {
 function closeModal() { document.getElementById('vaultModal').style.display = 'none'; }
 
 // ═══════ PORTFOLIO ANALYSIS ═══════════════════════════════════════
-let currentPeriod = null; // will be set to default
+let currentDateKey = null; // 선택된 분석 날짜
 
-function renderPortfolioAnalysis(periodKey) {
-  const periods = DATA.portfolio_periods || {};
-  const availableKeys = Object.keys(periods);
+function renderPortfolioAnalysis(dateKey) {
+  const byDate = DATA.portfolio_by_date || {};
+  const availableDates = Object.keys(byDate).sort();
 
-  // Determine which period to use
-  if(!periodKey) {
-    // Default: longest available period
-    periodKey = availableKeys.length ? availableKeys[availableKeys.length - 1] : null;
+  // 기본값: 최신 날짜
+  if(!dateKey) {
+    dateKey = availableDates.length ? availableDates[availableDates.length - 1] : null;
   }
-  currentPeriod = periodKey;
+  currentDateKey = dateKey;
 
-  const pf = periodKey && periods[periodKey] ? periods[periodKey] : DATA.portfolio;
+  const pf = dateKey && byDate[dateKey] ? byDate[dateKey] : DATA.portfolio;
   const el = document.getElementById('page-portfolio');
   if(!pf) { el.innerHTML = '<div class="card" style="text-align:center;padding:60px;"><h3>📊 포트폴리오 분석 데이터가 없습니다</h3><p style="color:var(--muted)">export_dashboard_data.py를 먼저 실행해주세요.</p></div>'; return; }
 
   let html = '';
 
-  // ── Period Selector ──
-  if(availableKeys.length > 1) {
+  // ── Date Selector ──
+  if(availableDates.length > 1) {
+    // 최신 날짜와 선택 날짜의 차이(일) 계산
+    const latestDate = availableDates[availableDates.length - 1];
+    const selectedDate = new Date(dateKey + 'T00:00:00');
+    const latestDt = new Date(latestDate + 'T00:00:00');
+    const diffDays = Math.round((latestDt - selectedDate) / (1000 * 60 * 60 * 24));
+    const diffLabel = diffDays === 0 ? '최신' : `${diffDays}일 전`;
+
     html += `<div class="card" style="display:flex;align-items:center;gap:15px;flex-wrap:wrap;border:1px solid var(--accent);padding:16px 20px;">
       <span style="font-size:1.2rem;">📅</span>
       <div style="flex:1;">
-        <h3 style="margin:0;color:var(--accent);">분석 기간 설정</h3>
-        <p style="margin:3px 0 0;font-size:.82rem;color:var(--muted);">원하는 기간을 선택하면 해당 기간 데이터로 포트폴리오가 재계산됩니다.</p>
+        <h3 style="margin:0;color:var(--accent);">분석 날짜 선택 <span style="font-size:.85rem;color:var(--accent2);font-weight:400;margin-left:8px;">${dateKey} (${diffLabel})</span></h3>
+        <p style="margin:3px 0 0;font-size:.82rem;color:var(--muted);">스냅샷 날짜를 선택하면 해당 시점의 볼트 데이터로 포트폴리오가 재계산됩니다. 데이터 포인트: <b style="color:var(--accent2)">${pf.analysis_days||0}개</b></p>
       </div>
-      <div style="display:flex;gap:8px;">`;
-    const labels = {'10':'10일','30':'30일','60':'60일','90':'90일'};
-    for(const k of availableKeys) {
-      const isActive = k === currentPeriod;
-      html += `<button onclick="renderPortfolioAnalysis('${k}')" class="btn ${isActive ? 'btn-primary' : ''}" style="padding:10px 20px;font-size:.9rem;${isActive ? '' : ''}">${labels[k] || k+'일'}</button>`;
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">`;
+    for(const d of availableDates) {
+      const isActive = d === currentDateKey;
+      const isLatest = d === latestDate;
+      const short = d.substring(5); // "MM-DD"
+      const label = isLatest ? `${short} ★` : short;
+      html += `<button onclick="renderPortfolioAnalysis('${d}')" class="btn ${isActive ? 'btn-primary' : ''}" style="padding:8px 14px;font-size:.82rem;min-width:70px;">${label}</button>`;
     }
     html += `</div></div>`;
   }

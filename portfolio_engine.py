@@ -36,6 +36,20 @@ def load_latest_snapshot():
     with open(str(paths[0]), encoding="utf-8") as f:
         return json.load(f), paths[0].stem
 
+def load_snapshot_by_date(date_str):
+    """특정 날짜의 스냅샷 로드"""
+    p = Path(SNAPSHOTS_DIR) / f"{date_str}.json"
+    if not p.exists():
+        return None, None
+    try:
+        with open(str(p), encoding="utf-8") as f:
+            data = json.load(f)
+            if not data or not isinstance(data, list) or len(data) < 5:
+                return None, None
+            return data, date_str
+    except Exception:
+        return None, None
+
 def load_all_history(max_days=90):
     """날짜별 볼트 메트릭 히스토리 (스냅샷 누적)"""
     paths = sorted(Path(SNAPSHOTS_DIR).glob("*.json"), reverse=True)[:max_days]
@@ -434,11 +448,14 @@ def get_portfolio_summary(history=None):
     }
 
 # ── 메인 분석 ─────────────────────────────────────────────────────────────────
-def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90, addresses=None):
-    """전체 포트폴리오 분석 실행. addresses가 주어지면 해당 주소 볼트만 분석."""
-    vaults, date = load_latest_snapshot()
+def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90, addresses=None, snapshot_date=None):
+    """전체 포트폴리오 분석 실행. addresses가 주어지면 해당 주소 볼트만 분석. snapshot_date가 주어지면 해당 날짜 스냅샷 사용."""
+    if snapshot_date:
+        vaults, date = load_snapshot_by_date(snapshot_date)
+    else:
+        vaults, date = load_latest_snapshot()
     if not vaults:
-        return {"error": "스냅샷 없음. 먼저 분석을 실행하세요."}
+        return {"error": f"스냅샷 없음 ({snapshot_date or 'latest'}). 먼저 분석을 실행하세요."}
 
     print(f"  [PE] 스냅샷: {len(vaults)}개 볼트 ({date})")
 

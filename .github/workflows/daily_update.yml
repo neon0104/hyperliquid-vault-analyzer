@@ -1,0 +1,51 @@
+name: Daily Vault Data Update
+
+on:
+  schedule:
+    # 매일 UTC 00:00 (한국 시간 오전 9시)에 실행
+    - cron: '0 0 * * *'
+  # 수동으로 원할 때 언제든 실행할 수 있도록 허용
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    # 저장소 내용 조작(커밋 및 푸시)을 위한 권한 설정
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Vault Analysis (Fetch Data)
+        run: |
+          python analyze_top_vaults.py --force
+
+      - name: Export Dashboard Data
+        run: |
+          python export_dashboard_data.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # 새롭게 생성된 스냅샷 파일이나 데이터가 있다면 추가
+          git add vault_data/
+          git add docs/data.json
+          
+          # 변경사항이 없으면 커밋하지 않음
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update vault data [skip ci]" && git push)

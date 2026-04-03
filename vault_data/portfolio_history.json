@@ -1303,5 +1303,108 @@
         "leader_eq": 0.832161025293811
       }
     ]
+  },
+  "2026-04-03": {
+    "portfolio_value": 103029.99,
+    "daily_pnl": 501.47,
+    "daily_return_pct": 0.4891,
+    "cumulative_pnl": 3029.99,
+    "cumulative_pct": 3.03,
+    "max_equity_ever": 103029.99,
+    "mdd_pct": 0.0,
+    "risk_score": 0.502,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 11.4,
+        "apr_30d": 82.17,
+        "robustness": 0.8906,
+        "undervalue": 0.828,
+        "leader_eq": 0.8781184024745312
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 14.0,
+        "apr_30d": 144.02,
+        "robustness": 0.8583,
+        "undervalue": 1.053,
+        "leader_eq": 0.9799056483717732
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 13.6,
+        "apr_30d": 29.79,
+        "robustness": 0.8581,
+        "undervalue": 1.026,
+        "leader_eq": 0.6372034610633884
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 9.2,
+        "apr_30d": 48.92,
+        "robustness": 0.571,
+        "undervalue": 1.041,
+        "leader_eq": 0.4432542128465416
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 12.4,
+        "apr_30d": 105.96,
+        "robustness": 0.731,
+        "undervalue": 1.097,
+        "leader_eq": 0.4410886817834843
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 7.5,
+        "apr_30d": 748.41,
+        "robustness": 0.3694,
+        "undervalue": 1.316,
+        "leader_eq": 0.784824513332146
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.9,
+        "apr_30d": 178.26,
+        "robustness": 0.489,
+        "undervalue": 1.175,
+        "leader_eq": 0.9770710770740705
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 9.0,
+        "apr_30d": 15.62,
+        "robustness": 0.5863,
+        "undervalue": 0.997,
+        "leader_eq": 0.5977015344889689
+      },
+      {
+        "name": "Velocity Alpha Vault",
+        "address": "0xffaed3e0b72f123aa0258d135ed436dfd9acc7e4",
+        "alloc_pct": 10.4,
+        "apr_30d": 383.97,
+        "robustness": 0.4574,
+        "undervalue": 1.47,
+        "leader_eq": 0.8106716591399271
+      },
+      {
+        "name": "[ Tachyon ] HYPE ",
+        "address": "0x131ab0c5032079bb9286ffc1828e11d5931e77bb",
+        "alloc_pct": 3.7,
+        "apr_30d": 377.51,
+        "robustness": 0.4771,
+        "undervalue": 0.5,
+        "leader_eq": 0.9961042186843153
+      }
+    ]
   }
 }
