@@ -33,8 +33,22 @@ def load_latest_snapshot():
     paths = sorted(Path(SNAPSHOTS_DIR).glob("*.json"), reverse=True)
     if not paths:
         return None, None
-    with open(paths[0], encoding="utf-8") as f:
+    with open(str(paths[0]), encoding="utf-8") as f:
         return json.load(f), paths[0].stem
+
+def load_snapshot_by_date(date_str):
+    """특정 날짜의 스냅샷 로드"""
+    p = Path(SNAPSHOTS_DIR) / f"{date_str}.json"
+    if not p.exists():
+        return None, None
+    try:
+        with open(str(p), encoding="utf-8") as f:
+            data = json.load(f)
+            if not data or not isinstance(data, list) or len(data) < 5:
+                return None, None
+            return data, date_str
+    except Exception:
+        return None, None
 
 def load_all_history(max_days=90):
     """날짜별 볼트 메트릭 히스토리 (스냅샷 누적)"""
@@ -45,7 +59,7 @@ def load_all_history(max_days=90):
         date = p.stem
         dates.append(date)
         try:
-            with open(p, encoding="utf-8") as f:
+            with open(str(p), encoding="utf-8") as f:
                 day = json.load(f)
         except Exception:
             continue
@@ -273,7 +287,7 @@ def load_portfolio_history():
     if not os.path.exists(PORTFOLIO_HISTORY_FILE):
         return {}
     try:
-        with open(PORTFOLIO_HISTORY_FILE, encoding="utf-8") as f:
+        with open(str(PORTFOLIO_HISTORY_FILE), encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return {}
@@ -282,7 +296,7 @@ def load_portfolio_history():
 def save_portfolio_history(history):
     """포트폴리오 이력 저장"""
     os.makedirs(DATA_DIR, exist_ok=True)
-    with open(PORTFOLIO_HISTORY_FILE, "w", encoding="utf-8") as f:
+    with open(str(PORTFOLIO_HISTORY_FILE), "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2, default=float)
 
 
@@ -434,13 +448,22 @@ def get_portfolio_summary(history=None):
     }
 
 # ── 메인 분석 ─────────────────────────────────────────────────────────────────
-def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90):
-    """전체 포트폴리오 분석 실행"""
-    vaults, date = load_latest_snapshot()
+def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90, addresses=None, snapshot_date=None):
+    """전체 포트폴리오 분석 실행. addresses가 주어지면 해당 주소 볼트만 분석. snapshot_date가 주어지면 해당 날짜 스냅샷 사용."""
+    if snapshot_date:
+        vaults, date = load_snapshot_by_date(snapshot_date)
+    else:
+        vaults, date = load_latest_snapshot()
     if not vaults:
-        return {"error": "스냅샷 없음. 먼저 분석을 실행하세요."}
+        return {"error": f"스냅샷 없음 ({snapshot_date or 'latest'}). 먼저 분석을 실행하세요."}
 
     print(f"  [PE] 스냅샷: {len(vaults)}개 볼트 ({date})")
+
+    # ★ 사용자 선택 주소가 있으면 해당 볼트만 필터
+    if addresses:
+        addr_set = set(addresses)
+        vaults = [v for v in vaults if v.get("address", "") in addr_set]
+        print(f"  [PE] 사용자 선택 볼트: {len(vaults)}개 (요청: {len(addr_set)}개)")
 
     # alltime_pnl 있는 볼트만
     valid = [v for v in vaults
@@ -459,19 +482,21 @@ def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90):
         # 리더 에쿼티 데이터가 없는 경우(0.0) → 데이터 부족으로 일단 통과
         leader_ratio = v.get("leader_equity_ratio", -1)
         ok_leader_pass = (leader_ratio < 0 or leader_ratio >= MIN_LEADER_EQ)
+        # 사용자가 직접 선택한 볼트는 필터 무조건 통과
+        user_selected = bool(addresses)
         filter_details.append({
             **v,
             "_ok_deposit":     ok_deposit,
             "_ok_leader":      ok_leader,
             "_leader_ratio":   leader_ratio,
-            "_filter_pass":    ok_deposit and ok_leader_pass,
+            "_filter_pass":    user_selected or (ok_deposit and ok_leader_pass),
         })
 
     filtered = [v for v in filter_details if v["_filter_pass"]]
-    if len(filtered) < 5:
+    if not addresses and len(filtered) < 5:
         filtered = [v for v in filter_details if v.get("allow_deposits", True)]
         print(f"  [PE] 리더에쿼티 데이터 부족 → 입금가능 폴백: {len(filtered)}개")
-    print(f"  [PE] 기본 필터 통과: {len(filtered)}개 (입금가능+리더에쿼티≥{MIN_LEADER_EQ:.0%})")
+    print(f"  [PE] 기본 필터 통과: {len(filtered)}개 {'(사용자 선택 모드)' if addresses else f'(입금가능+리더에쿼티≥{MIN_LEADER_EQ:.0%})'}")
 
     # 수익률 행렬
     all_sel, R = build_returns_matrix(filtered, min_pts, max_pts)

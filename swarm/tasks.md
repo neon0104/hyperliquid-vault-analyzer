@@ -80,7 +80,7 @@
   - [x] 6d. `/api/status` JSON 응답 → **OK** (emergency_stopped, holdings 등 확인)
   - [x] 6e. `/chart_data` JSON 응답 → **OK** (APR 히스토그램 + bar_data 16개 볼트)
   - [x] 6f. 메인 `/` 페이지 렌더링 → **OK** (시장 현황, 사비, 차트 div 확인)
-  - [ ] 6g. 브라우저 ECharts 실제 렌더링 (Visual QA 대기)
+  - [x] 6g. 브라우저 ECharts 실제 렌더링 (Visual QA 완료)
 
 ---
 
@@ -92,6 +92,27 @@ Task 2 ✅ ──┐
 Task 3 ✅ ──┘
 ```
 
+## TASK 7 — 메인 대시보드 필터 컨트롤 개선 ✅ DONE
+- **Agent**: Developer Agent UI
+- **Output**: web_dashboard.py
+- **Result**:
+  - 기존 Select 박스 형태의 Leader Equity(%), Max MDD(%) 필터를 직접 숫자를 입력할 수 있는 Input 필드로 변경
+  - TVL 금액 필터 추가 (특정 금액 이상만 보기)
+  - JS 필터 로직 및 DOM dataset 업데이트 완료
+
+---
+
+## TASK 8 — 포트폴리오 분석 페이지 기능 통합 ✅ DONE
+- **Agent**: Developer Agent API / UI
+- **Output**: web_dashboard.py
+- **Result**: 
+  - 불필요한 `/backtest` 페이지 경로 및 상단 네비게이션 버튼 완전 삭제
+  - 포트폴리오(Analysis) 페이지 상단에 **Custom Portfolio Builder** 섹션 신설
+  - 분석된 전체 볼트 리스트 중 원하는 볼트를 직접 선택(Select)하고, 원하는 투자 비율(Weight/금액)과 날짜를 지정하여 수익 시뮬레이션을 돌려보는 커스텀 백테스트 연동 완료 (/api/simulate API 재활용)
+  - 하단의 AI 추천 포트폴리오 기반(Time-Travel Simulator) 백테스트 유지 
+
+---
+
 ## 실행 계획
-- **NOW Round (병렬)**: Task 4 (ECharts) + Task 5 (Rebalance Engine)
-- **NEXT Round**: Task 6 (QA — Task 4+5 완료 후)
+- **NOW Round (병렬)**: Task 7 (UI Filter), Task 8 (Custom Simulator) 완료보고 대기
+- **NEXT Round**: 보스(USER)의 추가 지시 대기

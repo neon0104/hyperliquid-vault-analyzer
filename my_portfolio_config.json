@@ -1,0 +1,14 @@
+{
+  "_comment": "내 실제 투자 포트폴리오를 여기에 입력하세요. 볼트 주소: 투자금액(USD)",
+  "_example": "분석 후 추천된 볼트들을 오늘 기준으로 투자했다면의 수익률을 보여줍니다",
+  "positions": {},
+  "invest_date": "2026-03-12",
+  "total_capital": 100000,
+  "currency": "USD",
+  "_instructions": [
+    "positions에 볼트주소: 투자금액 형식으로 입력하세요",
+    "예시: '0xabc...': 10000",
+    "invest_date: 실제 투자 시작일",
+    "total_capital: 총 투자 원금"
+  ]
+}

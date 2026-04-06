@@ -31,7 +31,7 @@ if sys.platform == "win32":
 BASE_DIR        = Path(__file__).parent
 DATA_DIR        = BASE_DIR / "vault_data"
 SNAPSHOTS_DIR   = DATA_DIR / "snapshots"
-PORTFOLIO_FILE  = DATA_DIR / "my_portfolio.json"
+PORTFOLIO_FILE = BASE_DIR / "my_portfolio.json"
 STATUS_FILE     = DATA_DIR / "status.json"
 REBALANCE_FILE  = DATA_DIR / "rebalance_plan.json"   # ★ 메인 출력
 
@@ -68,7 +68,10 @@ def load_my_portfolio():
         return {}
     try:
         with open(PORTFOLIO_FILE, encoding="utf-8") as f:
-            return json.load(f)
+            d = json.load(f)
+            if "positions" in d:
+                return d["positions"]
+            return d
     except Exception as e:
         print(f"  [RE] 포트폴리오 로드 오류: {e}")
         return {}

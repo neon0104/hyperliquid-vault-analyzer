@@ -1,1798 +1,1382 @@
 #!/usr/bin/env python3
-"""
-Hyperliquid Vault Analyzer — 웹 대시보드
-=========================================
-실행: python web_dashboard.py
-브라우저: http://localhost:5000
-"""
-
-import os, sys, json, glob, subprocess, threading
+import os, sys, json, glob, threading, urllib.request
 from datetime import datetime
 from pathlib import Path
-from threading import Lock
-from flask import Flask, render_template_string, send_file, jsonify, request, redirect, url_for
+from flask import Flask, render_template_string, jsonify, request
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 app = Flask(__name__)
 
-DATA_DIR       = "vault_data"
-SNAPSHOTS_DIR  = os.path.join(DATA_DIR, "snapshots")
-REPORTS_DIR    = os.path.join(DATA_DIR, "reports")
-STATUS_FILE    = os.path.join(DATA_DIR, "status.json")
-PORTFOLIO_FILE = os.path.join(DATA_DIR, "my_portfolio.json")
-STOP_FLAG      = "emergency_stop.flag"
+# 경로 및 환경
+BASE_DIR       = Path(__file__).parent
+DATA_DIR       = BASE_DIR / "vault_data"
+SNAPSHOTS_DIR  = DATA_DIR / "snapshots"
+REPORTS_DIR    = DATA_DIR / "reports"
+PORTFOLIO_FILE = BASE_DIR / "my_portfolio.json"
+DISCORD_CFG    = BASE_DIR / "discord_config.json"
 
-# ── 분석 상태 관리 ────────────────────────────────────────────────────────────
-_analysis_running = False
-_analysis_log     = []
-_analysis_lock    = Lock()
+for d in [SNAPSHOTS_DIR, REPORTS_DIR]: os.makedirs(d, exist_ok=True)
 
-def load_status_file() -> dict:
-    """scheduler.py가 기록한 status.json 읽기"""
-    try:
-        if os.path.exists(STATUS_FILE):
-            with open(STATUS_FILE, encoding="utf-8") as f:
-                return json.load(f)
-    except Exception:
-        pass
-    return {}
+# ── 유틸리티 ──────────────────────────────────────────────────────────────────
 
-def load_portfolio_file() -> dict:
-    try:
-        if os.path.exists(PORTFOLIO_FILE):
-            with open(PORTFOLIO_FILE, encoding="utf-8") as f:
-                return json.load(f)
-    except Exception:
-        pass
-    return {}
-
-def is_emergency_stopped() -> bool:
-    return os.path.exists(STOP_FLAG)
-
-def today_str():
-    return datetime.now().strftime("%Y-%m-%d")
+def load_portfolio_config():
+    if os.path.exists(PORTFOLIO_FILE):
+        try:
+            with open(str(PORTFOLIO_FILE), encoding="utf-8") as f: return json.load(f)
+        except: pass
+    return {"positions": {}, "total_capital": 100000}
 
 def get_latest_snapshot():
     files = sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json")), reverse=True)
-    if not files:
-        return None, None
-    path = files[0]
-    date = os.path.basename(path).replace(".json", "")
-    with open(path, encoding="utf-8") as f:
-        return json.load(f), date
+    if not files: return [], None
+    try:
+        with open(str(files[0]), encoding="utf-8") as f:
+            return json.load(f), os.path.basename(files[0])[:-5]
+    except: return [], None
 
-def get_reports():
-    files = sorted(glob.glob(os.path.join(REPORTS_DIR, "*.xlsx")), reverse=True)
-    return [{"name": os.path.basename(f), "path": f,
-             "size_kb": round(os.path.getsize(f) / 1024, 1),
-             "date": os.path.basename(f).replace("vault_report_","").replace(".xlsx","")}
-            for f in files]
+def send_discord(msg):
+    try:
+        if not os.path.exists(DISCORD_CFG): return False
+        with open(str(DISCORD_CFG), encoding="utf-8") as f: url = json.load(f).get("webhook_url", "")
+        if not url: return False
+        data = json.dumps({"content": msg, "username": "HyperliquidBot"}).encode()
+        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r: return r.status in (200, 204)
+    except: return False
 
-def risk_label(vol):
-    if vol < 25:  return "LOW"
-    if vol < 55:  return "MODERATE"
-    return "HIGH"
+# ── 라우트 ────────────────────────────────────────────────────────────────────
 
-def risk_color(vol):
-    if vol < 25:  return "#27AE60"
-    if vol < 55:  return "#F39C12"
-    return "#E74C3C"
-
-def grade_color(grade):
-    if "A+" in grade: return "#1abc9c"
-    if "A"  in grade: return "#27AE60"
-    if "B"  in grade: return "#3498db"
-    if "C"  in grade: return "#F39C12"
-    return "#E74C3C"
-
-# ── HTML 템플릿 ───────────────────────────────────────────────────────────────
-HTML = r"""
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hyperliquid Vault Analyzer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-  <style>
-    :root {
-      --bg:       #0b0f1a;
-      --card:     #131928;
-      --card2:    #1a2340;
-      --border:   #243050;
-      --accent:   #4f8ef7;
-      --accent2:  #1abc9c;
-      --text:     #e8eaf0;
-      --muted:    #7b8db0;
-      --danger:   #e74c3c;
-      --warn:     #f39c12;
-      --success:  #27ae60;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
-
-    /* ── 헤더 ── */
-    header {
-      background: linear-gradient(135deg, #0d1b40 0%, #111e3d 50%, #0b1530 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 20px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
-      backdrop-filter: blur(20px);
-    }
-    header .brand { display: flex; align-items: center; gap: 12px; }
-    header .brand .logo {
-      width: 40px; height: 40px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-    }
-    header .brand h1 { font-size: 1.25rem; font-weight: 700; }
-    header .brand p  { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
-    header .hd-right { display: flex; align-items: center; gap: 12px; }
-    .badge-date {
-      background: var(--card2); border: 1px solid var(--border);
-      border-radius: 8px; padding: 6px 14px;
-      font-size: 0.8rem; color: var(--muted);
-    }
-
-    /* ── 버튼 ── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 20px; border-radius: 10px; font-size: 0.85rem;
-      font-weight: 600; cursor: pointer; border: none; text-decoration: none;
-      transition: all 0.2s; white-space: nowrap;
-    }
-    .btn-primary { background: linear-gradient(135deg, var(--accent), #6a9ff8); color: #fff; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,142,247,0.4); }
-    .btn-success { background: linear-gradient(135deg, var(--accent2), #16a085); color: #fff; }
-    .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,188,156,0.4); }
-    .btn-outline {
-      background: transparent; color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-outline:hover { background: var(--card2); border-color: var(--accent); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
-    /* ── 레이아웃 ── */
-    main { max-width: 1400px; margin: 0 auto; padding: 28px 24px; }
-    .section-title {
-      font-size: 1rem; font-weight: 700;
-      color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
-    }
-    .section-title::after {
-      content: ''; flex: 1; height: 1px; background: var(--border);
-    }
-
-    /* ── 통계 카드 ── */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .stat-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 20px;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .stat-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-    .stat-card .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-    .stat-card .value { font-size: 1.6rem; font-weight: 800; margin: 6px 0 2px; }
-    .stat-card .sub   { font-size: 0.75rem; color: var(--muted); }
-    .stat-card .icon  { font-size: 1.5rem; margin-bottom: 8px; }
-
-    /* ── 추천 포트폴리오 카드 ── */
-    .rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .rec-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 18px 20px;
-      transition: transform 0.2s, border-color 0.2s;
-      position: relative; overflow: hidden;
-    }
-    .rec-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-    .rec-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-    .rec-card .rank-badge {
-      position: absolute; top: 12px; right: 14px;
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--card2); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 700; color: var(--accent);
-    }
-    .rec-card .vault-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; padding-right: 36px; }
-    .rec-card .vault-addr { font-size: 0.7rem; color: var(--muted); font-family: monospace; margin-bottom: 12px; }
-    .rec-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-    .rec-metric .mk { font-size: 0.7rem; color: var(--muted); }
-    .rec-metric .mv { font-size: 0.9rem; font-weight: 600; margin-top: 2px; }
-    .alloc-bar-wrap { margin-top: 10px; }
-    .alloc-bar-wrap .alloc-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
-    .alloc-bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
-    .alloc-bar .fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1s ease; }
-    .grade-badge {
-      display: inline-block; padding: 2px 8px; border-radius: 6px;
-      font-size: 0.7rem; font-weight: 700;
-    }
-    .invest-amount {
-      background: var(--card2); border-radius: 8px; padding: 8px 12px;
-      margin-top: 10px; display: flex; justify-content: space-between; align-items: center;
-    }
-    .invest-amount .ia-label { font-size: 0.7rem; color: var(--muted); }
-    .invest-amount .ia-value { font-size: 1rem; font-weight: 700; color: var(--accent2); }
-
-    /* ── 상위 볼트 테이블 ── */
-    .table-wrap {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden; margin-bottom: 32px;
-    }
-    table { width: 100%; border-collapse: collapse; }
-    thead tr { background: var(--card2); }
-    th {
-      padding: 12px 14px; text-align: left; font-size: 0.72rem;
-      font-weight: 600; color: var(--muted); letter-spacing: 0.05em;
-      text-transform: uppercase; white-space: nowrap;
-    }
-    td { padding: 10px 14px; font-size: 0.82rem; border-top: 1px solid var(--border); }
-    tr:hover td { background: rgba(79,142,247,0.04); }
-    .rank-num { color: var(--muted); font-size: 0.75rem; }
-    .vault-nm { font-weight: 600; max-width: 200px; }
-    .pos { color: var(--success); }
-    .neg { color: var(--danger); }
-    .neu { color: var(--muted); }
-
-    /* ── 다운로드 섹션 ── */
-    .download-section {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 24px; margin-bottom: 32px;
-    }
-    .dl-list { display: grid; gap: 10px; margin-top: 16px; }
-    .dl-item {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--card2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 14px 18px;
-      transition: border-color 0.2s;
-    }
-    .dl-item:hover { border-color: var(--accent2); }
-    .dl-item .dl-info { display: flex; align-items: center; gap: 12px; }
-    .dl-item .dl-icon { font-size: 1.8rem; }
-    .dl-item .dl-name { font-weight: 600; font-size: 0.9rem; }
-    .dl-item .dl-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-
-    /* ── 진행 표시 ── */
-    #run-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 999;
-      align-items: center; justify-content: center;
-      backdrop-filter: blur(6px);
-    }
-    #run-overlay.show { display: flex; }
-    .run-box {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 20px; padding: 40px; text-align: center; max-width: 420px; width: 90%;
-    }
-    .spinner {
-      width: 56px; height: 56px; border-radius: 50%;
-      border: 4px solid var(--border);
-      border-top-color: var(--accent);
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 20px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .run-box h3 { font-size: 1.2rem; margin-bottom: 8px; }
-    .run-box p  { font-size: 0.85rem; color: var(--muted); }
-
-    /* ── 요약 패널 ── */
-    .sim-total {
-      background: linear-gradient(135deg, #0d1b40, #111e3d);
-      border: 1px solid var(--accent);
-      border-radius: 14px; padding: 20px 24px;
-      margin-bottom: 32px;
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;
-    }
-    .sim-total .st-item .stk { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    .sim-total .st-item .stv { font-size: 1.5rem; font-weight: 800; margin-top: 4px; }
-    .stv.green  { color: var(--accent2); }
-    .stv.blue   { color: var(--accent); }
-
-    .empty { text-align: center; padding: 60px; color: var(--muted); }
-    .empty .em-icon { font-size: 3rem; margin-bottom: 12px; }
-  </style>
-</head>
-<body>
-
-<header>
-  <div class="brand">
-    <div class="logo">📊</div>
-    <div>
-      <h1>Hyperliquid Vault Analyzer</h1>
-      <p>Robust Curve Edition — TVL &gt; $12K · MDD ≤ 25%</p>
-    </div>
-  </div>
-  <div class="hd-right">
-    <span class="badge-date" id="snap-date">{% if date %}분석일: {{ date }}{% else %}데이터 없음{% endif %}</span>
-    <a class="btn btn-outline" href="/portfolio">🔬 포트폴리오 분석</a>
-    <a class="btn btn-outline" href="/download-guide" download="집PC_설치가이드.txt">📄 설치가이드</a>
-    <button class="btn btn-outline" onclick="location.reload()">🔄 새로고침</button>
-    <button class="btn btn-primary" id="run-btn" onclick="runAnalysis()">⚡ 지금 분석 실행</button>
-  </div>
-</header>
-
-<main>
-
-{% if not vaults %}
-  <div class="empty">
-    <div class="em-icon">🔍</div>
-    <p>아직 분석 데이터가 없습니다.<br>위의 <strong>"지금 분석 실행"</strong> 버튼을 눌러주세요.</p>
-  </div>
-{% else %}
-
-  <!-- ── 통계 요약 ── -->
-  <p class="section-title">📈 시장 현황</p>
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="icon">🏦</div>
-      <div class="label">분석 볼트</div>
-      <div class="value">{{ stats.total }}</div>
-      <div class="sub">TVL ≥ $12,000 필터</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon">📉</div>
-      <div class="label">평균 최대낙폭(MDD)</div>
-      <div class="value" style="color:{% if stats.avg_mdd < 20 %}#27AE60{% elif stats.avg_mdd < 40 %}#F39C12{% else %}#E74C3C{% endif %}">{{ stats.avg_mdd }}%</div>
-      <div class="sub">전체 200개 기준</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon">📊</div>
-      <div class="label">평균 샤프비율</div>
-      <div class="value">{{ stats.avg_sharpe }}</div>
-      <div class="sub">리스크 대비 수익</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon">🌿</div>
-      <div class="label">평균 로버스트니스</div>
-      <div class="value" style="color:var(--accent2)">{{ stats.avg_robustness }}</div>
-      <div class="sub">수익곡선 안정성 (0~1)</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon">💰</div>
-      <div class="label">중앙값 30일 APR</div>
-      <div class="value" style="color:var(--accent)">{{ stats.median_apr }}%</div>
-      <div class="sub">이상치 제외 중앙값</div>
-    </div>
-  </div>
-
-  <!-- ── $100K 시뮬레이션 총합 ── -->
-  {% if recs %}
-  <p class="section-title">💼 $100,000 포트폴리오 요약</p>
-  <div class="sim-total">
-    <div class="st-item">
-      <div class="stk">투자 원금</div>
-      <div class="stv blue">$100,000</div>
-    </div>
-    <div class="st-item">
-      <div class="stk">예상 월 수익</div>
-      <div class="stv green">${{ sim.monthly }}</div>
-    </div>
-    <div class="st-item">
-      <div class="stk">예상 연 수익</div>
-      <div class="stv green">${{ sim.annual }}</div>
-    </div>
-    <div class="st-item">
-      <div class="stk">추천 볼트 수</div>
-      <div class="stv blue">{{ recs|length }}개</div>
-    </div>
-    <div class="st-item">
-      <div class="stk">MDD 상한</div>
-      <div class="stv" style="color:var(--warn)">≤ 35%</div>
-    </div>
-    <div class="st-item">
-      <div class="stk">최소 수익곡선등급</div>
-      <div class="stv" style="color:#3498db">C 이상</div>
-    </div>
-    <div class="st-item">
-      <div class="stk">필터: 리더 에쿼티</div>
-      <div class="stv" style="color:var(--accent2)">≥ 40%</div>
-    </div>
-  </div>
-
-  <!-- ── 추천 볼트 카드 ── -->
-  <p class="section-title">⭐ 투자 추천 포트폴리오</p>
-  <div class="rec-grid">
-    {% for v in recs %}
-    {% set invest = (v.suggested_allocation / 100 * 100000) %}
-    {% set monthly = invest * v.apr_30d / 100 / 12 %}
-    <div class="rec-card">
-      <div class="rank-badge">{{ loop.index }}</div>
-      <div class="vault-name">{{ v.name }}</div>
-      <div class="vault-addr">{{ v.address[:20] }}…</div>
-      <div class="rec-metrics">
-        <div class="rec-metric">
-          <div class="mk">30일 APR</div>
-          <div class="mv {% if v.apr_30d > 0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</div>
-        </div>
-        <div class="rec-metric">
-          <div class="mk">샤프비율</div>
-          <div class="mv">{{ "%.2f"|format(v.sharpe_ratio) }}</div>
-        </div>
-        <div class="rec-metric">
-          <div class="mk">최대낙폭(MDD)</div>
-          <div class="mv {% if v.max_drawdown < 15 %}pos{% elif v.max_drawdown < 30 %}" style="color:var(--warn)"{% else %}neg{% endif %}">{{ "%.1f"|format(v.max_drawdown) }}%</div>
-        </div>
-        <div class="rec-metric">
-          <div class="mk">수익곡선등급</div>
-          <div class="mv">
-            <span class="grade-badge" style="background:{{ v.grade_color }}22; color:{{ v.grade_color }}">
-              {{ v.equity_curve_grade.split('(')[0].strip() if v.equity_curve_grade != '-' else '-' }}
-            </span>
-          </div>
-        </div>
-        <div class="rec-metric">
-          <div class="mk">로버스트(0~1)</div>
-          <div class="mv" style="color:var(--accent2)">{{ "%.3f"|format(v.robustness_score) }}</div>
-        </div>
-        <div class="rec-metric">
-          <div class="mk">리더 에쿼티</div>
-          <div class="mv" style="color:var(--accent2)">{{ "%.1f"|format(v.leader_equity_ratio * 100) }}%</div>
-        </div>
-        <div class="rec-metric">
-          <div class="mk">TVL</div>
-          <div class="mv">${{ "{:,.0f}".format(v.tvl) }}</div>
-        </div>
-      </div>
-      <div class="alloc-bar-wrap">
-        <div class="alloc-label">
-          <span>배분 비중</span>
-          <span>{{ "%.1f"|format(v.suggested_allocation) }}%</span>
-        </div>
-        <div class="alloc-bar">
-          <div class="fill" style="width:{{ v.suggested_allocation }}%"></div>
-        </div>
-      </div>
-      <div class="invest-amount">
-        <div>
-          <div class="ia-label">투자 금액</div>
-          <div class="ia-value">${{ "{:,.0f}".format(invest) }}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="ia-label">예상 월 수익</div>
-          <div class="ia-value">+${{ "{:,.0f}".format(monthly) }}</div>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
-  <!-- ── APR 분포 차트 (ECharts) ── -->
-  <p class="section-title">📊 볼트 APR 분포</p>
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:32px;">
-    <div id="apr-dist-chart" style="height:220px;"></div>
-  </div>
-
-  <!-- ── 상위 50 볼트 테이블 ── -->
-  <p class="section-title">🏆 상위 50 볼트 (입금 가능 · 종합점수 기준)</p>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>순위</th>
-          <th>볼트명</th>
-          <th>생성일</th>
-          <th>운영기간</th>
-          <th>30일 APR</th>
-          <th>샤프비율</th>
-          <th>MDD</th>
-          <th>수익곡선등급</th>
-          <th>로버스트</th>
-          <th>리더 에쿼티</th>
-          <th>TVL ($)</th>
-          <th>종합점수</th>
-          <th>입금</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% set deposit_vaults = vaults | selectattr('allow_deposits', 'true') | list %}
-        {% for v in deposit_vaults[:50] %}
-        <tr>
-          <td class="rank-num">{{ v.rank }}</td>
-          <td class="vault-nm">{{ v.name }}</td>
-          <td class="neu" style="font-size:0.78rem; white-space:nowrap">{{ v.get('created_at', '-') }}</td>
-          <td class="{% if v.get('age_days', 0) >= 180 %}pos{% elif v.get('age_days', 0) >= 60 %}neu{% else %}neg{% endif %}" style="text-align:right">
-            {{ v.get('age_days', 0) }}일
-          </td>
-          <td class="{% if v.apr_30d > 0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
-          <td class="{% if v.sharpe_ratio > 0 %}pos{% else %}neg{% endif %}">{{ "%.2f"|format(v.sharpe_ratio) }}</td>
-          <td class="{% if v.max_drawdown < 20 %}pos{% elif v.max_drawdown < 50 %}neu{% else %}neg{% endif %}">{{ "%.1f"|format(v.max_drawdown) }}%</td>
-          <td>
-            {% if v.equity_curve_grade != '-' %}
-            <span class="grade-badge" style="background:{{ v.grade_color }}22; color:{{ v.grade_color }}">
-              {{ v.equity_curve_grade.split('(')[0].strip() }}
-            </span>
-            {% else %}<span class="neu">-</span>{% endif %}
-          </td>
-          <td class="{% if v.robustness_score >= 0.6 %}pos{% elif v.robustness_score >= 0.35 %}neu{% else %}neg{% endif %}">
-            {{ "%.3f"|format(v.robustness_score) }}
-          </td>
-          <td class="{% if v.leader_equity_ratio >= 0.4 %}pos{% else %}neu{% endif %}">
-            {{ "%.1f"|format(v.leader_equity_ratio * 100) }}%
-          </td>
-          <td>${{ "{:,.0f}".format(v.tvl) }}</td>
-          <td style="font-weight:700; color:var(--accent)">{{ "%.2f"|format(v.score) }}</td>
-          <td>{% if v.allow_deposits %}<span class="pos">✓</span>{% else %}<span class="neg">✗</span>{% endif %}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-{% endif %}
-
-  <!-- ── 다운로드 섹션 ── -->
-  <p class="section-title">⬇️ Excel 리포트 다운로드</p>
-  <div class="download-section">
-    <p style="color:var(--muted); font-size:0.85rem; margin-bottom:4px;">
-      분석 결과가 담긴 Excel 파일을 다운로드합니다.
-      6개 시트: 상위200랭킹 · 일별변화 · 투자추천 · 월별리밸런싱 · 분석요약 · $100K시뮬레이션
-    </p>
-    {% if reports %}
-    <div class="dl-list">
-      {% for r in reports %}
-      <div class="dl-item">
-        <div class="dl-info">
-          <div class="dl-icon">📊</div>
-          <div>
-            <div class="dl-name">{{ r.name }}</div>
-            <div class="dl-meta">분석일: {{ r.date }} &nbsp;|&nbsp; 파일크기: {{ r.size_kb }} KB</div>
-          </div>
-        </div>
-        <a class="btn btn-success" href="/download/{{ r.name }}" download>
-          ⬇️ 다운로드
-        </a>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty">
-      <div class="em-icon">📭</div>
-      <p>아직 생성된 리포트가 없습니다.<br>"지금 분석 실행"을 먼저 실행해주세요.</p>
-    </div>
-    {% endif %}
-  </div>
-
-</main>
-
-<!-- ── 분석 실행 오버레이 ── -->
-<div id="run-overlay">
-  <div class="run-box">
-    <div class="spinner"></div>
-    <h3>분석 실행 중...</h3>
-    <p>약 2~5분 소요됩니다.<br>200개 볼트 데이터를 수집하고 있습니다.</p>
-    <p id="run-log" style="margin-top:12px; font-size:0.72rem; color:var(--accent2); min-height:18px;">준비 중...</p>
-    <p style="margin-top:8px; font-size:0.72rem; color:var(--muted);">완료되면 자동으로 새로고침됩니다.</p>
-  </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-
-// ── APR 분포 차트 ECharts (/chart_data API) ──────────────────────────────
-(function(){
-  const el = document.getElementById('apr-dist-chart');
-  if (!el) return;
-  // 컨테이너 크기 명시
-  el.style.width  = '100%';
-  el.style.height = '240px';
-  const chart = echarts.init(el, null, {renderer:'canvas'});
-  chart.showLoading({text:'로딩 중...',textColor:'#7b8db0',maskColor:'rgba(11,15,26,.7)',color:'#4f8ef7'});
-
-  fetch('/chart_data')
-    .then(r => r.json())
-    .then(d => {
-      chart.hideLoading();
-      if (d.error) {
-        el.innerHTML = '<p style="color:#7b8db0;text-align:center;padding:60px">데이터 없음 — 분석 먼저 실행하세요</p>';
-        return;
-      }
-      const hist = d.apr_hist;
-      const colors = hist.labels.map(l => {
-        const v = parseFloat(l);
-        if (v < 0)   return 'rgba(231,76,60,.85)';
-        if (v < 10)  return 'rgba(243,156,18,.85)';
-        if (v < 30)  return 'rgba(79,142,247,.85)';
-        return 'rgba(26,188,156,.85)';
-      });
-      chart.setOption({
-        backgroundColor: 'transparent',
-        tooltip: {
-          trigger:'axis', axisPointer:{type:'shadow'},
-          backgroundColor:'#131928', borderColor:'#243050', borderWidth:1,
-          textStyle:{color:'#e8eaf0'},
-          formatter: params => `<b>${params[0].name}</b>&nbsp; ${params[0].value}개 볼트`
-        },
-        grid: {top:16, left:52, right:16, bottom:68, containLabel:false},
-        xAxis: {
-          type:'category', data: hist.labels,
-          axisLabel:{color:'#7b8db0', fontSize:10, rotate:45, interval:1},
-          axisLine:{lineStyle:{color:'#243050'}}
-        },
-        yAxis: {
-          type:'value',
-          splitLine:{lineStyle:{color:'rgba(36,48,80,.55)'}},
-          axisLabel:{color:'#7b8db0'}, axisLine:{lineStyle:{color:'#243050'}}
-        },
-        series: [{
-          type:'bar', data: hist.counts, barWidth:'75%',
-          itemStyle:{color: p => colors[p.dataIndex], borderRadius:[3,3,0,0]},
-          emphasis:{itemStyle:{opacity:1, shadowBlur:8, shadowColor:'rgba(79,142,247,.5)'}},
-          label:{show:true, position:'top', color:'#7b8db0', fontSize:9,
-                 formatter: p => p.value > 0 ? p.value : ''}
-        }]
-      });
-      chart.resize();
-    })
-    .catch(() => { chart.hideLoading(); });
-  window.addEventListener('resize', () => chart.resize());
-})();
-
-}); // DOMContentLoaded
-
-// ── 분석 실행 ────────────────────────────────────────────────────────────────
-function runAnalysis() {
-  const overlay = document.getElementById('run-overlay');
-  const btn = document.getElementById('run-btn');
-  const logEl = document.getElementById('run-log');
-  overlay.classList.add('show');
-  btn.disabled = true;
-  if (logEl) logEl.textContent = '분석 시작 중...';
-
-  fetch('/run-analysis', { method: 'POST' })
-    .then(r => r.json())
-    .then(d => {
-      if (d.status === 'started' || d.status === 'already_running') {
-        pollStatus();
-      } else {
-        alert('분석 시작 실패: ' + (d.message || '알 수 없는 오류'));
-        overlay.classList.remove('show');
-        btn.disabled = false;
-      }
-    })
-    .catch(() => {
-      overlay.classList.remove('show');
-      btn.disabled = false;
-    });
-}
-
-function pollStatus() {
-  fetch('/analysis-status')
-    .then(r => r.json())
-    .then(d => {
-      const logEl = document.getElementById('run-log');
-      if (logEl && d.log && d.log.length > 0) {
-        logEl.textContent = d.log[d.log.length - 1];
-      }
-      if (d.running) {
-        setTimeout(pollStatus, 2000);
-      } else {
-        location.reload();
-      }
-    })
-    .catch(() => setTimeout(pollStatus, 4000));
-}
-</script>
-</body>
-</html>
-"""
+def get_historical_snapshots():
+    files = sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json")), reverse=True)
+    if not files: return [], None, {}, None
+    try:
+        with open(str(files[0]), encoding="utf-8") as f:
+            latest = json.load(f)
+            latest_date = os.path.basename(files[0])[:-5]
+    except: return [], None, {}, None
+    
+    prev_vaults = {}
+    prev_date = None
+    if len(files) > 1:
+        try:
+            with open(str(files[1]), encoding="utf-8") as f:
+                prev_data = json.load(f)
+                prev_date = os.path.basename(files[1])[:-5]
+                for i, p in enumerate(prev_data):
+                    p["rank"] = p.get("rank", i+1)
+                    prev_vaults[p["address"]] = p
+        except: pass
+        
+    vault_hist = {}
+    for f in reversed(files):
+        dt = os.path.basename(f)[:-5]
+        try:
+            with open(str(f), encoding="utf-8") as fd:
+                data = json.load(fd)
+                for v in data:
+                    addr = v["address"]
+                    if addr not in vault_hist:
+                        vault_hist[addr] = {"dates": [], "mdd": [], "sharpe": [], "robust": [], "score": []}
+                    vault_hist[addr]["dates"].append(dt[5:]) 
+                    vault_hist[addr]["mdd"].append(v.get("max_drawdown", 0))
+                    vault_hist[addr]["sharpe"].append(v.get("sharpe_ratio", 0))
+                    vault_hist[addr]["robust"].append(v.get("robustness_score", 0))
+                    vault_hist[addr]["score"].append(v.get("score", 0))
+        except: pass
+        
+    return latest, latest_date, prev_vaults, prev_date, vault_hist
 
 # ── 라우트 ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
 def index():
-    vaults, date = get_latest_snapshot()
-    reports = get_reports()
-
+    vaults, date, prev_vaults, prev_date, vault_hist = get_historical_snapshots()
     if not vaults:
-        return render_template_string(HTML, vaults=[], recs=[], stats={}, sim={},
-                                      date=None, reports=reports)
+        return render_template_string(EMPTY_HTML)
+        
+    for i, v in enumerate(vaults):
+        v["rank"] = v.get("rank", i+1)
+        v["history"] = vault_hist.get(v["address"], {})
 
-    # 통계
-    valid = [v for v in vaults if v.get("data_points", 0) >= 3]
-    import numpy as np
-    stats = {}
-    if valid:
-        stats["total"]           = len(vaults)
-        stats["avg_mdd"]         = round(float(np.mean([v["max_drawdown"] for v in valid])), 1)
-        stats["avg_sharpe"]      = round(float(np.mean([v["sharpe_ratio"] for v in valid])), 2)
-        stats["avg_robustness"]  = round(float(np.mean([v.get("robustness_score", 0) for v in valid])), 3)
-        stats["median_apr"]      = round(float(np.median([v["apr_30d"] for v in valid])), 1)
-    else:
-        stats = dict(total=len(vaults), avg_mdd=0, avg_sharpe=0, avg_robustness=0, median_apr=0)
+        if prev_vaults and v["address"] in prev_vaults:
+            p = prev_vaults[v["address"]]
+            cr = p["rank"] - v["rank"]
+            cs = round(v.get("score", 0) - p.get("score", 0), 3)
+            cm = round(v.get("max_drawdown", 0) - p.get("max_drawdown", 0), 2)
+            cp = round(v.get("pnl_alltime", 0) - p.get("pnl_alltime", 0), 2)
+            
+            cv = round(v.get("tvl", 0) - p.get("tvl", 0), 2)
+            ce = round((v.get("leader_equity_ratio", 0) - p.get("leader_equity_ratio", 0)) * 100, 2)
+            csh = round(v.get("sharpe_ratio", 0) - p.get("sharpe_ratio", 0), 3)
+            
+            v["chg"] = {
+                "rank_val": abs(cr), "rank_dir": "▲" if cr > 0 else "▼" if cr < 0 else "-", "rank_col": "var(--success)" if cr > 0 else "var(--danger)" if cr < 0 else "var(--muted)",
+                "score_val": abs(cs), "score_dir": "▲" if cs > 0 else "▼" if cs < 0 else "-", "score_col": "var(--success)" if cs > 0 else "var(--danger)" if cs < 0 else "var(--muted)",
+                "mdd_val": abs(cm), "mdd_dir": "▲" if cm > 0 else "▼" if cm < 0 else "-", "mdd_col": "var(--danger)" if cm > 0 else "var(--success)" if cm < 0 else "var(--muted)",
+                "pnl_val": abs(cp), "pnl_dir": "▲" if cp > 0 else "▼" if cp < 0 else "-", "pnl_col": "var(--success)" if cp > 0 else "var(--danger)" if cp < 0 else "var(--muted)",
+                "tvl_val": abs(cv), "tvl_dir": "▲" if cv > 0 else "▼" if cv < 0 else "-", "tvl_col": "var(--success)" if cv > 0 else "var(--danger)" if cv < 0 else "var(--muted)",
+                "eq_val": abs(ce), "eq_dir": "▲" if ce > 0 else "▼" if ce < 0 else "-", "eq_col": "var(--success)" if ce > 0 else "var(--danger)" if ce < 0 else "var(--muted)",
+                "sharpe_val": abs(csh), "sharpe_dir": "▲" if csh > 0 else "▼" if csh < 0 else "-", "sharpe_col": "var(--success)" if csh > 0 else "var(--danger)" if csh < 0 else "var(--muted)"
+            }
+            def pt(c, pr): return round((c - pr) / abs(pr) * 100, 2) if pr != 0 else 0
+            v["chg_pct"] = {
+                "tvl": pt(v.get("tvl", 0), p.get("tvl", 0)),
+                "eq": pt(v.get("leader_equity_ratio", 0), p.get("leader_equity_ratio", 0)),
+                "pnl": pt(v.get("pnl_alltime", 0), p.get("pnl_alltime", 0)),
+                "mdd": pt(v.get("max_drawdown", 0), p.get("max_drawdown", 0)),
+                "sharpe": pt(v.get("sharpe_ratio", 0), p.get("sharpe_ratio", 0)),
+                "score": pt(v.get("score", 0), p.get("score", 0))
+            }
+            v["has_history"] = True
+        else:
+            v["has_history"] = False
+            
+        if v.get("apr_pct") and v.get("age_days"):
+            v["alltime_roi_pct"] = round(v.get("apr_pct", 0) * (v.get("age_days", 0) / 365.0), 1)
+        else:
+            v["alltime_roi_pct"] = 0.0
 
-    # 추천 볼트 (robustness 필터) - 최대 30개로 상한 확장
-    from analyze_top_vaults import get_recommendations
-    recs_raw = get_recommendations(vaults, top_k=10)
+    
+    avg_mdd = sum(v.get("max_drawdown", 0) for v in vaults) / len(vaults) if vaults else 0
+    stats = {
+        "total": len(vaults),
+        "avg_apr": sum(v.get("apr_30d", 0) for v in vaults) / len(vaults) if vaults else 0,
+        "avg_mdd": round(avg_mdd, 2),
+        "prev_date": prev_date
+    }
+    return render_template_string(MAIN_HTML, vaults=vaults, date=date, stats=stats)
 
-    # 색상 추가
-    for v in vaults:
-        v["grade_color"] = grade_color(v.get("equity_curve_grade", "-"))
-    for v in recs_raw:
-        v["grade_color"] = grade_color(v.get("equity_curve_grade", "-"))
-
-    # 시뮬레이션 합계
-    sim_amount = 100_000
-    total_monthly = sum(v["suggested_allocation"] / 100 * sim_amount * v.get("apr_30d", 0) / 100 / 12 for v in recs_raw)
-    total_annual  = sum(v["suggested_allocation"] / 100 * sim_amount * v.get("apr_30d", 0) / 100       for v in recs_raw)
-    sim = dict(
-        monthly=f"{total_monthly:,.0f}",
-        annual =f"{total_annual:,.0f}",
-    )
-
-    return render_template_string(HTML,
-        vaults=vaults, recs=recs_raw,
-        stats=stats, sim=sim,
-        date=date, reports=reports)
-
-
-
-# ── 포트폴리오 분석 페이지 ──────────────────────────────────────────────────
 @app.route("/portfolio")
 def portfolio_page():
     try:
         from portfolio_engine import run_portfolio_analysis
-        d = run_portfolio_analysis(top_k=25, max_corr=0.55)
+        addr_param = request.args.get("addresses", "")
+        addresses = [a.strip() for a in addr_param.split(",") if a.strip()] if addr_param else None
+        d = run_portfolio_analysis(top_k=25, max_corr=0.55, addresses=addresses)
+        d["user_selected_mode"] = bool(addresses)
+        d["user_selected_count"] = len(addresses) if addresses else 0
     except Exception as e:
-        return render_template_string(PORTFOLIO_HTML, err=str(e), d=None, bt_json="null")
-    if "error" in d:
-        return render_template_string(PORTFOLIO_HTML, err=d["error"], d=None, bt_json="null")
-    pfs = d["portfolios"]
-    min_len = min(len(pfs[k]["backtest"].get("equity_curve",[1])) for k in pfs)
-    import json as _j
-    bt_json = _j.dumps({
-        "sh": pfs["max_sharpe"]["backtest"].get("equity_curve",[])[:min_len],
-        "mv": pfs["min_variance"]["backtest"].get("equity_curve",[])[:min_len],
-        "rp": pfs["risk_parity"]["backtest"].get("equity_curve",[])[:min_len],
-        "cv": pfs["min_cvar"]["backtest"].get("equity_curve",[])[:min_len],
-    })
-    return render_template_string(PORTFOLIO_HTML, err=None, d=d, bt_json=bt_json)
+        return f"<body style='background:#0b0f1a;color:#e74c3c;padding:40px;'><h2>⚠️ 분석 에러</h2><p>{e}</p></body>"
+    return render_template_string(PORTFOLIO_HTML, d=d)
 
+@app.route("/api/simulate", methods=["POST"])
+def api_simulate():
+    data = request.json or {}
+    start_date = data.get("start_date")
+    sim_amount = float(data.get("amount", 100000))
+    ptype = data.get("ptype", "max_sharpe")
+    custom_vaults = data.get("custom_vaults")
 
+    import portfolio_tracker
+    
+    if custom_vaults:
+        recs = []
+        for cv in custom_vaults:
+            if float(cv.get("weight", 0)) > 0:
+                recs.append({
+                    "name": cv.get("name", ""),
+                    "address": cv.get("address", ""),
+                    "suggested_allocation": float(cv.get("weight", 0))
+                })
+    else:
+        from portfolio_engine import run_portfolio_analysis
+        d = run_portfolio_analysis()
+        if "error" in d: return jsonify(d)
 
+        # get weights for chosen portfolio
+        st = d["portfolios"].get(ptype, {}).get("stats", {})
+        weights = st.get("weights", {})
+        
+        # map names to address
+        name_to_addr = {v["name"]: v["address"] for v in d["selected_vaults"]}
+        
+        recs = []
+        for nm, w in weights.items():
+            if w > 0:
+                recs.append({
+                    "name": nm,
+                    "address": name_to_addr.get(nm, ""),
+                    "suggested_allocation": w
+                })
+            
+    snaps = portfolio_tracker.load_snapshots_all()
+    res = portfolio_tracker.simulate_rec_backtest(recs, snaps, start_date, sim_amount)
+    
+    if not res: return jsonify({"error": "데이터 또는 시뮬레이션 결과가 없습니다."})
+    return jsonify(res)
 
+@app.route("/discord")
+def discord_gui():
+    wk = ""
+    if os.path.exists(DISCORD_CFG):
+        with open(str(DISCORD_CFG), encoding="utf-8") as f: wk = json.load(f).get("webhook_url", "")
+    return render_template_string(DISCORD_HTML, wk=wk)
 
-# ── 포트폴리오 분석 페이지 ──────────────────────────────────────────────────
-PORTFOLIO_HTML = """
-<!DOCTYPE html><html lang="ko">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>포트폴리오 분석</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<style>
-:root{--bg:#0b0f1a;--card:#131928;--card2:#1a2340;--border:#243050;
-      --accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;
-      --danger:#e74c3c;--warn:#f39c12;--success:#27ae60;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
-header{background:linear-gradient(135deg,#0d1b40,#111e3d);border-bottom:1px solid var(--border);
-       padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
-       position:sticky;top:0;z-index:100;}
-header h1{font-size:1.1rem;font-weight:700;}header p{font-size:.72rem;color:var(--muted);}
-.back{background:transparent;border:1px solid var(--border);color:var(--text);
-      padding:8px 16px;border-radius:8px;font-size:.82rem;text-decoration:none;}
-.back:hover{border-color:var(--accent);background:var(--card2);}
-main{max-width:1400px;margin:0 auto;padding:24px 20px;}
-.sec{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;
-     margin:28px 0 12px;display:flex;align-items:center;gap:8px;}
-.sec::after{content:'';flex:1;height:1px;background:var(--border);}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
-.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px;}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.sc .k{font-size:.68rem;color:var(--muted);text-transform:uppercase;}
-.sc .v{font-size:1.4rem;font-weight:800;margin-top:4px;}
-.pfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px;}
-.pfc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;}
-.pfc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.sh::before{background:linear-gradient(90deg,#4f8ef7,#1abc9c);}
-.mv::before{background:linear-gradient(90deg,#27ae60,#1abc9c);}
-.rp::before{background:linear-gradient(90deg,#f39c12,#e74c3c);}
-.cv::before{background:linear-gradient(90deg,#9b59b6,#3498db);}
-.pt{font-size:1rem;font-weight:700;margin-bottom:12px;}
-.pr{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:6px;}
-.pr .pk{color:var(--muted);} .pr .pv{font-weight:600;}
-.pos{color:var(--success);} .neg{color:var(--danger);} .neu{color:var(--muted);}
-.tbw{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto;margin-bottom:20px;}
-table{width:100%;border-collapse:collapse;}
-thead tr{background:var(--card2);}
-th{padding:10px 12px;text-align:left;font-size:.68rem;font-weight:600;color:var(--muted);
-   letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
-td{padding:9px 12px;font-size:.78rem;border-top:1px solid var(--border);}
-tr:hover td{background:rgba(79,142,247,.04);}
-.ct{border-collapse:collapse;font-size:.65rem;}
-.ct th,.ct td{padding:4px 7px;border:1px solid var(--border);text-align:center;white-space:nowrap;}
-.ct th{background:var(--card2);color:var(--muted);}
-.cw{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
-.err{text-align:center;padding:60px;color:var(--muted);}
-</style></head>
-<body>
-<header>
-  <div><h1>🔬 포트폴리오 최적화 분석</h1><p>저상관 볼트 · 4가지 최적화 · 백테스팅 · 원금보호</p></div>
-  <a class="back" href="/">← 메인으로</a>
-</header>
+@app.route("/api/discord-setup", methods=["POST"])
+def api_discord_save():
+    data = request.get_json() or {}
+    with open(str(DISCORD_CFG), "w", encoding="utf-8") as f: json.dump({"webhook_url": data.get("webhook_url","")}, f)
+    send_discord("✅ 연결 성공! Hyperliquid Vault Analyzer와 연동되었습니다.")
+    return jsonify({"status": "ok"})
+
+@app.route("/m")
+@app.route("/my-portfolio")
+def my_portfolio_gui():
+    import portfolio_tracker
+    p = load_portfolio_config()
+    snaps = portfolio_tracker.load_snapshots_all()
+    
+    port_calc = portfolio_tracker.calc_my_portfolio(p.get("positions", {}), p.get("invest_date"), snaps)
+    
+    if not port_calc or not port_calc.get("holdings"):
+        return render_template_string(MY_HTML, holdings=[], total=0, capital=p.get("total_capital", 100000), pnl=0, pnl_pct=0, net_pnl=0, net_pct=0, days=0)
+        
+    holdings = port_calc["holdings"]
+    total_val = port_calc["total_value"]
+    total_inv = port_calc["total_invested"]
+    total_pnl = port_calc["total_pnl"]
+    net_pnl_after_fee = total_pnl * 0.9 if total_pnl > 0 else total_pnl
+    total_pct = total_pnl / total_inv * 100 if total_inv > 0 else 0
+    net_pct = net_pnl_after_fee / total_inv * 100 if total_inv > 0 else 0
+    
+    return render_template_string(MY_HTML, 
+                                  holdings=holdings, 
+                                  total=round(total_val), 
+                                  capital=round(total_inv), 
+                                  pnl=round(total_pnl), 
+                                  pnl_pct=round(total_pct, 2),
+                                  net_pnl=round(net_pnl_after_fee), 
+                                  net_pct=round(net_pct, 2),
+                                  days=port_calc["days_held"],
+                                  hist_dates=port_calc.get("history_dates", []),
+                                  hist_vals=port_calc.get("history_values", []))
+
+# ── HTML 템플릿 ───────────────────────────────────────────────────────────────
+
+COMMON_STYLE = """
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+:root{--bg:#0b0f1a;--card:#131928;--border:#243050;--accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;--danger:#e74c3c;--success:#2ecc71;}
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter', sans-serif;margin:0;min-height:100vh;overflow-x:hidden;}
+header{padding:15px 30px;background:rgba(13, 27, 64, 0.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:99;}
+h1,h2,h3,h4{margin:0;color:#fff;}
+.btn{padding:10px 18px;border-radius:10px;text-decoration:none;font-size:0.85rem;font-weight:600;margin-left:8px;border:1px solid var(--border);color:var(--text);cursor:pointer;transition:all 0.2s;}
+.btn:hover{background:var(--border);transform:translateY(-2px);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn-primary:hover{background:#3b7ce0;box-shadow:0 4px 12px rgba(79,142,247,0.3);}
+main{padding:30px;max-width:1300px;margin:0 auto;}
+.card{background:var(--card);padding:24px;border-radius:16px;border:1px solid var(--border);margin-bottom:24px;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+.grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:20px;}
+.stat-box{text-align:center;}
+.stat-val{font-size:1.8rem;font-weight:800;color:var(--accent2);margin-top:8px;}
+.stat-label{font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-top:10px;}
+th{text-align:left;padding:15px;background:rgba(26, 35, 64, 0.5);font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+td{padding:15px;border-top:1px solid var(--border);font-size:0.9rem;}
+.badge{padding:4px 8px;border-radius:6px;font-size:0.75rem;font-weight:800;}
+.bg-success{background:rgba(46,204,113,0.1);color:var(--success);}
+.bg-danger{background:rgba(231,76,60,0.1);color:var(--danger);}
+canvas{max-height:400px;width:100% !important;}
+table a{text-decoration:none; color:inherit; transition: color 0.2s;}
+table a:hover{color:var(--accent) !important; text-decoration:underline;}
+
+.modal { display:none; position:fixed; z-index:999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); justify-content:center; align-items:center; }
+.modal-content { background:var(--card); width:1100px; max-width:95%; border-radius:16px; border:1px solid var(--border); padding:24px; box-shadow:0 8px 32px rgba(0,0,0,0.5); position:relative; animation:slideIn 0.3s forwards; max-height:90vh; overflow-y:auto; }
+@keyframes slideIn { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+.modal-close { position:absolute; top:20px; right:20px; cursor:pointer; font-size:1.5rem; color:var(--muted); transition:0.2s;}
+.modal-close:hover { color:#fff; }
+.score-breakdown { background:rgba(255,255,255,0.02); padding:15px; border-radius:10px; margin-top:15px; display:grid; gap:10px; }
+.score-row { display:flex; justify-content:space-between; font-size:0.9rem; border-bottom:1px dashed var(--border); padding-bottom:5px; }
+.history-row { display:flex; justify-content:space-between; font-size:0.95rem; margin-bottom:8px; padding:8px; background:rgba(0,0,0,0.2); border-radius:8px;}
+"""
+
+EMPTY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMON_STYLE + """</style></head>
+<body style="display:flex;align-items:center;justify-content:center;height:100vh;">
+<div style="text-align:center;"><h2>📊 데이터가 없습니다.</h2><p>먼저 분석기를 실행해주세요 (python analyze_top_vaults.py)</p></div>
+</body></html>"""
+
+MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliquid Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>""" + COMMON_STYLE + """</style></head>
+<body><header><div><h1 style="background:linear-gradient(90deg, #4f8ef7, #1abc9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">HL Vault Analyzer Pro v3.1</h1></div><div>
+<a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/discord">🔔 Discord</a>
+</div></header><main>
+<div class="grid" style="grid-template-columns: repeat(4, 1fr);">
+<div class="card stat-box"><div class="stat-label">Analysis Date</div><div class="stat-val" style="color:#fff">{{date}} <small style="font-size:0.8rem;color:var(--muted)">{% if stats.prev_date %}(vs {{stats.prev_date}}){% endif %}</small></div></div>
+<div class="card stat-box"><div class="stat-label">Active Vaults</div><div class="stat-val">{{stats.total}}</div></div>
+<div class="card stat-box"><div class="stat-label">Avg 30D APR</div><div class="stat-val" style="color:var(--success)">{{stats.avg_apr|round(1)}}%</div></div>
+<div class="card stat-box"><div class="stat-label">Avg MDD</div><div class="stat-val" style="color:var(--danger)">{{stats.avg_mdd}}%</div></div>
+</div>
+<div class="card" style="margin-bottom:15px;">
+    <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <h3>Top Vaults (All 200) <span id="matchCount" style="color:var(--accent2); font-size:1rem; margin-left:10px; background:rgba(26,188,156,0.1); padding:4px 10px; border-radius:10px;"></span></h3>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span id="selCount" style="color:var(--accent); font-size:0.9rem; font-weight:600;">0/20 selected</span>
+            <button id="btnAnalyzeSelected" onclick="goAnalyzeSelected()" class="btn btn-primary" style="margin:0; padding:10px 20px; opacity:0.5; pointer-events:none;" disabled>🔬 선택한 볼트로 분석</button>
+        </div>
+    </div>
+    <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; border:1px solid var(--border);">
+        <div>
+            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Leader Eq Min (%):</label>
+            <input type="number" id="leaderFilter" oninput="filterTable()" placeholder="e.g. 10" style="padding:8px; width:100px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
+        </div>
+        <div>
+            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Max MDD (%):</label>
+            <input type="number" id="mddFilter" oninput="filterTable()" placeholder="e.g. 20" style="padding:8px; width:100px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
+        </div>
+        <div>
+            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Min TVL ($):</label>
+            <input type="number" id="tvlFilter" oninput="filterTable()" placeholder="e.g. 10000" style="padding:8px; width:120px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
+        </div>
+        <button onclick="selectAllVisible()" class="btn" style="margin:0; padding:8px 14px; font-size:0.8rem;">✅ 보이는 항목 전체선택</button>
+        <button onclick="clearSelection()" class="btn" style="margin:0; padding:8px 14px; font-size:0.8rem;">❌ 선택 해제</button>
+    </div>
+</div>
+
+<div class="card">
+    <table id="vaultTable">
+        <thead>
+            <tr>
+                <th style="width:40px; text-align:center;">✓</th>
+                <th>Rank</th>
+                <th>Vault Name</th>
+                <th>TVL (USD/KRW)</th>
+                <th style="text-align:center;">Leader Eq%</th>
+                <th>All-time PnL</th>
+                <th>All-time MDD</th>
+                <th>Sharpe Ratio</th>
+                <th>30d APR</th>
+                <th>Score</th>
+                <th>Deposit</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for v in vaults %}
+        <tr data-leader="{{ v.leader_equity_ratio }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}" data-tvl="{{ v.tvl }}" data-address="{{v.address}}">
+            <td style="text-align:center;"><input type="checkbox" class="vault-cb" data-address="{{v.address}}" onchange="updateSelectionCount()" style="width:18px;height:18px;cursor:pointer;accent-color:var(--accent2);"></td>
+            <td>
+                #{{v.rank}}<br>
+                {% if v.has_history and v.chg.rank_val != 0 %}
+                    <small style="color:{{ v.chg.rank_col }}; font-weight:bold;">{{ v.chg.rank_dir }} {{ v.chg.rank_val }}</small>
+                {% elif v.has_history %}
+                    <small style="color:var(--muted)">-</small>
+                {% else %}
+                    <span class="badge" style="background:rgba(241,196,15,0.1);color:#f1c40f;">NEW</span>
+                {% endif %}
+            </td>
+            <td><a href="https://app.hyperliquid.xyz/vaults/{{v.address}}" target="_blank"><b>{{v.name}}</b></a><br><small style="color:var(--muted)">{{v.address[:10]}}..</small></td>
+            <td>
+                <span style="font-weight:600;">${{ "{:,.0f}".format(v.tvl) }}</span><br>
+                <small style="color:var(--muted)">≈ {{ "{:,.1f}".format(v.tvl * 1400 / 100000000) }} 억원</small>
+            </td>
+            <td style="text-align:center;">
+                <span class="badge" style="background:rgba(26,188,156,0.1);color:var(--accent2)">{{ (v.leader_equity_ratio * 100)|round(1) }}%</span><br>
+                <small style="color:var(--muted)">≈ {{ "{:,.1f}".format(v.leader_equity_usd * 1400 / 100000000) }} 억원</small>
+            </td>
+            <td>
+                <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(v.pnl_alltime) }}</span>
+                <span style="font-size:0.8rem; color:var(--accent2); margin-left:4px;">({{ "{:,.1f}".format(v.alltime_roi_pct) }}%)</span><br>
+                <small style="color:var(--muted)">({{ "{:,.2f}".format(v.pnl_alltime * 1400 / 100000000) }} 억원)</small>
+                {% if v.has_history and v.chg.pnl_val != 0 %}
+                    <br><small style="color:{{ v.chg.pnl_col }}">{{ v.chg.pnl_dir }} ${{ "{:,.0f}".format(v.chg.pnl_val) }}</small>
+                {% endif %}
+            </td>
+            <td>
+                <span style="color:var(--danger); font-weight:600;">{{ v.max_drawdown }}%</span>
+                {% if v.has_history and v.chg.mdd_val != 0 %}
+                    <br><small style="color:{{ v.chg.mdd_col }}">{{ v.chg.mdd_dir }} {{ v.chg.mdd_val }}%p</small>
+                {% endif %}
+            </td>
+            <td style="color:var(--accent); font-weight:600;">{{ v.sharpe_ratio }}</td>
+            <td style="color:var(--success); font-weight:600;">{{ v.apr_30d }}%</td>
+            <td style="cursor:pointer;" onclick="showVaultDetails('{{v.address}}')">
+                <span class="badge" style="background:rgba(79,142,247,0.1);color:var(--accent);font-size:0.9rem;border:1px solid rgba(79,142,247,0.3);transition:0.2s;" onmouseover="this.style.background='rgba(79,142,247,0.2)'" onmouseout="this.style.background='rgba(79,142,247,0.1)'">{{ v.score }}</span>
+                {% if v.has_history and v.chg.score_val != 0 %}
+                    <br><small style="color:{{ v.chg.score_col }}">{{ v.chg.score_dir }} {{ "{:,.3f}".format(v.chg.score_val) }}</small>
+                {% endif %}
+            </td>
+            <td style="text-align:center;">
+                {% if v.allow_deposits %}
+                <span class="badge bg-success">OPEN</span>
+                {% else %}
+                <span class="badge bg-danger">CLOSE</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Vault Details Modal -->
+<div id="vaultModal" class="modal" onclick="if(event.target === this) closeModal()">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">×</span>
+        <h2 id="modalTitle" style="color:var(--accent2); margin-bottom:5px;">Vault DETAILS</h2>
+        <p style="color:var(--muted); font-size:0.85rem; margin-bottom:20px;">Performance tracking & Score breakdown</p>
+        
+        <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">
+            <div style="flex:1;">
+                <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">📈 All-time PnL Curve (USD)</h4>
+                <div style="height:250px;"><canvas id="modalPnlChart"></canvas></div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:20px;">
+                <div>
+                    <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">⚖️ Change vs Prev. Snapshot (%)</h4>
+                    <div style="height:120px;"><canvas id="modalChgChart"></canvas></div>
+                    <div id="modalNewIndicator" style="display:none; color:var(--muted); text-align:center; padding:10px 0;">신규 편입 (과거 데이터 없음)</div>
+                </div>
+                <div>
+                    <h4 style="color:var(--text); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">🧮 Score Breakdown</h4>
+                    <div style="height:120px;"><canvas id="modalScoreChart"></canvas></div>
+                    <p style="color:var(--muted); font-size:0.75rem; margin-top:5px; text-align:right;">Score = (+Sharpe×2) (+APR/50) (-MDD/30) (+Rob×3)</p>
+                </div>
+            </div>
+        </div>
+        
+        <h4 style="color:var(--accent2); margin-top:30px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">📊 Historical Trend</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:15px; margin-bottom:10px;">
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">🏅 Score</div>
+                <div style="height:140px;"><canvas id="modalTrendScoreChart"></canvas></div>
+            </div>
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">📉 MDD (%)</div>
+                <div style="height:140px;"><canvas id="modalTrendMddChart"></canvas></div>
+            </div>
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">✨ Sharpe Ratio</div>
+                <div style="height:140px;"><canvas id="modalTrendSharpeChart"></canvas></div>
+            </div>
+            <div>
+                <div style="text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:5px;">🛡️ Robustness</div>
+                <div style="height:140px;"><canvas id="modalTrendRobustChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const vaultConfig = {
+    {% for v in vaults %}
+    "{{v.address}}": {
+        "name": "{{v.name}}",
+        "score": {{v.score}},
+        "calc_sharpe": {{v.sharpe_ratio}},
+        "calc_apr": {{v.apr_30d}},
+        "calc_mdd": {{v.max_drawdown}},
+        "calc_rob": {{v.robustness_score | default(0)}},
+        "has_history": {{ 'true' if v.has_history else 'false' }},
+        "alltime_pnl": {{ v.alltime_pnl | default([]) | tojson }},
+        "chg_pct": {{ v.chg_pct | default({}) | tojson }},
+        "trend_hist": {{ v.history | tojson }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+
+let modalCharts = {};
+
+function showVaultDetails(address) {
+    const data = vaultConfig[address];
+    if(!data) return;
+    
+    document.getElementById('modalTitle').innerText = data.name + " Details";
+    
+    // Destroy existing charts
+    Object.values(modalCharts).forEach(c => c.destroy());
+    modalCharts = {};
+    
+    // 1. PNL Curve
+    const pnlCtx = document.getElementById('modalPnlChart').getContext('2d');
+    if(data.alltime_pnl && data.alltime_pnl.length > 0) {
+        modalCharts.pnl = new Chart(pnlCtx, {
+            type: 'line',
+            data: {
+                labels: data.alltime_pnl.map((_, i) => i+1),
+                datasets: [{
+                    label: 'Cumulative PnL ($)',
+                    data: data.alltime_pnl,
+                    borderColor: '#1abc9c',
+                    backgroundColor: 'rgba(26,188,156,0.1)',
+                    fill: true,
+                    tension: 0.1,
+                    pointRadius: 0,
+                    pointHitRadius: 10
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { display: false } }
+            }
+        });
+    } else {
+        modalCharts.pnl = new Chart(pnlCtx, { type: 'line', data: {labels:['No Data'], datasets:[{data:[0]}]}, options:{plugins:{legend:{display:false}}} });
+    }
+    
+    // 2. Daily Change Bar Chart
+    const chgCtx = document.getElementById('modalChgChart').getContext('2d');
+    if (data.has_history && data.chg_pct && Object.keys(data.chg_pct).length > 0) {
+        document.getElementById('modalChgChart').style.display = 'block';
+        document.getElementById('modalNewIndicator').style.display = 'none';
+        modalCharts.chg = new Chart(chgCtx, {
+            type: 'bar',
+            data: {
+                labels: ['TVL', 'L_Eq', 'PnL', 'MDD', 'Sharpe', 'Score'],
+                datasets: [{
+                    label: '% Change',
+                    data: [data.chg_pct.tvl, data.chg_pct.eq, data.chg_pct.pnl, data.chg_pct.mdd, data.chg_pct.sharpe, data.chg_pct.score],
+                    backgroundColor: function(context) {
+                        return context.raw >= 0 ? 'rgba(46,204,113,0.8)' : 'rgba(231,76,60,0.8)';
+                    },
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { suggestedMin: -5, suggestedMax: 5 } }
+            }
+        });
+    } else {
+        document.getElementById('modalChgChart').style.display = 'none';
+        document.getElementById('modalNewIndicator').style.display = 'block';
+    }
+
+    // 3. Score Breakdown (Horizontal Bar)
+    const scoreCtx = document.getElementById('modalScoreChart').getContext('2d');
+    let sharpeVal = data.calc_sharpe * 2.0;
+    let aprVal = data.calc_apr / 50.0;
+    let mddVal = data.calc_mdd / 30.0; // penalty
+    let robVal = data.calc_rob * 3.0;
+
+    modalCharts.score = new Chart(scoreCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Sharpe', 'APR', 'MDD Pen.', 'Robust'],
+            datasets: [{
+                label: 'Points',
+                data: [sharpeVal, aprVal, -mddVal, robVal],
+                backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6'],
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 4. Trend Charts (Score, MDD, Sharpe, Robustness)
+    function buildTrendChart(ctxId, label, dataArr, datesArr, bgColor, borderColor) {
+        const ctx = document.getElementById(ctxId).getContext('2d');
+        if(!dataArr || dataArr.length === 0) {
+            return new Chart(ctx, { type:'line', data:{labels:['No Data'], datasets:[{data:[0]}]}, options:{plugins:{legend:{display:false}}} });
+        }
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: datesArr,
+                datasets: [{
+                    label: label,
+                    data: dataArr,
+                    borderColor: borderColor,
+                    backgroundColor: bgColor,
+                    fill: true,
+                    tension: 0.2,
+                    pointRadius: 3,
+                    pointBackgroundColor: borderColor
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: { 
+                    x: { display: true, ticks: { font: { size: 9 }, color: 'var(--muted)', maxRotation:45 } },
+                    y: { display: true, ticks: { font: { size: 9 }, color: 'var(--muted)' } }
+                }
+            }
+        });
+    }
+
+    let tDates = data.trend_hist && data.trend_hist.dates ? data.trend_hist.dates : [];
+    
+    modalCharts.tScore = buildTrendChart('modalTrendScoreChart', 'Score', data.trend_hist ? data.trend_hist.score : [], tDates, 'rgba(79,142,247,0.1)', '#4f8ef7');
+    modalCharts.tMdd = buildTrendChart('modalTrendMddChart', 'MDD', data.trend_hist ? data.trend_hist.mdd : [], tDates, 'rgba(231,76,60,0.1)', '#e74c3c');
+    modalCharts.tSharpe = buildTrendChart('modalTrendSharpeChart', 'Sharpe', data.trend_hist ? data.trend_hist.sharpe : [], tDates, 'rgba(52,152,219,0.1)', '#3498db');
+    modalCharts.tRobust = buildTrendChart('modalTrendRobustChart', 'Robustness', data.trend_hist ? data.trend_hist.robust : [], tDates, 'rgba(155,89,182,0.1)', '#9b59b6');
+
+    document.getElementById('vaultModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('vaultModal').style.display = 'none';
+}
+
+function filterTable() {
+    let leaderMin = parseFloat(document.getElementById('leaderFilter').value);
+    if(isNaN(leaderMin)) leaderMin = 0; else leaderMin = leaderMin / 100.0;
+    
+    let mddMax = parseFloat(document.getElementById('mddFilter').value);
+    if(isNaN(mddMax)) mddMax = 999;
+    
+    let tvlMin = parseFloat(document.getElementById('tvlFilter').value);
+    if(isNaN(tvlMin)) tvlMin = 0;
+    
+    const rows = document.querySelectorAll('#vaultTable tbody tr');
+    let count = 0;
+    
+    rows.forEach(row => {
+        const leader = parseFloat(row.getAttribute('data-leader'));
+        const mdd = parseFloat(row.getAttribute('data-mdd'));
+        const tvl = parseFloat(row.getAttribute('data-tvl'));
+        
+        const leaderMatch = leader >= leaderMin;
+        const mddMatch = mdd <= mddMax;
+        const tvlMatch = tvl >= tvlMin;
+        
+        if (leaderMatch && mddMatch && tvlMatch) {
+            row.style.display = '';
+            count++;
+        } else {
+            row.style.display = 'none';
+            // 숨겨진 행 체크박스 해제
+            const cb = row.querySelector('.vault-cb');
+            if(cb) cb.checked = false;
+        }
+    });
+    document.getElementById('matchCount').innerText = `${count} vaults matched`;
+    updateSelectionCount();
+}
+
+function updateSelectionCount() {
+    const checked = document.querySelectorAll('.vault-cb:checked');
+    const count = checked.length;
+    document.getElementById('selCount').innerText = `${count}/20 selected`;
+    const btn = document.getElementById('btnAnalyzeSelected');
+    if(count >= 2 && count <= 20) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.pointerEvents = 'none';
+    }
+    // 20개 초과 방지
+    if(count > 20) {
+        alert('최대 20개까지 선택 가능합니다.');
+        // 마지막 체크한 것 해제
+        const allCbs = document.querySelectorAll('.vault-cb:checked');
+        allCbs[allCbs.length - 1].checked = false;
+        updateSelectionCount();
+    }
+}
+
+function selectAllVisible() {
+    const rows = document.querySelectorAll('#vaultTable tbody tr');
+    let selected = 0;
+    // 먼저 모든 체크박스 해제
+    document.querySelectorAll('.vault-cb').forEach(cb => cb.checked = false);
+    rows.forEach(row => {
+        if(row.style.display !== 'none' && selected < 20) {
+            const cb = row.querySelector('.vault-cb');
+            if(cb) { cb.checked = true; selected++; }
+        }
+    });
+    updateSelectionCount();
+}
+
+function clearSelection() {
+    document.querySelectorAll('.vault-cb').forEach(cb => cb.checked = false);
+    updateSelectionCount();
+}
+
+function goAnalyzeSelected() {
+    const checked = document.querySelectorAll('.vault-cb:checked');
+    if(checked.length < 2) { alert('최소 2개 이상 선택해주세요.'); return; }
+    const addresses = Array.from(checked).map(cb => cb.getAttribute('data-address'));
+    window.location.href = '/portfolio?addresses=' + addresses.join(',');
+}
+
+document.addEventListener('DOMContentLoaded', filterTable);
+</script>
+</main></body></html>"""
+
+PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
+<header><div><h1>🔬 Portfolio Analysis</h1></div><a class="btn" href="/">← Back</a></header>
 <main>
-{% if err %}
-  <div class="err"><p style="font-size:1.1rem">⚠️ {{ err }}</p>
-    <p style="margin-top:12px;font-size:.85rem">먼저 메인 페이지에서 <strong>지금 분석 실행</strong>을 눌러 데이터를 생성하세요.</p>
+{% if d.user_selected_mode %}
+<div style="background:rgba(79,142,247,0.15); padding:15px 20px; border-radius:12px; margin-bottom:20px; border:1px solid var(--accent); display:flex; align-items:center; gap:15px;">
+  <span style="font-size:1.5rem;">🎯</span>
+  <div>
+    <strong style="color:var(--accent);">사용자 선택 모드</strong>
+    <span style="color:var(--muted); margin-left:10px;">메인 페이지에서 선택한 <b style="color:#fff;">{{d.user_selected_count}}개</b> 볼트만으로 분석하였습니다.</span>
   </div>
-{% else %}
-  <p class="sec">📊 분석 현황 ({{ d.date }})</p>
-  <div class="sg">
-    <div class="sc"><div class="k">전체 볼트</div><div class="v" style="color:var(--accent)">{{ d.n_total }}</div></div>
-    <div class="sc"><div class="k">PnL 유효</div><div class="v">{{ d.n_valid }}</div></div>
-    <div class="sc"><div class="k">필터 통과</div><div class="v">{{ d.n_filtered }}</div></div>
-    <div class="sc"><div class="k">저상관 선택</div><div class="v" style="color:var(--accent2)">{{ d.n_selected }}</div></div>
-    <div class="sc"><div class="k">분석 기간</div><div class="v">{{ d.analysis_days }}일</div></div>
-    <div class="sc"><div class="k">히스토리</div><div class="v">{{ d.history_days }}일</div></div>
+  <a href="/portfolio" class="btn" style="margin-left:auto; padding:8px 16px;">📊 전체 분석 보기</a>
+</div>
+{% endif %}
+<div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-bottom: 25px; border:1px solid var(--accent2); display:flex; align-items:center; gap:20px;">
+  <div style="flex-grow:1;">
+    <h3 style="margin:0; color:var(--accent2); display:flex; align-items:center; gap:10px;">
+      💡 Custom Investment Simulation
+    </h3>
+    <p style="margin:5px 0 0 0; font-size:0.9rem; color:var(--muted);">Enter your desired investment amount to see exact allocations and profit projections based on our historical analysis.</p>
   </div>
-  <p class="sec">💼 포트폴리오 최적화 비교 ($100,000 기준)</p>
-  <div class="pfg">
-  {% for key, pf in d.portfolios.items() %}
-  {% set bt=pf.backtest %} {% set st=pf.stats %}
-  {% set cls={'max_sharpe':'sh','min_variance':'mv','risk_parity':'rp','min_cvar':'cv'} %}
-  <div class="pfc {{ cls[key] }}">
-    <div class="pt">{{ pf.emoji }} {{ pf.label }}</div>
-    <div class="pr"><span class="pk">예상 연수익</span>
-      <span class="pv {% if st.annual_return_pct>0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(st.annual_return_pct) }}%</span></div>
-    <div class="pr"><span class="pk">연 변동성</span><span class="pv">{{ "%.1f"|format(st.annual_vol_pct) }}%</span></div>
-    <div class="pr"><span class="pk">샤프비율</span>
-      <span class="pv {% if st.sharpe>1 %}pos{% elif st.sharpe>0 %}neu{% else %}neg{% endif %}">{{ "%.2f"|format(st.sharpe) }}</span></div>
-    <div style="height:1px;background:var(--border);margin:8px 0"></div>
-    <div class="pr"><span class="pk">백테스팅 수익</span>
-      <span class="pv {% if bt.total_profit>0 %}pos{% else %}neg{% endif %}">${{ "{:,.0f}".format(bt.total_profit) }}</span></div>
-    <div class="pr"><span class="pk">총 수익률</span>
-      <span class="pv {% if bt.total_return_pct>0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(bt.total_return_pct) }}%</span></div>
-    <div class="pr"><span class="pk">최대낙폭 MDD</span>
-      <span class="pv {% if bt.max_drawdown_pct<10 %}pos{% elif bt.max_drawdown_pct<25 %}neu{% else %}neg{% endif %}">{{ "%.1f"|format(bt.max_drawdown_pct) }}%</span></div>
+  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+    <div style="position: relative; display: flex; align-items: center;">
+      <span style="position: absolute; left: 15px; font-weight: bold; color: #fff;">$</span>
+      <input type="text" id="simAmount" value="100,000" oninput="formatAmountInput(this); updateSimulation();" style="width: 200px; padding: 12px 12px 12px 30px; font-size: 1.2rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align: right;">
+    </div>
+    <span id="simAmountKRW" style="font-size:0.85rem; color:var(--accent2); font-weight:600;">≈ ₩140,000,000</span>
   </div>
-  {% endfor %}
+</div>
+
+{% if d.portfolio_summary %}
+<div class="card"><h3>Historical Tracking (Trailing 90 Days Sim)</h3>
+<div style="height:350px;"><canvas id="historyChart"></canvas></div>
+<div class="grid" style="margin-top:20px;">
+<div class="stat-box"><div class="stat-label">Cumulative Return</div><div class="stat-val" style="color:var(--success)">{{d.portfolio_summary.cumulative_pct}}%</div></div>
+<div class="stat-box"><div class="stat-label">Max Drawdown</div><div class="stat-val" style="color:var(--danger)">{{d.portfolio_summary.max_mdd_pct}}%</div></div>
+<div class="stat-box"><div class="stat-label">Sharpe Ratio</div><div class="stat-val" style="color:var(--accent)">{{d.portfolio_summary.sharpe_ratio}}</div></div>
+</div></div>
+{% endif %}
+
+<div class="card" style="margin-bottom:25px; border-left:4px solid #f39c12">
+  <h3>🎯 Custom Portfolio Builder</h3>
+  <p style="margin:-10px 0 20px 0; font-size:0.9rem; color:var(--muted);">선택한 볼트와 비중으로 커스텀 포트폴리오를 구성하고 백테스트를 수행해보세요.</p>
+  
+  <div style="display:flex; gap:15px; margin-bottom:15px; align-items:center;">
+    <select id="customVaultSelect" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px; flex:1;">
+      {% for v in d.filter_details %}
+        <option value="{{v.address}}">{{v.name}} (APR: {{v.apr_30d}}%, MDD: {{v.max_drawdown}}%)</option>
+      {% endfor %}
+    </select>
+    <input type="number" id="customVaultWeight" placeholder="비중 (%)" style="padding:10px; width:100px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+    <button onclick="addCustomVault()" class="btn btn-primary" style="margin:0; padding:10px 20px;">+ 추가</button>
   </div>
-  <p class="sec">📈 백테스팅 Equity Curve (인터랙티브 · 줌 가능)</p>
-  <div class="cw" id="equity-chart" style="height:340px;width:100%;display:block;"></div>
-  <p class="sec">📊 포트폴리오별 성과 비교 (APR · MDD · Sharpe)</p>
-  <div class="cw" id="bar-chart" style="height:280px;width:100%;display:block;"></div>
-  <p class="sec">⭐ 저상관 선택 볼트 (상관 55% 미만)</p>
-  <div class="tbw"><table>
-    <thead><tr><th>#</th><th>볼트명</th><th>APR 30d</th><th>Sharpe</th><th>MDD</th>
-      <th>Robust</th><th>등급</th>
-      <th style="color:#4f8ef7">MaxSharpe</th><th style="color:#27ae60">MinVar</th>
-      <th style="color:#f39c12">RiskParity</th><th style="color:#9b59b6">MinCVaR</th><th>TVL</th></tr></thead>
+  
+  <div id="customVaultList" style="margin-bottom:20px; background:rgba(0,0,0,0.2); padding:15px; border-radius:8px; min-height:50px;">
+    <!-- Selected vaults will appear here -->
+  </div>
+  
+  <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+    <select id="customSimDate" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+      {% for dt in d.history_dates | reverse %}
+        <option value="{{dt}}">투자 시작일: {{dt}}</option>
+      {% endfor %}
+    </select>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <div style="position: relative; display: flex; align-items: center;">
+        <span style="position: absolute; left: 15px; font-weight: bold; color: #fff;">$</span>
+        <input type="text" id="customSimAmount" value="100,000" oninput="formatAmountInput(this); updateCustomKRW();" style="width: 170px; padding: 10px 10px 10px 30px; font-size: 1rem; font-weight: bold; background: #0b0f1a; border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align:right;">
+      </div>
+      <span id="customSimAmountKRW" style="font-size:0.8rem; color:var(--accent2);">≈ ₩140,000,000</span>
+    </div>
+    <button onclick="runCustomBacktest()" class="btn" style="background:#f39c12; color:#fff; border-color:#f39c12; margin:0; padding:10px 20px;">▶ 검증 및 시뮬레이션</button>
+  </div>
+  
+  <div id="cbtResult" style="display:none; margin-top:30px; padding-top:20px; border-top:1px solid var(--border);">
+    <div class="grid" style="margin-bottom:20px;">
+      <div class="stat-box"><div class="stat-label">Simulated PnL</div><div class="stat-val" id="cbtPnl" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Net ROI</div><div class="stat-val" id="cbtPct" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Final Value</div><div class="stat-val" id="cbtVal" style="color:var(--accent)">-</div></div>
+    </div>
+    <div style="height:350px;"><canvas id="cbtChart"></canvas></div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:25px; border-left:4px solid var(--accent)">
+  <h3>⏳ Time-Travel Simulator</h3>
+  <p style="margin:-10px 0 20px 0; font-size:0.9rem; color:var(--muted);">Test the historical performance of any recommended strategy with your chosen starting date and investment amount.</p>
+  <div style="display:flex; gap:15px; margin-bottom:20px; align-items:center;">
+    <select id="simPtype" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+      <option value="max_sharpe">Maximum Sharpe Strategy</option>
+      <option value="min_variance">Minimum Variance Strategy</option>
+      <option value="risk_parity">Risk Parity Strategy</option>
+      <option value="min_cvar">CVaR (Capital Protection) Strategy</option>
+    </select>
+    <select id="simDate" style="padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+      {% for dt in d.history_dates | reverse %}
+        <option value="{{dt}}">Invested on: {{dt}}</option>
+      {% endfor %}
+    </select>
+    <button onclick="runBacktest()" class="btn btn-primary" style="margin:0; padding:10px 20px;">Run Simulation</button>
+  </div>
+  
+  <div id="btResult" style="display:none; margin-top:30px; padding-top:20px; border-top:1px solid var(--border);">
+    <div class="grid" style="margin-bottom:20px;">
+      <div class="stat-box"><div class="stat-label">Simulated PnL</div><div class="stat-val" id="btPnl" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Net ROI</div><div class="stat-val" id="btPct" style="color:var(--success)">-</div></div>
+      <div class="stat-box"><div class="stat-label">Final Value</div><div class="stat-val" id="btVal" style="color:var(--accent)">-</div></div>
+    </div>
+    <div style="height:350px;"><canvas id="btChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ── 📊 선택된 볼트 상세 비교 ── -->
+<div class="card" style="margin-bottom:25px;">
+  <h2 style="margin-bottom:5px;">📊 분석 대상 볼트 비교</h2>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:15px;">선택된 {{d.n_selected}}개 볼트의 핵심 지표를 비교합니다. 색상은 상대적 우위를 나타냅니다.</p>
+  <div style="overflow-x:auto;">
+  <table style="min-width:900px;">
+    <thead><tr>
+      <th>Vault</th>
+      <th style="text-align:center;">30d APR</th>
+      <th style="text-align:center;">Sharpe</th>
+      <th style="text-align:center;">MDD</th>
+      <th style="text-align:center;">Robustness</th>
+      <th style="text-align:center;">TVL</th>
+      <th style="text-align:center;">Score</th>
+      <th style="text-align:center;">📈 Max Sharpe</th>
+      <th style="text-align:center;">🛡️ Min Var</th>
+      <th style="text-align:center;">⚖️ Risk Parity</th>
+      <th style="text-align:center;">🔒 CVaR</th>
+    </tr></thead>
     <tbody>
     {% for v in d.selected_vaults %}
     <tr>
-      <td class="neu">{{ loop.index }}</td>
-      <td style="font-weight:600">{{ v.name[:22] }}</td>
-      <td class="{% if v.apr_30d>0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
-      <td class="{% if v.sharpe_ratio>1 %}pos{% elif v.sharpe_ratio>0 %}neu{% else %}neg{% endif %}">{{ "%.2f"|format(v.sharpe_ratio) }}</td>
-      <td class="{% if v.max_drawdown<15 %}pos{% elif v.max_drawdown<25 %}neu{% else %}neg{% endif %}">{{ "%.1f"|format(v.max_drawdown) }}%</td>
-      <td class="{% if v.robustness_score>=0.6 %}pos{% elif v.robustness_score>=0.35 %}neu{% else %}neg{% endif %}">{{ "%.3f"|format(v.robustness_score) }}</td>
-      <td>{{ v.equity_curve_grade.split("(")[0].strip() if v.equity_curve_grade != "-" else "-" }}</td>
-      <td style="color:#4f8ef7;font-weight:600">{{ "%.1f"|format(v.alloc_sh) }}%</td>
-      <td style="color:#27ae60;font-weight:600">{{ "%.1f"|format(v.alloc_mv) }}%</td>
-      <td style="color:#f39c12;font-weight:600">{{ "%.1f"|format(v.alloc_rp) }}%</td>
-      <td style="color:#9b59b6;font-weight:600">{{ "%.1f"|format(v.alloc_cv) }}%</td>
-      <td>${{ "{:,.0f}".format(v.tvl) }}</td>
+      <td><a href="https://app.hyperliquid.xyz/vaults/{{v.address}}" target="_blank"><b>{{v.name[:25]}}</b></a></td>
+      <td style="text-align:center; color:var(--success); font-weight:600;">{{v.apr_30d}}%</td>
+      <td style="text-align:center; color:var(--accent);">{{v.sharpe_ratio}}</td>
+      <td style="text-align:center; color:var(--danger);">{{v.max_drawdown}}%</td>
+      <td style="text-align:center;"><span style="color:{{'var(--success)' if v.robustness_score >= 0.7 else 'var(--danger)' if v.robustness_score < 0.4 else '#f39c12'}}">{{v.robustness_score}}</span></td>
+      <td style="text-align:center;">${{"{:,.0f}".format(v.tvl)}}</td>
+      <td style="text-align:center; font-weight:800; color:var(--accent);">{{v.score}}</td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_sh > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_sh > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_sh > 15 else 'var(--muted)'}};">{{v.alloc_sh}}%</span></td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_mv > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_mv > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_mv > 15 else 'var(--muted)'}};">{{v.alloc_mv}}%</span></td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_rp > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_rp > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_rp > 15 else 'var(--muted)'}};">{{v.alloc_rp}}%</span></td>
+      <td style="text-align:center;"><span style="background:{{'rgba(26,188,156,0.2)' if v.alloc_cv > 15 else 'rgba(255,255,255,0.03)'}}; padding:3px 8px; border-radius:6px; font-weight:{{'800' if v.alloc_cv > 15 else '400'}}; color:{{'var(--accent2)' if v.alloc_cv > 15 else 'var(--muted)'}};">{{v.alloc_cv}}%</span></td>
     </tr>
     {% endfor %}
-    </tbody></table></div>
-  <p class="sec">🔗 상관관계 행렬 — 🔴 높음(>0.7) 🟡 중간(0.4~0.7) 🟢 낮음(<0.4) 🔵 음의상관</p>
-  <div class="card" style="overflow-x:auto">
-  <table class="ct"><thead><tr><th></th>
-    {% for n in d.corr_selected.names %}<th title="{{ n }}">{{ n[:9] }}</th>{% endfor %}
-  </tr></thead><tbody>
-  {% for i in range(d.corr_selected.names|length) %}
-  <tr><th style="text-align:left">{{ d.corr_selected.names[i][:9] }}</th>
-    {% for j in range(d.corr_selected.names|length) %}
-    {% set v=d.corr_selected.matrix[i][j] %}
-    {% if i==j %}<td style="background:#1a2340;color:var(--muted)">1.00</td>
-    {% elif v>0.7 %}<td style="background:rgba(231,76,60,.35);font-weight:600">{{ "%.2f"|format(v) }}</td>
-    {% elif v>0.4 %}<td style="background:rgba(243,156,18,.2)">{{ "%.2f"|format(v) }}</td>
-    {% elif v>0.0 %}<td style="background:rgba(39,174,96,.15)">{{ "%.2f"|format(v) }}</td>
-    {% else %}<td style="background:rgba(26,188,156,.2)">{{ "%.2f"|format(v) }}</td>
-    {% endif %}
-    {% endfor %}
-  </tr>
-  {% endfor %}
-  </tbody></table></div>
-{% endif %}
-</main>
-<script>
-{% if not err %}
-const bcd = {{ bt_json }};
-
-document.addEventListener('DOMContentLoaded', function() {
-
-// ── 1. Equity Curve — ECharts (인터랙티브 · 줌 · 툴팁) ─────────────────────
-(function(){
-  const elEc = document.getElementById('equity-chart');
-  if (!elEc) return;
-  elEc.style.width  = '100%';
-  elEc.style.height = '340px';
-  const ec = echarts.init(elEc, null, {renderer:'canvas'});
-  const labels = Array.from({length: bcd.sh.length}, (_, i) => i);
-  ec.setOption({
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger: 'axis', axisPointer: {type:'cross',lineStyle:{color:'#4f8ef7',opacity:.5}},
-      backgroundColor:'#131928', borderColor:'#243050', borderWidth:1,
-      textStyle:{color:'#e8eaf0', fontSize:12},
-      formatter: params => {
-        let s = '<b>Day ' + params[0].axisValue + '</b><br/>';
-        params.forEach(p => {
-          s += `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span>`
-            + p.seriesName + ': <b>$' + Number(p.value).toLocaleString('en-US', {maximumFractionDigits:0}) + '</b><br/>';
-        });
-        return s;
-      }
-    },
-    legend: {
-      data:['📈 Max Sharpe','🛡 Min Variance','⚖ Risk Parity','🔒 Min CVaR'],
-      textStyle:{color:'#e8eaf0'}, bottom:0, itemGap:20,
-      icon: 'roundRect', itemWidth:14, itemHeight:4
-    },
-    dataZoom: [
-      {type:'inside', xAxisIndex:0, start:0, end:100},
-      {type:'slider',  xAxisIndex:0, start:0, end:100, bottom:36,
-       borderColor:'#243050', fillerColor:'rgba(79,142,247,.1)',
-       handleStyle:{color:'#4f8ef7'}, textStyle:{color:'#7b8db0'},
-       height:20}
-    ],
-    grid: {top:20, left:70, right:20, bottom:100, containLabel:false},
-    xAxis: {type:'category', data:labels, show:false},
-    yAxis: {
-      type:'value', splitLine:{lineStyle:{color:'rgba(36,48,80,.6)'}},
-      axisLabel:{color:'#7b8db0', formatter: v => '$' + (v/1000).toFixed(0) + 'K'},
-      axisLine:{lineStyle:{color:'#243050'}}
-    },
-    series: [
-      {name:'📈 Max Sharpe',   type:'line', data:bcd.sh, smooth:true, symbol:'none',
-       lineStyle:{color:'#4f8ef7',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(79,142,247,.25)'},{offset:1,color:'rgba(79,142,247,0)'}]}}},
-      {name:'🛡 Min Variance', type:'line', data:bcd.mv, smooth:true, symbol:'none',
-       lineStyle:{color:'#27ae60',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(39,174,96,.2)'},{offset:1,color:'rgba(39,174,96,0)'}]}}},
-      {name:'⚖ Risk Parity',  type:'line', data:bcd.rp, smooth:true, symbol:'none',
-       lineStyle:{color:'#f39c12',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(243,156,18,.2)'},{offset:1,color:'rgba(243,156,18,0)'}]}}},
-      {name:'🔒 Min CVaR',    type:'line', data:bcd.cv, smooth:true, symbol:'none',
-       lineStyle:{color:'#9b59b6',width:2.5}, areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(155,89,182,.2)'},{offset:1,color:'rgba(155,89,182,0)'}]}}},
-    ]
-  });
-  window.addEventListener('resize', () => ec.resize());
-  setTimeout(() => ec.resize(), 100);
-})();
-
-// ── 2. 포트폴리오별 성과 Bar Chart ───────────────────────────────────────────
-(function(){
-  const elBc = document.getElementById('bar-chart');
-  if (!elBc) return;
-  elBc.style.width  = '100%';
-  elBc.style.height = '280px';
-  const pf_labels = ['Max Sharpe', 'Min Variance', 'Risk Parity', 'Min CVaR'];
-  const apr_data  = [
-    {% for key, pf in d.portfolios.items() %}{{ pf.stats.annual_return_pct }}{% if not loop.last %},{% endif %}{% endfor %}
-  ];
-  const mdd_data  = [
-    {% for key, pf in d.portfolios.items() %}{{ pf.backtest.max_drawdown_pct }}{% if not loop.last %},{% endif %}{% endfor %}
-  ];
-  const sharpe_data = [
-    {% for key, pf in d.portfolios.items() %}{{ pf.stats.sharpe }}{% if not loop.last %},{% endif %}{% endfor %}
-  ];
-
-  const bc = echarts.init(elBc, null, {renderer:'canvas'});
-  bc.setOption({
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger:'axis', axisPointer:{type:'shadow'},
-      backgroundColor:'#131928', borderColor:'#243050', borderWidth:1,
-      textStyle:{color:'#e8eaf0'}
-    },
-    legend: {data:['APR (%)','MDD (%)','Sharpe×10'], textStyle:{color:'#e8eaf0'}, bottom:0, itemGap:16},
-    grid: {top:16, left:60, right:20, bottom:60, containLabel:false},
-    xAxis: {type:'category', data:pf_labels,
-      axisLabel:{color:'#7b8db0', fontSize:11}, axisLine:{lineStyle:{color:'#243050'}}},
-    yAxis: {type:'value', splitLine:{lineStyle:{color:'rgba(36,48,80,.6)'}},
-      axisLabel:{color:'#7b8db0'}, axisLine:{lineStyle:{color:'#243050'}}},
-    series: [
-      {name:'APR (%)', type:'bar', data: apr_data, barWidth:'22%',
-       itemStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#4f8ef7'},{offset:1,color:'#1a5fd1'}]}, borderRadius:[4,4,0,0]},
-       label:{show:true, position:'top', color:'#4f8ef7', fontSize:11, formatter: v => v.value.toFixed(1)+'%'}},
-      {name:'MDD (%)', type:'bar', data: mdd_data, barWidth:'22%',
-       itemStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#e74c3c'},{offset:1,color:'#a52a2a'}]}, borderRadius:[4,4,0,0]},
-       label:{show:true, position:'top', color:'#e74c3c', fontSize:11, formatter: v => v.value.toFixed(1)+'%'}},
-      {name:'Sharpe×10', type:'bar', data: sharpe_data.map(v => +(v*10).toFixed(2)), barWidth:'22%',
-       itemStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#1abc9c'},{offset:1,color:'#0d8a6f'}]}, borderRadius:[4,4,0,0]},
-       label:{show:true, position:'top', color:'#1abc9c', fontSize:11, formatter: v => (v.value/10).toFixed(2)}},
-    ]
-  });
-  window.addEventListener('resize', () => bc.resize());
-  setTimeout(() => bc.resize(), 100);
-})();
-
-}); // DOMContentLoaded
-{% endif %}
-</script>
-</body></html>
-"""
-
-@app.route("/filtered-vaults")
-def filtered_vaults_page():
-    """필터 통과/탈락 전체 목록 페이지"""
-    try:
-        from portfolio_engine import run_portfolio_analysis
-        d = run_portfolio_analysis(top_k=10, max_corr=0.55)
-    except Exception as e:
-        return f"<pre>오류: {e}</pre>", 500
-    if "error" in d:
-        return f"<pre>오류: {d['error']}</pre>", 500
-
-    details = d.get("filter_details", [])
-    passed  = [v for v in details if v.get("_filter_pass")]
-    failed  = [v for v in details if not v.get("_filter_pass")]
-    # 탈락 이유 분류
-    for v in failed:
-        reasons = []
-        if not v.get("allow_deposits", True):
-            reasons.append("입금불가")
-        lr = v.get("leader_equity_ratio", -1)
-        if 0 <= lr < 0.40:
-            reasons.append(f"리더에쿼티 {lr:.0%}<40%")
-        elif lr < 0:
-            reasons.append("리더에쿼티 미확인")
-        v["_reason"] = " / ".join(reasons) if reasons else "기준미달"
-
-    FVHTML = """<!DOCTYPE html>
-<html lang="ko"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>필터 통과 목록</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0b0f1a;--card:#131928;--card2:#1a2340;--border:#243050;
-      --accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;
-      --danger:#e74c3c;--warn:#f39c12;--success:#27ae60;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
-header{background:linear-gradient(135deg,#0d1b40,#111e3d);border-bottom:1px solid var(--border);
-       padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
-       position:sticky;top:0;z-index:100;}
-header h1{font-size:1.1rem;font-weight:700;}
-header p{font-size:.72rem;color:var(--muted);}
-.back{background:transparent;border:1px solid var(--border);color:var(--text);
-      padding:8px 16px;border-radius:8px;font-size:.82rem;text-decoration:none;}
-.back:hover{border-color:var(--accent);}
-main{max-width:1500px;margin:0 auto;padding:24px 20px;}
-.tab-bar{display:flex;gap:12px;margin-bottom:20px;}
-.tab{padding:10px 24px;border-radius:10px;font-size:.85rem;font-weight:600;
-     cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--muted);}
-.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));
-            color:#fff;border-color:transparent;}
-.panel{display:none;}.panel.show{display:block;}
-.sg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;
-    padding:14px 20px;min-width:140px;}
-.sc .k{font-size:.68rem;color:var(--muted);text-transform:uppercase;}
-.sc .v{font-size:1.4rem;font-weight:800;margin-top:4px;}
-.sec{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.08em;
-     text-transform:uppercase;margin:24px 0 10px;display:flex;align-items:center;gap:8px;}
-.sec::after{content:'';flex:1;height:1px;background:var(--border);}
-.tbw{background:var(--card);border:1px solid var(--border);border-radius:14px;
-     overflow-x:auto;margin-bottom:20px;}
-table{width:100%;border-collapse:collapse;}
-thead tr{background:var(--card2);}
-th{padding:9px 11px;text-align:left;font-size:.65rem;font-weight:600;color:var(--muted);
-   letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
-td{padding:8px 11px;font-size:.76rem;border-top:1px solid var(--border);}
-tr:hover td{background:rgba(79,142,247,.04);}
-.pos{color:var(--success);} .neg{color:var(--danger);} .neu{color:var(--muted);}
-.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.65rem;font-weight:700;}
-.badge-ok{background:rgba(39,174,96,.2);color:#27ae60;}
-.badge-no{background:rgba(231,76,60,.15);color:#e74c3c;}
-.badge-warn{background:rgba(243,156,18,.15);color:#f39c12;}
-input[type=text]{background:var(--card2);border:1px solid var(--border);color:var(--text);
-  border-radius:8px;padding:8px 14px;font-size:.82rem;width:260px;margin-bottom:14px;}
-input[type=text]:focus{outline:none;border-color:var(--accent);}
-</style></head>
-<body>
-<header>
-  <div>
-    <h1>🔍 필터 통과 상세 목록</h1>
-    <p>입금가능 · 리더에쿼티 ≥40% 기준 — PnL 데이터 보유 {{ total }}개 볼트 분석</p>
+    </tbody>
+  </table>
   </div>
-  <div style="display:flex;gap:10px;">
-    <a class="back" href="/portfolio">← 포트폴리오</a>
-    <a class="back" href="/">← 메인</a>
-  </div>
-</header>
-<main>
-  <div class="sg">
-    <div class="sc"><div class="k">PnL 보유 볼트</div>
-      <div class="v" style="color:var(--accent)">{{ total }}</div></div>
-    <div class="sc"><div class="k">✅ 필터 통과</div>
-      <div class="v" style="color:var(--success)">{{ n_pass }}</div></div>
-    <div class="sc"><div class="k">❌ 필터 탈락</div>
-      <div class="v" style="color:var(--danger)">{{ n_fail }}</div></div>
-    <div class="sc"><div class="k">입금불가로 탈락</div>
-      <div class="v" style="color:var(--warn)">{{ n_no_deposit }}</div></div>
-    <div class="sc"><div class="k">리더에쿼티 미달</div>
-      <div class="v" style="color:var(--warn)">{{ n_no_leader }}</div></div>
-  </div>
-
-  <div class="tab-bar">
-    <div class="tab active" onclick="showTab('pass',this)">✅ 통과 ({{ n_pass }}개)</div>
-    <div class="tab"        onclick="showTab('fail',this)">❌ 탈락 ({{ n_fail }}개)</div>
-  </div>
-
-  <!-- 통과 목록 -->
-  <div id="panel-pass" class="panel show">
-    <input type="text" id="search-pass" oninput="filterTable('tbl-pass',this.value)"
-           placeholder="볼트명 / 주소 검색...">
-    <div class="tbw"><table id="tbl-pass">
-      <thead><tr>
-        <th>순위</th><th>볼트명</th><th>리더에쿼티</th><th>리더예치($)</th>
-        <th>30일APR</th><th>Sharpe</th><th>MDD</th><th>Robust</th><th>등급</th>
-        <th>TVL($)</th><th>점수</th><th>데이터</th>
-      </tr></thead>
-      <tbody>
-      {% for v in passed %}
-      <tr>
-        <td class="neu">{{ v.rank }}</td>
-        <td style="font-weight:600;max-width:200px">{{ v.name }}</td>
-        <td>
-          {% if v.leader_equity_ratio >= 0 %}
-            <span class="badge {% if v.leader_equity_ratio >= 0.4 %}badge-ok{% else %}badge-no{% endif %}">
-              {{ "%.0f"|format(v.leader_equity_ratio * 100) }}%
-            </span>
-          {% else %}
-            <span class="badge badge-warn">미확인</span>
-          {% endif %}
-        </td>
-        <td class="neu">${{ "{:,.0f}".format(v.leader_equity_usd) if v.leader_equity_usd else "-" }}</td>
-        <td class="{% if v.apr_30d > 0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
-        <td class="{% if v.sharpe_ratio > 1 %}pos{% elif v.sharpe_ratio > 0 %}neu{% else %}neg{% endif %}">
-          {{ "%.2f"|format(v.sharpe_ratio) }}</td>
-        <td class="{% if v.max_drawdown < 15 %}pos{% elif v.max_drawdown < 35 %}neu{% else %}neg{% endif %}">
-          {{ "%.1f"|format(v.max_drawdown) }}%</td>
-        <td class="{% if v.robustness_score >= 0.6 %}pos{% elif v.robustness_score >= 0.35 %}neu{% else %}neg{% endif %}">
-          {{ "%.3f"|format(v.robustness_score) }}</td>
-        <td>{{ v.equity_curve_grade.split("(")[0].strip() if v.equity_curve_grade != "-" else "-" }}</td>
-        <td>${{ "{:,.0f}".format(v.tvl) }}</td>
-        <td style="color:var(--accent);font-weight:700">{{ "%.2f"|format(v.score) }}</td>
-        <td class="neu">{{ v.data_points }}pt</td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-  </div>
-
-  <!-- 탈락 목록 -->
-  <div id="panel-fail" class="panel">
-    <input type="text" id="search-fail" oninput="filterTable('tbl-fail',this.value)"
-           placeholder="볼트명 / 주소 검색...">
-    <div class="tbw"><table id="tbl-fail">
-      <thead><tr>
-        <th>순위</th><th>볼트명</th><th>탈락 이유</th><th>리더에쿼티</th>
-        <th>입금</th><th>30일APR</th><th>MDD</th><th>Robust</th><th>TVL($)</th>
-      </tr></thead>
-      <tbody>
-      {% for v in failed %}
-      <tr>
-        <td class="neu">{{ v.rank }}</td>
-        <td style="font-weight:600;max-width:180px">{{ v.name }}</td>
-        <td><span class="badge badge-no">{{ v._reason }}</span></td>
-        <td>
-          {% if v.leader_equity_ratio >= 0 %}
-            <span class="badge badge-no">{{ "%.0f"|format(v.leader_equity_ratio * 100) }}%</span>
-          {% else %}
-            <span class="badge badge-warn">미확인</span>
-          {% endif %}
-        </td>
-        <td>{% if v.allow_deposits %}<span class="pos">✓</span>
-            {% else %}<span class="neg">✗</span>{% endif %}</td>
-        <td class="{% if v.apr_30d > 0 %}pos{% else %}neg{% endif %}">{{ "%.1f"|format(v.apr_30d) }}%</td>
-        <td>{{ "%.1f"|format(v.max_drawdown) }}%</td>
-        <td class="neu">{{ "%.3f"|format(v.robustness_score) }}</td>
-        <td>${{ "{:,.0f}".format(v.tvl) }}</td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-  </div>
-</main>
-<script>
-function showTab(id, el) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('show');
-  el.classList.add('active');
-}
-function filterTable(tblId, q) {
-  q = q.toLowerCase();
-  document.querySelectorAll('#' + tblId + ' tbody tr').forEach(row => {
-    row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-</script>
-</body></html>"""
-
-    n_no_deposit = sum(1 for v in failed if not v.get("allow_deposits", True))
-    n_no_leader  = sum(1 for v in failed if v.get("allow_deposits", True))  # 입금은 되지만 리더 에쿼티 미달
-
-    return render_template_string(FVHTML,
-        passed=passed, failed=failed,
-        total=len(details),
-        n_pass=len(passed), n_fail=len(failed),
-        n_no_deposit=n_no_deposit, n_no_leader=n_no_leader,
-    )
-
-
-# ── /chart_data API (Task 4e) ────────────────────────────────────────────────
-@app.route("/chart_data")
-def chart_data():
-    """ECharts용 차트 데이터 JSON API"""
-    vaults, date = get_latest_snapshot()
-    if not vaults:
-        return jsonify({"error": "no_data", "date": None})
-
-    import numpy as np
-    valid = [v for v in vaults if v.get("data_points", 0) >= 3]
-
-    # APR 분포
-    apr_vals = [v["apr_30d"] for v in valid]
-    # 히스토그램 bin (5% 간격, -20~100 범위)
-    bins = list(range(-20, 101, 5))
-    hist, _ = np.histogram(apr_vals, bins=bins)
-    apr_hist = {
-        "labels": [f"{b}~{b+5}%" for b in bins[:-1]],
-        "counts": hist.tolist(),
-    }
-
-    # 상위 20 볼트 APR / Sharpe / MDD
-    deposit = [v for v in vaults if v.get("allow_deposits")]
-    top20 = sorted(deposit, key=lambda v: v.get("score", 0), reverse=True)[:20]
-    bar_data = {
-        "names":  [v["name"][:16] for v in top20],
-        "apr":    [round(float(v.get("apr_30d", 0)), 2)   for v in top20],
-        "mdd":    [round(float(v.get("max_drawdown", 0)), 2) for v in top20],
-        "sharpe": [round(float(v.get("sharpe_ratio", 0)), 3) for v in top20],
-    }
-
-    # 요약 통계
-    stats = {}
-    if valid:
-        stats["total"]       = len(vaults)
-        stats["avg_apr"]     = round(float(np.mean(apr_vals)), 2)
-        stats["median_apr"]  = round(float(np.median(apr_vals)), 2)
-        stats["pct_positive"] = round(sum(1 for a in apr_vals if a > 0) / len(apr_vals) * 100, 1)
-
-    return jsonify({
-        "date":     date,
-        "stats":    stats,
-        "apr_hist": apr_hist,
-        "bar_data": bar_data,
-    })
-
-
-@app.route("/download/<filename>")
-def download(filename):
-    """Excel 파일 다운로드"""
-    safe_name = os.path.basename(filename)
-    filepath  = os.path.join(REPORTS_DIR, safe_name)
-    if not os.path.exists(filepath):
-        return "파일을 찾을 수 없습니다.", 404
-    return send_file(
-        os.path.abspath(filepath),
-        as_attachment=True,
-        download_name=safe_name,
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-
-
-@app.route("/download-guide")
-def download_guide():
-    """집 PC 설치 가이드 다운로드"""
-    lines = [
-        "집 PC 설치 가이드 - Hyperliquid Vault Analyzer",
-        "================================================",
-        "",
-        "STEP 1 - Python 설치 확인",
-        "  터미널에서 실행: python --version",
-        "  OK: Python 3.10 이상 -> 다음 단계로",
-        "  없으면 -> https://python.org/downloads 에서 설치",
-        "           (설치 중 [Add Python to PATH] 반드시 체크!)",
-        "",
-        "STEP 2 - Git 설치 확인",
-        "  터미널에서 실행: git --version",
-        "  없으면 -> https://git-scm.com 에서 설치",
-        "",
-        "STEP 3 - 프로젝트 클론 (코드 가져오기)",
-        "  PowerShell에서 실행:",
-        r"  git clone https://github.com/neon0104/hyperliquid-vault-analyzer.git C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer",
-        "",
-        "STEP 4 - 폴더 이동 & 패키지 설치",
-        r"  cd C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer",
-        "  pip install -r requirements.txt",
-        "  (약 2~5분 소요)",
-        "",
-        "STEP 5 - API 키 설정",
-        "  copy config.example.json config.json",
-        "",
-        "  config.json 파일을 메모장으로 열어서 수정:",
-        '  {',
-        '      "account_address": "여기에_지갑주소_입력",',
-        '      "secret_key": "여기에_시크릿키_입력"',
-        '  }',
-        "  (지갑주소/시크릿키는 회사 PC의 config.json에서 복사)",
-        "",
-        "STEP 6 - 실행!",
-        "  python web_dashboard.py",
-        "",
-        "  브라우저에서 http://localhost:5000 자동으로 열림",
-        "  -> [지금 분석 실행] 버튼 클릭 (2~5분 소요)",
-        "  -> [다운로드] 로 Excel 다운로드",
-        "",
-        "================================================",
-        " 매일 사용하는 명령어",
-        "================================================",
-        "",
-        "  코드 최신본 받기 (작업 시작 전): git pull origin master",
-        "  대시보드 시작:                  python web_dashboard.py",
-        "  분석만 실행 (CLI):              python analyze_top_vaults.py",
-        "  MDD 25% 미만으로만 분석:        python analyze_top_vaults.py --mdd 25",
-        "",
-        "================================================",
-        " 자주 있는 문제",
-        "================================================",
-        "",
-        "  git 명령어 없음  -> https://git-scm.com 설치",
-        "  pip 오류         -> python -m pip install -r requirements.txt",
-        "  포트 5000 충돌   -> 다른 프로그램 종료 후 재실행",
-        "  브라우저 안 열림 -> 직접 http://localhost:5000 입력",
-        "",
-        "  GitHub repo: https://github.com/neon0104/hyperliquid-vault-analyzer",
-    ]
-    guide_content = "\n".join(lines)
-    from flask import Response
-    return Response(
-        guide_content.encode("utf-8"),
-        mimetype="text/plain; charset=utf-8",
-        headers={"Content-Disposition": "attachment; filename*=UTF-8''%EC%A7%91PC_%EC%84%A4%EC%B9%98%EA%B0%80%EC%9D%B4%EB%93%9C.txt"}
-    )
-
-
-@app.route("/run-analysis", methods=["POST"])
-def run_analysis_route():
-    global _analysis_running, _analysis_log
-    with _analysis_lock:
-        if _analysis_running:
-            return jsonify(status="already_running", message="이미 분석이 실행 중입니다.", log=_analysis_log[-5:])
-
-    def _run():
-        global _analysis_running, _analysis_log
-        _analysis_running = True
-        _analysis_log = ["분석 시작..."];
-        try:
-            proc = subprocess.Popen(
-                [sys.executable, "-u", "analyze_top_vaults.py", "--force"],
-                cwd=os.path.dirname(os.path.abspath(__file__)),
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                text=True, encoding="utf-8", errors="replace"
-            )
-            for line in proc.stdout:
-                line = line.rstrip()
-                if line:
-                    _analysis_log.append(line)
-                    if len(_analysis_log) > 200:
-                        _analysis_log = _analysis_log[-200:]
-            proc.wait()
-        except Exception as e:
-            _analysis_log.append(f"오류: {e}")
-        finally:
-            _analysis_running = False
-
-    t = threading.Thread(target=_run, daemon=True)
-    t.start()
-    return jsonify(status="started")
-
-
-@app.route("/analysis-status")
-def analysis_status():
-    return jsonify(running=_analysis_running, log=_analysis_log[-10:])
-
-
-@app.route("/analysis-log")
-def analysis_log_route():
-    return jsonify(running=_analysis_running, log=_analysis_log)
-
-
-# ── 모바일 & API 라우트 ────────────────────────────────────────────────────────
-
-@app.route("/api/status")
-def api_status():
-    """모바일 앱 / 외부에서 포트폴리오 상태 조회 JSON API"""
-    status  = load_status_file()
-    stopped = is_emergency_stopped()
-
-    # my_portfolio.json 로드 (구형/신형 형식 모두 지원)
-    raw_portfolio = load_portfolio_file()
-    if isinstance(raw_portfolio, dict) and "positions" in raw_portfolio:
-        # 신형: fetch_my_portfolio.py 저장 형식
-        positions = raw_portfolio.get("positions", {})
-        hl_holdings = raw_portfolio.get("holdings", [])
-    else:
-        # 구형: {주소: 금액} 단순 dict
-        positions = raw_portfolio
-        hl_holdings = []
-
-    # holdings 이름 맵 (신형 데이터에서 이름 가져오기)
-    hl_name_map = {h.get("vault_address", ""): h.get("name", "") for h in hl_holdings}
-
-    vaults, date = get_latest_snapshot()
-    vault_map = {v["address"]: v for v in (vaults or [])}
-
-    holdings = []
-    total_invested = 0.0
-    total_monthly_est = 0.0
-    for addr, usd in positions.items():
-        usd = float(usd)  # 문자열/숫자 모두 처리
-        v   = vault_map.get(addr, {})
-        apr = float(v.get("apr_30d", 0))
-        monthly = usd * apr / 100 / 12
-        total_invested    += usd
-        total_monthly_est += monthly
-        name = v.get("name") or hl_name_map.get(addr) or addr[:12] + "..."
-        holdings.append({
-            "address":      addr,
-            "name":         name,
-            "invested_usd": round(usd, 2),
-            "pct":          0,
-            "apr_30d":      apr,
-            "mdd":          float(v.get("max_drawdown", 0)),
-            "monthly_est":  round(monthly, 2),
-            "danger":       float(v.get("max_drawdown", 0)) > 20 or apr < 0,
-        })
-    for h in holdings:
-        h["pct"] = round(h["invested_usd"] / total_invested * 100, 1) if total_invested else 0
-
-    return jsonify({
-        "emergency_stopped": stopped,
-        "scheduler_running": status.get("scheduler_running", False),
-        "last_run_date":     status.get("last_run_date"),
-        "last_run_status":   status.get("last_run_status"),
-        "next_run":          status.get("next_run"),
-        "days_to_rebalance": status.get("days_to_rebalance", 30),
-        "needs_rebalance":   status.get("needs_rebalance", False),
-        "rebalance_reason":  status.get("rebalance_reason", ""),
-        "total_invested":    round(total_invested, 2),
-        "estimated_monthly": round(total_monthly_est, 2),
-        "estimated_annual":  round(total_monthly_est * 12, 2),
-        "holdings":          holdings,
-        "recent_alerts":     status.get("recent_alerts", []),
-        "vault_count":       status.get("vault_count", 0),
-        "analysis_date":     date,
-        "is_configured":     len(positions) > 0,
-    })
-
-
-@app.route("/emergency-stop", methods=["POST"])
-def emergency_stop():
-    """긴급 중단 — 플래그 파일 생성"""
-    reason = request.json.get("reason", "Dashboard emergency stop") if request.is_json else "Dashboard emergency stop"
-    with open(STOP_FLAG, "w", encoding="utf-8") as f:
-        json.dump({"reason": reason, "time": datetime.now().isoformat()}, f)
-    return jsonify(status="stopped", message="긴급 중단 완료")
-
-
-@app.route("/emergency-clear", methods=["POST"])
-def emergency_clear():
-    """긴급 중단 해제"""
-    if os.path.exists(STOP_FLAG):
-        os.remove(STOP_FLAG)
-    return jsonify(status="cleared", message="긴급 중단 해제 완료")
-
-
-@app.route("/set-portfolio", methods=["POST"])
-def set_portfolio():
-    """포트폴리오 설정 저장 {address: usd_amount}"""
-    data = request.get_json(silent=True) or {}
-    portfolio = data.get("portfolio", {})
-    if not isinstance(portfolio, dict):
-        return jsonify(error="portfolio must be a dict"), 422
-    os.makedirs(DATA_DIR, exist_ok=True)
-    with open(PORTFOLIO_FILE, "w", encoding="utf-8") as f:
-        json.dump(portfolio, f, ensure_ascii=False, indent=2)
-    return jsonify(status="ok", message="포트폴리오 저장 완료")
-
-
-MOBILE_HTML = r"""<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>📊 내 포트폴리오</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#0b0f1a;--card:#131928;--card2:#1a2340;--border:#243050;
-          --accent:#4f8ef7;--accent2:#1abc9c;--text:#e8eaf0;--muted:#7b8db0;
-          --danger:#e74c3c;--warn:#f39c12;--success:#27ae60;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
-         min-height:100vh;padding-bottom:80px;}
-    header{background:linear-gradient(135deg,#0d1b40,#111e3d);
-           border-bottom:1px solid var(--border);padding:16px 20px;
-           display:flex;align-items:center;justify-content:space-between;
-           position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
-    header h1{font-size:1rem;font-weight:700;}
-    header p{font-size:.68rem;color:var(--muted);}
-    .back{color:var(--muted);text-decoration:none;font-size:.85rem;}
-    main{padding:16px;}
-    /* 상태 배너 */
-    .status-banner{border-radius:12px;padding:14px 16px;margin-bottom:16px;
-                   display:flex;align-items:center;gap:12px;}
-    .status-banner.ok  {background:rgba(39,174,96,.15);border:1px solid #27ae60;}
-    .status-banner.warn{background:rgba(243,156,18,.15);border:1px solid #f39c12;}
-    .status-banner.danger{background:rgba(231,76,60,.2);border:1px solid #e74c3c;}
-    .status-banner .icon{font-size:1.8rem;}
-    .status-banner .st-title{font-weight:700;font-size:.9rem;}
-    .status-banner .st-sub{font-size:.78rem;color:var(--muted);margin-top:2px;}
-    /* 통계 카드 그리드 */
-    .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
-    .stat-card .sk{font-size:.68rem;color:var(--muted);text-transform:uppercase;}
-    .stat-card .sv{font-size:1.3rem;font-weight:800;margin-top:4px;}
-    /* 홀딩 카드 */
-    .holding-card{background:var(--card);border:1px solid var(--border);
-                  border-radius:12px;padding:14px 16px;margin-bottom:10px;position:relative;}
-    .holding-card.danger{border-color:var(--danger);}
-    .holding-card .hname{font-weight:700;font-size:.9rem;margin-bottom:8px;padding-right:50px;}
-    .holding-row{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px;}
-    .holding-row .hk{color:var(--muted);}
-    .holding-row .hv{font-weight:600;}
-    .pct-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;}
-    .pct-bar .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;}
-    .danger-badge{position:absolute;top:12px;right:12px;
-                  background:rgba(231,76,60,.2);border:1px solid var(--danger);
-                  color:var(--danger);font-size:.65rem;font-weight:700;
-                  padding:2px 7px;border-radius:5px;}
-    /* 긴급중단 버튼 */
-    .emergency-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;
-                   background:var(--card);border-top:1px solid var(--border);
-                   display:flex;gap:10px;}
-    .btn-emergency{flex:1;background:linear-gradient(135deg,#e74c3c,#c0392b);
-                   color:#fff;border:none;border-radius:10px;padding:14px;
-                   font-size:.9rem;font-weight:700;cursor:pointer;transition:all.2s;}
-    .btn-emergency:active{transform:scale(.97);}
-    .btn-home{flex:0 0 44px;background:var(--card2);border:1px solid var(--border);
-              border-radius:10px;display:flex;align-items:center;justify-content:center;
-              font-size:1.3rem;cursor:pointer;text-decoration:none;}
-    /* 알림 */
-    .alerts-section{margin-top:16px;}
-    .alert-item{background:var(--card2);border:1px solid var(--border);
-                border-radius:10px;padding:12px;margin-bottom:8px;font-size:.78rem;}
-    .alert-item .at{color:var(--muted);font-size:.68rem;margin-bottom:4px;}
-    .alert-item.WARN{border-left:3px solid var(--warn);}
-    .alert-item.ERROR{border-left:3px solid var(--danger);}
-    .alert-item.INFO{border-left:3px solid var(--accent);}
-    /* 리밸런싱 카운트다운 */
-    .countdown{background:linear-gradient(135deg,#0d1b40,#111e3d);
-               border:1px solid var(--accent);border-radius:12px;
-               padding:14px 16px;margin-bottom:16px;text-align:center;}
-    .countdown .cd-num{font-size:2rem;font-weight:800;color:var(--accent);}
-    .countdown .cd-label{font-size:.75rem;color:var(--muted);}
-    .pos{color:var(--success);} .neg{color:var(--danger);} .warn-c{color:var(--warn);}
-    /* 토스트 */
-    #toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);
-           background:#131928;border:1px solid var(--accent);border-radius:10px;
-           padding:12px 20px;font-size:.85rem;z-index:999;display:none;
-           white-space:nowrap;}
-  </style>
-</head>
-<body>
-<header>
-  <div>
-    <h1>📊 내 포트폴리오</h1>
-    <p id="last-updated">로딩 중...</p>
-  </div>
-  <a class="back" href="/">← 메인</a>
-</header>
-<main>
-  <div id="content">
-    <div style="text-align:center;padding:60px;color:var(--muted)">
-      <div style="font-size:2rem;margin-bottom:12px">⏳</div>
-      <p>데이터 로딩 중...</p>
-    </div>
-  </div>
-</main>
-<div class="emergency-bar">
-  <a class="btn-home" href="/">🏠</a>
-  <button class="btn-emergency" id="stop-btn" onclick="emergencyStop()">🔴 긴급 중단</button>
 </div>
-<div id="toast"></div>
 
+<!-- ── 💡 전략 비교 설명 ── -->
+<div class="card" style="margin-bottom:25px;">
+  <h2 style="margin-bottom:5px;">💡 왜 이렇게 추천했는가?</h2>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:20px;">4가지 전략은 각각 다른 투자 철학을 반영합니다. 본인의 성향에 맞는 전략을 선택하세요.</p>
+  <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+  {% for k, p in d.portfolios.items() %}
+  <div class="card" style="margin-bottom:0; border-left:4px solid {{'var(--accent)' if k == 'max_sharpe' else 'var(--accent2)' if k == 'min_variance' else '#f39c12' if k == 'risk_parity' else '#e74c3c'}};">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h4 style="color:var(--accent);">{{p.emoji}} {{p.label}}</h4>
+      <span style="font-size:1.8rem; font-weight:800; color:var(--success);">{{p.stats.annual_return_pct}}%</span>
+    </div>
+
+    <!-- 전략 설명 -->
+    <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; margin-bottom:12px; font-size:0.85rem; line-height:1.6;">
+    {% if k == 'max_sharpe' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 위험 대비 수익이 가장 높은 조합을 찾습니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">Sharpe가 높은 볼트에 집중 배분합니다. 수익률은 높지만 특정 볼트에 쏠릴 수 있어 하락 시 타격이 클 수 있습니다.</p>
+    {% elif k == 'min_variance' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 포트폴리오 전체의 변동성을 최소화합니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">MDD가 낮고 변동성이 작은 볼트에 집중합니다. 수익률은 낮지만 안정적이며, 서로 반대로 움직이는 볼트끼리 조합해 변동을 상쇄합니다.</p>
+    {% elif k == 'risk_parity' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 각 볼트가 포트폴리오 위험에 동일하게 기여하도록 배분합니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">변동성이 큰 볼트는 비중을 줄이고, 안정적인 볼트는 비중을 높입니다. 어떤 한 볼트가 전체 위험을 지배하지 않도록 균형을 맞춥니다.</p>
+    {% elif k == 'min_cvar' %}
+      <p style="margin:0; color:var(--text);">📌 <b>핵심 원리:</b> 최악의 손실 시나리오(하위 5%)를 최소화합니다.</p>
+      <p style="margin:6px 0 0 0; color:var(--muted);">원금 보호를 최우선으로 합니다. 꼬리 위험(tail risk)이 적은 볼트를 선호하며, "최악의 날에도 얼마나 덜 잃을 수 있는가"에 집중합니다.</p>
+    {% endif %}
+    </div>
+
+    <!-- 지표 비교 -->
+    <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:8px; text-align:center; margin-bottom:12px;">
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">연 수익률</div>
+        <div style="font-size:1.1rem; font-weight:800; color:var(--success);">{{p.stats.annual_return_pct}}%</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">변동성</div>
+        <div style="font-size:1.1rem; font-weight:800; color:#f39c12;">{{p.stats.annual_vol_pct}}%</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">Sharpe</div>
+        <div style="font-size:1.1rem; font-weight:800; color:var(--accent);">{{p.stats.sharpe}}</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:6px;">
+        <div style="font-size:0.7rem; color:var(--muted);">Max MDD</div>
+        <div style="font-size:1.1rem; font-weight:800; color:var(--danger);">{{p.backtest.max_drawdown_pct}}%</div>
+      </div>
+    </div>
+
+    <!-- 비중 배분 -->
+    <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px;">
+    {% for vname, w in p.stats.weights.items() %}{% if w > 3 %}
+    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; margin-bottom:4px; padding:4px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+      <span style="font-weight:600; max-width:55%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{vname[:30]}}</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:80px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+          <div style="width:{{w * 2.86}}%; height:100%; background:var(--accent2); border-radius:3px;"></div>
+        </div>
+        <span style="color:var(--accent2); font-weight:800; min-width:40px; text-align:right;">{{w}}%</span>
+        <span class="alloc-dollar" data-weight="{{w}}" style="color:#fff; min-width:60px; text-align:right;">$0</span>
+      </div>
+    </div>
+    {% endif %}{% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  </div>
+</div>
+
+<!-- ── 🔗 상관관계 인사이트 ── -->
+{% if d.corr_selected %}
+<div class="card" style="margin-bottom:25px;">
+  <h2 style="margin-bottom:5px;">🔗 상관관계 분석</h2>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:15px;">볼트 간 상관관계가 낮을수록 분산 효과가 큽니다. 빨간색은 같이 움직이는 볼트, 파란색은 반대로 움직이는 볼트입니다.</p>
+  <div style="overflow-x:auto;">
+  <table style="min-width:600px; font-size:0.75rem;">
+    <thead><tr><th></th>
+    {% for n in d.corr_selected.names %}<th style="text-align:center; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.65rem;" title="{{n}}">{{n[:12]}}</th>{% endfor %}
+    </tr></thead>
+    <tbody>
+    {% for i in range(d.corr_selected.names | length) %}
+    <tr>
+      <td style="font-weight:600; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.7rem;" title="{{d.corr_selected.names[i]}}">{{d.corr_selected.names[i][:12]}}</td>
+      {% for j in range(d.corr_selected.names | length) %}
+      {% set val = d.corr_selected.matrix[i][j] %}
+      <td style="text-align:center; padding:6px; background:{{'rgba(231,76,60,' ~ (val * 0.4) ~ ')' if val > 0.3 else 'rgba(79,142,247,' ~ ((-val) * 0.5) ~ ')' if val < -0.1 else 'rgba(255,255,255,0.02)'}}; font-weight:{{'700' if val|abs > 0.5 else '400'}}; color:{{'var(--danger)' if val > 0.5 else 'var(--accent)' if val < -0.1 else 'var(--muted)'}}; font-size:0.75rem;">
+        {% if i == j %}<span style="color:var(--muted);">-</span>{% else %}{{val}}{% endif %}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  <!-- 상관관계 해석 -->
+  <div style="margin-top:15px; background:rgba(255,255,255,0.03); padding:15px; border-radius:8px; font-size:0.85rem; line-height:1.7;">
+    <p style="margin:0; color:var(--text);"><b>📖 읽는 법:</b></p>
+    <ul style="margin:5px 0 0 0; padding-left:20px; color:var(--muted);">
+      <li><span style="color:var(--danger);">빨간 숫자 (0.5 이상)</span> = 두 볼트가 같이 오르고 같이 내림 → 분산 효과 ❌</li>
+      <li><span style="color:var(--accent);">파란 숫자 (음수)</span> = 반대로 움직임 → 분산 효과 ✅ (이상적)</li>
+      <li><span style="color:var(--muted);">회색 숫자 (0 근처)</span> = 독립적 움직임 → 분산 효과 ✅</li>
+    </ul>
+    <p style="margin:10px 0 0 0; color:var(--accent2);"><b>💡 포인트:</b> 상관관계 0.5 이상인 볼트 조합은 동시에 투자 시 위험이 겹칩니다. 시스템은 상관 {{d.corr_selected.matrix[0][1] if d.corr_selected.names|length > 1 else 0}} 이하의 저상관 조합을 우선 선택했습니다.</p>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── 📝 종합 분석 가이드 ── -->
+<div class="card" style="margin-bottom:25px; border-left:4px solid var(--accent2);">
+  <h2 style="margin-bottom:5px;">📝 투자 전략 가이드</h2>
+  <div style="font-size:0.9rem; line-height:1.8; color:var(--muted);">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:10px;">
+      <div style="background:rgba(46,204,113,0.05); padding:15px; border-radius:10px; border:1px solid rgba(46,204,113,0.2);">
+        <p style="margin:0; color:var(--success); font-weight:600;">✅ 공격적 투자자 (수익 우선)</p>
+        <p style="margin:8px 0 0 0;">→ <b>최대 샤프 📈</b> 전략 추천<br>
+        높은 Sharpe 볼트에 집중, 수익률 극대화.<br>
+        <span style="color:var(--danger);">⚠️ MDD {{d.portfolios.max_sharpe.backtest.max_drawdown_pct}}% 감수 필요</span></p>
+      </div>
+      <div style="background:rgba(26,188,156,0.05); padding:15px; border-radius:10px; border:1px solid rgba(26,188,156,0.2);">
+        <p style="margin:0; color:var(--accent2); font-weight:600;">🛡️ 안정형 투자자 (원금 보호)</p>
+        <p style="margin:8px 0 0 0;">→ <b>원금보호 CVaR 🔒</b> 또는 <b>최소분산 🛡️</b> 추천<br>
+        최악의 시나리오를 최소화, 변동성 억제.<br>
+        <span style="color:var(--success);">MDD {{d.portfolios.min_cvar.backtest.max_drawdown_pct}}%로 제한</span></p>
+      </div>
+      <div style="background:rgba(243,156,18,0.05); padding:15px; border-radius:10px; border:1px solid rgba(243,156,18,0.2);">
+        <p style="margin:0; color:#f39c12; font-weight:600;">⚖️ 균형형 투자자</p>
+        <p style="margin:8px 0 0 0;">→ <b>위험 균형 ⚖️</b> 전략 추천<br>
+        모든 볼트가 위험에 균등 기여, 특정 볼트 의존도 낮음.<br>
+        수익과 안정의 중간 지점.</p>
+      </div>
+      <div style="background:rgba(79,142,247,0.05); padding:15px; border-radius:10px; border:1px solid rgba(79,142,247,0.2);">
+        <p style="margin:0; color:var(--accent); font-weight:600;">🧠 분석 기간</p>
+        <p style="margin:8px 0 0 0;">본 분석은 <b>최근 {{d.analysis_days}}일</b> 데이터를 기반으로 합니다.<br>
+        {{d.n_selected}}개 볼트가 저상관 기준으로 최종 선택되었으며,<br>
+        전체 {{d.n_filtered}}개 필터 통과 중 선별되었습니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
 <script>
-let statusData = null;
-let stopped = false;
+{% if d.portfolio_summary %}
+const ctx = document.getElementById('historyChart').getContext('2d');
+const dates = {{ d.portfolio_summary.value_series | map(attribute=0) | list | tojson }};
+const baseValues = {{ d.portfolio_summary.value_series | map(attribute=1) | list | tojson }};
+const BASE_CAPITAL = 100000; // Simulated originally at 100k
 
-function fmt(n){return '$'+Number(n).toLocaleString(undefined,{maximumFractionDigits:0});}
-function fmtPct(n){return (n>0?'+':'')+n.toFixed(1)+'%';}
-
-async function loadStatus(){
-  try{
-    const r = await fetch('/api/status');
-    statusData = await r.json();
-    stopped = statusData.emergency_stopped;
-    renderPage();
-  }catch(e){
-    document.getElementById('content').innerHTML=
-      '<div style="text-align:center;padding:40px;color:var(--muted)">⚠️ 서버 연결 실패</div>';
+let chartInstance = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: dates,
+    datasets: [{
+      label: 'Portfolio Value ($)',
+      data: baseValues,
+      borderColor: '#1abc9c',
+      backgroundColor: 'rgba(26, 188, 156, 0.1)',
+      fill: true,
+      tension: 0.4,
+      borderWidth: 3,
+      pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#7b8db0', maxRotation: 0, font: {size: 10} } },
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } } }
+    }
   }
+});
+
+const KRW_RATE = 1400;
+
+function parseAmountValue(el) {
+  return parseFloat(el.value.replace(/,/g, '')) || 0;
 }
 
-function renderPage(){
-  const d = statusData;
+function formatAmountInput(el) {
+  const cursor = el.selectionStart;
+  const oldLen = el.value.length;
+  const raw = el.value.replace(/[^0-9]/g, '');
+  const num = parseInt(raw) || 0;
+  el.value = num.toLocaleString();
+  const newLen = el.value.length;
+  const newCursor = cursor + (newLen - oldLen);
+  el.setSelectionRange(newCursor, newCursor);
+}
+
+function updateKRWDisplay(inputId, krwId) {
+  const val = parseAmountValue(document.getElementById(inputId));
+  const krw = val * KRW_RATE;
+  document.getElementById(krwId).innerText = '≈ ₩' + Math.round(krw).toLocaleString();
+}
+
+function updateCustomKRW() {
+  updateKRWDisplay('customSimAmount', 'customSimAmountKRW');
+}
+
+function updateSimulation() {
+  let simAmount = parseAmountValue(document.getElementById('simAmount'));
+  if(simAmount <= 0) simAmount = BASE_CAPITAL;
+  
+  // Update KRW
+  updateKRWDisplay('simAmount', 'simAmountKRW');
+  
+  // Update Chart
+  const ratio = simAmount / BASE_CAPITAL;
+  const newValues = baseValues.map(v => v * ratio);
+  chartInstance.data.datasets[0].data = newValues;
+  chartInstance.update();
+
+  // Update Allocation Dollars
+  document.querySelectorAll('.alloc-dollar').forEach(el => {
+    const weight = parseFloat(el.getAttribute('data-weight')) || 0;
+    const alloc = (simAmount * weight / 100).toFixed(0);
+    el.innerText = `\$${parseInt(alloc).toLocaleString()}`;
+  });
+}
+updateSimulation(); // init bounds
+{% endif %}
+
+let customVaults = [];
+let cbtChartInstance = null;
+
+function addCustomVault() {
+  const sel = document.getElementById('customVaultSelect');
+  const address = sel.value;
+  const name = sel.options[sel.selectedIndex].text.split(' (')[0];
+  const weight = parseFloat(document.getElementById('customVaultWeight').value);
+  
+  if(!weight || weight <= 0) { alert('정확한 비중(%)을 입력하세요.'); return; }
+  
+  customVaults.push({ address, name, weight });
+  renderCustomVaultList();
+  document.getElementById('customVaultWeight').value = '';
+}
+
+function removeCustomVault(idx) {
+  customVaults.splice(idx, 1);
+  renderCustomVaultList();
+}
+
+function renderCustomVaultList() {
+  const container = document.getElementById('customVaultList');
+  if(customVaults.length === 0) { container.innerHTML = '<span style="color:var(--muted)">추가된 볼트가 없습니다. Total: 0%</span>'; return; }
+  
   let html = '';
-
-  // 비상 상태 배너
-  if(d.emergency_stopped){
-    html += `<div class="status-banner danger">
-      <div class="icon">🔴</div>
-      <div><div class="st-title">긴급 중단 상태</div>
-      <div class="st-sub">모든 자동 분석이 중단되었습니다</div></div></div>`;
-  } else if(d.needs_rebalance){
-    html += `<div class="status-banner warn">
-      <div class="icon">⚠️</div>
-      <div><div class="st-title">리밸런싱 권고</div>
-      <div class="st-sub">${d.rebalance_reason||'포트폴리오 조정이 필요합니다'}</div></div></div>`;
-  } else {
-    html += `<div class="status-banner ok">
-      <div class="icon">✅</div>
-      <div><div class="st-title">포트폴리오 정상</div>
-      <div class="st-sub">마지막 분석: ${d.last_run_date||'없음'}</div></div></div>`;
-  }
-
-  // 리밸런싱 카운트다운
-  const days = d.days_to_rebalance || 30;
-  const dColor = days<=3?'var(--danger)':days<=7?'var(--warn)':'var(--accent)';
-  html += `<div class="countdown">
-    <div class="cd-num" style="color:${dColor}">${days}일</div>
-    <div class="cd-label">30일 리밸런싱까지</div>
-  </div>`;
-
-  // 통계
-  html += `<div class="stats-row">
-    <div class="stat-card">
-      <div class="sk">총 투자금</div>
-      <div class="sv" style="color:var(--accent)">${fmt(d.total_invested||0)}</div>
-    </div>
-    <div class="stat-card">
-      <div class="sk">예상 월수익</div>
-      <div class="sv" style="color:var(--accent2)">${fmt(d.estimated_monthly||0)}</div>
-    </div>
-    <div class="stat-card">
-      <div class="sk">예상 연수익</div>
-      <div class="sv" style="color:var(--accent2)">${fmt(d.estimated_annual||0)}</div>
-    </div>
-    <div class="stat-card">
-      <div class="sk">분석 볼트 수</div>
-      <div class="sv">${d.vault_count||0}<span style="font-size:.8rem;color:var(--muted)">개</span></div>
-    </div>
-  </div>`;
-
-  // 보유 볼트
-  if(d.holdings && d.holdings.length > 0){
-    html += '<p style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📌 보유 볼트</p>';
-    d.holdings.forEach(h=>{
-      const aprColor = h.apr_30d>0?'var(--success)':'var(--danger)';
-      const mddColor = h.mdd<15?'var(--success)':h.mdd<25?'var(--warn)':'var(--danger)';
-      html += `<div class="holding-card${h.danger?' danger':''}">
-        ${h.danger?'<div class="danger-badge">⚠️ 주의</div>':''}
-        <div class="hname">${h.name}</div>
-        <div class="holding-row"><span class="hk">투자금액</span><span class="hv">${fmt(h.invested_usd)}</span></div>
-        <div class="holding-row"><span class="hk">30일 APR</span>
-          <span class="hv" style="color:${aprColor}">${fmtPct(h.apr_30d)}</span></div>
-        <div class="holding-row"><span class="hk">MDD</span>
-          <span class="hv" style="color:${mddColor}">${h.mdd.toFixed(1)}%</span></div>
-        <div class="holding-row"><span class="hk">예상 월수익</span>
-          <span class="hv" style="color:var(--accent2)">${fmt(h.monthly_est)}</span></div>
-        <div class="pct-bar"><div class="fill" style="width:${Math.min(h.pct,100)}%"></div></div>
-        <div style="text-align:right;font-size:.68rem;color:var(--muted);margin-top:4px">${h.pct.toFixed(1)}%</div>
-      </div>`;
-    });
-  } else {
-    html += `<div style="text-align:center;padding:30px;color:var(--muted);
-              background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px">
-      <div style="font-size:1.5rem;margin-bottom:8px">💼</div>
-      <p style="font-size:.85rem">포트폴리오 미설정</p>
-      <p style="font-size:.75rem;margin-top:6px">vault_data/my_portfolio.json 에 투자 현황 입력</p>
+  let sum = 0;
+  customVaults.forEach((v, i) => {
+    sum += v.weight;
+    html += `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed var(--border);">
+      <span>${v.name} <small style="color:var(--muted)">- ${v.address.substring(0,8)}...</small></span>
+      <span>
+        <strong style="color:var(--accent2); margin-right:15px">${v.weight}%</strong>
+        <button onclick="removeCustomVault(${i})" style="background:none; border:none; color:var(--danger); cursor:pointer;">❌</button>
+      </span>
     </div>`;
-  }
+  });
+  html += `<div style="text-align:right; margin-top:10px; font-weight:bold; color:${Math.abs(sum-100)<0.1?'var(--success)':'var(--danger)'}">총 비중: ${sum}%</div>`;
+  container.innerHTML = html;
+}
+renderCustomVaultList();
 
-  // 최근 알림
-  if(d.recent_alerts && d.recent_alerts.length > 0){
-    html += '<p style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">🔔 최근 알림</p>';
-    html += '<div class="alerts-section">';
-    d.recent_alerts.forEach(a=>{
-      const t = a.time ? new Date(a.time).toLocaleString('ko-KR') : '';
-      html += `<div class="alert-item ${a.level||'INFO'}">
-        <div class="at">${t} · ${a.level}</div>
-        <div style="font-weight:600">${a.title}</div>
-        <div style="color:var(--muted);margin-top:2px">${a.message}</div>
-      </div>`;
+function runCustomBacktest() {
+  if(customVaults.length === 0) { alert('최소 하나의 볼트를 추가하세요.'); return; }
+  const total = customVaults.reduce((a, b) => a + b.weight, 0);
+  if(Math.abs(total - 100) > 0.1) { alert('총 비중은 100%가 되어야 합니다. 현재: ' + total + '%'); return; }
+  
+  const start_date = document.getElementById('customSimDate').value;
+  const amount = parseAmountValue(document.getElementById('customSimAmount')) || 100000;
+  
+  const btn = document.querySelector('button[onclick="runCustomBacktest()"]');
+  btn.innerText = "Simulating...";
+  
+  fetch('/api/simulate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ custom_vaults: customVaults, start_date, amount })
+  })
+  .then(r => r.json())
+  .then(res => {
+    btn.innerText = "▶ 검증 및 시뮬레이션";
+    if(res.error) { alert(res.error); return; }
+    
+    document.getElementById('cbtResult').style.display = 'block';
+    
+    const pnl = res.total_pnl;
+    document.getElementById('cbtPnl').innerHTML = (pnl >= 0 ? '+' : '') + '$' + pnl.toLocaleString();
+    document.getElementById('cbtPnl').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('cbtPct').innerText = (pnl >= 0 ? '+' : '') + res.total_pnl_pct + '%';
+    document.getElementById('cbtPct').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('cbtVal').innerText = '$' + res.total_value.toLocaleString();
+    
+    const ctx = document.getElementById('cbtChart').getContext('2d');
+    if(cbtChartInstance) cbtChartInstance.destroy();
+    cbtChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: res.history_dates,
+        datasets: [{
+          label: 'Custom Portfolio Value ($)',
+          data: res.history_values,
+          borderColor: '#f39c12',
+          backgroundColor: 'rgba(243, 156, 18, 0.15)',
+          fill: true, tension: 0.3, borderWidth: 3, pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { 
+          x: { display: false }, 
+          y: { grid: { color: 'rgba(255,255,255,0.05)'}, ticks:{color:'#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } }}
+        }
+      }
     });
-    html += '</div>';
-  }
-
-  document.getElementById('content').innerHTML = html;
-  document.getElementById('last-updated').textContent =
-    '업데이트: ' + new Date().toLocaleString('ko-KR');
-
-  // 긴급중단 버튼 라벨
-  const btn = document.getElementById('stop-btn');
-  if(d.emergency_stopped){
-    btn.textContent = '✅ 긴급중단 해제';
-    btn.style.background = 'linear-gradient(135deg,#27ae60,#1abc9c)';
-    btn.onclick = emergencyClear;
-  } else {
-    btn.textContent = '🔴 긴급 중단';
-    btn.style.background = 'linear-gradient(135deg,#e74c3c,#c0392b)';
-    btn.onclick = emergencyStop;
-  }
+  })
+  .catch(err => {
+    btn.innerText = "▶ 검증 및 시뮬레이션";
+    alert("시뮬레이션 통신 실패.");
+  });
 }
 
-async function emergencyStop(){
-  if(!confirm('⚠️ 정말 긴급 중단하시겠습니까?\n자동 분석이 중단됩니다.')) return;
-  try{
-    await fetch('/emergency-stop',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({reason:'Mobile dashboard emergency stop'})});
-    showToast('🔴 긴급 중단 완료');
-    setTimeout(loadStatus, 1000);
-  }catch(e){showToast('오류: 서버 연결 실패');}
+let btChartInstance = null;
+function runBacktest() {
+  const ptype = document.getElementById('simPtype').value;
+  const start_date = document.getElementById('simDate').value;
+  const amount = parseAmountValue(document.getElementById('simAmount')) || 100000;
+  
+  const btn = document.querySelector('button[onclick="runBacktest()"]');
+  btn.innerText = "Simulating...";
+  
+  fetch('/api/simulate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ptype, start_date, amount})
+  })
+  .then(r => r.json())
+  .then(res => {
+    btn.innerText = "Run Simulation";
+    if(res.error) { alert(res.error); return; }
+    
+    document.getElementById('btResult').style.display = 'block';
+    
+    const pnl = res.total_pnl;
+    document.getElementById('btPnl').innerHTML = (pnl >= 0 ? '+' : '') + '$' + pnl.toLocaleString();
+    document.getElementById('btPnl').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('btPct').innerText = (pnl >= 0 ? '+' : '') + res.total_pnl_pct + '%';
+    document.getElementById('btPct').style.color = pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+    
+    document.getElementById('btVal').innerText = '$' + res.total_value.toLocaleString();
+    
+    const ctx = document.getElementById('btChart').getContext('2d');
+    if(btChartInstance) btChartInstance.destroy();
+    btChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: res.history_dates,
+        datasets: [{
+          label: 'Simulated Value ($)',
+          data: res.history_values,
+          borderColor: '#4f8ef7',
+          backgroundColor: 'rgba(79, 142, 247, 0.15)',
+          fill: true, tension: 0.3, borderWidth: 3, pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { 
+          x: { display: false }, 
+          y: { grid: { color: 'rgba(255,255,255,0.05)'}, ticks:{color:'#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } }}
+        }
+      }
+    });
+  })
+  .catch(err => {
+    btn.innerText = "Run Simulation";
+    alert("Simulation failed.");
+  });
 }
+</script></body></html>"""
 
-async function emergencyClear(){
-  if(!confirm('✅ 긴급 중단을 해제하시겠습니까?')) return;
-  try{
-    await fetch('/emergency-clear',{method:'POST'});
-    showToast('✅ 긴급 중단 해제 완료');
-    setTimeout(loadStatus, 1000);
-  }catch(e){showToast('오류: 서버 연결 실패');}
+BACKTEST_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
+<header><h1>⏪ Strategy Backtest</h1><a class="btn" href="/">← Back</a></header>
+<main><div class="card" id="bt-container">
+<div style="text-align:center;padding:50px;">Calculating...</div>
+</div></main>
+<script>
+fetch('/api/backtest').then(r=>r.json()).then(d=>{
+  if(d.error) { document.getElementById('bt-container').innerHTML = `<h3>Error: ${d.error}</h3>`; return; }
+  document.getElementById('bt-container').innerHTML = `
+    <h2 style="color:var(--accent2)">Max Sharpe Equity Curve</h2>
+    <h1 style="font-size:3rem;margin:10px 0;">$${d.final_value.toLocaleString()} <small style="font-size:1rem;color:var(--success)">+${d.total_return_pct}%</small></h1>
+    <div style="display:flex;gap:30px;margin-bottom:30px;color:var(--muted);">
+      <div>Monthly Return: <b>${(d.annual_return_pct/12).toFixed(2)}%</b></div>
+      <div>Max Drawdown: <b style="color:var(--danger)">${d.max_drawdown_pct}%</b></div>
+      <div>Sharpe: <b>${d.sharpe_ratio}</b></div>
+    </div>
+    <div style="height:350px;"><canvas id="btChart"></canvas></div>
+  `;
+  const ctx = document.getElementById('btChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array.from({length: d.equity_curve.length}, (_, i) => i),
+      datasets: [{ label: 'Equity', data: d.equity_curve, borderColor: '#4f8ef7', fill: false, tension: 0.4, pointRadius: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x:{display:false}, y:{grid:{color:'rgba(255,255,255,0.05)'}} } }
+  });
+});
+</script></body></html>"""
+
+DISCORD_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMON_STYLE + """</style></head><body>
+<header><h1>🔔 Discord Notifications</h1><a class="btn" href="/">← Back</a></header>
+<main><div class="card" style="max-width:600px;margin:auto;">
+<h3>Webhook Integration</h3>
+<p style="color:var(--muted);font-size:0.9rem;margin:15px 0;">Receive daily analysis reports and rebalancing alerts directly on your Discord server.</p>
+<input id="url" style="width:100%;padding:14px;background:#0b0f1a;border:1px solid var(--border);color:#fff;border-radius:10px;margin-bottom:20px;" placeholder="https://discord.com/api/webhooks/..." value="{{wk}}">
+<button class="btn btn-primary" style="width:100%;padding:14px;margin:0;" onclick="save()">Save & Connect</button>
+<p id="msg" style="text-align:center;margin-top:15px;"></p>
+</div></main>
+<script>
+function save(){
+  const url = document.getElementById('url').value;
+  if(!url.startsWith('http')){ alert('Invalid URL'); return; }
+  fetch('/api/discord-setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhook_url:url})})
+  .then(r=>r.json()).then(d=>{
+    document.getElementById('msg').innerHTML='<span style="color:var(--success)">✅ Successfully Connected!</span>';
+    setTimeout(()=>location.reload(), 2000);
+  });
 }
+</script></body></html>"""
 
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.style.display='block';
-  setTimeout(()=>{t.style.display='none';}, 3000);
-}
-
-// 초기 로드 + 30초마다 자동 갱신
-loadStatus();
-setInterval(loadStatus, 30000);
+MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
+<header><h1>📱 My Portfolio</h1><a class="btn" href="/">← Back</a></header>
+<main>
+<div style="display: flex; flex-direction: column; gap: 20px;">
+<div class="card"><h3>Performance Summary</h3>
+<div style="height:250px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;"><canvas id="histChart"></canvas></div>
+<div class="grid" style="grid-template-columns: repeat(3, 1fr); text-align: center; gap: 15px;">
+  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px;">
+    <div class="stat-label">Total Invested (Holding Period)</div>
+    <div class="stat-val" style="color:#fff; font-size:1.6rem;">$ {{ "{:,.0f}".format(capital) }} <small style="font-size:0.9rem; color:var(--muted); font-weight:400;">({{ days }} Days)</small></div>
+  </div>
+  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px;">
+    <div class="stat-label">Gross PnL (Before Fees)</div>
+    <div class="stat-val" style="color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }}; font-size:1.6rem;">$ {{ "{:,.0f}".format(pnl) }}</div>
+    <div style="font-size:0.9rem; margin-top:5px; color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }};">{{ pnl_pct }}%</div>
+  </div>
+  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px; border: 1px solid var(--accent2);">
+    <div class="stat-label" style="color:var(--accent2);">Net Return / Final Payout</div>
+    <div class="stat-val" style="color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }}; font-size:2rem;">$ {{ "{:,.0f}".format(capital + net_pnl) }}</div>
+    <div style="font-size:1rem; font-weight:600; margin-top:5px; color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }};">Net PnL: $ {{ "{:,.0f}".format(net_pnl) }} ({{ net_pct }}%)</div>
+  </div>
+</div>
+</div>
+<div class="card"><h3>Current Positions</h3>
+{% if holdings %}
+<table><thead><tr><th>Vault</th><th>Invested / Weight</th><th>Holding Period</th><th>APR / MDD</th><th>Gross PnL</th><th>Net Final Payout<br><small>(After 10% Fee)</small></th></tr></thead><tbody>
+{% for h in holdings %}
+{% set h_net_pnl = h.pnl * 0.9 if h.pnl > 0 else h.pnl %}
+{% set h_net_pct = h_net_pnl / h.invested_usd * 100 if h.invested_usd > 0 else 0 %}
+{% set h_final_val = h.invested_usd + h_net_pnl %}
+<tr>
+<td><a href="https://app.hyperliquid.xyz/vaults/{{h.address}}" target="_blank"><b>{{h.name}}</b></a><br><small style="color:var(--muted)">{{h.address[:12]}}...</small></td>
+<td>${{ "{:,.0f}".format(h.invested_usd) }}<br><small style="color:var(--accent2)">{{ h.weight_pct }}%</small></td>
+<td>{{ h.days_held }} Days</td>
+<td><span style="color:var(--success)">{{ h.apr_30d }}%</span><br><small style="color:var(--danger)">{{ h.mdd }}%</small></td>
+<td><span style="color:{{ 'var(--success)' if h.pnl >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(h.pnl) }}</span><br><small style="color:{{ 'var(--success)' if h.pnl_pct >= 0 else 'var(--danger)' }}">{{ h.pnl_pct }}%</small></td>
+<td style="font-weight:600; color:#fff;">${{ "{:,.0f}".format(h_final_val) }}<br><small style="color:{{ 'var(--success)' if h_net_pct >= 0 else 'var(--danger)' }}">{{ h_net_pct | round(2) }}%</small></td>
+</tr>{% endfor %}
+</tbody></table>
+{% else %}
+<p style="padding:40px;text-align:center;color:var(--muted);">No positions found. Update <code>my_portfolio.json</code> to track your holdings.</p>
+{% endif %}
+</div>
+</div></main>
+<script>
+{% if hist_dates and hist_vals %}
+const ctx = document.getElementById('histChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ hist_dates | tojson }},
+        datasets: [{
+            label: 'Est. Portfolio Value ($)',
+            data: {{ hist_vals | tojson }},
+            borderColor: '#1abc9c',
+            backgroundColor: 'rgba(26, 188, 156, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 2
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { display: false },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'var(--muted)', font: { size: 9 } } }
+        }
+    }
+});
+{% endif %}
 </script>
 </body></html>"""
 
-
-@app.route("/portfolio-status")
-@app.route("/m")          # ← 단축 URL
-@app.route("/mobile")     # ← 별명
-def portfolio_status_page():
-    """모바일 최적화 포트폴리오 현황 페이지"""
-    return MOBILE_HTML
-
-
-# ── 실행 ────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    import webbrowser, time
-    os.makedirs(REPORTS_DIR, exist_ok=True)
-    os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
-    print("=" * 55)
-    print("  🚀 Hyperliquid Vault Dashboard 시작")
-    print("  📌 브라우저: http://localhost:5000")
-    print("  🛑 종료:     Ctrl+C")
-    print("=" * 55)
-    # 브라우저 자동 열기
-    threading.Timer(1.2, lambda: webbrowser.open("http://localhost:5000")).start()
-    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+    print("🚀 Hyperliquid Dashboard Pro v3.1 - Port 5001")
+    app.run(host="0.0.0.0", port=5001)
+

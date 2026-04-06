@@ -34,7 +34,6 @@ ENV/
 # Project specific — 보안 & 로컬 데이터
 .env
 *.xlsx
-vault_data/snapshots/
 vault_data/reports/
 
 # 디버깅 / 임시 스크립트

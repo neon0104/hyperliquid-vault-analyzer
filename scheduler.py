@@ -27,7 +27,7 @@ DATA_DIR       = BASE_DIR / "vault_data"
 SNAPSHOTS_DIR  = DATA_DIR / "snapshots"
 REPORTS_DIR    = DATA_DIR / "reports"
 LOG_DIR        = DATA_DIR / "logs"
-PORTFOLIO_FILE = DATA_DIR / "my_portfolio.json"   # 내 현재 포트폴리오
+PORTFOLIO_FILE = BASE_DIR / "my_portfolio.json"   # 내 현재 포트폴리오
 STATUS_FILE    = DATA_DIR / "status.json"          # 대시보드용 상태
 STOP_FLAG      = BASE_DIR / "emergency_stop.flag"  # 긴급 중단 트리거
 
@@ -99,7 +99,10 @@ def load_portfolio() -> dict:
     """내 포트폴리오 로드: {vault_address: invested_usd}"""
     if PORTFOLIO_FILE.exists():
         try:
-            return json.loads(PORTFOLIO_FILE.read_text(encoding="utf-8"))
+            d = json.loads(PORTFOLIO_FILE.read_text(encoding="utf-8"))
+            if "positions" in d:
+                return d["positions"]
+            return d
         except Exception:
             pass
     return {}
@@ -143,6 +146,25 @@ def run_analysis() -> dict:
             return {}
 
         log.info("✅ 분석 완료")
+
+        # ★ 정밀 PnL 데이터 수집 (DB 축적)
+        log.info("📡 정밀 PnL 데이터 수집 중...")
+        try:
+            pnl_result = subprocess.run(
+                [sys.executable, str(BASE_DIR / "daily_pnl_collector.py")],
+                cwd=str(BASE_DIR),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=120,
+            )
+            if pnl_result.returncode == 0:
+                log.info("✅ 정밀 PnL 데이터 DB 저장 완료")
+            else:
+                log.warning(f"⚠️ PnL 수집 실패: {pnl_result.stderr[:200]}")
+        except Exception as e:
+            log.warning(f"⚠️ PnL 수집 오류 (무시 가능): {e}")
 
         # 최신 스냅샷 로드
         import glob
