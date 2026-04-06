@@ -63,29 +63,12 @@ jobs:
           # 변경사항이 없으면 커밋하지 않음
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update vault data [skip ci]" && git push)
 
-      - name: Check Final Retry
+      - name: Send Alert (GitHub Email)
         if: failure()
-        id: check_final
         run: |
-          # UTC 6 (KST 15)인지 검사. (마지막 3차 재시도)
           current_hour=$(date -u +%-H)
           if [ "$current_hour" -ge 6 ]; then
-            echo "send_email=true" >> $GITHUB_OUTPUT
-          else
-            echo "send_email=false" >> $GITHUB_OUTPUT
+            echo "::error title=🚨 수집 보류::오전 9시, 12시, 오후 3시(최종)까지 총 3회의 데이터 수집 시도가 모두 실패했습니다."
+            exit 1 # 의도적으로 실패시켜 깃허브 자체 이메일 알림을 유발합니다.
           fi
-
-      - name: Send Alert Email
-        if: failure() && steps.check_final.outputs.send_email == 'true'
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "🚨 Hyperliquid Vault Analyzer: 분석 지연 알림 (최종)"
-          to: ${{ secrets.TO_EMAIL }}
-          from: "Hyperliquid Bot"
-          body: "오전 9시, 12시, 오후 3시(최종)까지 총 3회의 데이터 수집 시도가 거래소 API 응답 지연 등의 사유로 모두 실패했습니다. 수동으로 데이터 수집 스크립트를 실행해 주시기 바랍니다."
 
