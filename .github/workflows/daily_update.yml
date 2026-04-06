@@ -34,6 +34,10 @@ jobs:
         run: |
           python analyze_top_vaults.py --force
 
+      - name: Verify Data Health (Hook)
+        run: |
+          python check_data_health.py
+
       - name: Export Dashboard Data
         run: |
           python export_dashboard_data.py
@@ -43,8 +47,9 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 새롭게 생성된 스냅샷 파일이나 데이터가 있다면 추가
-          git add vault_data/
+          # 새롭게 생성된 스냅샷 파일이나 데이터가 있다면 추가 (명시적 강제 추가)
+          git add -f vault_data/snapshots/*.json || true
+          git add -A vault_data/ || true
           git add docs/data.json
           
           # 변경사항이 없으면 커밋하지 않음
