@@ -2,8 +2,8 @@ name: Daily Vault Data Update
 
 on:
   schedule:
-    # 매일 UTC 00:00 (한국 시간 오전 9시)에 실행
-    - cron: '0 0 * * *'
+    # 매일 UTC 00:00 (오전 9시), 03:00 (낮 12시), 06:00 (오후 3시) 실행
+    - cron: '0 0,3,6 * * *'
   # 수동으로 원할 때 언제든 실행할 수 있도록 허용
   workflow_dispatch:
 
@@ -30,15 +30,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Pre Run Check
+        id: pre_check
+        run: python pre_run_check.py
+
       - name: Run Vault Analysis (Fetch Data)
+        if: steps.pre_check.outputs.skip != 'true'
         run: |
           python analyze_top_vaults.py --force
 
       - name: Verify Data Health (Hook)
+        id: health_check
+        if: steps.pre_check.outputs.skip != 'true'
         run: |
           python check_data_health.py
 
       - name: Export Dashboard Data
+        if: steps.pre_check.outputs.skip != 'true'
         run: |
           python export_dashboard_data.py
 
@@ -54,3 +62,30 @@ jobs:
           
           # 변경사항이 없으면 커밋하지 않음
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update vault data [skip ci]" && git push)
+
+      - name: Check Final Retry
+        if: failure()
+        id: check_final
+        run: |
+          # UTC 6 (KST 15)인지 검사. (마지막 3차 재시도)
+          current_hour=$(date -u +%-H)
+          if [ "$current_hour" -ge 6 ]; then
+            echo "send_email=true" >> $GITHUB_OUTPUT
+          else
+            echo "send_email=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Alert Email
+        if: failure() && steps.check_final.outputs.send_email == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "🚨 Hyperliquid Vault Analyzer: 분석 지연 알림 (최종)"
+          to: ${{ secrets.TO_EMAIL }}
+          from: "Hyperliquid Bot"
+          body: "오전 9시, 12시, 오후 3시(최종)까지 총 3회의 데이터 수집 시도가 거래소 API 응답 지연 등의 사유로 모두 실패했습니다. 수동으로 데이터 수집 스크립트를 실행해 주시기 바랍니다."
+
