@@ -350,6 +350,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
                 <th>30d APR</th>
                 <th>Score</th>
                 <th>Deposit</th>
+                <th>AGE</th>
             </tr>
         </thead>
         <tbody>
@@ -404,6 +405,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliqu
                 <span class="badge bg-danger">CLOSE</span>
                 {% endif %}
             </td>
+            <td style="text-align:center; color:var(--muted); font-weight:600;">{{ v.age_days }} D</td>
         </tr>
         {% endfor %}
         </tbody>

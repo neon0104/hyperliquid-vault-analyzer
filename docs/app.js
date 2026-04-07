@@ -93,6 +93,7 @@ function getVaultSortVal(v, col) {
     case 'sharpe': return v.sharpe_ratio;
     case 'apr': return v.apr_30d;
     case 'score': return v.score;
+    case 'age': return v.age_days || 0;
     default: return v.rank;
   }
 }
@@ -117,6 +118,7 @@ function renderVaultTable() {
       <td style="color:var(--success);font-weight:600">${v.apr_30d}%</td>
       <td style="cursor:pointer" onclick="showVaultDetails('${v.address}')"><span class="badge bg-accent" style="font-size:.9rem;transition:.2s;cursor:pointer">${v.score}</span>${v.has_history&&c.score_val?`<br><small style="color:${chgCol(c.score_dir)}">${chgDir(c.score_dir)} ${Number(c.score_val).toFixed(3)}</small>`:''}</td>
       <td style="text-align:center">${v.allow_deposits ? '<span class="badge bg-success">OPEN</span>' : '<span class="badge bg-danger">CLOSE</span>'}</td>
+      <td style="text-align:center;color:var(--muted);font-weight:600">${v.age_days||'-'} D</td>
     </tr>`;
   });
   document.getElementById('vaultTableBody').innerHTML = html;
