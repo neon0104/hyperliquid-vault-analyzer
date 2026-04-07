@@ -14,12 +14,12 @@ def main():
     if snap_file.exists():
         size = os.path.getsize(snap_file)
         if size > 50000:
-            print(f"✅ Data for {today_str} already fully collected ({size} bytes). Skipping further analysis.")
+            print(f"OK: Data for {today_str} already fully collected ({size} bytes). Skipping further analysis.")
             skip = True
         else:
-            print(f"⚠️ Data for {today_str} exists but is too small ({size} bytes). Proceeding with retry.")
+            print(f"WARN: Data for {today_str} exists but is too small ({size} bytes). Proceeding with retry.")
     else:
-        print(f"⏳ Data for {today_str} not yet collected. Proceeding with analysis.")
+        print(f"RUN: Data for {today_str} not yet collected. Proceeding with analysis.")
         
     github_output = os.environ.get('GITHUB_OUTPUT')
     if github_output:
