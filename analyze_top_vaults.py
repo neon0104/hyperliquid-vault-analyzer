@@ -33,7 +33,7 @@ if sys.platform == "win32":
 
 # ── 설정 ──────────────────────────────────────────────────────────────────────
 TOP_N          = 200       # 분석할 볼트 수
-MAX_WORKERS    = 10        # 병렬 스레드 수
+MAX_WORKERS    = 3         # 병렬 스레드 수 (디도스 방지 위해 10 -> 3 축소)
 MIN_TVL        = 0         # TVL 최소값 제한 없음 (상위 200위 전체 대상)
 TOP_RECS       = 10        # 추천 포트폴리오 볼트 수
 SIM_AMOUNT     = 100_000   # 시뮬레이션 투자금 ($)
@@ -92,13 +92,26 @@ def risk_label(vol):
 def fetch_top_vaults(top_n=TOP_N):
     """stats-data API에서 전체 볼트 목록을 가져와 TVL 기준 상위 N개 반환"""
     print("  전체 볼트 목록 가져오는 중 (stats-data.hyperliquid.xyz)...")
-    try:
-        resp = requests.get(STATS_URL, timeout=60)
-        resp.raise_for_status()
-        all_vaults = resp.json()
-    except Exception as e:
-        print(f"  ERROR: {e}")
-        return []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://app.hyperliquid.xyz",
+        "Referer": "https://app.hyperliquid.xyz/"
+    }
+    all_vaults = []
+    for attempt in range(1, 4):
+        try:
+            resp = requests.get(STATS_URL, headers=headers, timeout=60)
+            resp.raise_for_status()
+            all_vaults = resp.json()
+            break
+        except Exception as e:
+            print(f"  [시도 {attempt}/3] ERROR: {e}")
+            if attempt < 3:
+                print("  => 5초 대기 후 재시도...")
+                time.sleep(5)
+            else:
+                return []
 
     print(f"  총 {len(all_vaults)}개 볼트 발견")
 
@@ -168,22 +181,27 @@ def analyze_vault_from_stats(v_data, info_client):
     leader_equity_ratio = 0.0
     leader_equity_usd   = 0.0
     num_followers       = 0
-    try:
-        details = info_client.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
-        if details and isinstance(details, dict):
-            allow_deposits = details.get("allowDeposits", True)
-            followers      = details.get("followers", [])
-            num_followers  = len(followers)
+    for attempt in range(1, 4):
+        try:
+            details = info_client.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
+            if details and isinstance(details, dict):
+                allow_deposits = details.get("allowDeposits", True)
+                followers      = details.get("followers", [])
+                num_followers  = len(followers)
 
-            # ★ 사용자 요청: 리더 에쿼티 비율 (leaderFraction 필드가 리더의 지분 비율임)
-            leader_equity_ratio = sf(details.get("leaderFraction"), 0.0)
-            leader_equity_usd   = round(leader_equity_ratio * tvl, 2)
-            
-            # 리더가 followers 목록에 없을 수 있으므로(UI에서 별도 처리), 전체 팔로워 수에 리더(+1) 고려
-            if leader_equity_ratio > 0:
-                num_followers += 1
-    except Exception:
-        pass
+                # ★ 사용자 요청: 리더 에쿼티 비율 (leaderFraction 필드가 리더의 지분 비율임)
+                leader_equity_ratio = sf(details.get("leaderFraction"), 0.0)
+                leader_equity_usd   = round(leader_equity_ratio * tvl, 2)
+                
+                # 리더가 followers 목록에 없을 수 있으므로(UI에서 별도 처리), 전체 팔로워 수에 리더(+1) 고려
+                if leader_equity_ratio > 0:
+                    num_followers += 1
+            break
+        except Exception:
+            if attempt < 3:
+                time.sleep(1.5) # 오류 시 1.5초 휴식 후 재시도
+            else:
+                pass
 
     # ★ 사용자 요청 (TVL 금액 + 에쿼티 금액 절대값 중심의 가중치 보정)
     # 리더 지분율(%)보다 리더가 꽂아넣은 '진짜 돈의 크기(USD)'가 안정성의 핵심이라는 보스의 철학 반영!
