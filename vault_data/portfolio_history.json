@@ -1406,5 +1406,417 @@
         "leader_eq": 0.9961042186843153
       }
     ]
+  },
+  "2026-04-06": {
+    "portfolio_value": 103393.19,
+    "daily_pnl": 363.2,
+    "daily_return_pct": 0.3525,
+    "cumulative_pnl": 3393.19,
+    "cumulative_pct": 3.3932,
+    "max_equity_ever": 103393.19,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4065,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 10.6,
+        "apr_30d": 71.42,
+        "robustness": 0.9481,
+        "undervalue": 0.824,
+        "leader_eq": 0.8787694286515442
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 12.2,
+        "apr_30d": 162.7,
+        "robustness": 0.841,
+        "undervalue": 1.069,
+        "leader_eq": 0.9812032794892922
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 11.7,
+        "apr_30d": 40.24,
+        "robustness": 0.8335,
+        "undervalue": 1.036,
+        "leader_eq": 0.6325522426508864
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 8.1,
+        "apr_30d": 53.96,
+        "robustness": 0.5719,
+        "undervalue": 1.046,
+        "leader_eq": 0.4397567445998034
+      },
+      {
+        "name": "Official Jane street ",
+        "address": "0x68c707e9fd21644c0d1b19d55b0ae96bd9ef32b3",
+        "alloc_pct": 13.9,
+        "apr_30d": 205.72,
+        "robustness": 0.8782,
+        "undervalue": 1.174,
+        "leader_eq": 0.9060140661966832
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.2,
+        "apr_30d": 79.64,
+        "robustness": 0.84,
+        "undervalue": 1.071,
+        "leader_eq": 0.437977794209185
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 9.1,
+        "apr_30d": 165.98,
+        "robustness": 0.5775,
+        "undervalue": 1.161,
+        "leader_eq": 0.9770838674486206
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 8.0,
+        "apr_30d": 8.38,
+        "robustness": 0.5853,
+        "undervalue": 1.005,
+        "leader_eq": 0.5856358223957316
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 8.8,
+        "apr_30d": 81.59,
+        "robustness": 0.6071,
+        "undervalue": 1.073,
+        "leader_eq": 0.4410886817834843
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 5.6,
+        "apr_30d": 551.88,
+        "robustness": 0.3366,
+        "undervalue": 1.221,
+        "leader_eq": 0.77441285933031
+      }
+    ]
+  },
+  "2026-04-07": {
+    "portfolio_value": 103979.01,
+    "daily_pnl": 585.82,
+    "daily_return_pct": 0.5666,
+    "cumulative_pnl": 3979.01,
+    "cumulative_pct": 3.979,
+    "max_equity_ever": 103979.01,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3649,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 9.3,
+        "apr_30d": 49.75,
+        "robustness": 0.9482,
+        "undervalue": 0.811,
+        "leader_eq": 0.8787694286515442
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 11.2,
+        "apr_30d": 194.06,
+        "robustness": 0.841,
+        "undervalue": 1.1,
+        "leader_eq": 0.9812032794892922
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.6,
+        "apr_30d": 55.33,
+        "robustness": 0.8353,
+        "undervalue": 1.048,
+        "leader_eq": 0.6300309331875071
+      },
+      {
+        "name": "Official Jane street ",
+        "address": "0x68c707e9fd21644c0d1b19d55b0ae96bd9ef32b3",
+        "alloc_pct": 12.8,
+        "apr_30d": 219.43,
+        "robustness": 0.8854,
+        "undervalue": 1.19,
+        "leader_eq": 0.9060140661966832
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 11.3,
+        "apr_30d": 83.13,
+        "robustness": 0.8689,
+        "undervalue": 1.074,
+        "leader_eq": 0.437977794209185
+      },
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 17.1,
+        "apr_30d": 641.94,
+        "robustness": 0.6563,
+        "undervalue": 2.15,
+        "leader_eq": 0.6499440757018596
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.5,
+        "apr_30d": 213.62,
+        "robustness": 0.5775,
+        "undervalue": 1.217,
+        "leader_eq": 0.9771606167439998
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.1,
+        "apr_30d": 12.55,
+        "robustness": 0.5862,
+        "undervalue": 1.006,
+        "leader_eq": 0.5835604679333847
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 8.4,
+        "apr_30d": 94.03,
+        "robustness": 0.6393,
+        "undervalue": 1.084,
+        "leader_eq": 0.4410886817834843
+      },
+      {
+        "name": "RedCoast",
+        "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+        "alloc_pct": 3.6,
+        "apr_30d": 10.57,
+        "robustness": 0.5878,
+        "undervalue": 0.509,
+        "leader_eq": 0.9313805498473918
+      }
+    ]
+  },
+  "2026-04-09": {
+    "portfolio_value": 104649.17,
+    "daily_pnl": 670.16,
+    "daily_return_pct": 0.6445,
+    "cumulative_pnl": 4649.17,
+    "cumulative_pct": 4.6492,
+    "max_equity_ever": 104649.17,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4212,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 10.6,
+        "apr_30d": 81.88,
+        "robustness": 0.9489,
+        "undervalue": 0.941,
+        "leader_eq": 0.7857236130029567
+      },
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 19.4,
+        "apr_30d": 676.25,
+        "robustness": 0.7103,
+        "undervalue": 2.291,
+        "leader_eq": 0.5562873683559469
+      },
+      {
+        "name": "Prudentia Asset Management",
+        "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+        "alloc_pct": 12.3,
+        "apr_30d": 114.15,
+        "robustness": 0.9339,
+        "undervalue": 1.105,
+        "leader_eq": 0.988464496774819
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 9.9,
+        "apr_30d": 33.01,
+        "robustness": 0.8716,
+        "undervalue": 0.959,
+        "leader_eq": 0.9825571927649063
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.3,
+        "apr_30d": 13.19,
+        "robustness": 0.8637,
+        "undervalue": 1.006,
+        "leader_eq": 0.6326180358087782
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.4,
+        "apr_30d": 224.79,
+        "robustness": 0.5775,
+        "undervalue": 1.228,
+        "leader_eq": 0.9776236628660085
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 6.7,
+        "apr_30d": 274.06,
+        "robustness": 0.4723,
+        "undervalue": 1.197,
+        "leader_eq": 0.7341553510297345
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 6.3,
+        "apr_30d": 506.4,
+        "robustness": 0.3604,
+        "undervalue": 1.472,
+        "leader_eq": 0.6875586563454679
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.2,
+        "apr_30d": 20.55,
+        "robustness": 0.5906,
+        "undervalue": 1.019,
+        "leader_eq": 0.5787254912580024
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 8.9,
+        "apr_30d": 68.34,
+        "robustness": 0.7221,
+        "undervalue": 1.032,
+        "leader_eq": 0.4226070878275071
+      }
+    ]
+  },
+  "2026-04-10": {
+    "portfolio_value": 105191.52,
+    "daily_pnl": 542.35,
+    "daily_return_pct": 0.5183,
+    "cumulative_pnl": 5191.52,
+    "cumulative_pct": 5.1915,
+    "max_equity_ever": 105191.52,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4238,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 12.0,
+        "apr_30d": 65.51,
+        "robustness": 0.9489,
+        "undervalue": 1.058,
+        "leader_eq": 0.5147812659832207
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.3,
+        "apr_30d": 72.58,
+        "robustness": 0.872,
+        "undervalue": 0.989,
+        "leader_eq": 0.9825571927649063
+      },
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 16.6,
+        "apr_30d": 679.98,
+        "robustness": 0.6841,
+        "undervalue": 2.04,
+        "leader_eq": 0.5782415932370272
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.1,
+        "apr_30d": 17.64,
+        "robustness": 0.8372,
+        "undervalue": 1.014,
+        "leader_eq": 0.6302497981720094
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 11.6,
+        "apr_30d": 79.98,
+        "robustness": 0.9349,
+        "undervalue": 1.041,
+        "leader_eq": 0.4226070878275071
+      },
+      {
+        "name": "Long vs Short Basket",
+        "address": "0x35b0ce1428c9fd6a23ff7c23734dd441d3824863",
+        "alloc_pct": 9.7,
+        "apr_30d": 165.91,
+        "robustness": 0.7049,
+        "undervalue": 1.16,
+        "leader_eq": 0.9399735723243838
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 7.7,
+        "apr_30d": 181.74,
+        "robustness": 0.5472,
+        "undervalue": 1.176,
+        "leader_eq": 0.9776236628660085
+      },
+      {
+        "name": "Official Jane street ",
+        "address": "0x68c707e9fd21644c0d1b19d55b0ae96bd9ef32b3",
+        "alloc_pct": 8.9,
+        "apr_30d": 204.72,
+        "robustness": 0.6191,
+        "undervalue": 1.201,
+        "leader_eq": 0.8887820879923772
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.2,
+        "apr_30d": 19.25,
+        "robustness": 0.5906,
+        "undervalue": 1.019,
+        "leader_eq": 0.5699423108404856
+      },
+      {
+        "name": "Super Saiyan 孫悟空",
+        "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
+        "alloc_pct": 5.9,
+        "apr_30d": 3.33,
+        "robustness": 0.4992,
+        "undervalue": 0.994,
+        "leader_eq": 0.9846316459191048
+      }
+    ]
   }
 }
