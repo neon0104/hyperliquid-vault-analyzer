@@ -22,6 +22,7 @@ import json, os, sys, time, argparse
 import numpy as np
 import pandas as pd
 import requests
+import cloudscraper
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from hyperliquid.info import Info
@@ -93,15 +94,17 @@ def fetch_top_vaults(top_n=TOP_N):
     """stats-data API에서 전체 볼트 목록을 가져와 TVL 기준 상위 N개 반환"""
     print("  전체 볼트 목록 가져오는 중 (stats-data.hyperliquid.xyz)...")
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/json, text/plain, */*",
         "Origin": "https://app.hyperliquid.xyz",
         "Referer": "https://app.hyperliquid.xyz/"
     }
+    # 클라우드플레어 JS 챌린지를 우회하기 위한 지능형 스크래퍼 생성
+    scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False})
+    
     all_vaults = []
     for attempt in range(1, 4):
         try:
-            resp = requests.get(STATS_URL, headers=headers, timeout=60)
+            resp = scraper.get(STATS_URL, headers=headers, timeout=60)
             resp.raise_for_status()
             all_vaults = resp.json()
             break
