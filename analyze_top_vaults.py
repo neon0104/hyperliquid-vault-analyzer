@@ -91,7 +91,8 @@ def risk_label(vol):
 
 # ── 볼트 데이터 가져오기 ──────────────────────────────────────────────────────
 def fetch_top_vaults(top_n=TOP_N):
-    """stats-data API에서 전체 볼트 목록을 가져와 TVL 기준 상위 N개 반환"""
+    """stats-data API에서 전체 볼트 목록을 가져와 TVL 기준 상위 N개 반환.
+    Cloudflare 차단 시 빈 리스트 반환 (run_analysis에서 fallback 처리)"""
     print("  전체 볼트 목록 가져오는 중 (stats-data.hyperliquid.xyz)...")
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -114,6 +115,7 @@ def fetch_top_vaults(top_n=TOP_N):
                 print("  => 5초 대기 후 재시도...")
                 time.sleep(5)
             else:
+                print("  ⚠️ stats-data API 접근 실패 (Cloudflare 차단 가능성)")
                 return []
 
     print(f"  총 {len(all_vaults)}개 볼트 발견")
@@ -133,6 +135,206 @@ def fetch_top_vaults(top_n=TOP_N):
     top = valid[:top_n]
     print(f"  User Vault (normal) TVL 상위 {len(top)}개 선별 (총 {len(valid)}개 중)")
     return top
+
+
+def _get_latest_snapshot_path():
+    """가장 최근 스냅샷 파일 경로를 반환"""
+    import glob
+    snapshots = sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json")), reverse=True)
+    for p in snapshots:
+        size = os.path.getsize(p)
+        if size > 50000:  # 유효한 데이터가 있는 스냅샷만
+            return p
+    return None
+
+
+def analyze_vault_from_details(addr, info_client):
+    """공식 vaultDetails API를 사용해 단일 볼트를 분석.
+    stats-data API가 Cloudflare 차단될 때 사용하는 fallback 함수."""
+    details = None
+    for attempt in range(1, 4):
+        try:
+            details = info_client.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
+            if details and isinstance(details, dict):
+                break
+            details = None
+        except Exception as e:
+            err_str = str(e)
+            if "429" in err_str:
+                # Rate Limit — 대기 후 재시도
+                wait = attempt * 3  # 3초, 6초, 9초
+                time.sleep(wait)
+                continue
+            print(f"    ⚠️ vaultDetails API 실패 ({addr[:12]}...): {e}")
+            return None
+    if not details:
+        return None
+
+    name = details.get("name", "Unknown")[:40]
+    leader = details.get("leader", "")
+    apr_raw = sf(details.get("apr", 0))
+    apr_pct = apr_raw * 100
+    is_closed = details.get("isClosed", False)
+    allow_deposits = details.get("allowDeposits", True)
+    leader_fraction = sf(details.get("leaderFraction", 0))
+    followers = details.get("followers", [])
+    num_followers = len(followers) if isinstance(followers, list) else 0
+
+    # relationship 체크 (HLP parent/child 제외)
+    rel = details.get("relationship", {})
+    rel_type = rel.get("type", "normal") if isinstance(rel, dict) else "normal"
+    if rel_type != "normal" or is_closed:
+        return None
+
+    # portfolio에서 PnL 데이터 추출
+    portfolio = details.get("portfolio", [])
+    alltime_pnl, month_pnl, week_pnl, day_pnl = [], [], [], []
+    tvl = 0.0
+
+    for period_data in (portfolio if isinstance(portfolio, list) else []):
+        if not isinstance(period_data, list) or len(period_data) < 2:
+            continue
+        period_name = period_data[0]
+        period_info = period_data[1]
+        if not isinstance(period_info, dict):
+            continue
+
+        # PnL 히스토리 파싱 (타임스탬프, 값 형태)
+        pnl_history = period_info.get("pnlHistory", [])
+        pnl_values = [sf(item[1]) for item in pnl_history if isinstance(item, list) and len(item) >= 2]
+
+        # accountValueHistory에서 최신 TVL 추출
+        avh = period_info.get("accountValueHistory", [])
+        if avh and period_name == "allTime" and isinstance(avh[-1], list) and len(avh[-1]) >= 2:
+            tvl = max(tvl, sf(avh[-1][1]))
+
+        if period_name == "allTime":
+            alltime_pnl = pnl_values
+        elif period_name == "month":
+            month_pnl = pnl_values
+        elif period_name == "week":
+            week_pnl = pnl_values
+        elif period_name == "day":
+            day_pnl = pnl_values
+
+    # TVL fallback: allTime accountValueHistory의 마지막 값이 없으면 다른 기간에서 시도
+    if tvl <= 0:
+        for period_data in (portfolio if isinstance(portfolio, list) else []):
+            if not isinstance(period_data, list) or len(period_data) < 2:
+                continue
+            period_info = period_data[1]
+            if isinstance(period_info, dict):
+                avh = period_info.get("accountValueHistory", [])
+                if avh and isinstance(avh[-1], list) and len(avh[-1]) >= 2:
+                    tvl = max(tvl, sf(avh[-1][1]))
+
+    # PnL 기반 메트릭 계산
+    metrics = _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct,
+                                day_pnl=day_pnl, week_pnl=week_pnl)
+
+    # 리더 에쿼티 계산
+    leader_equity_ratio = leader_fraction
+    leader_equity_usd = round(leader_equity_ratio * tvl, 2)
+    if leader_equity_ratio > 0:
+        num_followers += 1
+
+    # ★ SITG 보너스 (기존 analyze_vault_from_stats와 동일 로직)
+    sitg_bonus = float(np.log10(max(leader_equity_usd, 1))) * 2.0
+    tvl_scale_bonus = float(np.log10(max(sf(tvl), 1))) * 0.5
+    metrics["score"] = round(metrics.get("score", 0.0) + sitg_bonus + tvl_scale_bonus, 3)
+
+    # 생성 시간 (vaultDetails에서는 createTimeMillis가 없으므로 이전 스냅샷에서 가져옴)
+    return {
+        "address":             addr,
+        "name":                name,
+        "leader":              leader,
+        "tvl":                 tvl,
+        "num_followers":       num_followers,
+        "allow_deposits":      allow_deposits,
+        "leader_equity_ratio": leader_equity_ratio,
+        "leader_equity_usd":   leader_equity_usd,
+        "created_at":          "-",
+        "age_days":            0,
+        "apr_pct":             round(apr_pct, 2),
+        "alltime_pnl":         alltime_pnl,
+        "month_pnl":           month_pnl,
+        **metrics,
+    }
+
+
+def run_analysis_fallback(top_n=TOP_N):
+    """★ Cloudflare 차단 시 fallback: 이전 스냅샷의 vault 주소 기반 + 공식 API로 갱신"""
+    latest_snap_path = _get_latest_snapshot_path()
+    if not latest_snap_path:
+        print("  ❌ fallback 불가: 이전 스냅샷이 없습니다.")
+        return []
+
+    snap_name = os.path.basename(latest_snap_path)
+    print(f"  📋 이전 스냅샷 기반 fallback 모드 (기준: {snap_name})")
+    with open(latest_snap_path, encoding="utf-8") as f:
+        prev_data = json.load(f)
+
+    # 이전 스냅샷에서 vault 주소 추출 + created_at/age_days 보존
+    prev_meta = {}
+    addresses = []
+    for v in prev_data:
+        addr = v.get("address", "")
+        if addr:
+            addresses.append(addr)
+            prev_meta[addr] = {
+                "created_at": v.get("created_at", "-"),
+                "age_days": v.get("age_days", 0),
+            }
+
+    print(f"  📡 공식 API로 {len(addresses)}개 볼트 데이터 갱신 중 (순차 처리)...")
+    info_client = Info(API_URL, skip_ws=True)
+    results, failed = [], 0
+
+    for i, addr in enumerate(addresses):
+        if i > 0 and i % 5 == 0:
+            time.sleep(0.5)  # 5개마다 0.5초 휴식 (Rate Limit 방지)
+        if (i + 1) % 25 == 0 or (i + 1) == len(addresses):
+            print(f"    진행: {i+1}/{len(addresses)} ({(i+1) * 100 // len(addresses)}%)")
+        try:
+            res = analyze_vault_from_details(addr, info_client)
+            if res:
+                # 이전 스냅샷의 created_at/age_days 보존
+                if addr in prev_meta:
+                    if res["created_at"] == "-":
+                        res["created_at"] = prev_meta[addr]["created_at"]
+                    if res["age_days"] == 0:
+                        res["age_days"] = prev_meta[addr]["age_days"] + 1
+                results.append(res)
+            else:
+                failed += 1
+        except Exception:
+            failed += 1
+
+    print(f"  완료: 시도 {len(addresses)}개 / 성공 {len(results)}개 / 실패 {failed}개")
+
+    # 입금 가능한 볼트만 필터
+    open_results = [v for v in results if v.get("allow_deposits", True)]
+    open_results.sort(key=lambda x: x["tvl"], reverse=True)
+    final_results = open_results[:top_n]
+
+    # 필터링 / 랭킹 (run_analysis와 동일)
+    for v in final_results:
+        leader_usd = v.get("leader_equity_usd", 0)
+        leader_rat = v.get("leader_equity_ratio", 0)
+        ok_leader  = leader_usd >= 30000 or (leader_rat >= 0.3 and leader_usd >= 5000)
+        pnl_arr = v.get("alltime_pnl", [])
+        ok_no_loss = not (pnl_arr and min(pnl_arr) < 0)
+        v["_filter_pass"] = ok_leader and ok_no_loss
+        v["_ok_deposit"] = True
+        v["_ok_leader"] = ok_leader
+        v["_ok_no_loss"] = ok_no_loss
+
+    final_results.sort(key=lambda x: x["score"], reverse=True)
+    for i, v in enumerate(final_results):
+        v["rank"] = i + 1
+
+    save_snapshot(final_results)
+    return final_results
 
 
 # ── 단일 볼트 분석 ────────────────────────────────────────────────────────────
@@ -446,8 +648,11 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct, day_pnl=None, week_p
 def run_analysis(top_n=TOP_N):
     # 디파짓 불가능한 볼트를 배제하고 200개를 확실히 채우기 위해 5배수(1000개)를 가져옵니다.
     top_vaults = fetch_top_vaults(top_n * 5)
+    
+    # ★ Cloudflare 차단 fallback: stats-data API 실패 시 공식 API로 전환
     if not top_vaults:
-        return []
+        print("  🔄 stats-data API 실패 → 공식 vaultDetails API fallback 모드 전환...")
+        return run_analysis_fallback(top_n)
 
     info_client = Info(API_URL, skip_ws=True)
     results, failed = [], 0
