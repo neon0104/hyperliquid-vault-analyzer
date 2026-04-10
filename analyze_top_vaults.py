@@ -18,12 +18,12 @@ Hyperliquid 상위 200 볼트 분석기  (Robust Curve Edition)
   python analyze_top_vaults.py --mdd 25  # MDD 상한 25%로 변경
 """
 
-import json, os, sys, time, argparse
+import json, os, sys, time, argparse, glob
 import numpy as np
 import pandas as pd
 import requests
 import cloudscraper
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from hyperliquid.info import Info
 from hyperliquid.utils import constants
@@ -139,11 +139,9 @@ def fetch_top_vaults(top_n=TOP_N):
 
 def _get_latest_snapshot_path():
     """가장 최근 스냅샷 파일 경로를 반환"""
-    import glob
     snapshots = sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json")), reverse=True)
     for p in snapshots:
-        size = os.path.getsize(p)
-        if size > 50000:  # 유효한 데이터가 있는 스냅샷만
+        if os.path.getsize(p) > 50000:
             return p
     return None
 

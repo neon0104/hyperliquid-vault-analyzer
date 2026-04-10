@@ -2,16 +2,14 @@ name: Daily Vault Data Update
 
 on:
   schedule:
-    # 매일 UTC 00:00 (오전 9시), 03:00 (낮 12시), 06:00 (오후 3시) 실행
-    - cron: '0 0,3,6 * * *'
-  # 수동으로 원할 때 언제든 실행할 수 있도록 허용
+    # 매일 UTC 00:00 (KST 오전 9시) 실행 — 1회만 (fallback으로 안정성 확보)
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
   update-data:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
-    # 저장소 내용 조작(커밋 및 푸시)을 위한 권한 설정
     permissions:
       contents: write
 
@@ -22,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           cache: 'pip'
 
       - name: Install dependencies
@@ -34,41 +32,58 @@ jobs:
         id: pre_check
         run: python pre_run_check.py
 
-      - name: Run Vault Analysis (Fetch Data)
+      - name: Run Vault Analysis
+        id: analysis
         if: steps.pre_check.outputs.skip != 'true'
-        run: |
-          python analyze_top_vaults.py --force
+        run: python analyze_top_vaults.py --force
 
-      - name: Verify Data Health (Hook)
+      - name: Verify Data Health
         id: health_check
         if: steps.pre_check.outputs.skip != 'true'
-        run: |
-          python check_data_health.py
+        run: python check_data_health.py
 
       - name: Export Dashboard Data
         if: steps.pre_check.outputs.skip != 'true'
-        run: |
-          python export_dashboard_data.py
+        run: python export_dashboard_data.py
 
-      - name: Commit and Push changes
+      - name: Commit and Push
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 새롭게 생성된 스냅샷 파일이나 데이터가 있다면 추가 (명시적 강제 추가)
           git add -f vault_data/snapshots/*.json || true
           git add -A vault_data/ || true
-          git add docs/data.json
+          git add docs/data.json || true
           
-          # 변경사항이 없으면 커밋하지 않음
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update vault data [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update vault data $(date -u +%Y-%m-%d)" && git push)
 
-      - name: Send Alert (GitHub Email)
-        if: failure()
+      # ── 알림: 성공 시 Discord 알림 ──
+      - name: Notify Success (Discord)
+        if: success() && steps.pre_check.outputs.skip != 'true'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          current_hour=$(date -u +%-H)
-          if [ "$current_hour" -ge 6 ]; then
-            echo "::error title=🚨 수집 보류::오전 9시, 12시, 오후 3시(최종)까지 총 3회의 데이터 수집 시도가 모두 실패했습니다."
-            exit 1 # 의도적으로 실패시켜 깃허브 자체 이메일 알림을 유발합니다.
-          fi
+          if [ -z "$DISCORD_WEBHOOK" ]; then exit 0; fi
+          TODAY=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          SNAP_SIZE=$(stat -f%z vault_data/snapshots/${TODAY}.json 2>/dev/null || stat --format=%s vault_data/snapshots/${TODAY}.json 2>/dev/null || echo "0")
+          SNAP_KB=$((SNAP_SIZE / 1024))
+          curl -s -H "Content-Type: application/json" \
+            -d "{\"embeds\":[{\"title\":\"✅ 볼트 데이터 수집 완료\",\"description\":\"**${TODAY}** 데이터가 정상 수집되었습니다.\n📊 스냅샷: ${SNAP_KB}KB\n🌐 [대시보드 확인](https://neon0104.github.io/hyperliquid-vault-analyzer/)\",\"color\":5763719}]}" \
+            "$DISCORD_WEBHOOK"
 
+      # ── 알림: 실패 시 Discord 알림 ──
+      - name: Notify Failure (Discord)
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "::error title=🚨 데이터 수집 실패::볼트 데이터 수집에 실패했습니다. GitHub Actions 로그를 확인하세요."
+            exit 1
+          fi
+          TODAY=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          curl -s -H "Content-Type: application/json" \
+            -d "{\"content\":\"<@&everyone>\",\"embeds\":[{\"title\":\"🚨 볼트 데이터 수집 실패\",\"description\":\"**${TODAY}** 데이터 수집이 실패했습니다.\n\n🔗 [로그 확인](${RUN_URL})\n\n자동 fallback도 실패한 경우 수동 확인이 필요합니다.\",\"color\":15548997}]}" \
+            "$DISCORD_WEBHOOK"
+          exit 1

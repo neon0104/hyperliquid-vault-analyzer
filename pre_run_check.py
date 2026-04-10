@@ -1,26 +1,27 @@
+#!/usr/bin/env python3
+"""GitHub Actions 실행 전 중복 수집 방지 체크"""
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sys
 
+KST = timezone(timedelta(hours=9))
+
 def main():
-    # KST 기준 오늘 날짜 계산 (UTC + 9)
-    kst_now = datetime.utcnow() + timedelta(hours=9)
-    today_str = kst_now.strftime('%Y-%m-%d')
-    
+    today_str = datetime.now(KST).strftime('%Y-%m-%d')
     snap_file = Path(__file__).parent / "vault_data" / "snapshots" / f"{today_str}.json"
-    
+
     skip = False
     if snap_file.exists():
         size = os.path.getsize(snap_file)
         if size > 50000:
-            print(f"OK: Data for {today_str} already fully collected ({size} bytes). Skipping further analysis.")
+            print(f"OK: Data for {today_str} already collected ({size:,} bytes). Skipping.")
             skip = True
         else:
-            print(f"WARN: Data for {today_str} exists but is too small ({size} bytes). Proceeding with retry.")
+            print(f"WARN: {today_str} exists but too small ({size} bytes). Retrying.")
     else:
-        print(f"RUN: Data for {today_str} not yet collected. Proceeding with analysis.")
-        
+        print(f"RUN: {today_str} not yet collected. Proceeding.")
+
     github_output = os.environ.get('GITHUB_OUTPUT')
     if github_output:
         with open(github_output, 'a') as f:
