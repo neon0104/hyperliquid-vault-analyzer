@@ -1818,5 +1818,108 @@
         "leader_eq": 0.9846316459191048
       }
     ]
+  },
+  "2026-04-11": {
+    "portfolio_value": 105768.13,
+    "daily_pnl": 576.61,
+    "daily_return_pct": 0.5482,
+    "cumulative_pnl": 5768.13,
+    "cumulative_pct": 5.7681,
+    "max_equity_ever": 105768.13,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4602,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 13.3,
+        "apr_30d": 74.97,
+        "robustness": 0.9487,
+        "undervalue": 1.066,
+        "leader_eq": 0.4992590998873086
+      },
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 15.0,
+        "apr_30d": 750.31,
+        "robustness": 0.6211,
+        "undervalue": 1.838,
+        "leader_eq": 0.6417982911544305
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 11.0,
+        "apr_30d": 7.43,
+        "robustness": 0.8372,
+        "undervalue": 1.004,
+        "leader_eq": 0.6300319989354536
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.8,
+        "apr_30d": 83.72,
+        "robustness": 0.9369,
+        "undervalue": 1.042,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.4,
+        "apr_30d": 173.92,
+        "robustness": 0.5472,
+        "undervalue": 1.169,
+        "leader_eq": 0.9775989504566464
+      },
+      {
+        "name": "Super Saiyan 孫悟空",
+        "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
+        "alloc_pct": 7.1,
+        "apr_30d": 81.99,
+        "robustness": 0.5014,
+        "undervalue": 1.074,
+        "leader_eq": 0.9846316459191048
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.5,
+        "apr_30d": 18.25,
+        "robustness": 0.5642,
+        "undervalue": 1.014,
+        "leader_eq": 0.5706928900493996
+      },
+      {
+        "name": "Long vs Short Basket",
+        "address": "0x35b0ce1428c9fd6a23ff7c23734dd441d3824863",
+        "alloc_pct": 10.5,
+        "apr_30d": 151.34,
+        "robustness": 0.699,
+        "undervalue": 1.144,
+        "leader_eq": 0.9399735723243838
+      },
+      {
+        "name": "Official Jane street ",
+        "address": "0x68c707e9fd21644c0d1b19d55b0ae96bd9ef32b3",
+        "alloc_pct": 8.5,
+        "apr_30d": 188.42,
+        "robustness": 0.5529,
+        "undervalue": 1.169,
+        "leader_eq": 0.8968219281906297
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 6.0,
+        "apr_30d": 205.34,
+        "robustness": 0.3757,
+        "undervalue": 1.207,
+        "leader_eq": 0.8421607662784596
+      }
+    ]
   }
 }
