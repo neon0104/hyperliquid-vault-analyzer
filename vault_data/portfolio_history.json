@@ -1921,5 +1921,108 @@
         "leader_eq": 0.8421607662784596
       }
     ]
+  },
+  "2026-04-12": {
+    "portfolio_value": 106356.65,
+    "daily_pnl": 588.52,
+    "daily_return_pct": 0.5564,
+    "cumulative_pnl": 6356.65,
+    "cumulative_pct": 6.3567,
+    "max_equity_ever": 106356.65,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4574,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 17.1,
+        "apr_30d": 785.04,
+        "robustness": 0.6798,
+        "undervalue": 1.827,
+        "leader_eq": 0.6759508705327357
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 9.5,
+        "apr_30d": 0.99,
+        "robustness": 0.8334,
+        "undervalue": 0.825,
+        "leader_eq": 0.6300319989354536
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.2,
+        "apr_30d": 81.73,
+        "robustness": 0.8493,
+        "undervalue": 1.041,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Long vs Short Basket",
+        "address": "0x35b0ce1428c9fd6a23ff7c23734dd441d3824863",
+        "alloc_pct": 11.1,
+        "apr_30d": 153.56,
+        "robustness": 0.7028,
+        "undervalue": 1.146,
+        "leader_eq": 0.9399735723243838
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.8,
+        "apr_30d": 168.01,
+        "robustness": 0.5472,
+        "undervalue": 1.162,
+        "leader_eq": 0.9777059192735669
+      },
+      {
+        "name": "Official Jane street ",
+        "address": "0x68c707e9fd21644c0d1b19d55b0ae96bd9ef32b3",
+        "alloc_pct": 9.3,
+        "apr_30d": 215.11,
+        "robustness": 0.5594,
+        "undervalue": 1.2,
+        "leader_eq": 0.8968219281906297
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.9,
+        "apr_30d": 21.23,
+        "robustness": 0.5642,
+        "undervalue": 1.015,
+        "leader_eq": 0.5713478297563885
+      },
+      {
+        "name": "Super Saiyan 孫悟空",
+        "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
+        "alloc_pct": 6.9,
+        "apr_30d": 16.16,
+        "robustness": 0.4923,
+        "undervalue": 1.011,
+        "leader_eq": 0.9846316459191048
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 6.8,
+        "apr_30d": 45.45,
+        "robustness": 0.4769,
+        "undervalue": 1.036,
+        "leader_eq": 0.4422004924138734
+      },
+      {
+        "name": "Relative Value Strategies",
+        "address": "0x131398cf559514af8531ce246de9817decb4bd90",
+        "alloc_pct": 10.4,
+        "apr_30d": 10.3,
+        "robustness": 0.7499,
+        "undervalue": 1.002,
+        "leader_eq": 0.9752655344182877
+      }
+    ]
   }
 }
