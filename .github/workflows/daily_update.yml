@@ -2,8 +2,8 @@ name: Daily Vault Data Update
 
 on:
   schedule:
-    # 매일 UTC 00:00 (KST 오전 9시) 실행 — 1회만 (fallback으로 안정성 확보)
-    - cron: '0 0 * * *'
+    # 매일 UTC 21:00 (KST 오전 6시) 실행 - GitHub 지연을 고려해 오전 9시 전후로 완료되도록 확보
+    - cron: '0 21 * * *'
   workflow_dispatch:
 
 jobs:
