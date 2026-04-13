@@ -234,154 +234,106 @@ function showVaultDetails(address) {
 function closeModal() { document.getElementById('vaultModal').style.display = 'none'; }
 
 // ═══════ PORTFOLIO ANALYSIS ═══════════════════════════════════════
-let currentDateKey = null; // 선택된 분석 날짜
+let currentPortfolioVaults = [];
+let portfolioWeights = {};
+let backtestChart = null;
+let scatterChart = null;
 
 function renderPortfolioAnalysis(dateKey) {
-  const byDate = DATA.portfolio_by_date || {};
-  const availableDates = Object.keys(byDate).sort();
-
-  // 기본값: 최신 날짜
-  if(!dateKey) {
-    dateKey = availableDates.length ? availableDates[availableDates.length - 1] : null;
-  }
-  currentDateKey = dateKey;
-
-  const pf = dateKey && byDate[dateKey] ? byDate[dateKey] : DATA.portfolio;
   const el = document.getElementById('page-portfolio');
-  if(!pf) { el.innerHTML = '<div class="card" style="text-align:center;padding:60px;"><h3>📊 포트폴리오 분석 데이터가 없습니다</h3><p style="color:var(--muted)">export_dashboard_data.py를 먼저 실행해주세요.</p></div>'; return; }
-
-  let html = '';
-
-  // ── Date Selector ──
-  if(availableDates.length > 1) {
-    // 최신 날짜와 선택 날짜의 차이(일) 계산
-    const latestDate = availableDates[availableDates.length - 1];
-    const selectedDate = new Date(dateKey + 'T00:00:00');
-    const latestDt = new Date(latestDate + 'T00:00:00');
-    const diffDays = Math.round((latestDt - selectedDate) / (1000 * 60 * 60 * 24));
-    const diffLabel = diffDays === 0 ? '최신' : `${diffDays}일 전`;
-
-    html += `<div class="card" style="display:flex;align-items:center;gap:15px;flex-wrap:wrap;border:1px solid var(--accent);padding:16px 20px;">
-      <span style="font-size:1.2rem;">📅</span>
-      <div style="flex:1;">
-        <h3 style="margin:0;color:var(--accent);">분석 날짜 선택 <span style="font-size:.85rem;color:var(--accent2);font-weight:400;margin-left:8px;">${dateKey} (${diffLabel})</span></h3>
-        <p style="margin:3px 0 0;font-size:.82rem;color:var(--muted);">스냅샷 날짜를 선택하면 해당 시점의 볼트 데이터로 포트폴리오가 재계산됩니다. 데이터 포인트: <b style="color:var(--accent2)">${pf.analysis_days||0}개</b></p>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">`;
-    for(const d of availableDates) {
-      const isActive = d === currentDateKey;
-      const isLatest = d === latestDate;
-      const short = d.substring(5); // "MM-DD"
-      const label = isLatest ? `${short} ★` : short;
-      html += `<button onclick="renderPortfolioAnalysis('${d}')" class="btn ${isActive ? 'btn-primary' : ''}" style="padding:8px 14px;font-size:.82rem;min-width:70px;">${label}</button>`;
-    }
-    html += `</div></div>`;
+  const d = DATA;
+  
+  if(!d.vaults || d.vaults.length === 0) {
+    el.innerHTML = '<div class="card" style="text-align:center;padding:60px;"><h3>📊 분석 가능한 볼트 데이타가 없습니다</h3></div>'; 
+    return; 
   }
 
-  // Info banner
-  html += `<div class="card" style="border-left:4px solid var(--accent2)"><h3>🔬 Portfolio Analysis</h3><p style="color:var(--muted);font-size:.9rem;margin-top:5px">총 ${pf.n_total||0}개 볼트 중 ${pf.n_filtered||0}개 필터 통과 → ${pf.n_selected||0}개 최종 선택 (분석 기간: ${pf.analysis_days||0}일)</p></div>`;
-
-  // Investment simulator
-  html += `<div class="card" style="border:1px solid var(--accent2);display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-    <div style="flex:1"><h3 style="color:var(--accent2)">💡 Custom Investment Simulation</h3><p style="margin:5px 0 0;font-size:.9rem;color:var(--muted)">투자 금액을 입력하면 전략별 배분 금액을 확인할 수 있습니다.</p></div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-      <div style="position:relative;display:flex;align-items:center"><span style="position:absolute;left:15px;font-weight:bold;color:#fff">$</span>
-      <input type="text" id="simAmount" value="100,000" oninput="formatAmountInput(this);updateSimulation()" style="width:200px;padding:12px 12px 12px 30px;font-size:1.2rem;font-weight:bold;background:#0b0f1a;border:1px solid var(--border);color:#fff;border-radius:8px;text-align:right"></div>
-      <span id="simAmountKRW" style="font-size:.85rem;color:var(--accent2);font-weight:600">≈ ₩140,000,000</span>
-    </div></div>`;
-
-  // Selected vaults comparison table
-  if(pf.selected_vaults && pf.selected_vaults.length) {
-    html += `<div class="card"><h2 style="margin-bottom:5px">📊 분석 대상 볼트 비교</h2><p style="color:var(--muted);font-size:.9rem;margin-bottom:15px">${pf.n_selected||0}개 볼트의 핵심 지표 비교</p><div class="table-wrap"><table style="min-width:800px"><thead><tr><th>Vault</th><th style="text-align:center">30d APR</th><th style="text-align:center">Sharpe</th><th style="text-align:center">MDD</th><th style="text-align:center">Robustness</th><th style="text-align:center">TVL</th><th style="text-align:center">Score</th></tr></thead><tbody>`;
-    pf.selected_vaults.forEach(v => {
-      const rc = v.robustness_score >= 0.7 ? 'var(--success)' : v.robustness_score < 0.4 ? 'var(--danger)' : 'var(--warn)';
-      html += `<tr><td><a href="https://app.hyperliquid.xyz/vaults/${v.address}" target="_blank"><b>${(v.name||'').substring(0,25)}</b></a></td>
-        <td style="text-align:center;color:var(--success);font-weight:600">${v.apr_30d}%</td>
-        <td style="text-align:center;color:var(--accent)">${v.sharpe_ratio}</td>
-        <td style="text-align:center;color:var(--danger)">${v.max_drawdown}%</td>
-        <td style="text-align:center;color:${rc}">${v.robustness_score}</td>
-        <td style="text-align:center">$${Number(v.tvl||0).toLocaleString()}</td>
-        <td style="text-align:center;font-weight:800;color:var(--accent)">${v.score}</td></tr>`;
-    });
-    html += '</tbody></table></div></div>';
-  }
-
-  // Strategy cards
-  const strategyInfo = {
-    max_sharpe: {cls:'',emoji:'📈',desc:'위험 대비 수익이 가장 높은 조합. Sharpe가 높은 볼트에 집중 배분합니다. 수익률은 높지만 특정 볼트에 쏠릴 수 있습니다.'},
-    min_variance: {cls:'s-mv',emoji:'🛡️',desc:'전체 변동성을 최소화. MDD가 낮고 변동성이 작은 볼트에 집중합니다. 안정적이며 서로 반대로 움직이는 볼트끼리 조합합니다.'},
-    risk_parity: {cls:'s-rp',emoji:'⚖️',desc:'각 볼트가 위험에 동일하게 기여하도록 배분. 변동성이 큰 볼트는 비중을 줄이고 안정적인 볼트는 비중을 높입니다.'},
-    min_cvar: {cls:'s-cv',emoji:'🔒',desc:'최악의 손실 시나리오(하위 5%)를 최소화. 원금 보호를 최우선으로 합니다.'}
-  };
-
-  if(pf.portfolios && Object.keys(pf.portfolios).length) {
-    html += `<div class="card"><h2 style="margin-bottom:5px">💡 왜 이렇게 추천했는가?</h2><p style="color:var(--muted);font-size:.9rem;margin-bottom:20px">4가지 전략은 각각 다른 투자 철학을 반영합니다.</p><div class="grid grid-2">`;
-    for(const [key, p] of Object.entries(pf.portfolios)) {
-      const si = strategyInfo[key] || {cls:'',emoji:'📊',desc:''};
-      const st = p.stats || {};
-      const bt = p.backtest || {};
-      const weights = st.weights || {};
-      html += `<div class="card strategy-card ${si.cls}"><div class="strategy-header"><h4 style="color:var(--accent)">${si.emoji} ${p.label||key}</h4><span style="font-size:1.8rem;font-weight:800;color:var(--success)">${st.annual_return_pct||0}%</span></div>
-        <div class="strategy-desc"><p style="margin:0;color:var(--text)">📌 <b>핵심 원리:</b> ${si.desc}</p></div>
-        <div class="strategy-metrics">
-          <div class="metric-box"><div class="mk">연 수익률</div><div class="mv" style="color:var(--success)">${st.annual_return_pct||0}%</div></div>
-          <div class="metric-box"><div class="mk">변동성</div><div class="mv" style="color:var(--warn)">${st.annual_vol_pct||0}%</div></div>
-          <div class="metric-box"><div class="mk">Sharpe</div><div class="mv" style="color:var(--accent)">${st.sharpe||0}</div></div>
-          <div class="metric-box"><div class="mk">Max MDD</div><div class="mv" style="color:var(--danger)">${bt.max_drawdown_pct||0}%</div></div>
-        </div>
-        <div style="background:rgba(255,255,255,.03);padding:10px;border-radius:8px">`;
-      for(const [name, w] of Object.entries(weights)) {
-        if(w > 3) {
-          html += `<div class="weight-bar"><span style="font-weight:600;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name.substring(0,30)}</span>
-            <div style="display:flex;align-items:center;gap:10px"><div class="weight-bar-fill"><div class="fill" style="width:${Math.min(w*2.86,100)}%"></div></div>
-            <span style="color:var(--accent2);font-weight:800;min-width:40px;text-align:right">${w}%</span>
-            <span class="alloc-dollar" data-weight="${w}" style="color:#fff;min-width:60px;text-align:right">$0</span></div></div>`;
-        }
+  // 필터 통과한 볼트 위주로 가져옵니다 (TVL > 10000, 30일 이상)
+  let vaults = d.vaults.filter(v => v.tvl > 10000 && v.alltime_pnl && v.alltime_pnl.length > 20);
+  vaults.sort((a,b) => b.score - a.score);
+  
+  // 기본 선택 상위 15개
+  currentPortfolioVaults = vaults.slice(0, 15);
+  if(Object.keys(portfolioWeights).length === 0) {
+      for(let i=0; i<5; i++) {
+         if(currentPortfolioVaults[i]) portfolioWeights[currentPortfolioVaults[i].address] = 20;
       }
-      html += '</div></div>';
-    }
-    html += '</div></div>';
+      for(let i=5; i<currentPortfolioVaults.length; i++) {
+         portfolioWeights[currentPortfolioVaults[i].address] = 0;
+      }
   }
 
-  // Correlation matrix
-  if(pf.corr_selected && pf.corr_selected.names) {
-    const names = pf.corr_selected.names;
-    const matrix = pf.corr_selected.matrix;
-    html += `<div class="card"><h2 style="margin-bottom:5px">🔗 상관관계 분석</h2><p style="color:var(--muted);font-size:.9rem;margin-bottom:15px">볼트 간 상관관계가 낮을수록 분산 효과가 큽니다.</p><div class="table-wrap"><table style="min-width:500px;font-size:.75rem"><thead><tr><th></th>`;
-    names.forEach(n => html += `<th style="text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.65rem" title="${n}">${n.substring(0,12)}</th>`);
-    html += '</tr></thead><tbody>';
-    names.forEach((n, i) => {
-      html += `<tr><td style="font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.7rem" title="${n}">${n.substring(0,12)}</td>`;
-      names.forEach((_, j) => {
-        const val = matrix[i][j];
-        const bg = val > 0.3 ? `rgba(231,76,60,${val*0.4})` : val < -0.1 ? `rgba(79,142,247,${Math.abs(val)*0.5})` : 'rgba(255,255,255,.02)';
-        const color = val > 0.5 ? 'var(--danger)' : val < -0.1 ? 'var(--accent)' : 'var(--muted)';
-        const fw = Math.abs(val) > 0.5 ? '700' : '400';
-        html += `<td class="corr-cell" style="background:${bg};font-weight:${fw};color:${color}">${i===j?'-':val}</td>`;
-      });
-      html += '</tr>';
-    });
-    html += '</tbody></table></div>';
-    html += `<div style="margin-top:15px;background:rgba(255,255,255,.03);padding:15px;border-radius:8px;font-size:.85rem;line-height:1.7">
-      <p style="margin:0;color:var(--text)"><b>📖 읽는 법:</b></p>
-      <ul style="margin:5px 0 0;padding-left:20px;color:var(--muted)">
-        <li><span style="color:var(--danger)">빨간 숫자 (0.5 이상)</span> = 같이 움직임 → 분산 효과 ❌</li>
-        <li><span style="color:var(--accent)">파란 숫자 (음수)</span> = 반대로 움직임 → 분산 효과 ✅</li>
-        <li><span style="color:var(--muted)">회색 숫자 (0 근처)</span> = 독립적 → 분산 효과 ✅</li>
-      </ul></div></div>`;
-  }
+  let html = `
+    <div class="card" style="border-left:4px solid var(--accent2)">
+      <h2>🔬 Interactive Portfolio Backtester & Screener</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:5px"> Growi.fi 프레임워크 기반: 수익성이 검증된 상위 볼트들의 과거 성과를 조합하여 매달 최적의 리밸런싱 비율을 시뮬레이션 합니다.</p>
+    </div>
+    
+    <div class="grid grid-2" style="grid-template-columns: 2fr 1fr">
+      
+      <!-- Left: Backtest Chart -->
+      <div class="card">
+        <h3>📈 Portfolio Equity Curve (Simulated)</h3>
+        <div style="font-size:1.4rem;font-weight:bold;color:var(--success);margin-bottom:10px" id="totalReturnText">Total Return: +0.00%</div>
+        <div class="chart-container" style="height: 350px;">
+          <canvas id="customBacktestChart"></canvas>
+        </div>
+        
+        <h3 style="margin-top:30px">🛡️ Sweet Spot Screener (Risk vs Reward)</h3>
+        <p style="font-size:.8rem;color:var(--muted)">좌측 상단일수록 리스크(MDD) 대비 가성비(APR)가 큰 볼트입니다. (버블 크기 = TVL)</p>
+        <div class="chart-container" style="height: 320px;">
+          <canvas id="customScatterChart"></canvas>
+        </div>
+      </div>
 
-  // Strategy guide
-  html += `<div class="card" style="border-left:4px solid var(--accent2)"><h2 style="margin-bottom:5px">📝 투자 전략 가이드</h2>
-    <div style="font-size:.9rem;line-height:1.8;color:var(--muted)"><div class="grid grid-2" style="margin-top:10px">
-      <div class="guide-box aggressive"><p style="margin:0;color:var(--success);font-weight:600">✅ 공격적 투자자 (수익 우선)</p><p style="margin:8px 0 0">→ <b>최대 샤프 📈</b> 전략 추천<br>높은 Sharpe 볼트에 집중, 수익률 극대화.</p></div>
-      <div class="guide-box stable"><p style="margin:0;color:var(--accent2);font-weight:600">🛡️ 안정형 투자자 (원금 보호)</p><p style="margin:8px 0 0">→ <b>원금보호 CVaR 🔒</b> 또는 <b>최소분산 🛡️</b> 추천<br>최악의 시나리오를 최소화, 변동성 억제.</p></div>
-      <div class="guide-box balanced"><p style="margin:0;color:var(--warn);font-weight:600">⚖️ 균형형 투자자</p><p style="margin:8px 0 0">→ <b>위험 균형 ⚖️</b> 전략 추천<br>모든 볼트가 위험에 균등 기여, 특정 볼트 의존도 낮음.</p></div>
-      <div class="guide-box info"><p style="margin:0;color:var(--accent);font-weight:600">🧠 분석 기간</p><p style="margin:8px 0 0">본 분석은 <b>최근 ${pf.analysis_days||0}일</b> 데이터 기반.<br>${pf.n_selected||0}개 볼트가 저상관 기준으로 최종 선택.</p></div>
-    </div></div></div>`;
+      <!-- Right: Control Deck -->
+      <div class="card" style="display:flex; flex-direction:column; gap: 15px;">
+        <h3>🎛️ Rebalancing Desk</h3>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px;">총합 100%에 맞춰 슬라이더를 조정하세요.</p>
+        
+        <div style="background:rgba(255,255,255,0.02); padding:15px; border-radius:8px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+            <span style="font-weight:bold">투자금(USD):</span>
+            <input type="number" id="simInvestAmount" value="10000" style="width:100px; text-align:right; background:#0b0f1a; color:#fff; border:1px solid #333; border-radius:4px;" oninput="updateInteractiveBacktest()">
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-weight:bold">비중 총합:</span>
+            <span id="weightSumText" style="color:var(--success); font-weight:bold;">100%</span>
+          </div>
+        </div>
+        
+        <div id="slidersContainer" style="overflow-y:auto; max-height:550px; padding-right:10px;">
+  `;
 
+  currentPortfolioVaults.forEach(v => {
+      let w = portfolioWeights[v.address] || 0;
+      html += \`
+        <div style="margin-bottom: 12px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:5px;">
+            <span><a href="https://app.hyperliquid.xyz/vaults/\${v.address}" target="_blank" style="color:var(--accent)">\${v.name.substring(0,18)}</a></span>
+            <span id="label_w_\${v.address}" style="font-weight:bold; color:\${w>0?'var(--success)':'var(--muted)'}">\${w}%</span>
+          </div>
+          <input type="range" id="w_\${v.address}" min="0" max="100" value="\${w}" style="width:100%; accent-color:var(--accent2); cursor:pointer" oninput="onWeightSliderChange('\${v.address}')">
+          <div style="display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted); margin-top:2px;">
+            <span style="color:var(--success)">APR: \${v.apr_30d}%</span>
+            <span style="color:var(--danger)">MDD: \${v.max_drawdown}%</span>
+          </div>
+        </div>
+      \`;
+  });
+
+  html += `
+        </div>
+      </div>
+    </div>
+  `;
+  
   el.innerHTML = html;
-  updateSimulation();
+  
+  setTimeout(() => {
+     renderScatterChart();
+     updateInteractiveBacktest();
+  }, 100);
 }
 
 // ═══════ MY PORTFOLIO ═════════════════════════════════════════════
@@ -416,29 +368,149 @@ function renderMyPortfolio() {
   el.innerHTML = html;
 }
 
-// ── Simulation Input ─────────────────────────────────────────────
-function parseAmountValue(el) { return parseFloat(el.value.replace(/,/g,'')) || 0; }
-function formatAmountInput(el) {
-  const cursor = el.selectionStart;
-  const oldLen = el.value.length;
-  const raw = el.value.replace(/[^0-9]/g,'');
-  const num = parseInt(raw) || 0;
-  el.value = num.toLocaleString();
-  const newLen = el.value.length;
-  el.setSelectionRange(cursor + (newLen - oldLen), cursor + (newLen - oldLen));
+function onWeightSliderChange(addr) {
+    let rawW = parseInt(document.getElementById('w_' + addr).value) || 0;
+    portfolioWeights[addr] = rawW;
+    
+    // Total
+    let sum = 0;
+    currentPortfolioVaults.forEach(v => sum += (portfolioWeights[v.address] || 0));
+    let tEl = document.getElementById('weightSumText');
+    if(sum === 100) tEl.style.color = 'var(--success)';
+    else tEl.style.color = 'var(--danger)';
+    tEl.innerText = sum + '%';
+    
+    document.getElementById('label_w_' + addr).innerText = rawW + '%';
+    document.getElementById('label_w_' + addr).style.color = rawW > 0 ? 'var(--success)' : 'var(--muted)';
+    
+    updateInteractiveBacktest();
 }
 
-function updateSimulation() {
-  const input = document.getElementById('simAmount');
-  if(!input) return;
-  let simAmount = parseAmountValue(input);
-  if(simAmount <= 0) simAmount = 100000;
-  const krwEl = document.getElementById('simAmountKRW');
-  if(krwEl) krwEl.innerText = '≈ ₩' + Math.round(simAmount * KRW).toLocaleString();
-  document.querySelectorAll('.alloc-dollar').forEach(el => {
-    const w = parseFloat(el.dataset.weight) || 0;
-    el.innerText = '$' + Math.round(simAmount * w / 100).toLocaleString();
-  });
+function updateInteractiveBacktest() {
+    let investAmount = parseFloat(document.getElementById('simInvestAmount').value) || 10000;
+    
+    // Normalize weights
+    let normWeights = {};
+    let sum = 0;
+    currentPortfolioVaults.forEach(v => sum += (portfolioWeights[v.address] || 0));
+    
+    if(sum === 0) {
+        if(backtestChart) backtestChart.destroy();
+        document.getElementById('totalReturnText').innerText = "투자 비중을 설정해주세요.";
+        return;
+    }
+    
+    currentPortfolioVaults.forEach(v => {
+        normWeights[v.address] = (portfolioWeights[v.address] || 0) / sum;
+    });
+    
+    let validVaults = currentPortfolioVaults.filter(v => normWeights[v.address] > 0);
+    if(validVaults.length === 0) return;
+    
+    let minLen = Math.min(...validVaults.map(v => v.alltime_pnl.length));
+    
+    let eqCurve = [];
+    for(let i=0; i<minLen; i++) eqCurve.push(investAmount);
+    
+    validVaults.forEach(v => {
+        let w = normWeights[v.address];
+        let pnlArr = v.alltime_pnl.slice(-minLen);
+        let baselineCapital = v.tvl - pnlArr[pnlArr.length-1]; 
+        if(baselineCapital <= 0) baselineCapital = v.tvl;
+        
+        let startPnl = pnlArr[0];
+        for(let i=0; i<minLen; i++) {
+             let ret = (pnlArr[i] - startPnl) / (baselineCapital + 1e-9);
+             eqCurve[i] += (investAmount * w * ret);
+        }
+    });
+
+    let finalRet = ((eqCurve[minLen-1] / investAmount) - 1) * 100;
+    document.getElementById('totalReturnText').innerText = "Total Return: " + (finalRet>=0?'+':'') + finalRet.toFixed(2) + "%";
+    document.getElementById('totalReturnText').style.color = finalRet>=0 ? 'var(--success)' : 'var(--danger)';
+
+    let labels = Array.from({length: minLen}, (_, i) => "D-" + (minLen - i - 1));
+
+    if(backtestChart) backtestChart.destroy();
+    const ctx = document.getElementById('customBacktestChart').getContext('2d');
+    backtestChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Portfolio Value ($)',
+                data: eqCurve,
+                borderColor: '#1abc9c',
+                backgroundColor: 'rgba(26,188,156,0.1)',
+                fill: true,
+                tension: 0.1,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+                y: { ticks: { font: {size: 11} } },
+                x: { ticks: { autoSkip: true, maxTicksLimit: 10, font: {size: 10} } }
+            }
+        }
+    });
+}
+
+function renderScatterChart() {
+    if(scatterChart) scatterChart.destroy();
+    const ctx = document.getElementById('customScatterChart').getContext('2d');
+    
+    let dataset = currentPortfolioVaults.map(v => {
+        return {
+            x: v.max_drawdown,
+            y: v.apr_30d,
+            r: Math.max(5, Math.min(25, v.tvl / 50000)),
+            vaultName: v.name,
+            tvl: v.tvl
+        }
+    });
+
+    scatterChart = new Chart(ctx, {
+        type: 'bubble',
+        data: {
+            datasets: [{
+                label: 'Top Vaults',
+                data: dataset,
+                backgroundColor: dataset.map(d => d.y > 10 && d.x < 15 ? 'rgba(46,204,113,0.7)' : 'rgba(52,152,219,0.5)'),
+                borderColor: 'rgba(255,255,255,0.2)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            let d = ctx.raw;
+                            return d.vaultName + ' | MDD: ' + d.x + '% | APR: ' + d.y + '% | TVL: $' + d.tvl.toLocaleString();
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Max Drawdown (%)', color: '#999', font:{size:11} },
+                    reverse: false,
+                    grid: { color: 'rgba(255,255,255,0.05)'}
+                },
+                y: {
+                    title: { display: true, text: '30d APR (%)', color: '#999', font:{size:11} },
+                    grid: { color: 'rgba(255,255,255,0.05)'}
+                }
+            }
+        }
+    });
 }
 
 // ── Init ─────────────────────────────────────────────────────────
