@@ -2127,5 +2127,211 @@
         "leader_eq": 0.9752655344182877
       }
     ]
+  },
+  "2026-04-14": {
+    "portfolio_value": 107695.33,
+    "daily_pnl": 792.89,
+    "daily_return_pct": 0.7417,
+    "cumulative_pnl": 7695.33,
+    "cumulative_pct": 7.6953,
+    "max_equity_ever": 107695.33,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5146,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 14.6,
+        "apr_30d": 786.06,
+        "robustness": 0.588,
+        "undervalue": 1.824,
+        "leader_eq": 0.6768841408349733
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 12.0,
+        "apr_30d": 20.66,
+        "robustness": 0.8673,
+        "undervalue": 1.016,
+        "leader_eq": 0.6320916272394994
+      },
+      {
+        "name": "Long vs Short Basket",
+        "address": "0x35b0ce1428c9fd6a23ff7c23734dd441d3824863",
+        "alloc_pct": 12.8,
+        "apr_30d": 194.51,
+        "robustness": 0.7859,
+        "undervalue": 1.193,
+        "leader_eq": 0.9386912279522706
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 9.6,
+        "apr_30d": 587.8,
+        "robustness": 0.3676,
+        "undervalue": 1.914,
+        "leader_eq": 0.8557064287596597
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.3,
+        "apr_30d": 78.32,
+        "robustness": 0.8684,
+        "undervalue": 1.037,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.7,
+        "apr_30d": 175.47,
+        "robustness": 0.5472,
+        "undervalue": 1.171,
+        "leader_eq": 0.9777059192735669
+      },
+      {
+        "name": "Mataari",
+        "address": "0x3f1c7195d6b0da5e842d36a615c2c77fd5bdc9d0",
+        "alloc_pct": 7.4,
+        "apr_30d": 352.74,
+        "robustness": 0.3853,
+        "undervalue": 1.416,
+        "leader_eq": 1.0
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 8.0,
+        "apr_30d": 223.86,
+        "robustness": 0.5165,
+        "undervalue": 1.134,
+        "leader_eq": 0.744705138827075
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.8,
+        "apr_30d": 21.92,
+        "robustness": 0.5642,
+        "undervalue": 1.013,
+        "leader_eq": 0.5721329299404622
+      },
+      {
+        "name": "Super Saiyan 孫悟空",
+        "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
+        "alloc_pct": 6.9,
+        "apr_30d": 22.16,
+        "robustness": 0.498,
+        "undervalue": 1.017,
+        "leader_eq": 0.9846316459191048
+      }
+    ]
+  },
+  "2026-04-16": {
+    "portfolio_value": 108441.83,
+    "daily_pnl": 746.5,
+    "daily_return_pct": 0.6932,
+    "cumulative_pnl": 8441.83,
+    "cumulative_pct": 8.4418,
+    "max_equity_ever": 108441.83,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5424,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 12.8,
+        "apr_30d": 20.32,
+        "robustness": 0.8627,
+        "undervalue": 1.019,
+        "leader_eq": 0.6275164069724711
+      },
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 16.8,
+        "apr_30d": 669.21,
+        "robustness": 0.522,
+        "undervalue": 2.209,
+        "leader_eq": 0.5703926921854204
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 9.2,
+        "apr_30d": 554.49,
+        "robustness": 0.3403,
+        "undervalue": 1.859,
+        "leader_eq": 0.8103937628907175
+      },
+      {
+        "name": "Mataari",
+        "address": "0x3f1c7195d6b0da5e842d36a615c2c77fd5bdc9d0",
+        "alloc_pct": 10.0,
+        "apr_30d": 384.88,
+        "robustness": 0.464,
+        "undervalue": 1.472,
+        "leader_eq": 0.898671428739235
+      },
+      {
+        "name": "Long vs Short Basket",
+        "address": "0x35b0ce1428c9fd6a23ff7c23734dd441d3824863",
+        "alloc_pct": 10.4,
+        "apr_30d": 163.91,
+        "robustness": 0.6179,
+        "undervalue": 1.156,
+        "leader_eq": 0.9399734798261823
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 8.1,
+        "apr_30d": 173.56,
+        "robustness": 0.476,
+        "undervalue": 1.169,
+        "leader_eq": 0.569539246404432
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 8.4,
+        "apr_30d": 24.38,
+        "robustness": 0.5642,
+        "undervalue": 1.018,
+        "leader_eq": 0.5722717857626389
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.8,
+        "apr_30d": 38.68,
+        "robustness": 0.5826,
+        "undervalue": 1.033,
+        "leader_eq": 0.97768454190228
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 9.6,
+        "apr_30d": 86.37,
+        "robustness": 0.6263,
+        "undervalue": 1.045,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 5.8,
+        "apr_30d": 62.52,
+        "robustness": 0.3796,
+        "undervalue": 1.055,
+        "leader_eq": 0.9987547973158247
+      }
+    ]
   }
 }

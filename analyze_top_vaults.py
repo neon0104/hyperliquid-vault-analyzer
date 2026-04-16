@@ -384,7 +384,7 @@ def analyze_vault_from_stats(v_data, info_client):
     leader_equity_ratio = 0.0
     leader_equity_usd   = 0.0
     num_followers       = 0
-    for attempt in range(1, 4):
+    for attempt in range(1, 6):
         try:
             details = info_client.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
             if details and isinstance(details, dict):
@@ -400,11 +400,17 @@ def analyze_vault_from_stats(v_data, info_client):
                 if leader_equity_ratio > 0:
                     num_followers += 1
             break
-        except Exception:
-            if attempt < 3:
-                time.sleep(1.5) # 오류 시 1.5초 휴식 후 재시도
+        except Exception as e:
+            if "429" in str(e):
+                time.sleep(attempt * 2)
             else:
-                pass
+                if attempt < 5:
+                    time.sleep(2) # 오류 시 휴식 후 재시도
+                else:
+                    pass
+    
+    # 디도스 방지 소량 휴식 추가 (429 방지용)
+    time.sleep(0.5)
 
     # ★ 사용자 요청 (TVL 금액 + 에쿼티 금액 절대값 중심의 가중치 보정)
     # 리더 지분율(%)보다 리더가 꽂아넣은 '진짜 돈의 크기(USD)'가 안정성의 핵심이라는 보스의 철학 반영!
@@ -652,7 +658,21 @@ def run_analysis(top_n=TOP_N):
         print("  🔄 stats-data API 실패 → 공식 vaultDetails API fallback 모드 전환...")
         return run_analysis_fallback(top_n)
 
-    info_client = Info(API_URL, skip_ws=True)
+    info_client = None
+    for attempt in range(1, 6):
+        try:
+            info_client = Info(API_URL, skip_ws=True)
+            break
+        except Exception as e:
+            if "429" in str(e):
+                wait = attempt * 2
+                print(f"  [Info 초기화] 429 방어: {wait}초 대기 후 재시도...")
+                time.sleep(wait)
+            else:
+                raise
+    if not info_client:
+        raise RuntimeError("Info client init failed (Rate limited API_URL)")
+        
     results, failed = [], 0
 
     print(f"  {len(top_vaults)}개 볼트 병렬 분석 중 (스레드 {MAX_WORKERS}개)...")
