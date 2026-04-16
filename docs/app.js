@@ -283,6 +283,7 @@ function renderPortfolioAnalysis(mode) {
     <div class="card" style="border-left:4px solid var(--accent2)">
       <h2>🔬 Interactive Portfolio Backtester & Screener</h2>
       <p style="color:var(--muted);font-size:.9rem;margin-top:5px"> Growi.fi 프레임워크 기반: 수익성이 검증된 상위 볼트들의 과거 성과를 조합하여 매달 최적의 리밸런싱 비율을 시뮬레이션 합니다.</p>
+      <p style="color:var(--accent);font-size:1rem;margin-top:10px;font-weight:bold;">📅 백테스트 기준 날짜: ${d.analysis_date || '알 수 없음'}</p>
     </div>
     
     <div class="grid grid-2" style="grid-template-columns: 2fr 1fr">
@@ -310,12 +311,13 @@ function renderPortfolioAnalysis(mode) {
         <div style="background:rgba(255,255,255,0.02); padding:15px; border-radius:8px;">
           <div style="display:flex; justify-content:space-between; margin-bottom:10px">
             <span style="font-weight:bold">투자금(USD):</span>
-            <input type="number" id="simInvestAmount" value="10000" style="width:100px; text-align:right; background:#0b0f1a; color:#fff; border:1px solid #333; border-radius:4px;" oninput="updateInteractiveBacktest()">
+            <input type="number" id="simInvestAmount" value="10000" style="width:100px; text-align:right; background:#0b0f1a; color:#fff; border:1px solid #333; border-radius:4px;" oninput="document.getElementById('totalReturnText').innerHTML = '⚠️ 설정 변경됨. [분석 시작]을 누르세요!'; document.getElementById('totalReturnText').style.color='var(--warn)';">
           </div>
-          <div style="display:flex; justify-content:space-between;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:15px">
             <span style="font-weight:bold">비중 총합:</span>
             <span id="weightSumText" style="color:var(--success); font-weight:bold;">100%</span>
           </div>
+          <button id="btnRunSim" class="btn btn-primary" style="width:100%; font-size:1.05rem; padding:10px" onclick="runSimulation()">🚀 분석 시작 (Run Simulation)</button>
         </div>
         
         <div id="slidersContainer" style="overflow-y:auto; max-height:550px; padding-right:10px;">
@@ -399,7 +401,32 @@ function onWeightSliderChange(addr) {
     document.getElementById('label_w_' + addr).innerText = rawW + '%';
     document.getElementById('label_w_' + addr).style.color = rawW > 0 ? 'var(--success)' : 'var(--muted)';
     
-    updateInteractiveBacktest();
+    document.getElementById('totalReturnText').innerHTML = '⚠️ 설정 변경됨. [분석 시작]을 누르세요!';
+    document.getElementById('totalReturnText').style.color = 'var(--warn)';
+    
+    const btn = document.getElementById('btnRunSim');
+    if(btn) { btn.classList.add('pulse'); }
+}
+
+function runSimulation() {
+    const btn = document.getElementById('btnRunSim');
+    if(!btn) return;
+    
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ 시뮬레이터 구동 중...";
+    btn.disabled = true;
+    btn.classList.remove('pulse');
+    
+    // UI 업데이트를 위해 약간의 지연
+    setTimeout(() => {
+        updateInteractiveBacktest();
+        btn.innerText = "✅ 백테스트 완료";
+        
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }, 1500);
+    }, 400);
 }
 
 function updateInteractiveBacktest() {
