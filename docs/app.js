@@ -307,19 +307,19 @@ function renderPortfolioAnalysis(dateKey) {
 
   currentPortfolioVaults.forEach(v => {
       let w = portfolioWeights[v.address] || 0;
-      html += \`
+      html += `
         <div style="margin-bottom: 12px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
           <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:5px;">
-            <span><a href="https://app.hyperliquid.xyz/vaults/\${v.address}" target="_blank" style="color:var(--accent)">\${v.name.substring(0,18)}</a></span>
-            <span id="label_w_\${v.address}" style="font-weight:bold; color:\${w>0?'var(--success)':'var(--muted)'}">\${w}%</span>
+            <span><a href="https://app.hyperliquid.xyz/vaults/${v.address}" target="_blank" style="color:var(--accent)">${v.name.substring(0,18)}</a></span>
+            <span id="label_w_${v.address}" style="font-weight:bold; color:${w>0?'var(--success)':'var(--muted)'}">${w}%</span>
           </div>
-          <input type="range" id="w_\${v.address}" min="0" max="100" value="\${w}" style="width:100%; accent-color:var(--accent2); cursor:pointer" oninput="onWeightSliderChange('\${v.address}')">
+          <input type="range" id="w_${v.address}" min="0" max="100" value="${w}" style="width:100%; accent-color:var(--accent2); cursor:pointer" oninput="onWeightSliderChange('${v.address}')">
           <div style="display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted); margin-top:2px;">
-            <span style="color:var(--success)">APR: \${v.apr_30d}%</span>
-            <span style="color:var(--danger)">MDD: \${v.max_drawdown}%</span>
+            <span style="color:var(--success)">APR: ${v.apr_30d}%</span>
+            <span style="color:var(--danger)">MDD: ${v.max_drawdown}%</span>
           </div>
         </div>
-      \`;
+      `;
   });
 
   html += `
