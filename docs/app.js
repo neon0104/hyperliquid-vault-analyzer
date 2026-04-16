@@ -305,8 +305,8 @@ function renderPortfolioAnalysis(mode) {
 
       <!-- Right: Control Deck -->
       <div class="card" style="display:flex; flex-direction:column; gap: 15px;">
-        <h3>🎛️ Rebalancing Desk</h3>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px;">총합 100%에 맞춰 슬라이더를 조정하세요.</p>
+        <h3>🎛️ Rebalancing Desk <button class="btn btn-sm" onclick="autoOptimize()" style="float:right;background:var(--accent);color:#fff;padding:4px 8px;font-size:0.8rem">✨ AI 최적 비중 (수익 극대화)</button></h3>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px;">총합 100%에 맞춰 슬라이더를 조정하거나 최적 비중을 찾으세요.</p>
         
         <div style="background:rgba(255,255,255,0.02); padding:15px; border-radius:8px;">
           <div style="display:flex; justify-content:space-between; margin-bottom:10px">
@@ -429,6 +429,59 @@ function runSimulation() {
     }, 400);
 }
 
+function autoOptimize() {
+    let totalScore = 0;
+    currentPortfolioVaults.forEach(v => {
+        let score = Math.max(0, parseFloat(v.apr_30d) || 0);
+        let mdd = parseFloat(v.max_drawdown) || 100;
+        score = score / Math.max(1, mdd / 5); 
+        totalScore += score;
+    });
+    
+    currentPortfolioVaults.forEach((v, i) => {
+        let w = 0;
+        if(totalScore > 0) {
+            let score = Math.max(0, parseFloat(v.apr_30d) || 0) / Math.max(1, (parseFloat(v.max_drawdown) || 100) / 5);
+            w = Math.round((score / totalScore) * 100);
+        } else {
+            w = Math.floor(100 / currentPortfolioVaults.length);
+        }
+        portfolioWeights[v.address] = w;
+    });
+    
+    let sum = 0;
+    currentPortfolioVaults.forEach(v => sum += portfolioWeights[v.address]);
+    if(sum !== 100 && currentPortfolioVaults.length > 0) {
+        portfolioWeights[currentPortfolioVaults[0].address] += (100 - sum);
+    }
+    
+    currentPortfolioVaults.forEach(v => {
+        let w = portfolioWeights[v.address];
+        let slider = document.getElementById('w_' + v.address);
+        if(slider) slider.value = w;
+        let label = document.getElementById('label_w_' + v.address);
+        if(label) {
+            label.innerText = w + '%';
+            label.style.color = w > 0 ? 'var(--success)' : 'var(--muted)';
+        }
+    });
+    
+    let tEl = document.getElementById('weightSumText');
+    if(tEl) {
+        tEl.style.color = 'var(--success)';
+        tEl.innerText = '100%';
+    }
+    
+    let retText = document.getElementById('totalReturnText');
+    if(retText) {
+        retText.innerHTML = '⚠️ 최적의 비중을 찾았습니다! [분석 시작]을 누르세요.';
+        retText.style.color = 'var(--accent)';
+    }
+    
+    const btn = document.getElementById('btnRunSim');
+    if(btn) { btn.classList.add('pulse'); }
+}
+
 function updateInteractiveBacktest() {
     let investAmount = parseFloat(document.getElementById('simInvestAmount').value) || 10000;
     
@@ -456,32 +509,37 @@ function updateInteractiveBacktest() {
         return;
     }
     
-    let minLen = Math.min(...validVaults.map(v => v.alltime_pnl.length));
-    
+    let SIM_DAYS = 30;
     let eqCurve = [];
-    for(let i=0; i<minLen; i++) eqCurve.push(investAmount);
+    for(let i=0; i<SIM_DAYS; i++) eqCurve.push(investAmount);
     
     validVaults.forEach(v => {
         let w = normWeights[v.address];
-        let pnlArr = v.alltime_pnl.slice(-minLen);
-        let baselineCapital = v.tvl - pnlArr[pnlArr.length-1]; 
+        let pnlArr = v.alltime_pnl || [];
+        
+        let baselineCapital = v.tvl - (pnlArr.length > 0 ? pnlArr[pnlArr.length-1] : 0); 
         if(baselineCapital <= 0) baselineCapital = v.tvl || 10000;
         
-        // Use percentage return so it scales directly with portfolio portion
-        let startPnl = pnlArr[0];
-        for(let i=0; i<minLen; i++) {
-             // (Current return / baseline) => growth factor
-             let pctReturn = (pnlArr[i] - startPnl) / baselineCapital;
-             // But Wait, baselineCapital might be huge or small.
+        let availableLen = pnlArr.length;
+        let startPnl = availableLen > 0 ? pnlArr[0] : 0;
+        
+        for(let i=0; i<SIM_DAYS; i++) {
+             let pnlIdx = availableLen - SIM_DAYS + i;
+             let pctReturn = 0;
+             if (pnlIdx >= 0 && pnlIdx < availableLen) {
+                 pctReturn = (pnlArr[pnlIdx] - startPnl) / baselineCapital;
+             } else if (pnlIdx >= availableLen && availableLen > 0) {
+                 pctReturn = (pnlArr[availableLen-1] - startPnl) / baselineCapital;
+             }
              eqCurve[i] += (investAmount * w * pctReturn);
         }
     });
 
-    let finalRet = ((eqCurve[minLen-1] / investAmount) - 1) * 100;
-    document.getElementById('totalReturnText').innerText = "Total Return: " + (finalRet>=0?'+':'') + finalRet.toFixed(2) + "%";
+    let finalRet = ((eqCurve[SIM_DAYS-1] / investAmount) - 1) * 100;
+    document.getElementById('totalReturnText').innerText = "Total 30D Return: " + (finalRet>=0?'+':'') + finalRet.toFixed(2) + "%";
     document.getElementById('totalReturnText').style.color = finalRet>=0 ? 'var(--success)' : 'var(--danger)';
 
-    let labels = Array.from({length: minLen}, (_, i) => "D-" + (minLen - i - 1));
+    let labels = Array.from({length: SIM_DAYS}, (_, i) => "D-" + (SIM_DAYS - i - 1));
 
     if(backtestChart) backtestChart.destroy();
     const ctx = document.getElementById('customBacktestChart').getContext('2d');
