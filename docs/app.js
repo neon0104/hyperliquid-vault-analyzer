@@ -180,7 +180,25 @@ function clearSelection() {
 function goAnalyzeSelected() {
   const checked = document.querySelectorAll('.vault-cb:checked');
   if(checked.length < 2) { alert('최소 2개 이상 선택해주세요.'); return; }
-  toast(`선택한 ${checked.length}개 볼트를 분석합니다. (정적 사이트에서는 사전 계산된 포트폴리오 결과를 표시합니다)`);
+  
+  let selectedAddresses = Array.from(checked).map(cb => cb.dataset.address);
+  let selectedVaults = DATA.vaults.filter(v => selectedAddresses.includes(v.address) && v.alltime_pnl && v.alltime_pnl.length > 5);
+  
+  if(selectedVaults.length < 2) {
+      alert('분석에 필요한 과거 수익률 데이터가 충분한 볼트가 2개 미만입니다. (신규 볼트 제외)');
+      return;
+  }
+  
+  currentPortfolioVaults = selectedVaults;
+  portfolioWeights = {};
+  
+  let evenW = Math.floor(100 / selectedVaults.length);
+  selectedVaults.forEach((v, i) => {
+      portfolioWeights[v.address] = (i === selectedVaults.length - 1) ? (100 - evenW * i) : evenW;
+  });
+  
+  toast(`선택한 ${selectedVaults.length}개 볼트를 분석합니다.`);
+  renderPortfolioAnalysis('custom');
   switchPage('portfolio');
 }
 
@@ -239,7 +257,7 @@ let portfolioWeights = {};
 let backtestChart = null;
 let scatterChart = null;
 
-function renderPortfolioAnalysis(dateKey) {
+function renderPortfolioAnalysis(mode) {
   const el = document.getElementById('page-portfolio');
   const d = DATA;
   
@@ -248,18 +266,16 @@ function renderPortfolioAnalysis(dateKey) {
     return; 
   }
 
-  // 필터 통과한 볼트 위주로 가져옵니다 (TVL > 10000, 30일 이상)
-  let vaults = d.vaults.filter(v => v.tvl > 10000 && v.alltime_pnl && v.alltime_pnl.length > 20);
-  vaults.sort((a,b) => b.score - a.score);
-  
-  // 기본 선택 상위 15개
-  currentPortfolioVaults = vaults.slice(0, 15);
-  if(Object.keys(portfolioWeights).length === 0) {
+  if(mode !== 'custom') {
+      let vaults = d.vaults.filter(v => v.tvl > 10000 && v.alltime_pnl && v.alltime_pnl.length > 20);
+      vaults.sort((a,b) => b.score - a.score);
+      currentPortfolioVaults = vaults.slice(0, 15);
+      portfolioWeights = {};
       for(let i=0; i<5; i++) {
          if(currentPortfolioVaults[i]) portfolioWeights[currentPortfolioVaults[i].address] = 20;
       }
       for(let i=5; i<currentPortfolioVaults.length; i++) {
-         portfolioWeights[currentPortfolioVaults[i].address] = 0;
+         if(currentPortfolioVaults[i]) portfolioWeights[currentPortfolioVaults[i].address] = 0;
       }
   }
 
@@ -405,7 +421,13 @@ function updateInteractiveBacktest() {
     });
     
     let validVaults = currentPortfolioVaults.filter(v => normWeights[v.address] > 0);
-    if(validVaults.length === 0) return;
+    // Filter out vaults missing pnl
+    validVaults = validVaults.filter(v => v.alltime_pnl && v.alltime_pnl.length > 0);
+    if(validVaults.length === 0) {
+        if(backtestChart) backtestChart.destroy();
+        document.getElementById('totalReturnText').innerText = "과거 수익률 기록이 없는 볼트를 선택하셨습니다.";
+        return;
+    }
     
     let minLen = Math.min(...validVaults.map(v => v.alltime_pnl.length));
     
@@ -416,12 +438,15 @@ function updateInteractiveBacktest() {
         let w = normWeights[v.address];
         let pnlArr = v.alltime_pnl.slice(-minLen);
         let baselineCapital = v.tvl - pnlArr[pnlArr.length-1]; 
-        if(baselineCapital <= 0) baselineCapital = v.tvl;
+        if(baselineCapital <= 0) baselineCapital = v.tvl || 10000;
         
+        // Use percentage return so it scales directly with portfolio portion
         let startPnl = pnlArr[0];
         for(let i=0; i<minLen; i++) {
-             let ret = (pnlArr[i] - startPnl) / (baselineCapital + 1e-9);
-             eqCurve[i] += (investAmount * w * ret);
+             // (Current return / baseline) => growth factor
+             let pctReturn = (pnlArr[i] - startPnl) / baselineCapital;
+             // But Wait, baselineCapital might be huge or small.
+             eqCurve[i] += (investAmount * w * pctReturn);
         }
     });
 
