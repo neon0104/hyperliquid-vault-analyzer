@@ -18,5 +18,5 @@ git push >> auto_run.log 2>&1
 echo [%date% %time%] Update completed. Entering sleep mode... >> auto_run.log
 
 rem 작업이 끝나면 10초 대기 후 강제로 절전 모드(Sleep) 진입
-rem timeout /t 10 /nobreak > nul
-rem powershell -NoProfile -Command "Add-Type -Assembly System.Windows.Forms; [System.Windows.Forms.Application]::SetSuspendState('Suspend', $false, $false)"
+timeout /t 10 /nobreak > nul
+powershell -NoProfile -Command "Add-Type -Assembly System.Windows.Forms; [System.Windows.Forms.Application]::SetSuspendState('Suspend', $false, $false)"

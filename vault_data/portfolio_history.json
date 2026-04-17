@@ -2436,5 +2436,108 @@
         "leader_eq": 0.9095173994150239
       }
     ]
+  },
+  "2026-04-18": {
+    "portfolio_value": 109921.7,
+    "daily_pnl": 882.63,
+    "daily_return_pct": 0.8095,
+    "cumulative_pnl": 9921.7,
+    "cumulative_pct": 9.9217,
+    "max_equity_ever": 109921.7,
+    "mdd_pct": 0.0,
+    "risk_score": 0.496,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 22.5,
+        "apr_30d": 864.81,
+        "robustness": 0.6584,
+        "undervalue": 2.53,
+        "leader_eq": 0.6122388985408714
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 11.9,
+        "apr_30d": 28.32,
+        "robustness": 0.8628,
+        "undervalue": 1.024,
+        "leader_eq": 0.587208379587911
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.8,
+        "apr_30d": 94.29,
+        "robustness": 0.9001,
+        "undervalue": 1.052,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 9.4,
+        "apr_30d": 164.58,
+        "robustness": 0.603,
+        "undervalue": 1.158,
+        "leader_eq": 0.9773862739040099
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 9.1,
+        "apr_30d": 196.53,
+        "robustness": 0.5645,
+        "undervalue": 1.196,
+        "leader_eq": 0.569539246404432
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 7.7,
+        "apr_30d": 26.06,
+        "robustness": 0.5642,
+        "undervalue": 1.014,
+        "leader_eq": 0.5750639069365285
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 7.3,
+        "apr_30d": 460.52,
+        "robustness": 0.3322,
+        "undervalue": 1.623,
+        "leader_eq": 0.788167231664326
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 8.2,
+        "apr_30d": 93.36,
+        "robustness": 0.5619,
+        "undervalue": 1.084,
+        "leader_eq": 0.6092730239514174
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "alloc_pct": 6.6,
+        "apr_30d": 39.91,
+        "robustness": 0.4705,
+        "undervalue": 1.033,
+        "leader_eq": 0.45595713705307067
+      },
+      {
+        "name": "Artemis II",
+        "address": "0xc3237606ec3b927e1b848b348f36372ace64ac6d",
+        "alloc_pct": 4.4,
+        "apr_30d": 140.06,
+        "robustness": 0.2895,
+        "undervalue": 1.132,
+        "leader_eq": 0.9641018573201859
+      }
+    ]
   }
 }
