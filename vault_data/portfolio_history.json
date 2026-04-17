@@ -2333,5 +2333,108 @@
         "leader_eq": 0.9987547973158247
       }
     ]
+  },
+  "2026-04-17": {
+    "portfolio_value": 109039.07,
+    "daily_pnl": 597.24,
+    "daily_return_pct": 0.5507,
+    "cumulative_pnl": 9039.07,
+    "cumulative_pct": 9.0391,
+    "max_equity_ever": 109039.07,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5155,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 12.9,
+        "apr_30d": 29.34,
+        "robustness": 0.8636,
+        "undervalue": 1.023,
+        "leader_eq": 0.6063014479282338
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 14.3,
+        "apr_30d": 96.37,
+        "robustness": 0.9276,
+        "undervalue": 1.055,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Retarded Mode",
+        "address": "0x594c83ae097ed68b3850499fd3dbf7ebc0a5ab46",
+        "alloc_pct": 16.7,
+        "apr_30d": 655.26,
+        "robustness": 0.5194,
+        "undervalue": 2.203,
+        "leader_eq": 0.553869393729166
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 8.1,
+        "apr_30d": 174.2,
+        "robustness": 0.4762,
+        "undervalue": 1.17,
+        "leader_eq": 0.569539246404432
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 8.4,
+        "apr_30d": 26.01,
+        "robustness": 0.5642,
+        "undervalue": 1.014,
+        "leader_eq": 0.5739256222142676
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 8.5,
+        "apr_30d": 7.06,
+        "robustness": 0.5788,
+        "undervalue": 1.003,
+        "leader_eq": 0.9774088740750875
+      },
+      {
+        "name": "Mataari",
+        "address": "0x3f1c7195d6b0da5e842d36a615c2c77fd5bdc9d0",
+        "alloc_pct": 8.2,
+        "apr_30d": 261.5,
+        "robustness": 0.4376,
+        "undervalue": 1.279,
+        "leader_eq": 0.764383697296905
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 7.1,
+        "apr_30d": 404.27,
+        "robustness": 0.3222,
+        "undervalue": 1.508,
+        "leader_eq": 0.788167231664326
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 8.3,
+        "apr_30d": 82.75,
+        "robustness": 0.5279,
+        "undervalue": 1.073,
+        "leader_eq": 0.6092730239514174
+      },
+      {
+        "name": "Jay Pennies to Jay Dollars",
+        "address": "0x3b4f22366857da94f9346f88eac84718c8a8d48d",
+        "alloc_pct": 7.6,
+        "apr_30d": 1.55,
+        "robustness": 0.5225,
+        "undervalue": 0.994,
+        "leader_eq": 0.9095173994150239
+      }
+    ]
   }
 }

@@ -1,3 +1,8 @@
+Set fso = CreateObject("Scripting.FileSystemObject")
+folderPath = "C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer"
+batPath = folderPath & "\auto_run.bat"
+
 Set WinScriptHost = CreateObject("WScript.Shell")
-WinScriptHost.Run Chr(34) & "C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer\auto_run.bat" & Chr(34), 0
+WinScriptHost.CurrentDirectory = folderPath
+WinScriptHost.Run "cmd.exe /c """ & batPath & """", 0, False
 Set WinScriptHost = Nothing
