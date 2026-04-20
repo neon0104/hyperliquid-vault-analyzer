@@ -4,12 +4,24 @@ cd /d "C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer"
 echo ======================================================== >> auto_run.log
 echo [%date% %time%] Starting daily data update... >> auto_run.log
 
+echo Pulling latest changes from GitHub... >> auto_run.log
+git pull origin main >> auto_run.log 2>&1
+
+echo Checking if data is already collected... >> auto_run.log
+python pre_run_check.py > tmp_check.txt
+findstr /C:"OK: Data for" tmp_check.txt > nul
+if %errorlevel%==0 (
+    echo [SKIPPED] Data already collected by GitHub Actions. >> auto_run.log
+    goto skip_collect
+)
+
 echo Running analyze_top_vaults.py... >> auto_run.log
 python analyze_top_vaults.py >> auto_run.log 2>&1
 
 echo Running daily_pnl_collector.py... >> auto_run.log
 python daily_pnl_collector.py >> auto_run.log 2>&1
 
+:skip_collect
 echo Pushing updated data to GitHub... >> auto_run.log
 git add . >> auto_run.log 2>&1
 git commit -m "Auto-update daily data [%date%]" >> auto_run.log 2>&1

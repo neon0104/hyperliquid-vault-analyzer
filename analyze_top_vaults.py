@@ -34,7 +34,7 @@ if sys.platform == "win32":
 
 # ── 설정 ──────────────────────────────────────────────────────────────────────
 TOP_N          = 200       # 분석할 볼트 수
-MAX_WORKERS    = 3         # 병렬 스레드 수 (디도스 방지 위해 10 -> 3 축소)
+MAX_WORKERS    = 1         # 병렬 스레드 수 (봇 판정 회피를 위해 순차 처리)
 MIN_TVL        = 0         # TVL 최소값 제한 없음 (상위 200위 전체 대상)
 TOP_RECS       = 10        # 추천 포트폴리오 볼트 수
 SIM_AMOUNT     = 100_000   # 시뮬레이션 투자금 ($)
@@ -289,9 +289,8 @@ def run_analysis_fallback(top_n=TOP_N):
     results, failed = [], 0
 
     for i, addr in enumerate(addresses):
-        if i > 0 and i % 5 == 0:
-            time.sleep(0.5)  # 5개마다 0.5초 휴식 (Rate Limit 방지)
-        if (i + 1) % 25 == 0 or (i + 1) == len(addresses):
+        time.sleep(3.0)  # 봇 판정 및 Rate Limit 방지를 위해 매 요청마다 3초 휴식
+        if (i + 1) % 10 == 0 or (i + 1) == len(addresses):
             print(f"    진행: {i+1}/{len(addresses)} ({(i+1) * 100 // len(addresses)}%)")
         try:
             res = analyze_vault_from_details(addr, info_client)
@@ -409,8 +408,8 @@ def analyze_vault_from_stats(v_data, info_client):
                 else:
                     pass
     
-    # 디도스 방지 소량 휴식 추가 (429 방지용)
-    time.sleep(0.5)
+    # 봇 판정 방지 및 Rate Limit 회피를 위해 매 요청마다 3초 휴식
+    time.sleep(3.0)
 
     # ★ 사용자 요청 (TVL 금액 + 에쿼티 금액 절대값 중심의 가중치 보정)
     # 리더 지분율(%)보다 리더가 꽂아넣은 '진짜 돈의 크기(USD)'가 안정성의 핵심이라는 보스의 철학 반영!
