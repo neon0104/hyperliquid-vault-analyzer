@@ -2539,5 +2539,108 @@
         "leader_eq": 0.9641018573201859
       }
     ]
+  },
+  "2026-04-20": {
+    "portfolio_value": 110219.2,
+    "daily_pnl": 297.5,
+    "daily_return_pct": 0.2707,
+    "cumulative_pnl": 10219.2,
+    "cumulative_pct": 10.2192,
+    "max_equity_ever": 110219.2,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4357,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 9.3,
+        "apr_30d": 102.62,
+        "robustness": 0.9417,
+        "undervalue": 0.606,
+        "leader_eq": 0.4403404969676001
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 14.4,
+        "apr_30d": 28.61,
+        "robustness": 0.867,
+        "undervalue": 1.02,
+        "leader_eq": 0.5910152326687275
+      },
+      {
+        "name": "Mataari",
+        "address": "0x3f1c7195d6b0da5e842d36a615c2c77fd5bdc9d0",
+        "alloc_pct": 9.1,
+        "apr_30d": 431.97,
+        "robustness": 0.4275,
+        "undervalue": 1.299,
+        "leader_eq": 0.7515820187165388
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 13.5,
+        "apr_30d": 92.74,
+        "robustness": 0.7901,
+        "undervalue": 1.051,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "BTC SHORT DCA 2X",
+        "address": "0xc5c950d11214967c4ea29423b3d0690322bfb07e",
+        "alloc_pct": 9.8,
+        "apr_30d": 22.78,
+        "robustness": 0.593,
+        "undervalue": 1.018,
+        "leader_eq": 0.9756611183403305
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 9.9,
+        "apr_30d": 46.31,
+        "robustness": 0.5856,
+        "undervalue": 1.04,
+        "leader_eq": 0.9748330531228028
+      },
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "alloc_pct": 9.2,
+        "apr_30d": 34.16,
+        "robustness": 0.5641,
+        "undervalue": 0.998,
+        "leader_eq": 0.5874455946480864
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 6.3,
+        "apr_30d": 77.58,
+        "robustness": 0.3611,
+        "undervalue": 1.065,
+        "leader_eq": 0.898586416674387
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 9.4,
+        "apr_30d": 136.12,
+        "robustness": 0.5125,
+        "undervalue": 1.128,
+        "leader_eq": 0.5557890682310698
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 9.0,
+        "apr_30d": 62.8,
+        "robustness": 0.5226,
+        "undervalue": 1.056,
+        "leader_eq": 0.5888880566205739
+      }
+    ]
   }
 }
