@@ -2642,5 +2642,211 @@
         "leader_eq": 0.5888880566205739
       }
     ]
+  },
+  "2026-04-22": {
+    "portfolio_value": 110631.78,
+    "daily_pnl": 412.58,
+    "daily_return_pct": 0.3743,
+    "cumulative_pnl": 10631.78,
+    "cumulative_pct": 10.6318,
+    "max_equity_ever": 110631.78,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5195,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 10.8,
+        "apr_30d": 96.75,
+        "robustness": 0.9426,
+        "undervalue": 0.638,
+        "leader_eq": 0.4167416195064154
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 15.8,
+        "apr_30d": 29.28,
+        "robustness": 0.8669,
+        "undervalue": 1.016,
+        "leader_eq": 0.5783057696772015
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 11.8,
+        "apr_30d": 216.04,
+        "robustness": 0.5381,
+        "undervalue": 1.22,
+        "leader_eq": 0.5557890682310698
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 11.7,
+        "apr_30d": 56.99,
+        "robustness": 0.618,
+        "undervalue": 1.05,
+        "leader_eq": 0.9744342456500582
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 6.8,
+        "apr_30d": 85.98,
+        "robustness": 0.3606,
+        "undervalue": 1.043,
+        "leader_eq": 0.9235351753893783
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 11.1,
+        "apr_30d": 98.56,
+        "robustness": 0.567,
+        "undervalue": 1.09,
+        "leader_eq": 0.5849879375975064
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 8.5,
+        "apr_30d": 413.28,
+        "robustness": 0.3249,
+        "undervalue": 1.464,
+        "leader_eq": 0.8120724076500762
+      },
+      {
+        "name": "Mataari",
+        "address": "0x3f1c7195d6b0da5e842d36a615c2c77fd5bdc9d0",
+        "alloc_pct": 8.2,
+        "apr_30d": 293.78,
+        "robustness": 0.393,
+        "undervalue": 1.156,
+        "leader_eq": 0.7285894683455351
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 5.2,
+        "apr_30d": 91.99,
+        "robustness": 0.577,
+        "undervalue": 0.5,
+        "leader_eq": 0.5904177289125367
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.1,
+        "apr_30d": 85.18,
+        "robustness": 0.5401,
+        "undervalue": 1.044,
+        "leader_eq": 0.4236894820351292
+      }
+    ]
+  },
+  "2026-04-23": {
+    "portfolio_value": 110936.55,
+    "daily_pnl": 304.77,
+    "daily_return_pct": 0.2755,
+    "cumulative_pnl": 10936.55,
+    "cumulative_pct": 10.9365,
+    "max_equity_ever": 110936.55,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4443,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 14.2,
+        "apr_30d": 25.76,
+        "robustness": 0.8669,
+        "undervalue": 1.012,
+        "leader_eq": 0.5782871224161751
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 10.8,
+        "apr_30d": 225.61,
+        "robustness": 0.5381,
+        "undervalue": 1.232,
+        "leader_eq": 0.5557908045939821
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.7,
+        "apr_30d": 75.52,
+        "robustness": 0.7549,
+        "undervalue": 1.036,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 10.5,
+        "apr_30d": 56.88,
+        "robustness": 0.618,
+        "undervalue": 1.05,
+        "leader_eq": 0.9725480608539988
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 6.0,
+        "apr_30d": 73.65,
+        "robustness": 0.3616,
+        "undervalue": 1.03,
+        "leader_eq": 0.9235351753893783
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 8.2,
+        "apr_30d": 445.11,
+        "robustness": 0.3307,
+        "undervalue": 1.526,
+        "leader_eq": 0.8120724076500762
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 9.4,
+        "apr_30d": 91.71,
+        "robustness": 0.5368,
+        "undervalue": 1.083,
+        "leader_eq": 0.524763756502499
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 4.7,
+        "apr_30d": 75.48,
+        "robustness": 0.5771,
+        "undervalue": 0.5,
+        "leader_eq": 0.5904177289125367
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "alloc_pct": 7.4,
+        "apr_30d": 40.27,
+        "robustness": 0.4443,
+        "undervalue": 1.033,
+        "leader_eq": 0.4135065655082137
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 16.0,
+        "apr_30d": 5.6,
+        "robustness": 0.991,
+        "undervalue": 0.996,
+        "leader_eq": 0.7888225697664091
+      }
+    ]
   }
 }

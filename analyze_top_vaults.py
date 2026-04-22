@@ -649,8 +649,8 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct, day_pnl=None, week_p
 
 # ── 전체 분석 실행 ────────────────────────────────────────────────────────────
 def run_analysis(top_n=TOP_N):
-    # 디파짓 불가능한 볼트를 배제하고 200개를 확실히 채우기 위해 5배수(1000개)를 가져옵니다.
-    top_vaults = fetch_top_vaults(top_n * 5)
+    # 디파짓 불가능한 볼트를 배제하고 200개를 확실히 채우기 위해 2배수(400개)를 가져옵니다.
+    top_vaults = fetch_top_vaults(top_n * 2)
     
     # ★ Cloudflare 차단 fallback: stats-data API 실패 시 공식 API로 전환
     if not top_vaults:
@@ -678,7 +678,7 @@ def run_analysis(top_n=TOP_N):
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
         futures = {ex.submit(analyze_vault_from_stats, v, info_client): v for v in top_vaults}
         done = 0
-        for fut in as_completed(futures, timeout=600):
+        for fut in as_completed(futures, timeout=3600):
             done += 1
             if done % 25 == 0 or done == len(top_vaults):
                 print(f"    진행: {done}/{len(top_vaults)} ({done * 100 // len(top_vaults)}%)")
