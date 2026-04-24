@@ -2951,5 +2951,108 @@
         "leader_eq": 0.4047559375503891
       }
     ]
+  },
+  "2026-04-25": {
+    "portfolio_value": 111713.42,
+    "daily_pnl": 421.08,
+    "daily_return_pct": 0.3784,
+    "cumulative_pnl": 11713.42,
+    "cumulative_pct": 11.7134,
+    "max_equity_ever": 111713.42,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5394,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 15.3,
+        "apr_30d": 25.76,
+        "robustness": 0.8833,
+        "undervalue": 1.007,
+        "leader_eq": 0.5813124676888766
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 7.3,
+        "apr_30d": 82.15,
+        "robustness": 0.8457,
+        "undervalue": 0.5,
+        "leader_eq": 0.6026243894084327
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 14.5,
+        "apr_30d": 94.31,
+        "robustness": 0.7984,
+        "undervalue": 1.053,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 9.9,
+        "apr_30d": 150.61,
+        "robustness": 0.5036,
+        "undervalue": 1.142,
+        "leader_eq": 0.5564907784637387
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 11.3,
+        "apr_30d": 56.53,
+        "robustness": 0.6228,
+        "undervalue": 1.05,
+        "leader_eq": 0.966527664152128
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 9.2,
+        "apr_30d": 60.44,
+        "robustness": 0.5112,
+        "undervalue": 1.049,
+        "leader_eq": 0.5263281478029405
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 6.5,
+        "apr_30d": 44.37,
+        "robustness": 0.3628,
+        "undervalue": 1.038,
+        "leader_eq": 0.8701017307315163
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 8.2,
+        "apr_30d": 415.95,
+        "robustness": 0.3226,
+        "undervalue": 1.469,
+        "leader_eq": 0.8117355859268849
+      },
+      {
+        "name": "Mataari",
+        "address": "0x3f1c7195d6b0da5e842d36a615c2c77fd5bdc9d0",
+        "alloc_pct": 8.3,
+        "apr_30d": 327.29,
+        "robustness": 0.3625,
+        "undervalue": 1.328,
+        "leader_eq": 0.6669164356061323
+      },
+      {
+        "name": "Trending vault",
+        "address": "0x0910e6e088b0677b4bfef74d2b8169c9717b34b2",
+        "alloc_pct": 9.5,
+        "apr_30d": 247.05,
+        "robustness": 0.4395,
+        "undervalue": 1.259,
+        "leader_eq": 0.95915282459645
+      }
+    ]
   }
 }
