@@ -3054,5 +3054,108 @@
         "leader_eq": 0.95915282459645
       }
     ]
+  },
+  "2026-04-27": {
+    "portfolio_value": 112138.38,
+    "daily_pnl": 424.96,
+    "daily_return_pct": 0.3804,
+    "cumulative_pnl": 12138.38,
+    "cumulative_pct": 12.1384,
+    "max_equity_ever": 112138.38,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5252,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 15.5,
+        "apr_30d": 34.6,
+        "robustness": 0.8836,
+        "undervalue": 1.017,
+        "leader_eq": 0.5813124676888766
+      },
+      {
+        "name": "3xBTC脉冲",
+        "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+        "alloc_pct": 12.3,
+        "apr_30d": 233.8,
+        "robustness": 0.5756,
+        "undervalue": 1.24,
+        "leader_eq": 0.5564907784637387
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 14.5,
+        "apr_30d": 81.16,
+        "robustness": 0.8048,
+        "undervalue": 1.041,
+        "leader_eq": 0.4236894820351292
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 11.2,
+        "apr_30d": 57.02,
+        "robustness": 0.6247,
+        "undervalue": 1.041,
+        "leader_eq": 0.9748604992732532
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 10.6,
+        "apr_30d": 71.71,
+        "robustness": 0.5765,
+        "undervalue": 1.063,
+        "leader_eq": 0.5112341451553265
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 8.9,
+        "apr_30d": 459.09,
+        "robustness": 0.3328,
+        "undervalue": 1.553,
+        "leader_eq": 0.8120475561958207
+      },
+      {
+        "name": "Super Saiyan 孫悟空",
+        "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
+        "alloc_pct": 7.9,
+        "apr_30d": 19.06,
+        "robustness": 0.4508,
+        "undervalue": 1.015,
+        "leader_eq": 0.9846316459191048
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 7.6,
+        "apr_30d": 404.87,
+        "robustness": 0.3871,
+        "undervalue": 1.13,
+        "leader_eq": 0.8149387280466228
+      },
+      {
+        "name": "MOAS",
+        "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
+        "alloc_pct": 6.4,
+        "apr_30d": 31.62,
+        "robustness": 0.363,
+        "undervalue": 1.025,
+        "leader_eq": 0.8506385242920109
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 5.0,
+        "apr_30d": 76.21,
+        "robustness": 0.5821,
+        "undervalue": 0.5,
+        "leader_eq": 0.6026243894084327
+      }
+    ]
   }
 }

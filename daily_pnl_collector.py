@@ -105,15 +105,22 @@ def collect_all_vaults():
     print("  📡 일별 PnL 데이터 수집 시작")
     print("=" * 60)
 
-    # 1) API 호출
+    # 1) API 호출 (3회 재시도 추가)
     print("  전체 볼트 목록 가져오는 중...")
-    try:
-        resp = requests.get(STATS_URL, timeout=60)
-        resp.raise_for_status()
-        all_vaults = resp.json()
-    except Exception as e:
-        print(f"  ❌ API 오류: {e}")
-        return 0
+    all_vaults = []
+    for attempt in range(1, 4):
+        try:
+            resp = requests.get(STATS_URL, timeout=60)
+            resp.raise_for_status()
+            all_vaults = resp.json()
+            break
+        except Exception as e:
+            print(f"  [시도 {attempt}/3] API 오류: {e}")
+            if attempt < 3:
+                time.sleep(5)
+            else:
+                print("  ❌ API 최종 실패")
+                return 0
 
     # 2) Normal 볼트만 필터 + TVL 정렬
     valid = []
