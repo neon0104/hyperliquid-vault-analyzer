@@ -34,7 +34,7 @@ def check_data_health():
         print(f'ERROR: Data too small ({file_size:,} bytes)')
         sys.exit(1)
 
-    print(f'OK: {today_str} — {file_size / 1024:.1f} KB')
+    print(f'OK: {today_str} - {file_size / 1024:.1f} KB')
     sys.exit(0)
 
 if __name__ == '__main__':
