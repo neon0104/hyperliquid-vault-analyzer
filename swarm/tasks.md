@@ -114,5 +114,30 @@ Task 3 ✅ ──┘
 ---
 
 ## 실행 계획
-- **NOW Round (병렬)**: Task 7 (UI Filter), Task 8 (Custom Simulator) 완료보고 대기
+- **NOW Round (병렬)**: Task 9 진행 중 (데이터 분석 및 최적 투자 전략 수립 방안 강구)
 - **NEXT Round**: 보스(USER)의 추가 지시 대기
+
+---
+
+## TASK 9 — 데이터 분석 및 최적 투자 전략 수립 ✅ DONE
+- **Manager**: 목표 정의 및 에이전트 할당
+- **Research Agent**: `smart_scorer.py` 및 `portfolio_engine.py`의 핵심 분석 로직 추출 및 효율적 투자 방안 강구
+- **Developer Agent**: 도출된 전략을 시스템 파이프라인과 연계 분석
+- **QA Agent**: 전략의 코드 정합성 검증
+- **Output**: `artifacts/investment_strategy_report.md`
+
+---
+
+## TASK 10 — 일일 자동화 파이프라인(Dual Sync) 정합성 검증 ✅ DONE
+- **Manager**: 최근 수 주간 진행된 데이터 자동 수집 파이프라인(GitHub Actions + Local PC)의 안정성 검증 지시.
+- **Research Agent**: `daily_update.yml`과 로컬의 `auto_run.bat` 스크립트 간의 양방향 동기화(Dual Execution) 구조 분석. 동시에 실행되거나 지연될 경우 GitHub Actions의 커밋과 로컬 PC의 커밋이 충돌(Git Conflict)할 가능성을 잠재적 치명적 버그로 진단.
+- **Developer Agent**: 로컬 봇의 `auto_run.bat` 스크립트 수정. 최종 `git push` 직전에 `git pull --rebase origin main`을 강제 수행하도록 패치하여 분기 충돌 완벽 차단.
+- **QA Agent**: `auto_run.bat` 수정 사항 검수 및 패치 정상 반영 확인.
+
+---
+
+## TASK 11 — 바벨 전략(Barbell Strategy) 추천 알고리즘 구현 ✅ DONE
+- **Manager**: 포트폴리오의 50%를 Robust(극단적 안정) 그룹에, 나머지 50%를 MDD 회복탄력성(Satellite) 그룹에 할당하는 바벨 전략 지시.
+- **Research Agent**: `smart_scorer.py`의 `undervalue_score`와 `analyze_top_vaults.py`의 필터 로직 매핑. "회복탄력성"을 "장기 평균 수익률 대비 현재 슬럼프이나, 최근 30일 수익이 +로 전환된 상태(APR>0)"로 정의.
+- **Developer Agent**: `analyze_top_vaults.py` 내 `get_recommendations()` 함수를 수정하여 CORE 그룹(Robustness 50%)과 SATELLITE 그룹(Undervalue 50%)으로 분리 분배 로직 적용.
+- **QA Agent**: 포트폴리오 가중치 총합 100% 검증 및 터미널 출력 결과(`print_summary`)가 바벨 포맷으로 정상 렌더링되는지 확인.

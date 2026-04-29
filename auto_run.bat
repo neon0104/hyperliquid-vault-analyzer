@@ -36,6 +36,8 @@ python daily_pnl_collector.py >> %LOG_FILE% 2>&1
 echo Pushing updated data to GitHub... >> %LOG_FILE%
 git add . >> %LOG_FILE% 2>&1
 git commit -m "Auto-update daily data [%date%]" >> %LOG_FILE% 2>&1
+echo Syncing before push to avoid conflicts... >> %LOG_FILE%
+git pull --rebase origin main >> %LOG_FILE% 2>&1
 git push >> %LOG_FILE% 2>&1
 
 echo [%date% %time%] Update completed. >> %LOG_FILE%

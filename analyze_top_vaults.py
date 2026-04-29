@@ -774,8 +774,9 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
       2) 리더 에쿼티 >= 40% (skin-in-the-game: 리더 본인이 40% 이상 예치)
       3) robustness_score >= min_robustness (수익곡선 안정성)
       (MDD 제한 없음 — 요구사항 4번)
-    ★ 배분 기준:
-      Robustness × 저평가점수 (1달 기준, 장기평균 대비 현재 저조 = 진입 적기)
+    ★ 배분 기준 (바벨 전략):
+      - CORE (50%): 로버스트니스 최상위 (가장 안정적)
+      - SATELLITE (50%): 저평가점수(undervalue) 최상위 (현재 MDD 부근의 슬럼프지만 회복세(APR>0)를 보이는 종목)
     """
     # 1차: 모든 기준 적용 (APR > 0 필수 + 초기 손실 없음 추가)
     eligible = [
@@ -783,7 +784,7 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
         if v.get("allow_deposits", True)
         and v.get("leader_equity_ratio", 0) >= min_leader_equity
         and v.get("robustness_score", 0.0) >= min_robustness
-        and v.get("apr_30d", 0) > 0          # ★ 최근 30일 수익 양수만
+        and v.get("apr_30d", 0) > 0          # ★ 최근 30일 수익 양수만 (회복탄력성 최소 기준)
         and v.get("_ok_no_loss", True)       # ★ 초기 손실 없는 볼트만 추천
     ]
     print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}+로버스트≥{min_robustness:.2f}+APR>0): {len(eligible)}개")
@@ -805,22 +806,39 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
         eligible = [v for v in vault_data if v.get("allow_deposits", True) and v.get("apr_30d", 0) > 0]
         print(f"  [주의] 3차 최소 필터(입금가능+APR>0): {len(eligible)}개")
 
-    eligible.sort(key=lambda x: x["score"], reverse=True)
-    recs = eligible[:top_k]
-
-    # ★ 배분 가중치: Robustness × 저평가점수
-    #   - 꾸준한 볼트(robustness 高) + 현재 일시 저조(undervalue 高) = 높은 비중
-    for v in recs:
+    # 각 볼트의 undervalue_score 미리 계산
+    for v in eligible:
         v["undervalue_score"] = round(_calc_undervalue_score(v), 3)
 
-    raw_w = np.array([
-        v.get("robustness_score", 0.3) * v["undervalue_score"]
-        for v in recs
-    ])
-    raw_w = np.clip(raw_w, 0.01, None)
-    weights = raw_w / raw_w.sum() * 100
-    for v, w in zip(recs, weights):
-        v["suggested_allocation"] = round(float(w), 1)
+    # ★ 바벨 전략 (Barbell Strategy) 적용
+    half_k = top_k // 2
+
+    # Group A: Core (로버스트니스 최상위)
+    eligible_core = sorted(eligible, key=lambda x: x.get("robustness_score", 0), reverse=True)
+    core_vaults = eligible_core[:half_k]
+    
+    # Group B: Satellite (회복탄력성 - Undervalue 점수 최상위)
+    core_addrs = {v["address"] for v in core_vaults}
+    eligible_sat = [v for v in eligible if v["address"] not in core_addrs]
+    eligible_sat = sorted(eligible_sat, key=lambda x: x.get("undervalue_score", 0), reverse=True)
+    sat_vaults = eligible_sat[:top_k - len(core_vaults)]
+
+    recs = core_vaults + sat_vaults
+
+    # 가중치 분배 (50% : 50%)
+    for v in core_vaults:
+        v["suggested_allocation"] = round(50.0 / max(1, len(core_vaults)), 1)
+        v["barbell_group"] = "CORE"
+        
+    for v in sat_vaults:
+        v["suggested_allocation"] = round(50.0 / max(1, len(sat_vaults)), 1)
+        v["barbell_group"] = "SATELLITE"
+
+    # 총합이 100이 되도록 미세 조정
+    total = sum(v["suggested_allocation"] for v in recs)
+    if total != 100.0 and len(recs) > 0:
+        diff = round(100.0 - total, 1)
+        recs[0]["suggested_allocation"] = round(recs[0]["suggested_allocation"] + diff, 1)
 
     return recs
 
@@ -1116,13 +1134,14 @@ def print_summary(vault_data, changes, recommendations, rebalancing, date_str):
             print(f"  {c['rank']:<5} {c['name'][:27]:<28} {rc:>+9}  {ac:>+8.1f}%")
 
     # 투자 추천
-    print(f"\n  [투자 추천  TOP {len(recommendations)}  |  MDD≤{MAX_MDD}% & 로버스트 필터 적용]")
-    print(f"  {'#':<3} {'볼트명':<26} {'비중':>6} {'APR30d':>8} {'샤프':>7} "
+    print(f"\n  [투자 추천  TOP {len(recommendations)}  |  바벨 전략: CORE 50% + SATELLITE 50%]")
+    print(f"  {'#':<3} {'그룹':<10} {'볼트명':<26} {'비중':>6} {'APR30d':>8} {'샤프':>7} "
           f"{'곡선등급':<16} {'MDD':>7} {'TVL($)':>12}")
-    print("  " + "-" * 90)
+    print("  " + "-" * 102)
     for i, v in enumerate(recommendations, 1):
         grade = v.get("equity_curve_grade", "-")
-        print(f"  {i:<3} {v['name'][:25]:<26} {v['suggested_allocation']:>5.1f}%"
+        group = v.get("barbell_group", "-")
+        print(f"  {i:<3} {group:<10} {v['name'][:25]:<26} {v['suggested_allocation']:>5.1f}%"
               f" {v['apr_30d']:>7.1f}% {v['sharpe_ratio']:>7.2f} "
               f"{grade:<16} {v['max_drawdown']:>6.1f}%  ${v['tvl']:>10,.0f}")
 

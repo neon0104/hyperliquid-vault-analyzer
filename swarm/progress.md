@@ -51,6 +51,9 @@
 | Task 3: 모바일 대시보드 | Developer B | ✅ DONE | `web_dashboard.py` 업그레이드 |
 | Task 4: ECharts 차트 업그레이드 | Developer (ECharts) | ✅ DONE | `web_dashboard.py` |
 | Task 5: 30일 리밸런싱 엔진 | Developer A | ✅ DONE | `rebalance_engine.py` |
+| Task 9: 데이터 분석 및 투자 전략 수립 | Swarm (All Agents) | ✅ DONE | `investment_strategy_report.md` |
+| Task 10: 일일 자동화 파이프라인 정합성 검증 | Swarm (All Agents) | ✅ DONE | `auto_run.bat` 패치 |
+| Task 11: 바벨 전략(Barbell Strategy) 구현 | Swarm (All Agents) | ✅ DONE | `analyze_top_vaults.py` 패치 |
 
 ---
 
@@ -144,3 +147,34 @@ OK: portfolio_engine.py
 - 런타임 테스트 (서버 기동 + 브라우저 확인)
 - ECharts 실제 렌더링 스크린샷
 - rebalance_engine.py --dry-run 실행 검증
+
+---
+
+## ✅ Task 9 — 데이터 분석 및 투자 전략 수립 완료
+
+### 에이전트별 수행 내역:
+- **[Manager]**: 지시(Boss) 접수 완료. `tasks.md` 업데이트 및 목표(데이터 분석 로직 기반 최적 투자 방안 수립) 정의, 에이전트별 역할 분담 실행.
+- **[Research]**: `smart_scorer.py`의 평균회귀 모델(Undervalue Score, Robustness)과 `portfolio_engine.py`의 4가지 최적화 모델(Max Sharpe, Min CVaR 등) 분석. 이를 바탕으로 자본 보존과 수익을 동시 추구하는 하이브리드 투자 방안 도출.
+- **[Developer]**: 제안된 투자 방안이 실제 봇(`run_rebalance_analysis`) 시스템에서 그대로 실행 가능한지 시스템 파이프라인 연계 검토.
+- **[QA]**: 도출된 분석 방안이 소스코드의 실제 로직과 100% 일치하는지 교차 검증 (승인).
+- **결과물**: 사용자 제공용 전략 리포트 아티팩트(`investment_strategy_report.md`) 발행.
+
+---
+
+## ✅ Task 10 — 일일 자동화 파이프라인 정합성 검증 완료
+
+### 에이전트별 수행 내역:
+- **[Manager]**: "최근까지 작업한 걸 Swarm 프로세스로 검증하라"는 보스 지시 접수. 최근 4월 내내 진행된 자동화 시스템(`daily_update.yml`, `auto_run.bat`, 로컬 봇 스케줄러) 퀄리티 검증 태스크 배정.
+- **[Research]**: 이중 동기화 아키텍처 점검. 로컬 봇과 클라우드(GitHub Actions) 봇이 각자 데이터를 수집하고 Git 저장소로 Push하는 구조에서, 타이밍이 겹치거나 지연될 경우 발생하는 Non-fast-forward(커밋 충돌) 가능성을 치명적 결함으로 진단.
+- **[Developer]**: `auto_run.bat`의 38번 라인에 `git pull --rebase origin main` 코드를 즉각 패치. 로컬에서 수집한 데이터가 늦게 Push 되더라도 기존 클라우드 커밋 위에 깔끔하게 얹히도록 충돌 예방 코드 구현 완료.
+- **[QA]**: `auto_run.bat`의 코드 문법 및 스크립트 실행 순서, 로그 파일(`%LOG_FILE%`) 기록 처리의 이상 유무 검수 완료.
+
+---
+
+## ✅ Task 11 — 바벨 전략 추천 알고리즘 구현 완료
+
+### 에이전트별 수행 내역:
+- **[Manager]**: "포트폴리오의 50%는 로버스트하게, 50%는 MDD 기반 회복탄력성으로 바벨 전략 구성"이라는 강력한 투자 전략 지시 접수.
+- **[Research]**: 회복탄력성 볼트 발굴 공식 정의. `undervalue_score`(장기 평균 대비 현재 단기 수익이 낮아 저평가)가 높으면서, 동시에 최근 30일 APR이 0보다 큰(완전한 데스스파이럴이 아니라 회복세를 보임) 볼트로 규정.
+- **[Developer]**: `analyze_top_vaults.py`의 핵심 추천 함수 `get_recommendations()`를 수정. 상위 N개의 볼트를 로버스트 최상위권인 `CORE` 그룹(50% 비중)과 저평가 회복탄력성 최상위권인 `SATELLITE` 그룹(50% 비중)으로 양분하여 배열하도록 파이썬 코드 구현. 콘솔 출력부(`print_summary`)도 업데이트.
+- **[QA]**: 가중치 총합이 정확히 100%가 되도록 소수점 조절(미세 조정) 코드가 정상 작동하는지 확인. 터미널 결과물(바벨 전략) 정상 출력 검증.
