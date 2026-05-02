@@ -3569,5 +3569,108 @@
         "leader_eq": 0.7982293580380001
       }
     ]
+  },
+  "2026-05-02": {
+    "portfolio_value": 114527.33,
+    "daily_pnl": 343.97,
+    "daily_return_pct": 0.3012,
+    "cumulative_pnl": 14527.33,
+    "cumulative_pct": 14.5273,
+    "max_equity_ever": 114527.33,
+    "mdd_pct": 0.0,
+    "risk_score": 0.5165,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 25.28,
+        "robustness": 0.8833,
+        "undervalue": 1.004,
+        "leader_eq": 0.5828679811126344
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 10.0,
+        "apr_30d": 5.32,
+        "robustness": 0.7988,
+        "undervalue": 1.011,
+        "leader_eq": 0.5229511624689281
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 18.98,
+        "robustness": 0.7902,
+        "undervalue": 1.016,
+        "leader_eq": 0.9747916033796847
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 72.58,
+        "robustness": 0.7816,
+        "undervalue": 1.055,
+        "leader_eq": 0.4152752609640297
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 10.0,
+        "apr_30d": 84.85,
+        "robustness": 0.7804,
+        "undervalue": 0.5,
+        "leader_eq": 0.5720305698900847
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 10.0,
+        "apr_30d": 451.47,
+        "robustness": 0.379,
+        "undervalue": 1.539,
+        "leader_eq": 0.8114639893703781
+      },
+      {
+        "name": "Mataari",
+        "address": "0x3f1c7195d6b0da5e842d36a615c2c77fd5bdc9d0",
+        "alloc_pct": 10.0,
+        "apr_30d": 261.15,
+        "robustness": 0.4491,
+        "undervalue": 1.278,
+        "leader_eq": 0.47448171311272536
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 10.0,
+        "apr_30d": 112.83,
+        "robustness": 0.5986,
+        "undervalue": 1.095,
+        "leader_eq": 0.7982293580380001
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 10.0,
+        "apr_30d": 57.15,
+        "robustness": 0.5972,
+        "undervalue": 1.039,
+        "leader_eq": 0.9771599562996829
+      },
+      {
+        "name": "Super Saiyan 孫悟空",
+        "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
+        "alloc_pct": 10.0,
+        "apr_30d": 9.92,
+        "robustness": 0.4555,
+        "undervalue": 1.004,
+        "leader_eq": 0.9846316459191048
+      }
+    ]
   }
 }
