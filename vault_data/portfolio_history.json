@@ -3672,5 +3672,108 @@
         "leader_eq": 0.9846316459191048
       }
     ]
+  },
+  "2026-05-03": {
+    "portfolio_value": 115265.78,
+    "daily_pnl": 738.45,
+    "daily_return_pct": 0.6448,
+    "cumulative_pnl": 15265.78,
+    "cumulative_pct": 15.2658,
+    "max_equity_ever": 115265.78,
+    "mdd_pct": 0.0,
+    "risk_score": 0.6952,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 10.0,
+        "apr_30d": 5.43,
+        "robustness": 0.9066,
+        "undervalue": 1.009,
+        "leader_eq": 0.5229511624689281
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 28.55,
+        "robustness": 0.8833,
+        "undervalue": 1.008,
+        "leader_eq": 0.5828679811126344
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 10.0,
+        "apr_30d": 80.72,
+        "robustness": 0.846,
+        "undervalue": 0.5,
+        "leader_eq": 0.5720305698900847
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 67.04,
+        "robustness": 0.8398,
+        "undervalue": 1.058,
+        "leader_eq": 0.40926194086940204
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 20.19,
+        "robustness": 0.7618,
+        "undervalue": 1.018,
+        "leader_eq": 0.9747916033796847
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 10.0,
+        "apr_30d": 435.94,
+        "robustness": 0.3782,
+        "undervalue": 1.525,
+        "leader_eq": 0.8058447392426398
+      },
+      {
+        "name": "IKAGI",
+        "address": "0xe44bed760c2f1a03a03bd1b8911f025d96e6eb04",
+        "alloc_pct": 10.0,
+        "apr_30d": 400.26,
+        "robustness": 0.1859,
+        "undervalue": 1.5,
+        "leader_eq": 0.524992219551221
+      },
+      {
+        "name": "TROLOLOLOL",
+        "address": "0xa7ed03d702d1c3fae1d3554295b2a13df54219f4",
+        "alloc_pct": 10.0,
+        "apr_30d": 395.47,
+        "robustness": 0.4215,
+        "undervalue": 1.491,
+        "leader_eq": 0.9988342155426891
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 10.0,
+        "apr_30d": 549.71,
+        "robustness": 0.3915,
+        "undervalue": 1.472,
+        "leader_eq": 0.7950371630192512
+      },
+      {
+        "name": "Orion",
+        "address": "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01",
+        "alloc_pct": 10.0,
+        "apr_30d": 370.14,
+        "robustness": 0.4806,
+        "undervalue": 1.446,
+        "leader_eq": 0.4974856570074328
+      }
+    ]
   }
 }
