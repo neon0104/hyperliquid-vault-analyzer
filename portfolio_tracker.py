@@ -202,9 +202,9 @@ def simulate_rec_backtest(recs, snapshots, start_date=None, sim_amount=100000.0)
         p_s = v_s.get("alltime_pnl", []) if v_s else []
         p_e = v_e.get("alltime_pnl", []) if v_e else []
 
-        if p_s and p_e and tvl_e > 0:
+        if p_s and p_e and tvl > 0:
             pnl_diff = p_e[-1] - p_s[-1]
-            my_pnl   = pnl_diff * (amount / tvl_e)
+            my_pnl   = pnl_diff * (amount / tvl)
         else:
             # APR 추정
             try:

@@ -333,6 +333,13 @@ def send_alert(title: str, message: str, level: str = "INFO"):
     with open(alert_file, "a", encoding="utf-8") as f:
         f.write(json.dumps(alert, ensure_ascii=False) + "\n")
 
+    # 텔레그램 알림 전송
+    try:
+        from telegram_bot import notify
+        notify(title, message, level)
+    except Exception:
+        pass  # 텔레그램 미설정 시 무시
+
 
 # ── 일일 작업 ─────────────────────────────────────────────────────────────────
 def daily_job():
