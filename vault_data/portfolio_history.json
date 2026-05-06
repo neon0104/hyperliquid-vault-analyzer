@@ -3981,5 +3981,108 @@
         "leader_eq": 0.9988342155426891
       }
     ]
+  },
+  "2026-05-06": {
+    "portfolio_value": 118009.75,
+    "daily_pnl": 1085.25,
+    "daily_return_pct": 0.9282,
+    "cumulative_pnl": 18009.75,
+    "cumulative_pct": 18.0097,
+    "max_equity_ever": 118009.75,
+    "mdd_pct": 0.0,
+    "risk_score": 0.7273,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 26.09,
+        "robustness": 0.8833,
+        "undervalue": 1.011,
+        "leader_eq": 0.5812205513111423
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 126.31,
+        "robustness": 0.8022,
+        "undervalue": 0.526,
+        "leader_eq": 0.8314193922276482
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 23.54,
+        "robustness": 0.79,
+        "undervalue": 1.021,
+        "leader_eq": 0.9349388275406754
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 10.0,
+        "apr_30d": 80.09,
+        "robustness": 0.7871,
+        "undervalue": 0.5,
+        "leader_eq": 0.5720305698900847
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 10.0,
+        "apr_30d": 78.26,
+        "robustness": 0.6049,
+        "undervalue": 1.07,
+        "leader_eq": 0.5112341451553265
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 10.0,
+        "apr_30d": 737.38,
+        "robustness": 0.3362,
+        "undervalue": 2.592,
+        "leader_eq": 0.7719073886867351
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 10.0,
+        "apr_30d": 739.96,
+        "robustness": 0.3998,
+        "undervalue": 2.33,
+        "leader_eq": 0.7585648181789955
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "alloc_pct": 10.0,
+        "apr_30d": 621.03,
+        "robustness": 0.2398,
+        "undervalue": 1.92,
+        "leader_eq": 0.6276217024519369
+      },
+      {
+        "name": "IKAGI",
+        "address": "0xe44bed760c2f1a03a03bd1b8911f025d96e6eb04",
+        "alloc_pct": 10.0,
+        "apr_30d": 512.21,
+        "robustness": 0.1849,
+        "undervalue": 1.746,
+        "leader_eq": 0.524992219551221
+      },
+      {
+        "name": "Orion",
+        "address": "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01",
+        "alloc_pct": 10.0,
+        "apr_30d": 442.92,
+        "robustness": 0.4261,
+        "undervalue": 1.585,
+        "leader_eq": 0.4948805755344662
+      }
+    ]
   }
 }
