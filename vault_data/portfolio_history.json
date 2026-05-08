@@ -4187,5 +4187,108 @@
         "leader_eq": 0.4719358646040321
       }
     ]
+  },
+  "2026-05-08": {
+    "portfolio_value": 119842.67,
+    "daily_pnl": 916.77,
+    "daily_return_pct": 0.7709,
+    "cumulative_pnl": 19842.67,
+    "cumulative_pct": 19.8427,
+    "max_equity_ever": 119842.67,
+    "mdd_pct": 0.0,
+    "risk_score": 0.7098,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 39.93,
+        "robustness": 0.8839,
+        "undervalue": 1.015,
+        "leader_eq": 0.584175243431382
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 10.0,
+        "apr_30d": 97.88,
+        "robustness": 0.8481,
+        "undervalue": 0.5,
+        "leader_eq": 0.5720305698900847
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 128.98,
+        "robustness": 0.8109,
+        "undervalue": 0.519,
+        "leader_eq": 0.8288162962745045
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 14.82,
+        "robustness": 0.7918,
+        "undervalue": 1.009,
+        "leader_eq": 0.9350696813155663
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 10.0,
+        "apr_30d": 6.64,
+        "robustness": 0.7648,
+        "undervalue": 1.012,
+        "leader_eq": 0.5229511624689281
+      },
+      {
+        "name": "Otter Quant",
+        "address": "0xebe5162899cd82531b202c3c02e386dd13bbc47b",
+        "alloc_pct": 10.0,
+        "apr_30d": 598.22,
+        "robustness": 0.5013,
+        "undervalue": 1.994,
+        "leader_eq": 0.5413727932263592
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 10.0,
+        "apr_30d": 561.43,
+        "robustness": 0.3402,
+        "undervalue": 1.877,
+        "leader_eq": 0.7184096005887243
+      },
+      {
+        "name": "IKAGI",
+        "address": "0xe44bed760c2f1a03a03bd1b8911f025d96e6eb04",
+        "alloc_pct": 10.0,
+        "apr_30d": 549.75,
+        "robustness": 0.1968,
+        "undervalue": 1.846,
+        "leader_eq": 0.5109283903236793
+      },
+      {
+        "name": "TROLOLOLOL",
+        "address": "0xa7ed03d702d1c3fae1d3554295b2a13df54219f4",
+        "alloc_pct": 10.0,
+        "apr_30d": 410.66,
+        "robustness": 0.4599,
+        "undervalue": 1.52,
+        "leader_eq": 0.924543924255895
+      },
+      {
+        "name": "Trader Sarah's 💁‍♀️ - Fear vs ",
+        "address": "0x12b26fe3aa9e923ea9da2425f3ceabfbafdcd12d",
+        "alloc_pct": 10.0,
+        "apr_30d": 405.37,
+        "robustness": 0.2059,
+        "undervalue": 1.51,
+        "leader_eq": 0.9965300504387223
+      }
+    ]
   }
 }
