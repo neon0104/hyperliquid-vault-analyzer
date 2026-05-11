@@ -4599,5 +4599,108 @@
         "leader_eq": 0.4725208468165534
       }
     ]
+  },
+  "2026-05-12": {
+    "portfolio_value": 123581.82,
+    "daily_pnl": 886.62,
+    "daily_return_pct": 0.7226,
+    "cumulative_pnl": 23581.82,
+    "cumulative_pct": 23.5818,
+    "max_equity_ever": 123581.82,
+    "mdd_pct": 0.0,
+    "risk_score": 0.735,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 34.67,
+        "robustness": 0.8843,
+        "undervalue": 1.029,
+        "leader_eq": 0.5626615674510205
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 10.0,
+        "apr_30d": 70.17,
+        "robustness": 0.8152,
+        "undervalue": 0.5,
+        "leader_eq": 0.5660222136761652
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 109.57,
+        "robustness": 0.7788,
+        "undervalue": 0.518,
+        "leader_eq": 0.8289080302729224
+      },
+      {
+        "name": "0xBTC脉冲",
+        "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
+        "alloc_pct": 10.0,
+        "apr_30d": 44.23,
+        "robustness": 0.5928,
+        "undervalue": 1.037,
+        "leader_eq": 0.5110364307638414
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 10.0,
+        "apr_30d": 20.79,
+        "robustness": 0.5882,
+        "undervalue": 1.007,
+        "leader_eq": 0.9772434223170204
+      },
+      {
+        "name": "Otter Quant",
+        "address": "0xebe5162899cd82531b202c3c02e386dd13bbc47b",
+        "alloc_pct": 10.0,
+        "apr_30d": 613.4,
+        "robustness": 0.4026,
+        "undervalue": 2.046,
+        "leader_eq": 0.4593102093887091
+      },
+      {
+        "name": "IKAGI",
+        "address": "0xe44bed760c2f1a03a03bd1b8911f025d96e6eb04",
+        "alloc_pct": 10.0,
+        "apr_30d": 522.5,
+        "robustness": 0.1967,
+        "undervalue": 1.771,
+        "leader_eq": 0.4850951802506477
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "alloc_pct": 10.0,
+        "apr_30d": 445.53,
+        "robustness": 0.2123,
+        "undervalue": 1.59,
+        "leader_eq": 0.5997988133913248
+      },
+      {
+        "name": "Scared Money",
+        "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
+        "alloc_pct": 10.0,
+        "apr_30d": 398.53,
+        "robustness": 0.3409,
+        "undervalue": 1.473,
+        "leader_eq": 0.6092703402444174
+      },
+      {
+        "name": "Orion",
+        "address": "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01",
+        "alloc_pct": 10.0,
+        "apr_30d": 378.18,
+        "robustness": 0.489,
+        "undervalue": 1.46,
+        "leader_eq": 0.46983577198557286
+      }
+    ]
   }
 }
