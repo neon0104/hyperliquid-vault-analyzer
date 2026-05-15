@@ -4908,5 +4908,108 @@
         "leader_eq": 0.9965300504387223
       }
     ]
+  },
+  "2026-05-15": {
+    "portfolio_value": 126410.16,
+    "daily_pnl": 883.39,
+    "daily_return_pct": 0.7037,
+    "cumulative_pnl": 26410.16,
+    "cumulative_pct": 26.4102,
+    "max_equity_ever": 126410.16,
+    "mdd_pct": 0.0,
+    "risk_score": 0.7154,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 28.04,
+        "robustness": 0.8843,
+        "undervalue": 1.019,
+        "leader_eq": 0.5642200820280675
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 10.0,
+        "apr_30d": 67.71,
+        "robustness": 0.8309,
+        "undervalue": 0.5,
+        "leader_eq": 0.5463760108140886
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 1.67,
+        "robustness": 0.7932,
+        "undervalue": 0.994,
+        "leader_eq": 0.9349879376886362
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 82.96,
+        "robustness": 0.7611,
+        "undervalue": 0.512,
+        "leader_eq": 0.8289080302729224
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 10.0,
+        "apr_30d": 194.01,
+        "robustness": 0.7116,
+        "undervalue": 1.084,
+        "leader_eq": 0.8206419520449217
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "alloc_pct": 10.0,
+        "apr_30d": 509.33,
+        "robustness": 0.2786,
+        "undervalue": 1.735,
+        "leader_eq": 0.5980634011951717
+      },
+      {
+        "name": "Otter Quant",
+        "address": "0xebe5162899cd82531b202c3c02e386dd13bbc47b",
+        "alloc_pct": 10.0,
+        "apr_30d": 558.09,
+        "robustness": 0.5306,
+        "undervalue": 1.583,
+        "leader_eq": 0.49946812314676486
+      },
+      {
+        "name": "TROLOLOLOL",
+        "address": "0xa7ed03d702d1c3fae1d3554295b2a13df54219f4",
+        "alloc_pct": 10.0,
+        "apr_30d": 386.1,
+        "robustness": 0.5339,
+        "undervalue": 1.463,
+        "leader_eq": 0.9191436342089689
+      },
+      {
+        "name": "Trader Sarah's 💁‍♀️ - Fear vs ",
+        "address": "0x12b26fe3aa9e923ea9da2425f3ceabfbafdcd12d",
+        "alloc_pct": 10.0,
+        "apr_30d": 372.05,
+        "robustness": 0.1795,
+        "undervalue": 1.45,
+        "leader_eq": 0.9965300504387223
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "alloc_pct": 10.0,
+        "apr_30d": 368.71,
+        "robustness": 0.1878,
+        "undervalue": 1.428,
+        "leader_eq": 0.9634527619910763
+      }
+    ]
   }
 }
