@@ -5320,5 +5320,108 @@
         "leader_eq": 0.9753037721523381
       }
     ]
+  },
+  "2026-05-19": {
+    "portfolio_value": 129461.51,
+    "daily_pnl": 833.34,
+    "daily_return_pct": 0.6479,
+    "cumulative_pnl": 29461.51,
+    "cumulative_pct": 29.4615,
+    "max_equity_ever": 129461.51,
+    "mdd_pct": 0.0,
+    "risk_score": 0.7316,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 14.01,
+        "robustness": 0.8843,
+        "undervalue": 1.01,
+        "leader_eq": 0.5566686490644457
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 10.0,
+        "apr_30d": 98.37,
+        "robustness": 0.8324,
+        "undervalue": 1.089,
+        "leader_eq": 0.5323587736762831
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 8.75,
+        "robustness": 0.8189,
+        "undervalue": 0.998,
+        "leader_eq": 0.9421495360217004
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 67.09,
+        "robustness": 0.7491,
+        "undervalue": 0.509,
+        "leader_eq": 0.8289080302729224
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 10.0,
+        "apr_30d": 403.87,
+        "robustness": 0.5373,
+        "undervalue": 1.298,
+        "leader_eq": 0.8385088779974718
+      },
+      {
+        "name": "IKAGI",
+        "address": "0xe44bed760c2f1a03a03bd1b8911f025d96e6eb04",
+        "alloc_pct": 10.0,
+        "apr_30d": 469.11,
+        "robustness": 0.1955,
+        "undervalue": 1.642,
+        "leader_eq": 0.4461618004626685
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "alloc_pct": 10.0,
+        "apr_30d": 403.92,
+        "robustness": 0.2006,
+        "undervalue": 1.502,
+        "leader_eq": 0.5564450335052732
+      },
+      {
+        "name": "SWORM ",
+        "address": "0xfa829d0ccf789006d0c8b52fa9d724ab4e166a1e",
+        "alloc_pct": 10.0,
+        "apr_30d": 293.26,
+        "robustness": 0.2831,
+        "undervalue": 1.323,
+        "leader_eq": 0.9999999999999999
+      },
+      {
+        "name": "BuyTheDipFund",
+        "address": "0xcb2b3f8b7395abe3ac387477ebd638e9475ade44",
+        "alloc_pct": 10.0,
+        "apr_30d": 468.91,
+        "robustness": 0.4548,
+        "undervalue": 1.184,
+        "leader_eq": 0.9571428622670991
+      },
+      {
+        "name": "HyperTwin - Blue Whale",
+        "address": "0x9a3006e0b7ffacf11729103098ff16fa6e17bd24",
+        "alloc_pct": 10.0,
+        "apr_30d": 137.42,
+        "robustness": 0.4122,
+        "undervalue": 1.129,
+        "leader_eq": 0.9893742775541706
+      }
+    ]
   }
 }
