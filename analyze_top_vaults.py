@@ -778,7 +778,7 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
       - CORE (50%): 로버스트니스 최상위 (가장 안정적)
       - SATELLITE (50%): 저평가점수(undervalue) 최상위 (현재 MDD 부근의 슬럼프지만 회복세(APR>0)를 보이는 종목)
     """
-    # 1차: 모든 기준 적용 (APR > 0 필수 + 초기 손실 없음 추가)
+    # 1차: 모든 기준 적용 (APR > 0 필수 + 초기 손실 없음 + MDD 30% 이하 하드캡)
     eligible = [
         v for v in vault_data
         if v.get("allow_deposits", True)
@@ -786,10 +786,11 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
         and v.get("robustness_score", 0.0) >= min_robustness
         and v.get("apr_30d", 0) > 0          # ★ 최근 30일 수익 양수만 (회복탄력성 최소 기준)
         and v.get("_ok_no_loss", True)       # ★ 초기 손실 없는 볼트만 추천
+        and v.get("max_drawdown", 0.0) <= 30.0  # ★ MDD 30% 이하 하드캡 적용
     ]
-    print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}+로버스트≥{min_robustness:.2f}+APR>0): {len(eligible)}개")
+    print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}+로버스트≥{min_robustness:.2f}+APR>0+MDD≤30%): {len(eligible)}개")
 
-    # 2차: robustness 기준만 완화 (APR > 0은 유지)
+    # 2차: robustness 기준만 완화 (APR > 0, _ok_no_loss, MDD 하드캡은 유지)
     if len(eligible) < top_k:
         fallback_rob = min_robustness * 0.5
         eligible = [
@@ -798,20 +799,38 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
             and v.get("leader_equity_ratio", 0) >= min_leader_equity
             and v.get("robustness_score", 0.0) >= fallback_rob
             and v.get("apr_30d", 0) > 0      # ★ APR > 0 유지
+            and v.get("_ok_no_loss", True)       # ★ 안전장치 유지
+            and v.get("max_drawdown", 0.0) <= 30.0  # ★ MDD 하드캡 유지
         ]
-        print(f"  [주의] 2차 완화: robustness >= {fallback_rob:.2f} → {len(eligible)}개")
+        print(f"  [주의] 2차 완화: robustness >= {fallback_rob:.2f} (안전 필터 유지) → {len(eligible)}개")
 
-    # 3차: 리더 에쿼티 데이터 미확인 볼트까지 포함 (APR > 0은 항상 유지)
+    # 3차: 리더 에쿼티 데이터 기준 완화 (단, _ok_no_loss, MDD 하드캡, APR > 0은 항상 엄격하게 유지)
     if len(eligible) < 3:
-        eligible = [v for v in vault_data if v.get("allow_deposits", True) and v.get("apr_30d", 0) > 0]
-        print(f"  [주의] 3차 최소 필터(입금가능+APR>0): {len(eligible)}개")
+        eligible = [
+            v for v in vault_data 
+            if v.get("allow_deposits", True) 
+            and v.get("apr_30d", 0) > 0
+            and v.get("_ok_no_loss", True)       # ★ 안전장치 유지
+            and v.get("max_drawdown", 0.0) <= 30.0  # ★ MDD 하드캡 유지
+        ]
+        print(f"  [주의] 3차 최소 필터(입금가능+APR>0+안전 필터 유지): {len(eligible)}개")
 
     # 각 볼트의 undervalue_score 미리 계산
     for v in eligible:
         v["undervalue_score"] = round(_calc_undervalue_score(v), 3)
 
     # ★ 바벨 전략 (Barbell Strategy) 적용
-    half_k = top_k // 2
+    # eligible 볼트 개수가 부족할 경우, 동적으로 half_k를 조정하여 CORE와 SATELLITE 비율이 고르게 유지되도록 개선 (엣지 케이스 버그 해결)
+    if len(eligible) <= 1:
+        recs = eligible
+        if recs:
+            recs[0]["suggested_allocation"] = 100.0
+            recs[0]["barbell_group"] = "CORE"
+        return recs
+
+    half_k = min(top_k // 2, len(eligible) // 2)
+    if half_k == 0:
+        half_k = 1
 
     # Group A: Core (로버스트니스 최상위)
     eligible_core = sorted(eligible, key=lambda x: x.get("robustness_score", 0), reverse=True)
@@ -821,18 +840,26 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
     core_addrs = {v["address"] for v in core_vaults}
     eligible_sat = [v for v in eligible if v["address"] not in core_addrs]
     eligible_sat = sorted(eligible_sat, key=lambda x: x.get("undervalue_score", 0), reverse=True)
-    sat_vaults = eligible_sat[:top_k - len(core_vaults)]
+    
+    sat_k = min(top_k - len(core_vaults), len(eligible_sat))
+    sat_vaults = eligible_sat[:sat_k]
 
     recs = core_vaults + sat_vaults
 
     # 가중치 분배 (50% : 50%)
-    for v in core_vaults:
-        v["suggested_allocation"] = round(50.0 / max(1, len(core_vaults)), 1)
-        v["barbell_group"] = "CORE"
-        
-    for v in sat_vaults:
-        v["suggested_allocation"] = round(50.0 / max(1, len(sat_vaults)), 1)
-        v["barbell_group"] = "SATELLITE"
+    if len(core_vaults) > 0 and len(sat_vaults) > 0:
+        for v in core_vaults:
+            v["suggested_allocation"] = round(50.0 / len(core_vaults), 1)
+            v["barbell_group"] = "CORE"
+        for v in sat_vaults:
+            v["suggested_allocation"] = round(50.0 / len(sat_vaults), 1)
+            v["barbell_group"] = "SATELLITE"
+    else:
+        active_group = core_vaults if len(core_vaults) > 0 else sat_vaults
+        group_name = "CORE" if len(core_vaults) > 0 else "SATELLITE"
+        for v in active_group:
+            v["suggested_allocation"] = round(100.0 / len(active_group), 1)
+            v["barbell_group"] = group_name
 
     # 총합이 100이 되도록 미세 조정
     total = sum(v["suggested_allocation"] for v in recs)

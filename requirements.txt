@@ -10,4 +10,7 @@ xlsxwriter
 scipy>=1.13.0
 requests>=2.31.0
 cloudscraper
-
+flask
+flask-jwt-extended
+bcrypt
+pyjwt

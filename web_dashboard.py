@@ -1,13 +1,28 @@
 #!/usr/bin/env python3
-import os, sys, json, glob, threading, urllib.request
-from datetime import datetime
+import os, sys, json, glob, threading, urllib.request, sqlite3
+from datetime import datetime, timedelta
 from pathlib import Path
-from flask import Flask, render_template_string, jsonify, request
+from flask import Flask, render_template_string, jsonify, request, redirect, make_response
+from flask_jwt_extended import (
+    JWTManager, jwt_required, get_jwt_identity, 
+    set_access_cookies, unset_jwt_cookies, create_access_token
+)
+from flask_jwt_extended.exceptions import NoAuthorizationError
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 app = Flask(__name__)
+
+# JWT 쿠키 기반 인증 환경설정
+app.config["JWT_SECRET_KEY"] = "hyperliquid-vault-analyzer-secret-2026-key"
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config["JWT_COOKIE_CSRF_PROTECT"] = False  # 모바일 브라우저 편의를 위해 CSRF 비활성화
+app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
+app.config["JWT_COOKIE_SECURE"] = False  # 로컬 및 프라이빗 터널(HTTP/HTTPS) 호환용
+
+jwt = JWTManager(app)
 
 # 경로 및 환경
 BASE_DIR       = Path(__file__).parent
@@ -18,6 +33,71 @@ PORTFOLIO_FILE = BASE_DIR / "my_portfolio.json"
 DISCORD_CFG    = BASE_DIR / "discord_config.json"
 
 for d in [SNAPSHOTS_DIR, REPORTS_DIR]: os.makedirs(d, exist_ok=True)
+
+# ── auth.py 블루프린트 연동 및 기본 계정 생성 ─────────────────────────────────
+from auth import auth_bp, init_db, setup_jwt, DB_PATH, _check_password, _hash_password
+app.register_blueprint(auth_bp)
+init_db(app)
+setup_jwt(jwt)
+
+def create_default_admin():
+    """앱 기동 시 어드민 계정이 없을 경우 기본 계정 자동 생성"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT count(*) FROM users")
+    if cursor.fetchone()[0] == 0:
+        pw_hash = _hash_password("admin1234")
+        cursor.execute(
+            "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)",
+            ("admin", "admin@hyperliquid.com", pw_hash, "admin")
+        )
+        conn.commit()
+        print("👤 [SECURITY] 기본 관리자 계정이 생성되었습니다. (ID: admin@hyperliquid.com / PW: admin1234)")
+    conn.close()
+
+create_default_admin()
+
+# ── 미인증 및 만료 토큰 자동 리다이렉트 핸들러 ────────────────────────────────
+@app.errorhandler(NoAuthorizationError)
+@app.errorhandler(ExpiredSignatureError)
+@app.errorhandler(InvalidTokenError)
+def handle_auth_failures(e):
+    return redirect("/login")
+
+# ── 로그인 / 로그아웃 라우트 ──────────────────────────────────────────────────
+@app.route("/login", methods=["GET", "POST"])
+def login_view():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+        
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        user = conn.execute("SELECT id, username, email, password_hash, is_active, role FROM users WHERE email = ?", (email,)).fetchone()
+        conn.close()
+        
+        if not user or not user["is_active"] or not _check_password(password, user["password_hash"]):
+            return render_template_string(LOGIN_HTML, error="이메일 또는 비밀번호가 올바르지 않습니다.")
+            
+        identity = str(user["id"])
+        access_token = create_access_token(
+            identity=identity,
+            additional_claims={"role": user["role"], "username": user["username"]},
+            expires_delta=timedelta(hours=24)  # 모바일 편의를 위해 24시간
+        )
+        
+        response = make_response(redirect("/"))
+        set_access_cookies(response, access_token)
+        return response
+        
+    return render_template_string(LOGIN_HTML)
+
+@app.route("/logout")
+def logout_view():
+    response = make_response(redirect("/login"))
+    unset_jwt_cookies(response)
+    return response
+
 
 # ── 유틸리티 ──────────────────────────────────────────────────────────────────
 
@@ -91,6 +171,7 @@ def get_historical_snapshots():
 # ── 라우트 ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
+@jwt_required()
 def index():
     vaults, date, prev_vaults, prev_date, vault_hist = get_historical_snapshots()
     if not vaults:
@@ -149,6 +230,7 @@ def index():
     return render_template_string(MAIN_HTML, vaults=vaults, date=date, stats=stats)
 
 @app.route("/portfolio")
+@jwt_required()
 def portfolio_page():
     try:
         from portfolio_engine import run_portfolio_analysis
@@ -162,6 +244,7 @@ def portfolio_page():
     return render_template_string(PORTFOLIO_HTML, d=d)
 
 @app.route("/api/simulate", methods=["POST"])
+@jwt_required()
 def api_simulate():
     data = request.json or {}
     start_date = data.get("start_date")
@@ -208,6 +291,7 @@ def api_simulate():
     return jsonify(res)
 
 @app.route("/discord")
+@jwt_required()
 def discord_gui():
     wk = ""
     if os.path.exists(DISCORD_CFG):
@@ -215,6 +299,7 @@ def discord_gui():
     return render_template_string(DISCORD_HTML, wk=wk)
 
 @app.route("/api/discord-setup", methods=["POST"])
+@jwt_required()
 def api_discord_save():
     data = request.get_json() or {}
     with open(str(DISCORD_CFG), "w", encoding="utf-8") as f: json.dump({"webhook_url": data.get("webhook_url","")}, f)
@@ -223,6 +308,7 @@ def api_discord_save():
 
 @app.route("/m")
 @app.route("/my-portfolio")
+@jwt_required()
 def my_portfolio_gui():
     import portfolio_tracker
     p = load_portfolio_config()
@@ -254,6 +340,46 @@ def my_portfolio_gui():
                                   hist_vals=port_calc.get("history_values", []))
 
 # ── HTML 템플릿 ───────────────────────────────────────────────────────────────
+
+LOGIN_HTML = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HL Vault Analyzer - Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { background: #0b0f1a; color: #e8eaf0; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .login-card { background: #131928; padding: 40px; border-radius: 16px; border: 1px solid #243050; width: 100%; max-width: 400px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        h2 { margin: 0 0 10px 0; color: #fff; text-align: center; }
+        p { color: #7b8db0; font-size: 0.85rem; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.8rem; color: #7b8db0; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; background: #0b0f1a; border: 1px solid #243050; border-radius: 8px; color: #fff; font-size: 0.95rem; box-sizing: border-box; }
+        .btn { width: 100%; padding: 14px; background: #4f8ef7; border: none; border-radius: 8px; color: #fff; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #3b7ce0; }
+        .error { color: #e74c3c; font-size: 0.85rem; text-align: center; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>🔒 Vault Analyzer Pro</h2>
+        <p>비인가자의 접근이 제한된 시스템입니다.</p>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" required placeholder="admin@hyperliquid.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn">안전하게 로그인</button>
+        </form>
+    </div>
+</body>
+</html>"""
 
 COMMON_STYLE = """
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
@@ -290,18 +416,31 @@ table a:hover{color:var(--accent) !important; text-decoration:underline;}
 .score-breakdown { background:rgba(255,255,255,0.02); padding:15px; border-radius:10px; margin-top:15px; display:grid; gap:10px; }
 .score-row { display:flex; justify-content:space-between; font-size:0.9rem; border-bottom:1px dashed var(--border); padding-bottom:5px; }
 .history-row { display:flex; justify-content:space-between; font-size:0.95rem; margin-bottom:8px; padding:8px; background:rgba(0,0,0,0.2); border-radius:8px;}
+
+/* ── 📱 모바일 미디어 쿼리 추가 ── */
+@media (max-width: 768px) {
+    header { padding: 12px 15px; flex-direction: column; gap: 8px; text-align: center; }
+    .btn { margin: 4px 2px; padding: 8px 12px; font-size: 0.8rem; display: inline-block; }
+    main { padding: 15px; }
+    .grid { grid-template-columns: 1fr !important; gap: 15px; }
+    .card { padding: 16px; margin-bottom: 16px; }
+    table { font-size: 0.8rem; display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    th, td { padding: 10px 8px; }
+    .modal-content { width: 95%; padding: 15px; }
+    .stat-val { font-size: 1.4rem; }
+}
 """
 
-EMPTY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMON_STYLE + """</style></head>
+EMPTY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>""" + COMMON_STYLE + """</style></head>
 <body style="display:flex;align-items:center;justify-content:center;height:100vh;">
 <div style="text-align:center;"><h2>📊 데이터가 없습니다.</h2><p>먼저 분석기를 실행해주세요 (python analyze_top_vaults.py)</p></div>
 </body></html>"""
 
-MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Hyperliquid Dashboard</title>
+MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hyperliquid Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>""" + COMMON_STYLE + """</style></head>
 <body><header><div><h1 style="background:linear-gradient(90deg, #4f8ef7, #1abc9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">HL Vault Analyzer Pro v3.1</h1></div><div>
-<a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/discord">🔔 Discord</a>
+<a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/discord">🔔 Discord</a><a class="btn" href="/logout" style="color:var(--danger);">🚪 Logout</a>
 </div></header><main>
 <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
 <div class="card stat-box"><div class="stat-label">Analysis Date</div><div class="stat-val" style="color:#fff">{{date}} <small style="font-size:0.8rem;color:var(--muted)">{% if stats.prev_date %}(vs {{stats.prev_date}}){% endif %}</small></div></div>
