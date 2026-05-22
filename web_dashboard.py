@@ -417,17 +417,80 @@ table a:hover{color:var(--accent) !important; text-decoration:underline;}
 .score-row { display:flex; justify-content:space-between; font-size:0.9rem; border-bottom:1px dashed var(--border); padding-bottom:5px; }
 .history-row { display:flex; justify-content:space-between; font-size:0.95rem; margin-bottom:8px; padding:8px; background:rgba(0,0,0,0.2); border-radius:8px;}
 
-/* ── 📱 모바일 미디어 쿼리 추가 ── */
+/* ── 📱 모바일 하단 플로팅 탭바 디자인 ── */
+.mobile-tab-bar {
+    display: none;
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 480px;
+    height: 64px;
+    background: rgba(19, 25, 40, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(36, 48, 80, 0.8);
+    border-radius: 18px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+}
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    flex: 1;
+    height: 100%;
+}
+.tab-item span.icon {
+    font-size: 1.25rem;
+    margin-bottom: 3px;
+    transition: transform 0.2s ease;
+}
+.tab-item.active {
+    color: var(--accent2);
+}
+.tab-item.active span.icon {
+    transform: translateY(-3px);
+}
+.tab-item:hover {
+    color: #fff;
+}
+
+/* ── 📱 모바일 극대화 반응형 레이아웃 ── */
 @media (max-width: 768px) {
-    header { padding: 12px 15px; flex-direction: column; gap: 8px; text-align: center; }
-    .btn { margin: 4px 2px; padding: 8px 12px; font-size: 0.8rem; display: inline-block; }
-    main { padding: 15px; }
-    .grid { grid-template-columns: 1fr !important; gap: 15px; }
-    .card { padding: 16px; margin-bottom: 16px; }
-    table { font-size: 0.8rem; display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-    th, td { padding: 10px 8px; }
-    .modal-content { width: 95%; padding: 15px; }
-    .stat-val { font-size: 1.4rem; }
+    body { padding-bottom: 95px !important; } /* 하단 탭바 여백 보장 */
+    header { padding: 12px 16px; justify-content: center; text-align: center; }
+    header h1 { font-size: 1.25rem !important; }
+    
+    /* 기존 PC용 버튼 목록 및 back 버튼은 가림 */
+    header div:last-child { display: none !important; }
+    .back-btn { display: none !important; }
+    
+    /* 모바일 탭바 활성화 */
+    .mobile-tab-bar { display: flex; }
+    
+    main { padding: 12px; }
+    .grid { grid-template-columns: 1fr !important; gap: 12px; }
+    .card { padding: 16px; margin-bottom: 12px; border-radius: 12px; }
+    
+    /* 테이블 가로 스크롤 및 콤팩트 패치 */
+    table { font-size: 0.78rem; display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    th, td { padding: 8px 6px; }
+    .modal-content { width: 96%; padding: 12px; }
+    .stat-val { font-size: 1.35rem; }
+    
+    /* 성능 지표(그리드) 간격 조절 */
+    .stat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px !important; }
 }
 """
 
@@ -848,10 +911,29 @@ function goAnalyzeSelected() {
 
 document.addEventListener('DOMContentLoaded', filterTable);
 </script>
+<!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
+<div class="mobile-tab-bar">
+    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
+    <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
+    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
+</div>
+<script>
+    (function() {
+        const path = window.location.pathname;
+        if(path==='/m'||path==='/my-portfolio') {
+            document.getElementById('tab-portfolio').classList.add('active');
+        } else if(path==='/discord') {
+            document.getElementById('tab-discord').classList.add('active');
+        } else if(path==='/'||path.includes('/portfolio')) {
+            document.getElementById('tab-analysis').classList.add('active');
+        }
+    })();
+</script>
 </main></body></html>"""
 
-PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
-<header><div><h1>🔬 Portfolio Analysis</h1></div><a class="btn" href="/">← Back</a></header>
+PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
+<header><div><h1>🔬 Portfolio Analysis</h1></div><a class="btn back-btn" href="/">← Back</a></header>
 <main>
 {% if d.user_selected_mode %}
 <div style="background:rgba(79,142,247,0.15); padding:15px 20px; border-radius:12px; margin-bottom:20px; border:1px solid var(--accent); display:flex; align-items:center; gap:15px;">
@@ -1389,7 +1471,27 @@ function runBacktest() {
     alert("Simulation failed.");
   });
 }
-</script></body></html>"""
+</script>
+<!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
+<div class="mobile-tab-bar">
+    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
+    <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
+    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
+</div>
+<script>
+    (function() {
+        const path = window.location.pathname;
+        if(path==='/m'||path==='/my-portfolio') {
+            document.getElementById('tab-portfolio').classList.add('active');
+        } else if(path==='/discord') {
+            document.getElementById('tab-discord').classList.add('active');
+        } else if(path==='/'||path.includes('/portfolio')) {
+            document.getElementById('tab-analysis').classList.add('active');
+        }
+    })();
+</script>
+</body></html>"""
 
 BACKTEST_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
 <header><h1>⏪ Strategy Backtest</h1><a class="btn" href="/">← Back</a></header>
@@ -1421,8 +1523,8 @@ fetch('/api/backtest').then(r=>r.json()).then(d=>{
 });
 </script></body></html>"""
 
-DISCORD_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>""" + COMMON_STYLE + """</style></head><body>
-<header><h1>🔔 Discord Notifications</h1><a class="btn" href="/">← Back</a></header>
+DISCORD_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>""" + COMMON_STYLE + """</style></head><body>
+<header><h1>🔔 Discord Notifications</h1><a class="btn back-btn" href="/">← Back</a></header>
 <main><div class="card" style="max-width:600px;margin:auto;">
 <h3>Webhook Integration</h3>
 <p style="color:var(--muted);font-size:0.9rem;margin:15px 0;">Receive daily analysis reports and rebalancing alerts directly on your Discord server.</p>
@@ -1440,10 +1542,30 @@ function save(){
     setTimeout(()=>location.reload(), 2000);
   });
 }
-</script></body></html>"""
+</script>
+<!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
+<div class="mobile-tab-bar">
+    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
+    <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
+    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
+</div>
+<script>
+    (function() {
+        const path = window.location.pathname;
+        if(path==='/m'||path==='/my-portfolio') {
+            document.getElementById('tab-portfolio').classList.add('active');
+        } else if(path==='/discord') {
+            document.getElementById('tab-discord').classList.add('active');
+        } else if(path==='/'||path.includes('/portfolio')) {
+            document.getElementById('tab-analysis').classList.add('active');
+        }
+    })();
+</script>
+</body></html>"""
 
-MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
-<header><h1>📱 My Portfolio</h1><a class="btn" href="/">← Back</a></header>
+MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
+<header><h1>📱 My Portfolio</h1><a class="btn back-btn" href="/">← Back</a></header>
 <main>
 <div style="display: flex; flex-direction: column; gap: 20px;">
 <div class="card"><h3>Performance Summary</h3>
@@ -1514,6 +1636,25 @@ new Chart(ctx, {
     }
 });
 {% endif %}
+</script>
+<!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
+<div class="mobile-tab-bar">
+    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
+    <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
+    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
+</div>
+<script>
+    (function() {
+        const path = window.location.pathname;
+        if(path==='/m'||path==='/my-portfolio') {
+            document.getElementById('tab-portfolio').classList.add('active');
+        } else if(path==='/discord') {
+            document.getElementById('tab-discord').classList.add('active');
+        } else if(path==='/'||path.includes('/portfolio')) {
+            document.getElementById('tab-analysis').classList.add('active');
+        }
+    })();
 </script>
 </body></html>"""
 

@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
     private val PREFS_NAME = "VaultPrefs"
     private val KEY_URL = "DashboardUrl"
-    private val DEFAULT_URL = "http://10.0.2.2:5001" 
+    private val DEFAULT_URL = "https://covered-cumulative-xml-personality.trycloudflare.com/m" 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

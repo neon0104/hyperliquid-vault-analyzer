@@ -5687,5 +5687,63 @@
         "leader_eq": 0.8510631347290969
       }
     ]
+  },
+  "2026-05-23": {
+    "portfolio_value": 132039.11,
+    "daily_pnl": 418.07,
+    "daily_return_pct": 0.3176,
+    "cumulative_pnl": 32039.11,
+    "cumulative_pct": 32.0391,
+    "max_equity_ever": 132039.11,
+    "mdd_pct": 0.0,
+    "risk_score": 0.308,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 24.9,
+        "apr_30d": 82.87,
+        "robustness": 0.9611,
+        "undervalue": 1.072,
+        "leader_eq": 0.411250781907506
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 25.0,
+        "apr_30d": 12.79,
+        "robustness": 0.8843,
+        "undervalue": 1.006,
+        "leader_eq": 0.5473429886032357
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 16.7,
+        "apr_30d": 443.35,
+        "robustness": 0.7849,
+        "undervalue": 1.348,
+        "leader_eq": 0.8415648987036993
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 16.7,
+        "apr_30d": 44.14,
+        "robustness": 0.6312,
+        "undervalue": 1.029,
+        "leader_eq": 0.9432482608102947
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 16.7,
+        "apr_30d": 64.03,
+        "robustness": 0.7439,
+        "undervalue": 0.506,
+        "leader_eq": 0.8348314381112131
+      }
+    ]
   }
 }

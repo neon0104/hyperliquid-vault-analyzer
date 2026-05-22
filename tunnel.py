@@ -18,6 +18,13 @@ ngrok 또는 Cloudflare Tunnel을 사용해서
 import sys, os, time, subprocess, threading, argparse, json
 from pathlib import Path
 
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except AttributeError:
+        pass
+
 BASE_DIR = Path(__file__).parent
 STATUS_FILE = BASE_DIR / "vault_data" / "status.json"
 
@@ -122,7 +129,7 @@ def start_cloudflare(port: int = 5000, show_qr: bool = False):
     print("(URL 생성까지 약 10초 소요)")
 
     proc = subprocess.Popen(
-        ["cloudflared", "tunnel", "--url", f"http://localhost:{port}"],
+        [r"C:\Users\USER\AppData\Local\Microsoft\WinGet\Packages\Cloudflare.cloudflared_Microsoft.Winget.Source_8wekyb3d8bbwe\cloudflared.exe", "tunnel", "--url", f"http://localhost:{port}"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True, encoding="utf-8", errors="replace",
