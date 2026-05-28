@@ -5968,5 +5968,63 @@
         "leader_eq": 0.9430412222151787
       }
     ]
+  },
+  "2026-05-28": {
+    "portfolio_value": 134078.64,
+    "daily_pnl": 457.48,
+    "daily_return_pct": 0.3424,
+    "cumulative_pnl": 34078.64,
+    "cumulative_pct": 34.0786,
+    "max_equity_ever": 134078.64,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4269,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 24.9,
+        "apr_30d": 22.87,
+        "robustness": 0.8888,
+        "undervalue": 0.986,
+        "leader_eq": 0.5641006611229953
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 25.0,
+        "apr_30d": 70.34,
+        "robustness": 0.7143,
+        "undervalue": 0.504,
+        "leader_eq": 0.8520270872208693
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 16.7,
+        "apr_30d": 388.17,
+        "robustness": 0.7043,
+        "undervalue": 1.254,
+        "leader_eq": 0.8415648987036993
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 16.7,
+        "apr_30d": 172.71,
+        "robustness": 0.4883,
+        "undervalue": 1.168,
+        "leader_eq": 0.44206181488671054
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 16.7,
+        "apr_30d": 48.01,
+        "robustness": 0.6313,
+        "undervalue": 1.033,
+        "leader_eq": 0.9430412222151787
+      }
+    ]
   }
 }
