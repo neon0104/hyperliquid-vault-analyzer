@@ -6026,5 +6026,63 @@
         "leader_eq": 0.9430412222151787
       }
     ]
+  },
+  "2026-05-29": {
+    "portfolio_value": 134611.62,
+    "daily_pnl": 532.98,
+    "daily_return_pct": 0.3975,
+    "cumulative_pnl": 34611.62,
+    "cumulative_pct": 34.6116,
+    "max_equity_ever": 134611.62,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4354,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 24.9,
+        "apr_30d": 28.1,
+        "robustness": 0.8894,
+        "undervalue": 0.994,
+        "leader_eq": 0.5637672014799142
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 25.0,
+        "apr_30d": 388.17,
+        "robustness": 0.7107,
+        "undervalue": 1.254,
+        "leader_eq": 0.8415648987036993
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 16.7,
+        "apr_30d": 185.59,
+        "robustness": 0.5123,
+        "undervalue": 1.182,
+        "leader_eq": 0.4422004921431351
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 16.7,
+        "apr_30d": 59.23,
+        "robustness": 0.632,
+        "undervalue": 1.042,
+        "leader_eq": 0.9428309314767056
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 16.7,
+        "apr_30d": 1.0,
+        "robustness": 0.6028,
+        "undervalue": 0.833,
+        "leader_eq": 0.99999948684608
+      }
+    ]
   }
 }
