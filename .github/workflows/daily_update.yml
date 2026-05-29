@@ -61,6 +61,10 @@ jobs:
         if: steps.pre_check.outputs.skip != 'true'
         run: python check_data_health.py || (echo "::warning::Data health check failed, but proceeding to commit." && exit 0)
 
+      - name: Run PnL Collector
+        if: steps.pre_check.outputs.skip != 'true'
+        run: python daily_pnl_collector.py
+
       - name: Export Dashboard Data
         if: steps.pre_check.outputs.skip != 'true'
         run: python export_dashboard_data.py
