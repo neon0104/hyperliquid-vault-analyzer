@@ -6084,5 +6084,81 @@
         "leader_eq": 0.99999948684608
       }
     ]
+  },
+  "2026-05-30": {
+    "portfolio_value": 134903.78,
+    "daily_pnl": 292.16,
+    "daily_return_pct": 0.217,
+    "cumulative_pnl": 34903.78,
+    "cumulative_pct": 34.9038,
+    "max_equity_ever": 134903.78,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4643,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 16.6,
+        "apr_30d": 39.2,
+        "robustness": 0.8904,
+        "undervalue": 0.996,
+        "leader_eq": 0.5674101021323905
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 16.7,
+        "apr_30d": 85.04,
+        "robustness": 0.6332,
+        "undervalue": 1.067,
+        "leader_eq": 0.9428508615444731
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 16.7,
+        "apr_30d": 0.19,
+        "robustness": 0.6162,
+        "undervalue": 0.5,
+        "leader_eq": 0.99999948684608
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 12.5,
+        "apr_30d": 427.81,
+        "robustness": 0.6047,
+        "undervalue": 1.309,
+        "leader_eq": 0.8415648987036993
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 12.5,
+        "apr_30d": 2.08,
+        "robustness": 0.4609,
+        "undervalue": 1.02,
+        "leader_eq": 0.9999999999999998
+      },
+      {
+        "name": "Hyper 3",
+        "address": "0xae8da1fcab050318c5c1f015cb8f9a510d0e3254",
+        "alloc_pct": 12.5,
+        "apr_30d": 4.01,
+        "robustness": 0.4428,
+        "undervalue": 1.015,
+        "leader_eq": 1.0
+      },
+      {
+        "name": "All-Weather Multi-Strategy",
+        "address": "0xcc1e051cbb317bbfaa3c025dbd1dbfbddfd608c7",
+        "alloc_pct": 12.5,
+        "apr_30d": 33.92,
+        "robustness": 0.5128,
+        "undervalue": 0.991,
+        "leader_eq": 0.9863913705288957
+      }
+    ]
   }
 }
