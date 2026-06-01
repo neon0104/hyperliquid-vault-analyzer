@@ -6218,5 +6218,63 @@
         "leader_eq": 0.9999999999999998
       }
     ]
+  },
+  "2026-06-01": {
+    "portfolio_value": 135706.12,
+    "daily_pnl": 401.26,
+    "daily_return_pct": 0.2966,
+    "cumulative_pnl": 35706.12,
+    "cumulative_pct": 35.7061,
+    "max_equity_ever": 135706.12,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4253,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 24.9,
+        "apr_30d": 43.07,
+        "robustness": 0.8906,
+        "undervalue": 0.983,
+        "leader_eq": 0.5770131739787555
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 25.0,
+        "apr_30d": 22.61,
+        "robustness": 0.6498,
+        "undervalue": 0.508,
+        "leader_eq": 0.8550360066935789
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 16.7,
+        "apr_30d": 455.5,
+        "robustness": 0.6047,
+        "undervalue": 1.349,
+        "leader_eq": 0.8415648987036993
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 16.7,
+        "apr_30d": 93.78,
+        "robustness": 0.6337,
+        "undervalue": 1.075,
+        "leader_eq": 0.9428508615444731
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 16.7,
+        "apr_30d": 0.82,
+        "robustness": 0.5709,
+        "undervalue": 0.683,
+        "leader_eq": 0.9999999999999998
+      }
+    ]
   }
 }
