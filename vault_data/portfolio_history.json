@@ -6352,5 +6352,72 @@
         "leader_eq": 0.99999948684608
       }
     ]
+  },
+  "2026-06-03": {
+    "portfolio_value": 136132.83,
+    "daily_pnl": 158.64,
+    "daily_return_pct": 0.1167,
+    "cumulative_pnl": 36132.83,
+    "cumulative_pct": 36.1328,
+    "max_equity_ever": 136132.83,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3723,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 16.5,
+        "apr_30d": 41.49,
+        "robustness": 0.891,
+        "undervalue": 1.035,
+        "leader_eq": 0.5039578999301332
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 16.7,
+        "apr_30d": 7.15,
+        "robustness": 0.7348,
+        "undervalue": 0.999,
+        "leader_eq": 0.9999999999999998
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 16.7,
+        "apr_30d": 41.19,
+        "robustness": 0.6554,
+        "undervalue": 0.515,
+        "leader_eq": 0.8550360066935789
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 16.7,
+        "apr_30d": 91.0,
+        "robustness": 0.6336,
+        "undervalue": 1.073,
+        "leader_eq": 0.9426866285096237
+      },
+      {
+        "name": "Hyper 3",
+        "address": "0xae8da1fcab050318c5c1f015cb8f9a510d0e3254",
+        "alloc_pct": 16.7,
+        "apr_30d": 14.7,
+        "robustness": 0.4555,
+        "undervalue": 1.009,
+        "leader_eq": 1.0
+      },
+      {
+        "name": "All-Weather Multi-Strategy",
+        "address": "0xcc1e051cbb317bbfaa3c025dbd1dbfbddfd608c7",
+        "alloc_pct": 16.7,
+        "apr_30d": 59.96,
+        "robustness": 0.5796,
+        "undervalue": 1.003,
+        "leader_eq": 0.9815838004559505
+      }
+    ]
   }
 }
