@@ -6419,5 +6419,108 @@
         "leader_eq": 0.9815838004559505
       }
     ]
+  },
+  "2026-06-04": {
+    "portfolio_value": 136697.24,
+    "daily_pnl": 564.41,
+    "daily_return_pct": 0.4146,
+    "cumulative_pnl": 36697.24,
+    "cumulative_pct": 36.6972,
+    "max_equity_ever": 136697.24,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4562,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 44.07,
+        "robustness": 0.8913,
+        "undervalue": 1.039,
+        "leader_eq": 0.48806680648993533
+      },
+      {
+        "name": "All-Weather Multi-Strategy",
+        "address": "0xcc1e051cbb317bbfaa3c025dbd1dbfbddfd608c7",
+        "alloc_pct": 10.0,
+        "apr_30d": 60.64,
+        "robustness": 0.79,
+        "undervalue": 0.995,
+        "leader_eq": 0.9767750722052398
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 10.0,
+        "apr_30d": 458.69,
+        "robustness": 0.7378,
+        "undervalue": 1.515,
+        "leader_eq": 0.8320082468193313
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 10.0,
+        "apr_30d": 9.13,
+        "robustness": 0.7244,
+        "undervalue": 1.009,
+        "leader_eq": 0.9999999999999998
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 40.42,
+        "robustness": 0.7199,
+        "undervalue": 0.518,
+        "leader_eq": 0.8491687996733988
+      },
+      {
+        "name": "Buyback Spread Engine",
+        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
+        "alloc_pct": 10.0,
+        "apr_30d": 375.73,
+        "robustness": 0.4356,
+        "undervalue": 1.456,
+        "leader_eq": 0.9125330532815451
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 10.0,
+        "apr_30d": 202.21,
+        "robustness": 0.468,
+        "undervalue": 1.202,
+        "leader_eq": 0.44220049214304674
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 95.02,
+        "robustness": 0.6339,
+        "undervalue": 1.077,
+        "leader_eq": 0.9423669236955673
+      },
+      {
+        "name": "DOEZOE",
+        "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+        "alloc_pct": 10.0,
+        "apr_30d": 212.69,
+        "robustness": 0.5736,
+        "undervalue": 1.055,
+        "leader_eq": 0.8415648987036993
+      },
+      {
+        "name": "Hyper 3",
+        "address": "0xae8da1fcab050318c5c1f015cb8f9a510d0e3254",
+        "alloc_pct": 10.0,
+        "apr_30d": 14.7,
+        "robustness": 0.407,
+        "undervalue": 1.009,
+        "leader_eq": 1.0
+      }
+    ]
   }
 }
