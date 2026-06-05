@@ -306,6 +306,63 @@ def api_discord_save():
     send_discord("✅ 연결 성공! Hyperliquid Vault Analyzer와 연동되었습니다.")
     return jsonify({"status": "ok"})
 
+@app.route("/api/portfolio/save", methods=["POST"])
+@jwt_required()
+def api_portfolio_save():
+    data = request.get_json() or {}
+    if "positions" not in data or "invest_date" not in data or "total_capital" not in data:
+        return jsonify({"error": "Missing required fields: positions, invest_date, total_capital"}), 400
+    
+    positions = data["positions"]
+    invest_date = data["invest_date"]
+    total_capital = data["total_capital"]
+    
+    if not isinstance(positions, dict):
+        return jsonify({"error": "positions must be a dictionary mapping vault addresses to numbers"}), 400
+    
+    cleaned_positions = {}
+    for k, v in positions.items():
+        k_clean = k.strip().lower()
+        if not k_clean.startswith("0x"):
+            return jsonify({"error": f"Invalid vault address format: {k}"}), 400
+        try:
+            cleaned_positions[k_clean] = float(v)
+        except (ValueError, TypeError):
+            return jsonify({"error": f"Invalid position value for {k}: {v}"}), 400
+            
+    if not isinstance(invest_date, str):
+        return jsonify({"error": "invest_date must be a string YYYY-MM-DD"}), 400
+    try:
+        datetime.strptime(invest_date, "%Y-%m-%d")
+    except ValueError:
+        return jsonify({"error": "invest_date must be in YYYY-MM-DD format"}), 400
+        
+    try:
+        total_capital = float(total_capital)
+    except (ValueError, TypeError):
+        return jsonify({"error": "total_capital must be numeric"}), 400
+        
+    existing = {}
+    if os.path.exists(PORTFOLIO_FILE):
+        try:
+            with open(str(PORTFOLIO_FILE), "r", encoding="utf-8") as f:
+                existing = json.load(f)
+        except:
+            pass
+            
+    existing["positions"] = cleaned_positions
+    existing["invest_date"] = invest_date
+    existing["total_capital"] = total_capital
+    existing["fetched_at"] = datetime.now().isoformat()
+    
+    try:
+        with open(str(PORTFOLIO_FILE), "w", encoding="utf-8") as f:
+            json.dump(existing, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        return jsonify({"error": f"Failed to save portfolio file: {str(e)}"}), 500
+        
+    return jsonify({"status": "success", "message": "Portfolio saved successfully"})
+
 @app.route("/m")
 @app.route("/my-portfolio")
 @jwt_required()
@@ -316,8 +373,29 @@ def my_portfolio_gui():
     
     port_calc = portfolio_tracker.calc_my_portfolio(p.get("positions", {}), p.get("invest_date"), snaps)
     
+    available_vaults = []
+    latest_snap, _ = get_latest_snapshot()
+    if latest_snap:
+        for v in latest_snap:
+            if "address" in v and "name" in v:
+                available_vaults.append({
+                    "address": v["address"],
+                    "name": v["name"]
+                })
+    
     if not port_calc or not port_calc.get("holdings"):
-        return render_template_string(MY_HTML, holdings=[], total=0, capital=p.get("total_capital", 100000), pnl=0, pnl_pct=0, net_pnl=0, net_pct=0, days=0)
+        return render_template_string(MY_HTML, 
+                                      holdings=[], 
+                                      total=0, 
+                                      capital=p.get("total_capital", 100000), 
+                                      pnl=0, 
+                                      pnl_pct=0, 
+                                      net_pnl=0, 
+                                      net_pct=0, 
+                                      days=0,
+                                      available_vaults=available_vaults,
+                                      invest_date=p.get("invest_date", "2026-03-12"),
+                                      total_capital=p.get("total_capital", 100000))
         
     holdings = port_calc["holdings"]
     total_val = port_calc["total_value"]
@@ -337,7 +415,11 @@ def my_portfolio_gui():
                                   net_pct=round(net_pct, 2),
                                   days=port_calc["days_held"],
                                   hist_dates=port_calc.get("history_dates", []),
-                                  hist_vals=port_calc.get("history_values", []))
+                                  hist_vals=port_calc.get("history_values", []),
+                                  available_vaults=available_vaults,
+                                  invest_date=p.get("invest_date", "2026-03-12"),
+                                  total_capital=p.get("total_capital", 100000))
+
 
 # ── HTML 템플릿 ───────────────────────────────────────────────────────────────
 
@@ -1564,8 +1646,46 @@ function save(){
 </script>
 </body></html>"""
 
-MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """</style></head><body>
-<header><h1>📱 My Portfolio</h1><a class="btn back-btn" href="/">← Back</a></header>
+MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: var(--accent2);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 10000;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+#toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+}
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+}
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+</style></head><body>
+<header><h1>📱 My Portfolio</h1><div><button class="btn btn-primary" onclick="openEditModal()">✏️ Edit Portfolio</button><a class="btn back-btn" href="/">← Back</a></div></header>
 <main>
 <div style="display: flex; flex-direction: column; gap: 20px;">
 <div class="card"><h3>Performance Summary</h3>
@@ -1608,6 +1728,58 @@ MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewpo
 {% endif %}
 </div>
 </div></main>
+
+<div id="toast"></div>
+
+<!-- Edit Portfolio Modal -->
+<div id="editModal" class="modal" onclick="if(event.target === this) closeEditModal()">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="modal-close" onclick="closeEditModal()">×</span>
+        <h2 style="color:var(--accent2); margin-bottom:15px;">✏️ Edit Portfolio</h2>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:4px;">Total Capital (USD)</label>
+            <input type="number" id="editTotalCapital" value="{{ total_capital }}" style="width:100%; padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+        </div>
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:4px;">Investment Start Date</label>
+            <input type="date" id="editInvestDate" value="{{ invest_date }}" style="width:100%; padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+        </div>
+        
+        <h3 style="margin-top:16px; margin-bottom:8px; font-size:0.95rem; border-bottom:1px solid var(--border); padding-bottom:4px;">Current Positions</h3>
+        <div id="editPositionsList" style="margin-bottom:16px; max-height: 150px; overflow-y: auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px;">
+        </div>
+        
+        <h3 style="margin-top:16px; margin-bottom:8px; font-size:0.95rem; border-bottom:1px solid var(--border); padding-bottom:4px;">➕ Add Position</h3>
+        <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:8px; display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+            <div>
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:2px;">Select Vault</label>
+                <select id="editAddVaultSelect" onchange="onVaultSelectChange()" style="width:100%; padding:8px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+                    <option value="">-- Choose Vault --</option>
+                    {% for av in available_vaults %}
+                    <option value="{{ av.address }}">{{ av.name }}</option>
+                    {% endfor %}
+                    <option value="custom">-- Custom Address --</option>
+                </select>
+            </div>
+            
+            <div id="customVaultAddressContainer" style="display:none;">
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:2px;">Custom Vault Address</label>
+                <input type="text" id="editCustomVaultAddress" placeholder="0x..." style="width:100%; padding:8px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+            </div>
+            
+            <div>
+                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:2px;">Invested Amount (USD)</label>
+                <input type="number" id="editAddAmount" placeholder="e.g. 5000" style="width:100%; padding:8px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+            </div>
+            
+            <button onclick="addPositionToEditList()" class="btn btn-primary" style="margin:0; padding:8px; width:100%;">Add Position</button>
+        </div>
+        
+        <button onclick="savePortfolioChanges()" class="btn btn-primary" style="margin:0; padding:10px; width:100%; background:var(--accent2); border-color:var(--accent2); font-weight:bold; font-size:0.95rem;">Save Changes</button>
+    </div>
+</div>
+
 <script>
 {% if hist_dates and hist_vals %}
 const ctx = document.getElementById('histChart').getContext('2d');
@@ -1636,6 +1808,169 @@ new Chart(ctx, {
     }
 });
 {% endif %}
+
+// Portfolio Edit Logic
+let editPositions = {
+    {% for h in holdings %}
+    "{{ h.address }}": {{ h.invested_usd }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+
+const vaultNames = {
+    {% for av in available_vaults %}
+    "{{ av.address }}": "{{ av.name }}",
+    {% endfor %}
+    {% for h in holdings %}
+    "{{ h.address }}": "{{ h.name }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+
+function openEditModal() {
+    document.getElementById('editModal').style.display = 'flex';
+    renderEditPositions();
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+function renderEditPositions() {
+    const container = document.getElementById('editPositionsList');
+    const keys = Object.keys(editPositions);
+    if (keys.length === 0) {
+        container.innerHTML = '<span style="color:var(--muted)">No positions in portfolio.</span>';
+        return;
+    }
+    
+    let html = '';
+    keys.forEach(addr => {
+        const amt = editPositions[addr];
+        const name = vaultNames[addr] || (addr.substring(0, 10) + '...');
+        html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed var(--border);">
+            <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right:10px;">
+                <b>${name}</b><br>
+                <small style="color:var(--muted); font-size:0.75rem;">${addr.substring(0, 12)}...</small>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-weight:600; font-size:0.85rem;">$${amt.toLocaleString()}</span>
+                <button onclick="deletePositionFromEditList('${addr}')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:1rem; padding: 2px;">❌</button>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function deletePositionFromEditList(addr) {
+    delete editPositions[addr];
+    renderEditPositions();
+}
+
+function onVaultSelectChange() {
+    const sel = document.getElementById('editAddVaultSelect');
+    const customContainer = document.getElementById('customVaultAddressContainer');
+    if (sel.value === 'custom') {
+        customContainer.style.display = 'block';
+    } else {
+        customContainer.style.display = 'none';
+    }
+}
+
+function addPositionToEditList() {
+    const sel = document.getElementById('editAddVaultSelect');
+    let address = sel.value;
+    const amountVal = parseFloat(document.getElementById('editAddAmount').value);
+    
+    if (address === 'custom') {
+        address = document.getElementById('editCustomVaultAddress').value.trim().toLowerCase();
+        if (!address.startsWith('0x') || address.length < 40) {
+            alert('올바른 볼트 주소(0x...)를 입력해주세요.');
+            return;
+        }
+    }
+    
+    if (!address) {
+        alert('볼트를 선택하거나 주소를 입력해주세요.');
+        return;
+    }
+    
+    if (isNaN(amountVal) || amountVal <= 0) {
+        alert('올바른 투자 금액을 입력해주세요.');
+        return;
+    }
+    
+    const opt = sel.options[sel.selectedIndex];
+    if (sel.value !== 'custom' && opt) {
+        vaultNames[address] = opt.text;
+    } else if (!vaultNames[address]) {
+        vaultNames[address] = address;
+    }
+    
+    editPositions[address] = amountVal;
+    renderEditPositions();
+    
+    document.getElementById('editAddAmount').value = '';
+    document.getElementById('editCustomVaultAddress').value = '';
+    sel.value = '';
+    onVaultSelectChange();
+}
+
+function savePortfolioChanges() {
+    const total_capital = parseFloat(document.getElementById('editTotalCapital').value);
+    const invest_date = document.getElementById('editInvestDate').value;
+    
+    if (isNaN(total_capital) || total_capital <= 0) {
+        alert('올바른 Total Capital을 입력해주세요.');
+        return;
+    }
+    
+    if (!invest_date) {
+        alert('투자 시작일을 입력해주세요.');
+        return;
+    }
+    
+    const payload = {
+        positions: editPositions,
+        invest_date: invest_date,
+        total_capital: total_capital
+    };
+    
+    const saveBtn = document.querySelector('button[onclick="savePortfolioChanges()"]');
+    const oldText = saveBtn.innerText;
+    saveBtn.innerText = 'Saving...';
+    saveBtn.disabled = true;
+    
+    fetch('/api/portfolio/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(data => { throw new Error(data.error || 'Server error'); });
+        }
+        return res.json();
+    })
+    .then(data => {
+        showToast('✅ 포트폴리오가 성공적으로 저장되었습니다!');
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
+    })
+    .catch(err => {
+        alert('저장 실패: ' + err.message);
+        saveBtn.innerText = oldText;
+        saveBtn.disabled = false;
+    });
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.className = "show";
+    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+}
 </script>
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">
