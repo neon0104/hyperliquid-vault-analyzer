@@ -6625,5 +6625,90 @@
         "leader_eq": 0.9999999999999998
       }
     ]
+  },
+  "2026-06-06": {
+    "portfolio_value": 137747.39,
+    "daily_pnl": 373.23,
+    "daily_return_pct": 0.2717,
+    "cumulative_pnl": 37747.39,
+    "cumulative_pct": 37.7474,
+    "max_equity_ever": 137747.39,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3862,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 12.5,
+        "apr_30d": 45.52,
+        "robustness": 0.8911,
+        "undervalue": 0.955,
+        "leader_eq": 0.5296986415426588
+      },
+      {
+        "name": "All-Weather Multi-Strategy",
+        "address": "0xcc1e051cbb317bbfaa3c025dbd1dbfbddfd608c7",
+        "alloc_pct": 12.5,
+        "apr_30d": 70.75,
+        "robustness": 0.8472,
+        "undervalue": 1.038,
+        "leader_eq": 0.8726272438253904
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 12.5,
+        "apr_30d": 15.31,
+        "robustness": 0.773,
+        "undervalue": 0.955,
+        "leader_eq": 0.9999999999999998
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 12.5,
+        "apr_30d": 87.7,
+        "robustness": 0.7705,
+        "undervalue": 1.079,
+        "leader_eq": 0.9809697354747505
+      },
+      {
+        "name": "Buyback Spread Engine",
+        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
+        "alloc_pct": 12.5,
+        "apr_30d": 352.91,
+        "robustness": 0.4236,
+        "undervalue": 1.417,
+        "leader_eq": 0.8688616082167717
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.5,
+        "apr_30d": 105.54,
+        "robustness": 0.7163,
+        "undervalue": 1.093,
+        "leader_eq": 0.850970601686223
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 12.5,
+        "apr_30d": 75.36,
+        "robustness": 0.4549,
+        "undervalue": 1.067,
+        "leader_eq": 0.8941992744820326
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 12.5,
+        "apr_30d": 40.24,
+        "robustness": 0.5977,
+        "undervalue": 1.029,
+        "leader_eq": 0.9408858677214008
+      }
+    ]
   }
 }
