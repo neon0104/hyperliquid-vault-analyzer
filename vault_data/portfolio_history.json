@@ -6907,5 +6907,108 @@
         "leader_eq": 0.9999999100440211
       }
     ]
+  },
+  "2026-06-09": {
+    "portfolio_value": 139141.24,
+    "daily_pnl": 414.63,
+    "daily_return_pct": 0.2989,
+    "cumulative_pnl": 39141.24,
+    "cumulative_pct": 39.1412,
+    "max_equity_ever": 139141.24,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3879,
+    "n_vaults": 10,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 54.47,
+        "robustness": 0.8921,
+        "undervalue": 1.006,
+        "leader_eq": 0.5078240266979016
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 10.0,
+        "apr_30d": 93.15,
+        "robustness": 0.7799,
+        "undervalue": 1.085,
+        "leader_eq": 0.9809697354747505
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 10.0,
+        "apr_30d": 65.41,
+        "robustness": 0.713,
+        "undervalue": 1.058,
+        "leader_eq": 0.5284928900500856
+      },
+      {
+        "name": "All-Weather Multi-Strategy",
+        "address": "0xcc1e051cbb317bbfaa3c025dbd1dbfbddfd608c7",
+        "alloc_pct": 10.0,
+        "apr_30d": 53.97,
+        "robustness": 0.6974,
+        "undervalue": 1.04,
+        "leader_eq": 0.8040144428140525
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 10.0,
+        "apr_30d": 24.76,
+        "robustness": 0.6862,
+        "undervalue": 1.012,
+        "leader_eq": 0.9570637390353142
+      },
+      {
+        "name": "Buyback Spread Engine",
+        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
+        "alloc_pct": 10.0,
+        "apr_30d": 430.59,
+        "robustness": 0.4421,
+        "undervalue": 1.56,
+        "leader_eq": 0.8307696049451251
+      },
+      {
+        "name": "Bolivia government fund",
+        "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
+        "alloc_pct": 10.0,
+        "apr_30d": 221.22,
+        "robustness": 0.554,
+        "undervalue": 1.226,
+        "leader_eq": 0.4390659866107187
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 10.0,
+        "apr_30d": 76.6,
+        "robustness": 0.4691,
+        "undervalue": 1.069,
+        "leader_eq": 0.8941992744820326
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 10.0,
+        "apr_30d": 63.95,
+        "robustness": 0.6444,
+        "undervalue": 1.049,
+        "leader_eq": 0.9409585116967774
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 10.0,
+        "apr_30d": 6.8,
+        "robustness": 0.6276,
+        "undervalue": 1.0,
+        "leader_eq": 0.9991176557085467
+      }
+    ]
   }
 }
