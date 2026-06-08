@@ -427,11 +427,22 @@ def api_create_portfolio():
         name_to_addr = {v["name"]: v["address"] for v in pe_res.get("selected_vaults", [])}
         
         positions = {}
+        vault_items = []
         for vault_name, weight in weights.items():
             if weight > 0:
                 addr = name_to_addr.get(vault_name)
                 if addr:
-                    positions[addr] = (weight / 100.0) * total_capital
+                    vault_items.append((addr, weight))
+        
+        if vault_items:
+            allocated = 0.0
+            for i, (addr, weight) in enumerate(vault_items):
+                if i == len(vault_items) - 1:
+                    positions[addr] = round(total_capital - allocated, 2)
+                else:
+                    amt = round((weight / 100.0) * total_capital, 2)
+                    positions[addr] = amt
+                    allocated += amt
                     
     if not positions:
         positions = {}

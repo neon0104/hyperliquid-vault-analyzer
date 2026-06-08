@@ -1,0 +1,96 @@
+[
+  {
+    "id": "default",
+    "name": "기본 포트폴리오",
+    "ptype": "custom",
+    "total_capital": 100000.0,
+    "invest_date": "2026-03-12",
+    "positions": {
+      "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 20.0,
+      "0xd6e56265890b76413d1d527eb9b75e334c0c5b42": 20.0,
+      "0xda51323fe9800c8365646ad5c7ade0dd17fdc167": 20.0,
+      "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802": 10.0,
+      "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8": 10.0,
+      "0x93ad52177d0795de8c67c92b1a72035293cb7aac": 10.0,
+      "0x8bd03b8a06612cdb83ebee91e901dae9203ef537": 10.0
+    }
+  },
+  {
+    "id": "31c861e0",
+    "name": "AI 추천 1",
+    "ptype": "max_sharpe",
+    "total_capital": 100000.0,
+    "invest_date": "2026-06-08",
+    "positions": {
+      "0x77fee2df7bad4f1db93052fa82bf78eaab771a16": 7600.0,
+      "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 7700.0,
+      "0x3b4f22366857da94f9346f88eac84718c8a8d48d": 7700.0,
+      "0xfa829d0ccf789006d0c8b52fa9d724ab4e166a1e": 7700.0,
+      "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f": 7700.0,
+      "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 7700.0,
+      "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 7700.0,
+      "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01": 7700.0,
+      "0x4078582c42fdb547b1397fabb5d5a4beab81be9e": 7700.0,
+      "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086": 7700.0,
+      "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f": 7700.0,
+      "0xc18ad3b82d4ee7e3bb76512b5fcfae60be59bec0": 7700.0,
+      "0x48d3faa89163541e82f0811c3f162f52ef7ee219": 7700.0
+    }
+  },
+  {
+    "id": "5d389767",
+    "name": "AI 추천 2(분산)",
+    "ptype": "min_variance",
+    "total_capital": 100000.0,
+    "invest_date": "2026-06-08",
+    "positions": {
+      "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 23900.0,
+      "0x3b4f22366857da94f9346f88eac84718c8a8d48d": 4800.0,
+      "0xfa829d0ccf789006d0c8b52fa9d724ab4e166a1e": 29900.0,
+      "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 3900.0,
+      "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 9500.0,
+      "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01": 6100.0,
+      "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f": 3400.0,
+      "0xc18ad3b82d4ee7e3bb76512b5fcfae60be59bec0": 3500.0,
+      "0x48d3faa89163541e82f0811c3f162f52ef7ee219": 15000.0
+    }
+  },
+  {
+    "id": "751e86dc",
+    "name": "AI 추천 3(위험평균)",
+    "ptype": "risk_parity",
+    "total_capital": 100000.0,
+    "invest_date": "2026-06-08",
+    "positions": {
+      "0x77fee2df7bad4f1db93052fa82bf78eaab771a16": 11300.0,
+      "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 1000.0,
+      "0x3b4f22366857da94f9346f88eac84718c8a8d48d": 1000.0,
+      "0xfa829d0ccf789006d0c8b52fa9d724ab4e166a1e": 1000.0,
+      "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f": 21600.0,
+      "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 5400.0,
+      "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 1000.0,
+      "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01": 1000.0,
+      "0x4078582c42fdb547b1397fabb5d5a4beab81be9e": 2100.0,
+      "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086": 7100.0,
+      "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f": 6000.0,
+      "0xc18ad3b82d4ee7e3bb76512b5fcfae60be59bec0": 6400.0,
+      "0x48d3faa89163541e82f0811c3f162f52ef7ee219": 35100.0
+    }
+  },
+  {
+    "id": "fab19055",
+    "name": "AI 추천 4(원금보호형)",
+    "ptype": "min_cvar",
+    "total_capital": 100000.0,
+    "invest_date": "2026-06-08",
+    "positions": {
+      "0x77fee2df7bad4f1db93052fa82bf78eaab771a16": 9700.0,
+      "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 30700.0,
+      "0x3b4f22366857da94f9346f88eac84718c8a8d48d": 900.0,
+      "0xfa829d0ccf789006d0c8b52fa9d724ab4e166a1e": 35000.0,
+      "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 10100.0,
+      "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 12000.0,
+      "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f": 1600.0
+    }
+  }
+]
