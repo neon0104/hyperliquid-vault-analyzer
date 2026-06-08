@@ -363,15 +363,150 @@ def api_portfolio_save():
         
     return jsonify({"status": "success", "message": "Portfolio saved successfully"})
 
+@app.route("/api/portfolios", methods=["GET"])
+@jwt_required()
+def api_get_portfolios():
+    import portfolio_tracker
+    portfolios = portfolio_tracker.load_virtual_portfolios()
+    snaps = portfolio_tracker.load_snapshots_all()
+    
+    latest_snap = []
+    files = sorted(glob.glob(os.path.join(str(SNAPSHOTS_DIR), "*.json")), reverse=True)
+    if files:
+        try:
+            with open(str(files[0]), encoding="utf-8") as f:
+                latest_snap = json.load(f)
+        except:
+            pass
+            
+    results = []
+    for p in portfolios:
+        perf = portfolio_tracker.calc_portfolio_performance(p.get("positions", {}), p.get("invest_date"), p.get("total_capital", 100000.0), snaps)
+        insights = portfolio_tracker.get_portfolio_insights(p.get("positions", {}), perf, latest_snap)
+        results.append({
+            "id": p.get("id"),
+            "name": p.get("name"),
+            "ptype": p.get("ptype", "custom"),
+            "total_capital": p.get("total_capital"),
+            "invest_date": p.get("invest_date"),
+            "positions": p.get("positions", {}),
+            "performance": perf,
+            "insights": insights
+        })
+    return jsonify(results)
+
+
+@app.route("/api/portfolios", methods=["POST"])
+@jwt_required()
+def api_create_portfolio():
+    import portfolio_tracker
+    from portfolio_engine import run_portfolio_analysis
+    import uuid
+    
+    data = request.get_json() or {}
+    name = data.get("name", "").strip()
+    ptype = data.get("ptype", "custom").strip()
+    try:
+        total_capital = float(data.get("total_capital", 100000.0))
+    except:
+        total_capital = 100000.0
+    invest_date = data.get("invest_date", datetime.now().strftime("%Y-%m-%d"))
+    positions = data.get("positions")
+    
+    if not name:
+        return jsonify({"error": "Portfolio name is required"}), 400
+        
+    if not positions and ptype in ["max_sharpe", "min_variance", "risk_parity", "min_cvar"]:
+        pe_res = run_portfolio_analysis()
+        if "error" in pe_res:
+            return jsonify({"error": f"Failed to run portfolio optimization: {pe_res['error']}"}), 500
+        
+        pf_opt = pe_res.get("portfolios", {}).get(ptype, {})
+        weights = pf_opt.get("stats", {}).get("weights", {})
+        
+        name_to_addr = {v["name"]: v["address"] for v in pe_res.get("selected_vaults", [])}
+        
+        positions = {}
+        for vault_name, weight in weights.items():
+            if weight > 0:
+                addr = name_to_addr.get(vault_name)
+                if addr:
+                    positions[addr] = (weight / 100.0) * total_capital
+                    
+    if not positions:
+        positions = {}
+        
+    # Ensure positions contains valid address format and numeric values
+    cleaned_positions = {}
+    for k, v in positions.items():
+        k_clean = k.strip().lower()
+        if k_clean.startswith("0x"):
+            try:
+                cleaned_positions[k_clean] = float(v)
+            except:
+                pass
+    
+    portfolios = portfolio_tracker.load_virtual_portfolios()
+    
+    pid = data.get("id")
+    is_new = True
+    if pid:
+        for p in portfolios:
+            if p.get("id") == pid:
+                p["name"] = name
+                p["ptype"] = ptype
+                p["total_capital"] = total_capital
+                p["invest_date"] = invest_date
+                p["positions"] = cleaned_positions
+                is_new = False
+                break
+                
+    if is_new:
+        pid = str(uuid.uuid4())[:8] if pid != "default" else "default"
+        new_port = {
+            "id": pid,
+            "name": name,
+            "ptype": ptype,
+            "total_capital": total_capital,
+            "invest_date": invest_date,
+            "positions": cleaned_positions
+        }
+        portfolios.append(new_port)
+        
+    portfolio_tracker.save_virtual_portfolios(portfolios)
+    return jsonify({"status": "success", "id": pid})
+
+
+@app.route("/api/portfolios/<id>", methods=["DELETE"])
+@jwt_required()
+def api_delete_portfolio(id):
+    import portfolio_tracker
+    portfolios = portfolio_tracker.load_virtual_portfolios()
+    new_ports = [p for p in portfolios if p.get("id") != id]
+    
+    if len(new_ports) == len(portfolios):
+        return jsonify({"error": "Portfolio not found"}), 404
+        
+    portfolio_tracker.save_virtual_portfolios(new_ports)
+    return jsonify({"status": "success", "message": "Portfolio deleted"})
+
+
+@app.route("/api/scenarios", methods=["GET"])
+@jwt_required()
+def api_get_scenarios():
+    import portfolio_tracker
+    portfolios = portfolio_tracker.load_virtual_portfolios()
+    snaps = portfolio_tracker.load_snapshots_all()
+    reports = portfolio_tracker.run_scenario_analysis(portfolios, snaps)
+    return jsonify(reports)
+
+
 @app.route("/m")
 @app.route("/my-portfolio")
 @jwt_required()
 def my_portfolio_gui():
     import portfolio_tracker
-    p = load_portfolio_config()
-    snaps = portfolio_tracker.load_snapshots_all()
-    
-    port_calc = portfolio_tracker.calc_my_portfolio(p.get("positions", {}), p.get("invest_date"), snaps)
+    portfolios = portfolio_tracker.load_virtual_portfolios()
     
     available_vaults = []
     latest_snap, _ = get_latest_snapshot()
@@ -380,45 +515,16 @@ def my_portfolio_gui():
             if "address" in v and "name" in v:
                 available_vaults.append({
                     "address": v["address"],
-                    "name": v["name"]
+                    "name": v["name"],
+                    "apr_30d": v.get("apr_30d", 0.0),
+                    "max_drawdown": v.get("max_drawdown", 0.0),
+                    "robustness_score": v.get("robustness_score", 0.0),
+                    "barbell_group": v.get("barbell_group", "CORE" if v.get("max_drawdown", 0.0) <= 15.0 else "SATELLITE")
                 })
-    
-    if not port_calc or not port_calc.get("holdings"):
-        return render_template_string(MY_HTML, 
-                                      holdings=[], 
-                                      total=0, 
-                                      capital=p.get("total_capital", 100000), 
-                                      pnl=0, 
-                                      pnl_pct=0, 
-                                      net_pnl=0, 
-                                      net_pct=0, 
-                                      days=0,
-                                      available_vaults=available_vaults,
-                                      invest_date=p.get("invest_date", "2026-03-12"),
-                                      total_capital=p.get("total_capital", 100000))
-        
-    holdings = port_calc["holdings"]
-    total_val = port_calc["total_value"]
-    total_inv = port_calc["total_invested"]
-    total_pnl = port_calc["total_pnl"]
-    net_pnl_after_fee = total_pnl * 0.9 if total_pnl > 0 else total_pnl
-    total_pct = total_pnl / total_inv * 100 if total_inv > 0 else 0
-    net_pct = net_pnl_after_fee / total_inv * 100 if total_inv > 0 else 0
-    
+                
     return render_template_string(MY_HTML, 
-                                  holdings=holdings, 
-                                  total=round(total_val), 
-                                  capital=round(total_inv), 
-                                  pnl=round(total_pnl), 
-                                  pnl_pct=round(total_pct, 2),
-                                  net_pnl=round(net_pnl_after_fee), 
-                                  net_pct=round(net_pct, 2),
-                                  days=port_calc["days_held"],
-                                  hist_dates=port_calc.get("history_dates", []),
-                                  hist_vals=port_calc.get("history_values", []),
-                                  available_vaults=available_vaults,
-                                  invest_date=p.get("invest_date", "2026-03-12"),
-                                  total_capital=p.get("total_capital", 100000))
+                                  portfolios=portfolios,
+                                  available_vaults=available_vaults)
 
 
 # ── HTML 템플릿 ───────────────────────────────────────────────────────────────
@@ -1646,352 +1752,1435 @@ function save(){
 </script>
 </body></html>"""
 
-MY_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>""" + COMMON_STYLE + """
-#toast {
-    visibility: hidden;
-    min-width: 250px;
-    background-color: var(--accent2);
-    color: #fff;
-    text-align: center;
-    border-radius: 8px;
-    padding: 16px;
-    position: fixed;
-    z-index: 10000;
-    left: 50%;
-    bottom: 30px;
-    transform: translateX(-50%);
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-#toast.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-@-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;} 
-    to {bottom: 30px; opacity: 1;}
-}
-@keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-@-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;} 
-    to {bottom: 0; opacity: 0;}
-}
-@keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-</style></head><body>
-<header><h1>📱 My Portfolio</h1><div><button class="btn btn-primary" onclick="openEditModal()">✏️ Edit Portfolio</button><a class="btn back-btn" href="/">← Back</a></div></header>
+MY_HTML = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HL Vault Analyzer - Virtual Portfolios</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg: #0b0f19;
+            --card-bg: rgba(19, 26, 47, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.35);
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.12);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.12);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #1e294b 0%, var(--bg) 75%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 90px;
+        }
+
+        header {
+            padding: 20px 30px;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.03);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+        }
+
+        main {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ── Tabs Navigation ── */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            width: fit-content;
+        }
+
+        .tab-nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-nav-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-nav-btn.active {
+            color: #fff;
+            background: var(--accent);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        /* ── Tab Content Panels ── */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ── Glass Cards ── */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        .glass-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        /* ── Grid Layouts ── */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* ── Portfolio Item Card ── */
+        .p-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .p-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        }
+
+        .p-card.active-port {
+            border-color: var(--accent);
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), var(--card-bg));
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .p-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .p-card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .p-card-type {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .p-card-type.ai {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .p-card-type.custom {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .p-card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .p-card-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .p-card-stat-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        /* ── Tables styling ── */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 14px 18px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ── Badges & Indicators ── */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .badge-success { background: var(--success-bg); color: var(--success); }
+        .badge-danger { background: var(--danger-bg); color: var(--danger); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        
+        .pnl-green { color: var(--success); }
+        .pnl-red { color: var(--danger); }
+
+        /* ── Modal Design ── */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4, 6, 12, 0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 650px;
+            max-width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 11px 14px;
+            background: #0b0f19;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .positions-editor {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .position-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .position-row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ── AI Insights Box ── */
+        .insight-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+
+        .insight-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        /* ── Toast Toast ── */
+        #toast {
+            visibility: hidden;
+            min-width: 280px;
+            background: #10b981;
+            color: #fff;
+            text-align: center;
+            border-radius: 10px;
+            padding: 16px;
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: 700;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            transition: visibility 0s, opacity 0.3s ease-in-out;
+            opacity: 0;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* ── Chart size ── */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+
+        /* ── Mobile Navigation ── */
+        .mobile-tab-bar {
+            display: none;
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 480px;
+            height: 64px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 8px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            flex: 1;
+            height: 100%;
+        }
+
+        .tab-item span.icon {
+            font-size: 1.25rem;
+            margin-bottom: 3px;
+        }
+
+        .tab-item.active {
+            color: #60a5fa;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 100px;
+            }
+
+            header {
+                padding: 15px 20px;
+            }
+
+            header h1 {
+                font-size: 1.15rem;
+            }
+
+            header div:last-child {
+                display: none !important;
+            }
+
+            .mobile-tab-bar {
+                display: flex;
+            }
+
+            main {
+                padding: 15px;
+            }
+
+            .tab-nav {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .tab-nav-btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .glass-card {
+                padding: 16px;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>💼 Virtual Portfolios Manager</h1>
+    <div>
+        <button class="btn btn-primary" onclick="openCreateModal()">➕ 새 가상 포트폴리오</button>
+        <a class="btn back-btn" href="/">← 메인 대시보드</a>
+    </div>
+</header>
+
 <main>
-<div style="display: flex; flex-direction: column; gap: 20px;">
-<div class="card"><h3>Performance Summary</h3>
-<div style="height:250px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;"><canvas id="histChart"></canvas></div>
-<div class="grid" style="grid-template-columns: repeat(3, 1fr); text-align: center; gap: 15px;">
-  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px;">
-    <div class="stat-label">Total Invested (Holding Period)</div>
-    <div class="stat-val" style="color:#fff; font-size:1.6rem;">$ {{ "{:,.0f}".format(capital) }} <small style="font-size:0.9rem; color:var(--muted); font-weight:400;">({{ days }} Days)</small></div>
-  </div>
-  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px;">
-    <div class="stat-label">Gross PnL (Before Fees)</div>
-    <div class="stat-val" style="color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }}; font-size:1.6rem;">$ {{ "{:,.0f}".format(pnl) }}</div>
-    <div style="font-size:0.9rem; margin-top:5px; color:{{ 'var(--success)' if pnl >= 0 else 'var(--danger)' }};">{{ pnl_pct }}%</div>
-  </div>
-  <div style="padding:15px; background:rgba(255,255,255,0.02); border-radius:10px; border: 1px solid var(--accent2);">
-    <div class="stat-label" style="color:var(--accent2);">Net Return / Final Payout</div>
-    <div class="stat-val" style="color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }}; font-size:2rem;">$ {{ "{:,.0f}".format(capital + net_pnl) }}</div>
-    <div style="font-size:1rem; font-weight:600; margin-top:5px; color:{{ 'var(--success)' if net_pnl >= 0 else 'var(--danger)' }};">Net PnL: $ {{ "{:,.0f}".format(net_pnl) }} ({{ net_pct }}%)</div>
-  </div>
-</div>
-</div>
-<div class="card"><h3>Current Positions</h3>
-{% if holdings %}
-<table><thead><tr><th>Vault</th><th>Invested / Weight</th><th>Holding Period</th><th>APR / MDD</th><th>Gross PnL</th><th>Net Final Payout<br><small>(After 10% Fee)</small></th></tr></thead><tbody>
-{% for h in holdings %}
-{% set h_net_pnl = h.pnl * 0.9 if h.pnl > 0 else h.pnl %}
-{% set h_net_pct = h_net_pnl / h.invested_usd * 100 if h.invested_usd > 0 else 0 %}
-{% set h_final_val = h.invested_usd + h_net_pnl %}
-<tr>
-<td><a href="https://app.hyperliquid.xyz/vaults/{{h.address}}" target="_blank"><b>{{h.name}}</b></a><br><small style="color:var(--muted)">{{h.address[:12]}}...</small></td>
-<td>${{ "{:,.0f}".format(h.invested_usd) }}<br><small style="color:var(--accent2)">{{ h.weight_pct }}%</small></td>
-<td>{{ h.days_held }} Days</td>
-<td><span style="color:var(--success)">{{ h.apr_30d }}%</span><br><small style="color:var(--danger)">{{ h.mdd }}%</small></td>
-<td><span style="color:{{ 'var(--success)' if h.pnl >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(h.pnl) }}</span><br><small style="color:{{ 'var(--success)' if h.pnl_pct >= 0 else 'var(--danger)' }}">{{ h.pnl_pct }}%</small></td>
-<td style="font-weight:600; color:#fff;">${{ "{:,.0f}".format(h_final_val) }}<br><small style="color:{{ 'var(--success)' if h_net_pct >= 0 else 'var(--danger)' }}">{{ h_net_pct | round(2) }}%</small></td>
-</tr>{% endfor %}
-</tbody></table>
-{% else %}
-<p style="padding:40px;text-align:center;color:var(--muted);">No positions found. Update <code>my_portfolio.json</code> to track your holdings.</p>
-{% endif %}
-</div>
-</div></main>
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <button class="tab-nav-btn active" onclick="switchTab('tab-list')">📋 포트폴리오 목록</button>
+        <button class="tab-nav-btn" onclick="switchTab('tab-details')">📊 상세 분석 & AI 인사이트</button>
+        <button class="tab-nav-btn" onclick="switchTab('tab-simulator')">🔮 시나리오 시뮬레이터</button>
+    </div>
 
-<div id="toast"></div>
+    <!-- TAB 1: 포트폴리오 목록 -->
+    <div id="tab-list" class="tab-panel active">
+        <div class="glass-card">
+            <h3>📂 내 가상 포트폴리오 리스트</h3>
+            <div id="portfolios-grid" class="grid-3">
+                <!-- Portfolios render dynamically -->
+            </div>
+            
+            <div id="empty-portfolios-msg" style="display:none; text-align:center; padding:50px 0; color:var(--text-muted);">
+                <p style="font-size:1.1rem; margin-bottom:15px;">등록된 가상 포트폴리오가 없습니다.</p>
+                <button class="btn btn-primary" onclick="openCreateModal()">새 가상 포트폴리오 생성하기</button>
+            </div>
+        </div>
+    </div>
 
-<!-- Edit Portfolio Modal -->
-<div id="editModal" class="modal" onclick="if(event.target === this) closeEditModal()">
-    <div class="modal-content" style="max-width: 500px;">
-        <span class="modal-close" onclick="closeEditModal()">×</span>
-        <h2 style="color:var(--accent2); margin-bottom:15px;">✏️ Edit Portfolio</h2>
-        
-        <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:4px;">Total Capital (USD)</label>
-            <input type="number" id="editTotalCapital" value="{{ total_capital }}" style="width:100%; padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+    <!-- TAB 2: 상세 분석 및 AI 인사이트 -->
+    <div id="tab-details" class="tab-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap:10px;">
+            <h2 id="details-portfolio-title" style="font-size:1.5rem; color:#fff;">기본 포트폴리오</h2>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-primary" onclick="openEditModal()">✏️ 포트폴리오 수정</button>
+                <button class="btn btn-danger" onclick="deleteActivePortfolio()">🗑️ 포트폴리오 삭제</button>
+            </div>
         </div>
-        <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:4px;">Investment Start Date</label>
-            <input type="date" id="editInvestDate" value="{{ invest_date }}" style="width:100%; padding:10px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+
+        <div class="grid-3" style="margin-bottom:24px;">
+            <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
+                <div class="p-card-stat-label">총 투자 자산 (USD)</div>
+                <div class="stat-val" id="details-total-value" style="font-size:1.8rem; font-weight:800; color:#fff; margin-top:5px;">$0</div>
+                <div class="p-card-stat-label" id="details-total-capital" style="margin-top:5px; font-size:0.75rem;">원금 $0</div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
+                <div class="p-card-stat-label">누적 수익률 (PnL)</div>
+                <div class="stat-val" id="details-total-pnl" style="font-size:1.8rem; font-weight:800; margin-top:5px;">$0 (+0%)</div>
+                <div class="p-card-stat-label" id="details-days-held" style="margin-top:5px; font-size:0.75rem;">투자 기간: 0일</div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
+                <div class="p-card-stat-label">예상 최대 낙폭 (MDD)</div>
+                <div class="stat-val" id="details-portfolio-mdd" style="font-size:1.8rem; font-weight:800; color:var(--danger); margin-top:5px;">0%</div>
+                <div class="p-card-stat-label" style="margin-top:5px; font-size:0.75rem;">역사적 시뮬레이션 기반</div>
+            </div>
         </div>
-        
-        <h3 style="margin-top:16px; margin-bottom:8px; font-size:0.95rem; border-bottom:1px solid var(--border); padding-bottom:4px;">Current Positions</h3>
-        <div id="editPositionsList" style="margin-bottom:16px; max-height: 150px; overflow-y: auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px;">
+
+        <!-- Equity Curve Chart -->
+        <div class="glass-card">
+            <h3>📈 포트폴리오 가치 누적 추이 (USD)</h3>
+            <div class="chart-container">
+                <canvas id="equity-chart"></canvas>
+            </div>
         </div>
-        
-        <h3 style="margin-top:16px; margin-bottom:8px; font-size:0.95rem; border-bottom:1px solid var(--border); padding-bottom:4px;">➕ Add Position</h3>
-        <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:8px; display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-            <div>
-                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:2px;">Select Vault</label>
-                <select id="editAddVaultSelect" onchange="onVaultSelectChange()" style="width:100%; padding:8px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
-                    <option value="">-- Choose Vault --</option>
-                    {% for av in available_vaults %}
-                    <option value="{{ av.address }}">{{ av.name }}</option>
-                    {% endfor %}
-                    <option value="custom">-- Custom Address --</option>
+
+        <!-- Positions Table -->
+        <div class="glass-card">
+            <h3>📌 보유 볼트 및 구성 비율</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>볼트 이름</th>
+                            <th>투자 원금 (USD)</th>
+                            <th>비중 (%)</th>
+                            <th>30d APR</th>
+                            <th>최대 낙폭 (MDD)</th>
+                            <th>평가 금액 (USD)</th>
+                            <th>누적 수익금 (ROI)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details-positions-table">
+                        <!-- Positions render dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- AI Diagnostics Insights Card -->
+        <div class="glass-card">
+            <h3>🤖 AI 포트폴리오 진단 및 솔루션</h3>
+            <div class="insight-card">
+                <ul class="insight-list" id="details-insights-list">
+                    <!-- Insights render dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: 시나리오 시뮬레이터 -->
+    <div id="tab-simulator" class="tab-panel">
+        <div class="glass-card">
+            <h3>🔮 4대 가상 시나리오별 성과 비교</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px; line-height:1.5;">
+                상승장, 하락장, 고변동성, 안정수익 시나리오 하에서 현재 생성된 모든 가상 포트폴리오들의 예상 수익률과 자산 변화를 한눈에 시뮬레이션합니다.
+            </p>
+            <div class="chart-container" style="height:380px; margin-bottom:30px;">
+                <canvas id="scenario-comparison-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3>📋 시나리오별 시뮬레이션 상세 테이블</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>포트폴리오</th>
+                            <th>시나리오</th>
+                            <th>예상 수익률 (%)</th>
+                            <th>예상 최대 낙폭 (%)</th>
+                            <th>시뮬레이션 종료 자산 (USD)</th>
+                            <th>시나리오 설명</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scenario-table-body">
+                        <!-- Scenario rows render dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Create / Edit Portfolio Modal -->
+<div id="portfolioModal" class="modal" onclick="if(event.target === this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title" style="color:#fff; font-size:1.2rem;">새 가상 포트폴리오 생성</h2>
+            <span class="modal-close" onclick="closeModal()">×</span>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="modal-port-id" value="">
+            
+            <div class="form-group">
+                <label>포트폴리오 이름</label>
+                <input type="text" id="modal-port-name" class="form-input" placeholder="예: 성장 추구형 포트폴리오" required>
+            </div>
+            
+            <div class="form-group">
+                <label>총 투자 원금 (USD)</label>
+                <input type="number" id="modal-port-capital" class="form-input" value="100000" min="100" required>
+            </div>
+
+            <div class="form-group">
+                <label>투자 시작일</label>
+                <input type="date" id="modal-port-date" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label>비중 설정 방식</label>
+                <select id="modal-port-mode" class="form-input" onchange="toggleAllocMode()">
+                    <option value="manual">직접 수동 입력 (Manual)</option>
+                    <option value="ai">AI 최적화 비중 자동 설정 (Auto)</option>
                 </select>
             </div>
-            
-            <div id="customVaultAddressContainer" style="display:none;">
-                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:2px;">Custom Vault Address</label>
-                <input type="text" id="editCustomVaultAddress" placeholder="0x..." style="width:100%; padding:8px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+
+            <!-- AI Optimizer strategies -->
+            <div class="form-group" id="modal-ai-strategy-container" style="display:none;">
+                <label>AI 최적화 전략 선택</label>
+                <select id="modal-port-strategy" class="form-input">
+                    <option value="max_sharpe">📈 최대 샤프지수 (Max Sharpe) - 위험 대비 수익성 극대화</option>
+                    <option value="min_variance">🛡️ 최소 분산 (Min Variance) - 전체 포트폴리오 변동성 극 최소화</option>
+                    <option value="risk_parity">⚖️ 위험 균형 (Risk Parity) - 각 볼트별 위험 기여도 균등 배분</option>
+                    <option value="min_cvar">🔒 원금보호형 CVaR (Min CVaR) - 최악의 꼬리 리스크 방어</option>
+                </select>
+                <p style="color:var(--text-muted); font-size:0.78rem; margin-top:6px;">
+                    * AI 최적화 비중 설정 선택 시 오늘 날짜의 최적화 결과를 사용하여 포트폴리오 자산이 자동 배분됩니다.
+                </p>
             </div>
-            
-            <div>
-                <label style="display:block; font-size:0.75rem; color:var(--muted); margin-bottom:2px;">Invested Amount (USD)</label>
-                <input type="number" id="editAddAmount" placeholder="e.g. 5000" style="width:100%; padding:8px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:8px;">
+
+            <!-- Manual Positions Editor -->
+            <div class="form-group" id="modal-manual-positions-container">
+                <label>볼트별 투자 비중 (%)</label>
+                <div class="positions-editor">
+                    <div id="modal-positions-list">
+                        <!-- Manual position rows render dynamically -->
+                    </div>
+                    
+                    <button type="button" class="btn" style="margin-top:10px; width:100%; justify-content:center;" onclick="addManualPositionRow()">
+                        ➕ 포지션 볼트 추가
+                    </button>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.85rem;">
+                    <span id="modal-total-weight-text" style="font-weight:700; color:var(--text-muted);">총 비중 합계: 0%</span>
+                    <span style="color:var(--text-muted);">* 입력한 비중 %는 총 투자 원금에 비례하여 USD로 저장됩니다.</span>
+                </div>
             </div>
-            
-            <button onclick="addPositionToEditList()" class="btn btn-primary" style="margin:0; padding:8px; width:100%;">Add Position</button>
+
+            <div style="margin-top:25px; display:flex; justify-content:flex-end; gap:12px;">
+                <button type="button" class="btn" onclick="closeModal()">취소</button>
+                <button type="button" class="btn btn-primary" onclick="savePortfolio()">포트폴리오 저장</button>
+            </div>
         </div>
-        
-        <button onclick="savePortfolioChanges()" class="btn btn-primary" style="margin:0; padding:10px; width:100%; background:var(--accent2); border-color:var(--accent2); font-weight:bold; font-size:0.95rem;">Save Changes</button>
     </div>
 </div>
 
-<script>
-{% if hist_dates and hist_vals %}
-const ctx = document.getElementById('histChart').getContext('2d');
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: {{ hist_dates | tojson }},
-        datasets: [{
-            label: 'Est. Portfolio Value ($)',
-            data: {{ hist_vals | tojson }},
-            borderColor: '#1abc9c',
-            backgroundColor: 'rgba(26, 188, 156, 0.1)',
-            fill: true,
-            tension: 0.3,
-            borderWidth: 2,
-            pointRadius: 2
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { display: false },
-            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'var(--muted)', font: { size: 9 } } }
-        }
-    }
-});
-{% endif %}
+<div id="toast"></div>
 
-// Portfolio Edit Logic
-let editPositions = {
-    {% for h in holdings %}
-    "{{ h.address }}": {{ h.invested_usd }}{% if not loop.last %},{% endif %}
-    {% endfor %}
-};
-
-const vaultNames = {
-    {% for av in available_vaults %}
-    "{{ av.address }}": "{{ av.name }}",
-    {% endfor %}
-    {% for h in holdings %}
-    "{{ h.address }}": "{{ h.name }}"{% if not loop.last %},{% endif %}
-    {% endfor %}
-};
-
-function openEditModal() {
-    document.getElementById('editModal').style.display = 'flex';
-    renderEditPositions();
-}
-
-function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
-}
-
-function renderEditPositions() {
-    const container = document.getElementById('editPositionsList');
-    const keys = Object.keys(editPositions);
-    if (keys.length === 0) {
-        container.innerHTML = '<span style="color:var(--muted)">No positions in portfolio.</span>';
-        return;
-    }
-    
-    let html = '';
-    keys.forEach(addr => {
-        const amt = editPositions[addr];
-        const name = vaultNames[addr] || (addr.substring(0, 10) + '...');
-        html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed var(--border);">
-            <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right:10px;">
-                <b>${name}</b><br>
-                <small style="color:var(--muted); font-size:0.75rem;">${addr.substring(0, 12)}...</small>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-weight:600; font-size:0.85rem;">$${amt.toLocaleString()}</span>
-                <button onclick="deletePositionFromEditList('${addr}')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:1rem; padding: 2px;">❌</button>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-
-function deletePositionFromEditList(addr) {
-    delete editPositions[addr];
-    renderEditPositions();
-}
-
-function onVaultSelectChange() {
-    const sel = document.getElementById('editAddVaultSelect');
-    const customContainer = document.getElementById('customVaultAddressContainer');
-    if (sel.value === 'custom') {
-        customContainer.style.display = 'block';
-    } else {
-        customContainer.style.display = 'none';
-    }
-}
-
-function addPositionToEditList() {
-    const sel = document.getElementById('editAddVaultSelect');
-    let address = sel.value;
-    const amountVal = parseFloat(document.getElementById('editAddAmount').value);
-    
-    if (address === 'custom') {
-        address = document.getElementById('editCustomVaultAddress').value.trim().toLowerCase();
-        if (!address.startsWith('0x') || address.length < 40) {
-            alert('올바른 볼트 주소(0x...)를 입력해주세요.');
-            return;
-        }
-    }
-    
-    if (!address) {
-        alert('볼트를 선택하거나 주소를 입력해주세요.');
-        return;
-    }
-    
-    if (isNaN(amountVal) || amountVal <= 0) {
-        alert('올바른 투자 금액을 입력해주세요.');
-        return;
-    }
-    
-    const opt = sel.options[sel.selectedIndex];
-    if (sel.value !== 'custom' && opt) {
-        vaultNames[address] = opt.text;
-    } else if (!vaultNames[address]) {
-        vaultNames[address] = address;
-    }
-    
-    editPositions[address] = amountVal;
-    renderEditPositions();
-    
-    document.getElementById('editAddAmount').value = '';
-    document.getElementById('editCustomVaultAddress').value = '';
-    sel.value = '';
-    onVaultSelectChange();
-}
-
-function savePortfolioChanges() {
-    const total_capital = parseFloat(document.getElementById('editTotalCapital').value);
-    const invest_date = document.getElementById('editInvestDate').value;
-    
-    if (isNaN(total_capital) || total_capital <= 0) {
-        alert('올바른 Total Capital을 입력해주세요.');
-        return;
-    }
-    
-    if (!invest_date) {
-        alert('투자 시작일을 입력해주세요.');
-        return;
-    }
-    
-    const payload = {
-        positions: editPositions,
-        invest_date: invest_date,
-        total_capital: total_capital
-    };
-    
-    const saveBtn = document.querySelector('button[onclick="savePortfolioChanges()"]');
-    const oldText = saveBtn.innerText;
-    saveBtn.innerText = 'Saving...';
-    saveBtn.disabled = true;
-    
-    fetch('/api/portfolio/save', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(res => {
-        if (!res.ok) {
-            return res.json().then(data => { throw new Error(data.error || 'Server error'); });
-        }
-        return res.json();
-    })
-    .then(data => {
-        showToast('✅ 포트폴리오가 성공적으로 저장되었습니다!');
-        setTimeout(() => {
-            location.reload();
-        }, 1500);
-    })
-    .catch(err => {
-        alert('저장 실패: ' + err.message);
-        saveBtn.innerText = oldText;
-        saveBtn.disabled = false;
-    });
-}
-
-function showToast(message) {
-    const toast = document.getElementById("toast");
-    toast.innerText = message;
-    toast.className = "show";
-    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
-}
-</script>
-<!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
+<!-- Mobile Navigation Bar -->
 <div class="mobile-tab-bar">
-    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
-    <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
-    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/m" class="tab-item active"><span class="icon">💼</span><span>Portfolios</span></a>
+    <a href="/" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
+    <a href="/discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
 </div>
+
 <script>
-    (function() {
-        const path = window.location.pathname;
-        if(path==='/m'||path==='/my-portfolio') {
-            document.getElementById('tab-portfolio').classList.add('active');
-        } else if(path==='/discord') {
-            document.getElementById('tab-discord').classList.add('active');
-        } else if(path==='/'||path.includes('/portfolio')) {
-            document.getElementById('tab-analysis').classList.add('active');
+    // State Variables
+    let portfolios = [];
+    let scenarioReports = {};
+    let activePortfolioId = 'default';
+    let equityChart = null;
+    let scenarioChart = null;
+
+    const availableVaults = {{ available_vaults | tojson }};
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", () => {
+        // Set default date to today
+        document.getElementById('modal-port-date').value = new Date().toISOString().substring(0, 10);
+        
+        loadPortfoliosData();
+        loadScenariosData();
+    });
+
+    // switch tabs
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        
+        // Find which button triggered this
+        const btnMap = {
+            'tab-list': 0,
+            'tab-details': 1,
+            'tab-simulator': 2
+        };
+        const btns = document.querySelectorAll('.tab-nav-btn');
+        if (btns[btnMap[tabId]]) {
+            btns[btnMap[tabId]].classList.add('active');
         }
-    })();
+        
+        document.getElementById(tabId).classList.add('active');
+
+        // Draw charts if needed when tab becomes visible
+        if (tabId === 'tab-details') {
+            renderActivePortfolioDetails();
+        } else if (tabId === 'tab-simulator') {
+            renderScenarioSimulator();
+        }
+    }
+
+    // Load API Data
+    function loadPortfoliosData(selectIdAfterLoad = null) {
+        fetch('/api/portfolios')
+            .then(res => res.json())
+            .then(data => {
+                portfolios = data;
+                if (portfolios.length === 0) {
+                    document.getElementById('portfolios-grid').style.display = 'none';
+                    document.getElementById('empty-portfolios-msg').style.display = 'block';
+                    activePortfolioId = null;
+                } else {
+                    document.getElementById('portfolios-grid').style.display = 'grid';
+                    document.getElementById('empty-portfolios-msg').style.display = 'none';
+                    
+                    if (selectIdAfterLoad) {
+                        activePortfolioId = selectIdAfterLoad;
+                    } else if (!activePortfolioId || !portfolios.find(p => p.id === activePortfolioId)) {
+                        activePortfolioId = portfolios[0].id;
+                    }
+                    renderPortfoliosList();
+                }
+            })
+            .catch(err => console.error("Error loading portfolios:", err));
+    }
+
+    function loadScenariosData() {
+        fetch('/api/scenarios')
+            .then(res => res.json())
+            .then(data => {
+                scenarioReports = data;
+                if (document.getElementById('tab-simulator').classList.contains('active')) {
+                    renderScenarioSimulator();
+                }
+            })
+            .catch(err => console.error("Error loading scenarios:", err));
+    }
+
+    // Render Tab 1 (List of Portfolios)
+    function renderPortfoliosList() {
+        const grid = document.getElementById('portfolios-grid');
+        grid.innerHTML = '';
+
+        portfolios.forEach(p => {
+            const perf = p.performance || {};
+            const isSelected = p.id === activePortfolioId;
+            const pnlColor = perf.total_pnl >= 0 ? 'pnl-green' : 'pnl-red';
+            const sign = perf.total_pnl >= 0 ? '+' : '';
+
+            const card = document.createElement('div');
+            card.className = `glass-card p-card ${isSelected ? 'active-port' : ''}`;
+            card.onclick = () => {
+                activePortfolioId = p.id;
+                renderPortfoliosList();
+                switchTab('tab-details');
+            };
+
+            card.innerHTML = `
+                <div class="p-card-header">
+                    <div class="p-card-title">📂 ${escapeHtml(p.name)}</div>
+                    <span class="p-card-type ${p.ptype === 'custom' ? 'custom' : 'ai'}">${p.ptype === 'custom' ? '수동' : 'AI 최적화'}</span>
+                </div>
+                <div class="p-card-stats">
+                    <div>
+                        <div class="p-card-stat-label">투자 원금</div>
+                        <div class="p-card-stat-val">$${Math.round(p.total_capital).toLocaleString()}</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">현재 가치</div>
+                        <div class="p-card-stat-val">$${Math.round(perf.total_value || p.total_capital).toLocaleString()}</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">수익금 / 수익률</div>
+                        <div class="p-card-stat-val ${pnlColor}">${sign}$${Math.round(perf.total_pnl || 0).toLocaleString()} (${sign}${perf.total_pnl_pct || 0}%)</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">최대 낙폭 (MDD)</div>
+                        <div class="p-card-stat-val" style="color:var(--danger);">${perf.mdd || 0}%</div>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // Render Tab 2 (Selected Portfolio Details & Insights)
+    function renderActivePortfolioDetails() {
+        const p = portfolios.find(port => port.id === activePortfolioId);
+        if (!p) {
+            switchTab('tab-list');
+            return;
+        }
+
+        document.getElementById('details-portfolio-title').innerText = `📂 ${p.name}`;
+        
+        const perf = p.performance || {};
+        document.getElementById('details-total-value').innerText = `$${Math.round(perf.total_value || p.total_capital).toLocaleString()}`;
+        document.getElementById('details-total-capital').innerText = `원금 $${Math.round(p.total_capital).toLocaleString()}`;
+        
+        const sign = perf.total_pnl >= 0 ? '+' : '';
+        const pnlColor = perf.total_pnl >= 0 ? 'var(--success)' : 'var(--danger)';
+        const pnlText = `${sign}$${Math.round(perf.total_pnl || 0).toLocaleString()} (${sign}${perf.total_pnl_pct || 0}%)`;
+        document.getElementById('details-total-pnl').innerText = pnlText;
+        document.getElementById('details-total-pnl').style.color = pnlColor;
+        document.getElementById('details-days-held').innerText = `투자 시작일: ${p.invest_date} (경과: ${perf.days_held || 0}일)`;
+        document.getElementById('details-portfolio-mdd').innerText = `${perf.mdd || 0}%`;
+
+        // Render Positions Table
+        const tbody = document.getElementById('details-positions-table');
+        tbody.innerHTML = '';
+        if (perf.holdings && perf.holdings.length > 0) {
+            perf.holdings.forEach(h => {
+                const hPnlColor = h.pnl >= 0 ? 'pnl-green' : 'pnl-red';
+                const hSign = h.pnl >= 0 ? '+' : '';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <a href="https://app.hyperliquid.xyz/vaults/${h.address}" target="_blank" style="color:#fff; text-decoration:none; font-weight:700; hover:underline;">
+                            ${escapeHtml(h.name)}
+                        </a>
+                        <br><small style="color:var(--text-muted); font-size:0.75rem;">${h.address.substring(0, 12)}...</small>
+                    </td>
+                    <td>$${h.invested_usd.toLocaleString()}</td>
+                    <td><span class="badge" style="background:rgba(255,255,255,0.05); color:#fff;">${h.weight_pct}%</span></td>
+                    <td style="color:var(--success); font-weight:600;">${h.apr_30d}%</td>
+                    <td style="color:var(--danger); font-weight:600;">${h.mdd}%</td>
+                    <td style="font-weight:600;">$${h.est_value.toLocaleString()}</td>
+                    <td class="${hPnlColor}" style="font-weight:600;">${hSign}$${h.pnl.toLocaleString()} (${hSign}${h.pnl_pct}%)</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:30px;">보유 포지션 내역이 없습니다. 포트폴리오를 수정하여 포지션을 추가하세요.</td></tr>`;
+        }
+
+        // Render AI Insights
+        const insightsList = document.getElementById('details-insights-list');
+        insightsList.innerHTML = '';
+        const insights = p.insights || ["✨ 포트폴리오 분석 결과가 없습니다."];
+        insights.forEach(ins => {
+            const li = document.createElement('li');
+            li.className = 'insight-item';
+            
+            let emoji = '💡';
+            if (ins.includes('⚠️')) emoji = '⚠️';
+            if (ins.includes('⚖️')) emoji = '⚖️';
+            if (ins.includes('✨')) emoji = '✨';
+
+            const cleanText = ins.replace(/^[⚠️⚖️✨]\s*/, '');
+            li.innerHTML = `<span>${emoji}</span><span>${escapeHtml(cleanText)}</span>`;
+            insightsList.appendChild(li);
+        });
+
+        // Draw Line Chart
+        renderEquityCurveChart(perf.history_dates || [], perf.history_values || []);
+    }
+
+    // Render Equity Curve Chart
+    function renderEquityCurveChart(labels, data) {
+        const ctx = document.getElementById('equity-chart').getContext('2d');
+        if (equityChart) {
+            equityChart.destroy();
+        }
+
+        if (labels.length === 0 || data.length === 0) {
+            ctx.clearRect(0, 0, 400, 400);
+            return;
+        }
+
+        equityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '포트폴리오 평가 자산 (USD)',
+                    data: data,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                    fill: true,
+                    tension: 0.2,
+                    borderWidth: 2.5,
+                    pointRadius: 1,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#3b82f6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#1e293b',
+                        titleColor: '#fff',
+                        bodyColor: '#e2e8f0',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                return ` $${context.raw.toLocaleString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#64748b', font: { size: 10 } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.04)' },
+                        ticks: {
+                            color: '#64748b',
+                            font: { size: 10 },
+                            callback: function(value) {
+                                return `$${value.toLocaleString()}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Render Tab 3 (Scenario Simulator)
+    function renderScenarioSimulator() {
+        if (!scenarioReports || Object.keys(scenarioReports).length === 0) {
+            return;
+        }
+
+        // Draw Comparative Bar Chart
+        const ctx = document.getElementById('scenario-comparison-chart').getContext('2d');
+        if (scenarioChart) {
+            scenarioChart.destroy();
+        }
+
+        const labels = ["상승장 (Bull)", "하락장 (Bear)", "고변동성 (Vol)", "안정수익 (Stable)"];
+        const datasets = [];
+        
+        // Dynamic colors for portfolios
+        const colors = [
+            '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'
+        ];
+
+        let colorIdx = 0;
+        
+        // Render scenarios table
+        const tbody = document.getElementById('scenario-table-body');
+        tbody.innerHTML = '';
+
+        for (const [pid, report] of Object.entries(scenarioReports)) {
+            const sc = report.scenarios || {};
+            if (Object.keys(sc).length === 0) continue;
+
+            const color = colors[colorIdx % colors.length];
+            colorIdx++;
+
+            const dataPoints = [
+                sc.bull.expected_return_pct,
+                sc.bear.expected_return_pct,
+                sc.volatility.expected_return_pct,
+                sc.stable.expected_return_pct
+            ];
+
+            datasets.push({
+                label: report.name,
+                data: dataPoints,
+                backgroundColor: color,
+                borderRadius: 5
+            });
+
+            // Table Rows
+            const scenarioKeys = ['bull', 'bear', 'volatility', 'stable'];
+            scenarioKeys.forEach(skey => {
+                const s = sc[skey];
+                const retColor = s.expected_return_pct >= 0 ? 'pnl-green' : 'pnl-red';
+                const sign = s.expected_return_pct >= 0 ? '+' : '';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:#fff;">${escapeHtml(report.name)}</td>
+                    <td><span class="badge" style="background:${color}20; color:${color}; font-weight:700;">${escapeHtml(s.scenario_name)}</span></td>
+                    <td class="${retColor}" style="font-weight:700;">${sign}${s.expected_return_pct}%</td>
+                    <td style="color:var(--danger); font-weight:700;">${s.simulated_mdd}%</td>
+                    <td style="font-weight:700;">$${Math.round(s.expected_ending_value).toLocaleString()}</td>
+                    <td style="color:var(--text-muted); font-size:0.82rem; line-height:1.4;">${escapeHtml(s.desc)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        scenarioChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#e2e8f0', font: { weight: '600' } }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleColor: '#fff',
+                        bodyColor: '#e2e8f0',
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.dataset.label}: ${context.raw >= 0 ? '+' : ''}${context.raw}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#64748b', font: { weight: '600' } },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#64748b',
+                            callback: function(value) { return value + '%'; }
+                        },
+                        grid: { color: 'rgba(255,255,255,0.04)' }
+                    }
+                }
+            }
+        });
+    }
+
+    // Toggle Allocation Mode in Modal
+    function toggleAllocMode() {
+        const mode = document.getElementById('modal-port-mode').value;
+        const aiContainer = document.getElementById('modal-ai-strategy-container');
+        const manualContainer = document.getElementById('modal-manual-positions-container');
+
+        if (mode === 'ai') {
+            aiContainer.style.display = 'block';
+            manualContainer.style.display = 'none';
+        } else {
+            aiContainer.style.display = 'none';
+            manualContainer.style.display = 'block';
+        }
+    }
+
+    // Modal Manager
+    function openCreateModal() {
+        document.getElementById('modal-title').innerText = "새 가상 포트폴리오 생성";
+        document.getElementById('modal-port-id').value = "";
+        document.getElementById('modal-port-name').value = "";
+        document.getElementById('modal-port-capital').value = "100000";
+        document.getElementById('modal-port-date').value = new Date().toISOString().substring(0, 10);
+        document.getElementById('modal-port-mode').value = "manual";
+        
+        const positionsList = document.getElementById('modal-positions-list');
+        positionsList.innerHTML = '';
+        
+        toggleAllocMode();
+        addManualPositionRow(); // add at least one row
+        updateTotalWeight();
+        
+        document.getElementById('portfolioModal').style.display = 'flex';
+    }
+
+    function openEditModal() {
+        const p = portfolios.find(port => port.id === activePortfolioId);
+        if (!p) return;
+
+        document.getElementById('modal-title').innerText = "포트폴리오 수정";
+        document.getElementById('modal-port-id').value = p.id;
+        document.getElementById('modal-port-name').value = p.name;
+        document.getElementById('modal-port-capital').value = p.total_capital;
+        document.getElementById('modal-port-date').value = p.invest_date;
+        document.getElementById('modal-port-mode').value = "manual"; // default to manual edit
+
+        const positionsList = document.getElementById('modal-positions-list');
+        positionsList.innerHTML = '';
+
+        const totalCap = p.total_capital || 100000.0;
+        
+        if (p.positions && Object.keys(p.positions).length > 0) {
+            for (const [addr, amount] of Object.entries(p.positions)) {
+                const pct = Math.round((amount / totalCap) * 1000) / 10;
+                addManualPositionRow(addr, pct);
+            }
+        } else {
+            addManualPositionRow();
+        }
+
+        toggleAllocMode();
+        updateTotalWeight();
+
+        document.getElementById('portfolioModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('portfolioModal').style.display = 'none';
+    }
+
+    // Add row to manual positions in modal
+    function addManualPositionRow(selectedAddr = '', weight = 0) {
+        const container = document.getElementById('modal-positions-list');
+        const row = document.createElement('div');
+        row.className = 'position-row';
+
+        let optionsHtml = '<option value="">-- 볼트 선택 --</option>';
+        availableVaults.forEach(v => {
+            const isSelected = v.address.toLowerCase() === selectedAddr.toLowerCase() ? 'selected' : '';
+            optionsHtml += `<option value="${v.address}" ${isSelected}>${escapeHtml(v.name)} (${v.apr_30d}% APR)</option>`;
+        });
+
+        row.innerHTML = `
+            <select class="form-input vault-select" style="flex:2;" onchange="updateTotalWeight()">
+                ${optionsHtml}
+            </select>
+            <input type="number" class="form-input weight-input" style="flex:1;" value="${weight || ''}" placeholder="비중 (%)" min="0" max="100" step="0.1" oninput="updateTotalWeight()">
+            <button type="button" class="btn" style="color:var(--danger); border-color:var(--danger); font-size:0.9rem;" onclick="removePositionRow(this)">✕</button>
+        `;
+        container.appendChild(row);
+        updateTotalWeight();
+    }
+
+    function removePositionRow(button) {
+        const row = button.parentNode;
+        row.parentNode.removeChild(row);
+        updateTotalWeight();
+    }
+
+    function updateTotalWeight() {
+        let total = 0;
+        document.querySelectorAll('.weight-input').forEach(input => {
+            const v = parseFloat(input.value) || 0;
+            total += v;
+        });
+        
+        total = Math.round(total * 100) / 100;
+        const textNode = document.getElementById('modal-total-weight-text');
+        textNode.innerText = `총 비중 합계: ${total}%`;
+        
+        if (total === 100) {
+            textNode.style.color = 'var(--success)';
+        } else if (total > 100) {
+            textNode.style.color = 'var(--danger)';
+        } else {
+            textNode.style.color = 'var(--text-muted)';
+        }
+    }
+
+    // Save Portfolio
+    function savePortfolio() {
+        const pid = document.getElementById('modal-port-id').value;
+        const name = document.getElementById('modal-port-name').value.trim();
+        const capital = parseFloat(document.getElementById('modal-port-capital').value) || 100000.0;
+        const date = document.getElementById('modal-port-date').value;
+        const mode = document.getElementById('modal-port-mode').value;
+
+        if (!name) {
+            alert("포트폴리오 이름을 입력해주세요.");
+            return;
+        }
+
+        if (!date) {
+            alert("투자 시작일을 입력해주세요.");
+            return;
+        }
+
+        const payload = {
+            name: name,
+            total_capital: capital,
+            invest_date: date,
+            ptype: mode === 'ai' ? document.getElementById('modal-port-strategy').value : 'custom'
+        };
+
+        if (pid) {
+            payload.id = pid;
+        }
+
+        if (mode === 'manual') {
+            const positions = {};
+            let totalWeight = 0;
+            let hasError = false;
+
+            document.querySelectorAll('.position-row').forEach(row => {
+                const select = row.querySelector('.vault-select');
+                const input = row.querySelector('.weight-input');
+                const addr = select.value;
+                const weight = parseFloat(input.value) || 0;
+
+                if (!addr) {
+                    alert("볼트를 선택하지 않은 행이 있습니다.");
+                    hasError = true;
+                    return;
+                }
+
+                if (weight <= 0) {
+                    alert("비중은 0보다 커야 합니다.");
+                    hasError = true;
+                    return;
+                }
+
+                positions[addr] = weight;
+                totalWeight += weight;
+            });
+
+            if (hasError) return;
+
+            totalWeight = Math.round(totalWeight * 100) / 100;
+            if (totalWeight !== 100) {
+                alert(`비중 합계는 정확히 100%여야 합니다. (현재 합계: ${totalWeight}%)`);
+                return;
+            }
+
+            payload.positions = positions;
+        }
+
+        fetch('/api/portfolios', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(data => { throw new Error(data.error || 'Server error'); });
+            }
+            return res.json();
+        })
+        .then(data => {
+            showToast('✅ 가상 포트폴리오가 정상 저장되었습니다!');
+            closeModal();
+            loadPortfoliosData(data.id);
+            loadScenariosData();
+            switchTab('tab-list');
+        })
+        .catch(err => {
+            alert('저장 오류: ' + err.message);
+        });
+    }
+
+    // Delete Active Portfolio
+    function deleteActivePortfolio() {
+        if (!activePortfolioId) return;
+        
+        const p = portfolios.find(port => port.id === activePortfolioId);
+        if (!p) return;
+
+        if (!confirm(`정말로 포트폴리오 '${p.name}'을(를) 삭제하시겠습니까?`)) {
+            return;
+        }
+
+        fetch(`/api/portfolios/${activePortfolioId}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                showToast('🗑️ 포트폴리오가 성공적으로 삭제되었습니다.');
+                activePortfolioId = null;
+                loadPortfoliosData();
+                loadScenariosData();
+                switchTab('tab-list');
+            })
+            .catch(err => console.error("Error deleting portfolio:", err));
+    }
+
+    // Helper functions
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.innerText = message;
+        toast.className = "show";
+        setTimeout(() => { toast.className = ""; }, 3000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/"/g, "&quot;")
+                  .replace(/'/g, "&#039;");
+    }
 </script>
-</body></html>"""
+</body>
+</html>"""
+
 
 if __name__ == "__main__":
     print("🚀 Hyperliquid Dashboard Pro v3.1 - Port 5001")

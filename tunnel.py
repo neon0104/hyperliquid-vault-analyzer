@@ -152,6 +152,20 @@ def start_cloudflare(port: int = 5000, show_qr: bool = False):
         proc.kill()
         sys.exit(1)
 
+    # Spawn background daemon threads to continuously read and consume stdout and stderr,
+    # preventing pipe buffer deadlock (Error 1033).
+    def consume_stream(stream):
+        try:
+            for _ in stream:
+                pass
+        except Exception:
+            pass
+
+    t_stdout = threading.Thread(target=consume_stream, args=(proc.stdout,), daemon=True)
+    t_stderr = threading.Thread(target=consume_stream, args=(proc.stderr,), daemon=True)
+    t_stdout.start()
+    t_stderr.start()
+
     mobile_url = public_url + "/m"
 
     print()

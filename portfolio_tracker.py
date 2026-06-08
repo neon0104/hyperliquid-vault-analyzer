@@ -25,6 +25,9 @@ def load_snapshots_all():
     return result
 
 
+VIRTUAL_PORTFOLIOS_FILE = os.path.join(DATA_DIR, "virtual_portfolios.json")
+
+
 def load_my_portfolio():
     if not os.path.exists(MY_PORT_FILE):
         return {"positions": {}, "invest_date": None, "total_capital": 100000}
@@ -35,21 +38,82 @@ def load_my_portfolio():
     return {"positions": raw, "invest_date": None, "total_capital": sum(float(v) for v in raw.values())}
 
 
-def calc_my_portfolio(positions, invest_date, snapshots):
-    """내 실제 포트폴리오 수익률 계산"""
+def load_virtual_portfolios():
+    # If my_portfolio.json exists but virtual_portfolios.json does not, migrate it
+    if not os.path.exists(VIRTUAL_PORTFOLIOS_FILE) and os.path.exists(MY_PORT_FILE):
+        try:
+            my_port = load_my_portfolio()
+            default_port = {
+                "id": "default",
+                "name": "기본 포트폴리오",
+                "ptype": "custom",
+                "total_capital": my_port.get("total_capital", 100000.0),
+                "invest_date": my_port.get("invest_date") or datetime.now().strftime("%Y-%m-%d"),
+                "positions": my_port.get("positions", {})
+            }
+            save_virtual_portfolios([default_port])
+        except Exception as e:
+            print(f"[PORTFOLIO MIGRATION ERROR] {e}")
+
+    if not os.path.exists(VIRTUAL_PORTFOLIOS_FILE):
+        return []
+    try:
+        with open(VIRTUAL_PORTFOLIOS_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+def save_virtual_portfolios(portfolios):
+    os.makedirs(os.path.dirname(VIRTUAL_PORTFOLIOS_FILE), exist_ok=True)
+    with open(VIRTUAL_PORTFOLIOS_FILE, "w", encoding="utf-8") as f:
+        json.dump(portfolios, f, ensure_ascii=False, indent=2)
+
+
+def calc_portfolio_performance(positions, invest_date, total_capital, snapshots):
+    """Calculates performance metrics, holdings, and equity curve values for a portfolio configuration."""
     if not positions or not snapshots:
-        return None
+        return {
+            "total_invested": 0.0,
+            "total_value": 0.0,
+            "total_pnl": 0.0,
+            "total_pnl_pct": 0.0,
+            "monthly_est": 0.0,
+            "annual_est": 0.0,
+            "holdings": [],
+            "n_vaults": 0,
+            "invest_date": invest_date,
+            "analysis_date": None,
+            "days_held": 0,
+            "history_dates": [],
+            "history_values": [],
+            "mdd": 0.0
+        }
+
+    # Normalize positions: if positions sum to <= 1.05, treat as decimal weights;
+    # if positions sum to <= 100.5, treat as percentage weights;
+    # otherwise, treat as absolute USD amounts.
+    raw_sum = sum(float(v) for v in positions.values())
+    scaled_positions = {}
+    if raw_sum <= 1.05 and total_capital > 100:
+        for addr, w in positions.items():
+            scaled_positions[addr] = float(w) * total_capital
+    elif raw_sum <= 100.5 and total_capital > 1000:
+        for addr, w in positions.items():
+            scaled_positions[addr] = (float(w) / 100.0) * total_capital
+    else:
+        scaled_positions = {addr: float(val) for addr, val in positions.items()}
 
     dates      = sorted(snapshots.keys())
-    latest_dt  = dates[-1]
-    latest_map = snapshots[latest_dt]
+    latest_dt  = dates[-1] if dates else None
+    latest_map = snapshots[latest_dt] if latest_dt else {}
 
-    total_inv = sum(float(v) for v in positions.values())
+    total_inv = sum(float(v) for v in scaled_positions.values())
     holdings  = []
 
-    for addr, amount in positions.items():
+    for addr, amount in scaled_positions.items():
         amount = float(amount)
-        # 가장 최신 볼트 정보
+        # Get the latest vault info
         v = latest_map.get(addr, {})
         if not v:
             for d in reversed(dates):
@@ -65,15 +129,14 @@ def calc_my_portfolio(positions, invest_date, snapshots):
         allow_dep  = v.get("allow_deposits", True)
         leader_eq  = float(v.get("leader_equity_ratio", 0))
 
-        # 투자 기간 계산
+        # Calculate holding days
         try:
             start_dt   = datetime.strptime(invest_date, "%Y-%m-%d") if invest_date else datetime.now()
             days_held  = max(1, (datetime.now() - start_dt).days)
         except Exception:
             days_held = 1
 
-        # 스냅샷 기반 실제 수익 추정
-        # invest_date 이후 최초 스냅샷 찾기
+        # Locate first snapshot on/after invest_date
         first_snap_pnl = None
         for d in dates:
             if invest_date and d >= invest_date:
@@ -89,11 +152,10 @@ def calc_my_portfolio(positions, invest_date, snapshots):
         if first_snap_pnl and latest_pnl_arr:
             _, start_pnl_val, start_tvl = first_snap_pnl
             pnl_vault_diff = latest_pnl_arr[-1] - start_pnl_val
-            # 내 지분 비율로 환산
             my_share       = amount / max(start_tvl, 1)
             my_pnl_real    = pnl_vault_diff * my_share
         else:
-            # APR 기반 추정
+            # Fallback to APR calculation
             daily_r        = apr_30d / 100 / 365
             my_pnl_real    = amount * ((1 + daily_r) ** days_held - 1)
 
@@ -137,7 +199,6 @@ def calc_my_portfolio(positions, invest_date, snapshots):
             addr = h["address"]
             amt = h["invested_usd"]
             if not h["_first_pnl"]:
-                # If no starting snapshot, guess value based on linear APR
                 try:
                     start_dt = datetime.strptime(invest_date, "%Y-%m-%d") if invest_date else datetime.now()
                     d_dt = datetime.strptime(d, "%Y-%m-%d")
@@ -155,9 +216,18 @@ def calc_my_portfolio(positions, invest_date, snapshots):
                 my_share = amt / max(start_tvl, 1)
                 daily_total += amt + (pnl_diff * my_share)
             else:
-                # Missing snapshot for this day, assume value hasn't changed from best known
                 daily_total += h["est_value"]
         hist_values.append(round(daily_total, 2))
+
+    # Calculate portfolio MDD
+    mdd_val = 0.0
+    if hist_values:
+        eq_arr = np.array(hist_values, dtype=float)
+        if len(eq_arr) > 0:
+            rm = np.maximum.accumulate(eq_arr)
+            denom = np.where(rm > 0, rm, 1.0)
+            dd = (rm - eq_arr) / denom * 100
+            mdd_val = round(float(dd.max()), 2)
 
     return {
         "total_invested": round(total_inv, 2),
@@ -172,8 +242,220 @@ def calc_my_portfolio(positions, invest_date, snapshots):
         "analysis_date":  latest_dt,
         "days_held":      holdings[0]["days_held"] if holdings else 0,
         "history_dates":  hist_dates,
-        "history_values": hist_values
+        "history_values": hist_values,
+        "mdd":            mdd_val
     }
+
+
+def calc_my_portfolio(positions, invest_date, snapshots):
+    """Fallback calc_my_portfolio delegating to calc_portfolio_performance."""
+    total_capital = sum(float(v) for v in positions.values()) if positions else 100000.0
+    return calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
+
+
+def get_portfolio_insights(positions, performance, latest_snapshot):
+    """Diagnoses the portfolio and returns a list of text insights."""
+    insights = []
+    if not positions or not performance or not latest_snapshot:
+        return ["포트폴리오 구성 요소가 부족하여 진단할 수 없습니다."]
+
+    holdings = performance.get("holdings", [])
+    if not holdings:
+        return ["포트폴리오에 보유한 볼트가 없습니다."]
+
+    # 1. Diversification check
+    max_weight_holding = max(holdings, key=lambda x: x["weight_pct"])
+    if max_weight_holding["weight_pct"] > 50.0:
+        insights.append(
+            f"⚠️ 분산 투자 경고: 단일 볼트 '{max_weight_holding['name']}'의 비중이 "
+            f"{max_weight_holding['weight_pct']}%로 50%를 초과합니다. 리스크 분산을 위해 비중 조절을 권장합니다."
+        )
+
+    # 2. Robustness check
+    total_invested = performance.get("total_invested", 0.0)
+    if total_invested > 0:
+        weighted_robustness = sum(
+            h["invested_usd"] * h["robustness"] for h in holdings
+        ) / total_invested
+    else:
+        weighted_robustness = 0.0
+
+    if weighted_robustness < 0.4:
+        insights.append(
+            f"⚠️ 로버스트니스 경고: 포트폴리오의 가중 평균 로버스트니스 점수가 "
+            f"{weighted_robustness:.2f}로 기준치(0.4) 미만입니다. 장기적 안정성이 낮을 수 있습니다."
+        )
+
+    # 3. Risk warning
+    portfolio_mdd = performance.get("mdd", 0.0)
+    high_vault_mdd = [h for h in holdings if h["mdd"] > 30.0]
+
+    if portfolio_mdd > 20.0 or high_vault_mdd:
+        mdd_msgs = []
+        if portfolio_mdd > 20.0:
+            mdd_msgs.append(f"포트폴리오의 최대 낙폭(MDD)이 {portfolio_mdd:.2f}%로 20%를 초과합니다.")
+        if high_vault_mdd:
+            names = ", ".join([f"'{h['name']}'({h['mdd']}%)" for h in high_vault_mdd])
+            mdd_msgs.append(f"개별 볼트 중 MDD가 30%를 초과하는 위험 자산이 포함되어 있습니다: {names}")
+        insights.append(f"⚠️ 위험 관리 경고: {' '.join(mdd_msgs)}")
+
+    # 4. Barbell strategy check
+    snapshot_map = {v["address"]: v for v in latest_snapshot if "address" in v}
+    
+    core_usd = 0.0
+    satellite_usd = 0.0
+    unknown_usd = 0.0
+    
+    for h in holdings:
+        addr = h["address"]
+        v = snapshot_map.get(addr, {})
+        group = v.get("barbell_group")
+        
+        # Fallback classification if barbell_group is not specified
+        if not group:
+            mdd_val = float(v.get("max_drawdown", h["mdd"]))
+            rob_val = float(v.get("robustness_score", h["robustness"]))
+            if mdd_val <= 15.0 and rob_val >= 0.5:
+                group = "CORE"
+            else:
+                group = "SATELLITE"
+                
+        if group == "CORE":
+            core_usd += h["invested_usd"]
+        elif group == "SATELLITE":
+            satellite_usd += h["invested_usd"]
+        else:
+            unknown_usd += h["invested_usd"]
+
+    total_usd = core_usd + satellite_usd + unknown_usd
+    if total_usd > 0:
+        core_pct = (core_usd / total_usd) * 100.0
+        satellite_pct = (satellite_usd / total_usd) * 100.0
+        
+        if not (50.0 <= core_pct <= 80.0) or not (20.0 <= satellite_pct <= 50.0):
+            insights.append(
+                f"⚖️ 바벨 전략 제안: 현재 포트폴리오 비중(CORE: {core_pct:.1f}%, SATELLITE: {satellite_pct:.1f}%)이 "
+                f"이상적인 균형(CORE 50%~80%, SATELLITE 20%~50%)을 벗어났습니다. 비중 리밸런싱을 고려해보세요."
+            )
+    
+    if not insights:
+        insights.append("✨ 포트폴리오가 정상 범위 내에서 안정적으로 운영되고 있습니다. (진단 결과 특이사항 없음)")
+
+    return insights
+
+
+def run_scenario_analysis(portfolios, snapshots):
+    """Returns a simulated report for each portfolio under 4 scenarios."""
+    if not snapshots:
+        return {}
+
+    dates = sorted(snapshots.keys())
+    latest_dt = dates[-1] if dates else None
+    latest_map = snapshots[latest_dt] if latest_dt else {}
+
+    reports = {}
+
+    for port in portfolios:
+        port_id = port.get("id")
+        positions = port.get("positions", {})
+        total_capital = float(port.get("total_capital", 100000.0))
+        
+        # Calculate weights
+        raw_sum = sum(float(v) for v in positions.values())
+        scaled_positions = {}
+        if raw_sum <= 1.05 and total_capital > 100:
+            for addr, w in positions.items():
+                scaled_positions[addr] = float(w) * total_capital
+        elif raw_sum <= 100.5 and total_capital > 1000:
+            for addr, w in positions.items():
+                scaled_positions[addr] = (float(w) / 100.0) * total_capital
+        else:
+            scaled_positions = {addr: float(val) for addr, val in positions.items()}
+
+        total_inv = sum(float(v) for v in scaled_positions.values())
+        if total_inv <= 0:
+            continue
+
+        # Get vault details
+        vault_details = []
+        for addr, amount in scaled_positions.items():
+            w = amount / total_inv
+            v = latest_map.get(addr, {})
+            if not v:
+                for d in reversed(dates):
+                    v = snapshots[d].get(addr, {})
+                    if v: break
+            
+            apr = float(v.get("apr_30d", 0))
+            mdd = float(v.get("max_drawdown", 0))
+            vault_details.append({
+                "weight": w,
+                "apr": apr,
+                "mdd": mdd
+            })
+
+        # 1. 상승장 (Bull Market)
+        bull_ret = sum(vd["weight"] * vd["apr"] * 1.5 for vd in vault_details)
+        bull_mdd = sum(vd["weight"] * vd["mdd"] * 0.5 for vd in vault_details)
+        bull_val = total_capital * (1.0 + bull_ret / 100.0)
+
+        # 2. 하락장 (Bear Market)
+        bear_mdd = sum(vd["weight"] * vd["mdd"] for vd in vault_details)
+        bear_ret = -bear_mdd
+        bear_val = total_capital * (1.0 + bear_ret / 100.0)
+
+        # 3. 고변동성 (High Volatility)
+        vol_ret = sum(vd["weight"] * vd["apr"] * 0.8 for vd in vault_details)
+        vol_mdd = sum(vd["weight"] * vd["mdd"] * 1.3 for vd in vault_details)
+        vol_val = total_capital * (1.0 + vol_ret / 100.0)
+
+        # 4. 안정수익 (Stable Yield)
+        stable_rets = []
+        for vd in vault_details:
+            if vd["mdd"] <= 10.0:
+                sim_apr = vd["apr"]
+            else:
+                sim_apr = vd["apr"] * (10.0 / max(vd["mdd"], 1.0))
+            stable_rets.append(vd["weight"] * sim_apr)
+        stable_ret = sum(stable_rets)
+        stable_mdd = sum(vd["weight"] * min(vd["mdd"], 10.0) for vd in vault_details)
+        stable_val = total_capital * (1.0 + stable_ret / 100.0)
+
+        reports[port_id] = {
+            "name": port.get("name"),
+            "total_capital": total_capital,
+            "scenarios": {
+                "bull": {
+                    "scenario_name": "상승장 (Bull Market)",
+                    "expected_return_pct": round(bull_ret, 2),
+                    "simulated_mdd": round(bull_mdd, 2),
+                    "expected_ending_value": round(bull_val, 2),
+                    "desc": "가상 상승장 시뮬레이션: 미래 수익률을 현재 30일 APR의 1.5배로 가정하여 낙관적인 자산 성장률을 프로젝션합니다."
+                },
+                "bear": {
+                    "scenario_name": "하락장 (Bear Market)",
+                    "expected_return_pct": round(bear_ret, 2),
+                    "simulated_mdd": round(bear_mdd, 2),
+                    "expected_ending_value": round(bear_val, 2),
+                    "desc": "시장 크래시 시뮬레이션: 포트폴리오 내 모든 볼트가 과거 최대 낙폭(MDD)을 동시에 겪는 최악의 상황을 시뮬레이션합니다."
+                },
+                "volatility": {
+                    "scenario_name": "고변동성 (High Volatility)",
+                    "expected_return_pct": round(vol_ret, 2),
+                    "simulated_mdd": round(vol_mdd, 2),
+                    "expected_ending_value": round(vol_val, 2),
+                    "desc": "변동성 급증 시뮬레이션: 시장의 불확실성이 커져 수익률은 20% 감소하고 개별 볼트의 MDD는 1.3배 증가하는 시나리오입니다."
+                },
+                "stable": {
+                    "scenario_name": "안정수익 (Stable Yield)",
+                    "expected_return_pct": round(stable_ret, 2),
+                    "simulated_mdd": round(stable_mdd, 2),
+                    "expected_ending_value": round(stable_val, 2),
+                    "desc": "보수적 안정수익 시뮬레이션: MDD 10% 이하의 저위험 볼트는 수익률을 유지하고, 고위험 볼트의 수익률은 MDD 비율로 페널티를 주어 시뮬레이션합니다."
+                }
+            }
+        }
+    return reports
 
 
 def simulate_rec_backtest(recs, snapshots, start_date=None, sim_amount=100000.0):
