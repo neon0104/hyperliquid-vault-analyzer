@@ -2609,8 +2609,33 @@ MY_HTML = """<!DOCTYPE html>
     // Load API Data
     function loadPortfoliosData(selectIdAfterLoad = null) {
         fetch('/api/portfolios')
-            .then(res => res.json())
+            .then(res => {
+                if (res.redirected || res.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                return res.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch(e) {
+                        if (text.trim().startsWith('<')) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+                    }
+                });
+            })
             .then(data => {
+                if (!data) return;
+                if (!Array.isArray(data)) {
+                    if (data.error) {
+                        alert("에러 발생: " + data.error);
+                    } else {
+                        alert("잘못된 데이터 포맷입니다.");
+                    }
+                    return;
+                }
                 portfolios = data;
                 if (portfolios.length === 0) {
                     document.getElementById('portfolios-grid').style.display = 'none';
@@ -2628,13 +2653,33 @@ MY_HTML = """<!DOCTYPE html>
                     renderPortfoliosList();
                 }
             })
-            .catch(err => console.error("Error loading portfolios:", err));
+            .catch(err => {
+                console.error("Error loading portfolios:", err);
+                showToast("❌ 포트폴리오 데이터를 불러오지 못했습니다. 새로고침해보세요.");
+            });
     }
 
     function loadScenariosData() {
         fetch('/api/scenarios')
-            .then(res => res.json())
+            .then(res => {
+                if (res.redirected || res.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                return res.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch(e) {
+                        if (text.trim().startsWith('<')) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+                    }
+                });
+            })
             .then(data => {
+                if (!data) return;
                 scenarioReports = data;
                 if (document.getElementById('tab-simulator').classList.contains('active')) {
                     renderScenarioSimulator();
