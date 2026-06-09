@@ -7010,5 +7010,90 @@
         "leader_eq": 0.9991176557085467
       }
     ]
+  },
+  "2026-06-10": {
+    "portfolio_value": 139710.23,
+    "daily_pnl": 568.99,
+    "daily_return_pct": 0.4089,
+    "cumulative_pnl": 39710.23,
+    "cumulative_pct": 39.7102,
+    "max_equity_ever": 139710.23,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3818,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 12.5,
+        "apr_30d": 54.44,
+        "robustness": 0.8922,
+        "undervalue": 1.03,
+        "leader_eq": 0.49618018084721255
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 12.5,
+        "apr_30d": 384.22,
+        "robustness": 0.8611,
+        "undervalue": 0.576,
+        "leader_eq": 0.4559192842094903
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 12.5,
+        "apr_30d": 93.26,
+        "robustness": 0.8017,
+        "undervalue": 1.085,
+        "leader_eq": 0.9809697354747505
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.5,
+        "apr_30d": 96.91,
+        "robustness": 0.7398,
+        "undervalue": 0.714,
+        "leader_eq": 0.8459111073380101
+      },
+      {
+        "name": "Buyback Spread Engine",
+        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
+        "alloc_pct": 12.5,
+        "apr_30d": 429.22,
+        "robustness": 0.4986,
+        "undervalue": 1.557,
+        "leader_eq": 0.8247941334240058
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 12.5,
+        "apr_30d": 48.37,
+        "robustness": 0.6129,
+        "undervalue": 1.033,
+        "leader_eq": 0.9427322072426638
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 12.5,
+        "apr_30d": 27.39,
+        "robustness": 0.6815,
+        "undervalue": 1.024,
+        "leader_eq": 0.9459679175168018
+      },
+      {
+        "name": "All-Weather Multi-Strategy",
+        "address": "0xcc1e051cbb317bbfaa3c025dbd1dbfbddfd608c7",
+        "alloc_pct": 12.5,
+        "apr_30d": 60.26,
+        "robustness": 0.6537,
+        "undervalue": 0.829,
+        "leader_eq": 0.9870865488929941
+      }
+    ]
   }
 }
