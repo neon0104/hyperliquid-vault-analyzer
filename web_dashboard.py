@@ -2385,14 +2385,24 @@ MY_HTML = """<!DOCTYPE html>
 
         <div class="grid-3" style="margin-bottom:24px;">
             <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
-                <div class="p-card-stat-label">총 투자 자산 (USD)</div>
+                <div class="p-card-stat-label">총 투자 자산 (세전)</div>
                 <div class="stat-val" id="details-total-value" style="font-size:1.8rem; font-weight:800; color:#fff; margin-top:5px;">$0</div>
                 <div class="p-card-stat-label" id="details-total-capital" style="margin-top:5px; font-size:0.75rem;">원금 $0</div>
             </div>
             <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
-                <div class="p-card-stat-label">누적 수익률 (PnL)</div>
+                <div class="p-card-stat-label">공제 후 순자산 (예상)</div>
+                <div class="stat-val" id="details-net-value" style="font-size:1.8rem; font-weight:800; color:var(--accent2); margin-top:5px;">$0</div>
+                <div class="p-card-stat-label" style="margin-top:5px; font-size:0.75rem;">10% 성과수수료 공제 반영</div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
+                <div class="p-card-stat-label">세전 누적 수익률 (PnL)</div>
                 <div class="stat-val" id="details-total-pnl" style="font-size:1.8rem; font-weight:800; margin-top:5px;">$0 (+0%)</div>
                 <div class="p-card-stat-label" id="details-days-held" style="margin-top:5px; font-size:0.75rem;">투자 기간: 0일</div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
+                <div class="p-card-stat-label">공제 후 순수익 (예상)</div>
+                <div class="stat-val" id="details-net-pnl" style="font-size:1.8rem; font-weight:800; margin-top:5px;">$0 (+0%)</div>
+                <div class="p-card-stat-label" style="margin-top:5px; font-size:0.75rem;">수익 구간 10% 수수료 공제</div>
             </div>
             <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
                 <div class="p-card-stat-label">예상 최대 낙폭 (MDD)</div>
@@ -2419,10 +2429,10 @@ MY_HTML = """<!DOCTYPE html>
                             <th>볼트 이름</th>
                             <th>투자 원금 (USD)</th>
                             <th>비중 (%)</th>
-                            <th>30d APR</th>
-                            <th>최대 낙폭 (MDD)</th>
-                            <th>평가 금액 (USD)</th>
-                            <th>누적 수익금 (ROI)</th>
+                            <th>30d APR / MDD</th>
+                            <th>평가 금액 (세전)</th>
+                            <th>세전 수익금 (ROI)</th>
+                            <th>공제 후 순자산 / 순수익 (예상)</th>
                         </tr>
                     </thead>
                     <tbody id="details-positions-table">
@@ -2698,6 +2708,9 @@ MY_HTML = """<!DOCTYPE html>
             const isSelected = p.id === activePortfolioId;
             const pnlColor = perf.total_pnl >= 0 ? 'pnl-green' : 'pnl-red';
             const sign = perf.total_pnl >= 0 ? '+' : '';
+            
+            const netPnlColor = (perf.net_total_pnl || 0) >= 0 ? 'pnl-green' : 'pnl-red';
+            const netSign = (perf.net_total_pnl || 0) >= 0 ? '+' : '';
 
             const card = document.createElement('div');
             card.className = `glass-card p-card ${isSelected ? 'active-port' : ''}`;
@@ -2718,16 +2731,24 @@ MY_HTML = """<!DOCTYPE html>
                         <div class="p-card-stat-val">$${Math.round(p.total_capital).toLocaleString()}</div>
                     </div>
                     <div>
-                        <div class="p-card-stat-label">현재 가치</div>
+                        <div class="p-card-stat-label">최대 낙폭 (MDD)</div>
+                        <div class="p-card-stat-val" style="color:var(--danger);">${perf.mdd || 0}%</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">현재 가치 (세전)</div>
                         <div class="p-card-stat-val">$${Math.round(perf.total_value || p.total_capital).toLocaleString()}</div>
                     </div>
                     <div>
-                        <div class="p-card-stat-label">수익금 / 수익률</div>
+                        <div class="p-card-stat-label">공제 후 순자산 (예상)</div>
+                        <div class="p-card-stat-val" style="color:var(--accent2);">$${Math.round(perf.net_total_value || p.total_capital).toLocaleString()}</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">세전 수익금 / 수익률</div>
                         <div class="p-card-stat-val ${pnlColor}">${sign}$${Math.round(perf.total_pnl || 0).toLocaleString()} (${sign}${perf.total_pnl_pct || 0}%)</div>
                     </div>
                     <div>
-                        <div class="p-card-stat-label">최대 낙폭 (MDD)</div>
-                        <div class="p-card-stat-val" style="color:var(--danger);">${perf.mdd || 0}%</div>
+                        <div class="p-card-stat-label">공제 후 순수익 / 순수익률</div>
+                        <div class="p-card-stat-val ${netPnlColor}">${netSign}$${Math.round(perf.net_total_pnl || 0).toLocaleString()} (${netSign}${perf.net_total_pnl_pct || 0}%)</div>
                     </div>
                 </div>
             `;
@@ -2757,6 +2778,14 @@ MY_HTML = """<!DOCTYPE html>
         document.getElementById('details-days-held').innerText = `투자 시작일: ${p.invest_date} (경과: ${perf.days_held || 0}일)`;
         document.getElementById('details-portfolio-mdd').innerText = `${perf.mdd || 0}%`;
 
+        // Render Net elements
+        const netSign = (perf.net_total_pnl || 0) >= 0 ? '+' : '';
+        const netPnlColor = (perf.net_total_pnl || 0) >= 0 ? 'var(--success)' : 'var(--danger)';
+        const netPnlText = `${netSign}$${Math.round(perf.net_total_pnl || 0).toLocaleString()} (${netSign}${perf.net_total_pnl_pct || 0}%)`;
+        document.getElementById('details-net-value').innerText = `$${Math.round(perf.net_total_value || p.total_capital).toLocaleString()}`;
+        document.getElementById('details-net-pnl').innerText = netPnlText;
+        document.getElementById('details-net-pnl').style.color = netPnlColor;
+
         // Render Positions Table
         const tbody = document.getElementById('details-positions-table');
         tbody.innerHTML = '';
@@ -2764,6 +2793,9 @@ MY_HTML = """<!DOCTYPE html>
             perf.holdings.forEach(h => {
                 const hPnlColor = h.pnl >= 0 ? 'pnl-green' : 'pnl-red';
                 const hSign = h.pnl >= 0 ? '+' : '';
+                
+                const hNetPnlColor = h.net_pnl >= 0 ? 'pnl-green' : 'pnl-red';
+                const hNetSign = h.net_pnl >= 0 ? '+' : '';
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -2775,10 +2807,10 @@ MY_HTML = """<!DOCTYPE html>
                     </td>
                     <td>$${h.invested_usd.toLocaleString()}</td>
                     <td><span class="badge" style="background:rgba(255,255,255,0.05); color:#fff;">${h.weight_pct}%</span></td>
-                    <td style="color:var(--success); font-weight:600;">${h.apr_30d}%</td>
-                    <td style="color:var(--danger); font-weight:600;">${h.mdd}%</td>
+                    <td style="font-weight:600;"><span style="color:var(--success);">${h.apr_30d}%</span> / <span style="color:var(--danger);">${h.mdd}%</span></td>
                     <td style="font-weight:600;">$${h.est_value.toLocaleString()}</td>
                     <td class="${hPnlColor}" style="font-weight:600;">${hSign}$${h.pnl.toLocaleString()} (${hSign}${h.pnl_pct}%)</td>
+                    <td style="font-weight:600; color:var(--accent2);">$${h.net_value.toLocaleString()} <span class="${hNetPnlColor}" style="font-size:0.85rem; font-weight:600;">(${hNetSign}$${h.net_pnl.toLocaleString()})</span></td>
                 `;
                 tbody.appendChild(tr);
             });

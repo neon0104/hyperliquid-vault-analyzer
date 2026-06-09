@@ -163,6 +163,10 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
         pnl_pct    = my_pnl_real / amount * 100 if amount > 0 else 0
         monthly_est= amount * apr_30d / 100 / 12
 
+        # Net profit after 10% leader fee (profit share)
+        net_pnl = my_pnl_real * 0.9 if my_pnl_real > 0 else my_pnl_real
+        net_val = amount + net_pnl
+
         holdings.append({
             "address":      addr,
             "name":         name,
@@ -179,6 +183,9 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
             "est_value":    round(est_value, 2),
             "pnl":          round(my_pnl_real, 2),
             "pnl_pct":      round(pnl_pct, 2),
+            "net_pnl":      round(net_pnl, 2),
+            "net_pnl_pct":  round(net_pnl / amount * 100, 2) if amount > 0 else 0,
+            "net_value":    round(net_val, 2),
             "monthly_est":  round(monthly_est, 2),
             "is_danger":    (mdd > 30 or apr_30d < -5),
             "_first_pnl":   first_snap_pnl
@@ -188,6 +195,10 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
     total_val  = sum(h["est_value"] for h in holdings)
     total_pnl  = total_val - total_inv
     total_pct  = total_pnl / total_inv * 100 if total_inv > 0 else 0
+
+    net_total_pnl = sum(h["net_pnl"] for h in holdings)
+    net_total_val = total_inv + net_total_pnl
+    net_total_pct = net_total_pnl / total_inv * 100 if total_inv > 0 else 0
 
     # Build history series
     hist_dates = [d for d in dates if not invest_date or d >= invest_date]
@@ -234,6 +245,9 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
         "total_value":    round(total_val, 2),
         "total_pnl":      round(total_pnl, 2),
         "total_pnl_pct":  round(total_pct, 2),
+        "net_total_pnl":  round(net_total_pnl, 2),
+        "net_total_pnl_pct": round(net_total_pct, 2),
+        "net_total_value": round(net_total_val, 2),
         "monthly_est":    round(sum(h["monthly_est"] for h in holdings), 2),
         "annual_est":     round(sum(h["monthly_est"] for h in holdings) * 12, 2),
         "holdings":       holdings,
