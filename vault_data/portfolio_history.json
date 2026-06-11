@@ -7095,5 +7095,81 @@
         "leader_eq": 0.9870865488929941
       }
     ]
+  },
+  "2026-06-11": {
+    "portfolio_value": 140087.01,
+    "daily_pnl": 376.78,
+    "daily_return_pct": 0.2697,
+    "cumulative_pnl": 40087.01,
+    "cumulative_pct": 40.087,
+    "max_equity_ever": 140087.01,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3575,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 16.6,
+        "apr_30d": 48.41,
+        "robustness": 0.8921,
+        "undervalue": 1.01,
+        "leader_eq": 0.5036781459469545
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 16.7,
+        "apr_30d": 29.96,
+        "robustness": 0.8365,
+        "undervalue": 0.985,
+        "leader_eq": 0.9771857309814094
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 16.7,
+        "apr_30d": 94.05,
+        "robustness": 0.8364,
+        "undervalue": 1.085,
+        "leader_eq": 0.9809697354747505
+      },
+      {
+        "name": "Buyback Spread Engine",
+        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
+        "alloc_pct": 12.5,
+        "apr_30d": 343.42,
+        "robustness": 0.4392,
+        "undervalue": 1.401,
+        "leader_eq": 0.8247941334240058
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 12.5,
+        "apr_30d": 76.87,
+        "robustness": 0.4761,
+        "undervalue": 1.068,
+        "leader_eq": 0.8941992744820326
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 12.5,
+        "apr_30d": 41.97,
+        "robustness": 0.6123,
+        "undervalue": 1.027,
+        "leader_eq": 0.9427322059674438
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 12.5,
+        "apr_30d": 95.26,
+        "robustness": 0.7435,
+        "undervalue": 0.718,
+        "leader_eq": 0.840028124245312
+      }
+    ]
   }
 }
