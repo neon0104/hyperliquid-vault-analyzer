@@ -1,0 +1,208 @@
+{
+  "ok": true,
+  "metrics_count": 30,
+  "stable_picks": 10,
+  "recovery_picks": 10,
+  "holdings": [
+    {
+      "leg": "stable",
+      "name": "HLP Liquidator 2",
+      "address": "0xb0a55f13d22f66e6d495ac98113841b2326e9540",
+      "weight": 0.4992,
+      "return_all": 29.0001,
+      "mdd": 0.0001,
+      "drawdown_now": 0.0,
+      "recovery_factor": 413981.4777
+    },
+    {
+      "leg": "stable",
+      "name": "Equinox · Blackalgo",
+      "address": "0x7048b287889c5913d59f812795d7fd5d724be77a",
+      "weight": 0.0002,
+      "return_all": 7543.6801,
+      "mdd": 0.2268,
+      "drawdown_now": 0.168,
+      "recovery_factor": 33268.3632
+    },
+    {
+      "leg": "stable",
+      "name": "HLP Strategy A",
+      "address": "0x010461c14e146ac35fe42271bdc1134ee31c703a",
+      "weight": 0.0001,
+      "return_all": 4341.2915,
+      "mdd": 0.6339,
+      "drawdown_now": 0.3745,
+      "recovery_factor": 6848.1075
+    },
+    {
+      "leg": "stable",
+      "name": "Hyperliquidity Provider (HLP)",
+      "address": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+      "weight": 0.0,
+      "return_all": 4746.7288,
+      "mdd": 0.7062,
+      "drawdown_now": 0.3527,
+      "recovery_factor": 6721.8776
+    },
+    {
+      "leg": "stable",
+      "name": "HLP Strategy B",
+      "address": "0x31ca8395cf837de08b24da3f660e77761dfb974b",
+      "weight": 0.0001,
+      "return_all": 3946.6091,
+      "mdd": 0.6066,
+      "drawdown_now": 0.3753,
+      "recovery_factor": 6505.6228
+    },
+    {
+      "leg": "stable",
+      "name": "drkmttr",
+      "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+      "weight": 0.0001,
+      "return_all": 1215.5765,
+      "mdd": 0.4021,
+      "drawdown_now": 0.0933,
+      "recovery_factor": 3023.3279
+    },
+    {
+      "leg": "stable",
+      "name": "pmalt",
+      "address": "0x4dec0a851849056e259128464ef28ce78afa27f6",
+      "weight": 0.0,
+      "return_all": 2373.4538,
+      "mdd": 0.9978,
+      "drawdown_now": 0.0,
+      "recovery_factor": 2378.6502
+    },
+    {
+      "leg": "stable",
+      "name": "Scott Phillips Trading Vault",
+      "address": "0x1840bdb83caff17de910ec407cafb817678786b5",
+      "weight": 0.0001,
+      "return_all": 1050.6863,
+      "mdd": 0.5976,
+      "drawdown_now": 0.2641,
+      "recovery_factor": 1758.173
+    },
+    {
+      "leg": "stable",
+      "name": "AIQuantPulse",
+      "address": "0x8231fdf9997c003a267374b45fb25c0455aa1dcb",
+      "weight": 0.0002,
+      "return_all": 235.4077,
+      "mdd": 0.1507,
+      "drawdown_now": 0.1507,
+      "recovery_factor": 1562.4456
+    },
+    {
+      "leg": "stable",
+      "name": "Growi HF",
+      "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+      "weight": 0.0001,
+      "return_all": 814.3255,
+      "mdd": 0.6937,
+      "drawdown_now": 0.1587,
+      "recovery_factor": 1173.8169
+    },
+    {
+      "leg": "recovery",
+      "name": "Equinox · Blackalgo",
+      "address": "0x7048b287889c5913d59f812795d7fd5d724be77a",
+      "weight": 0.2725,
+      "return_all": 7543.6801,
+      "mdd": 0.2268,
+      "drawdown_now": 0.168,
+      "recovery_factor": 33268.3632
+    },
+    {
+      "leg": "recovery",
+      "name": "HLP Strategy A",
+      "address": "0x010461c14e146ac35fe42271bdc1134ee31c703a",
+      "weight": 0.0561,
+      "return_all": 4341.2915,
+      "mdd": 0.6339,
+      "drawdown_now": 0.3745,
+      "recovery_factor": 6848.1075
+    },
+    {
+      "leg": "recovery",
+      "name": "HLP Strategy B",
+      "address": "0x31ca8395cf837de08b24da3f660e77761dfb974b",
+      "weight": 0.0533,
+      "return_all": 3946.6091,
+      "mdd": 0.6066,
+      "drawdown_now": 0.3753,
+      "recovery_factor": 6505.6228
+    },
+    {
+      "leg": "recovery",
+      "name": "Hyperliquidity Provider (HLP)",
+      "address": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+      "weight": 0.0551,
+      "return_all": 4746.7288,
+      "mdd": 0.7062,
+      "drawdown_now": 0.3527,
+      "recovery_factor": 6721.8776
+    },
+    {
+      "leg": "recovery",
+      "name": "Scott Phillips Trading Vault",
+      "address": "0x1840bdb83caff17de910ec407cafb817678786b5",
+      "weight": 0.0144,
+      "return_all": 1050.6863,
+      "mdd": 0.5976,
+      "drawdown_now": 0.2641,
+      "recovery_factor": 1758.173
+    },
+    {
+      "leg": "recovery",
+      "name": "drkmttr",
+      "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+      "weight": 0.0248,
+      "return_all": 1215.5765,
+      "mdd": 0.4021,
+      "drawdown_now": 0.0933,
+      "recovery_factor": 3023.3279
+    },
+    {
+      "leg": "recovery",
+      "name": "AIQuantPulse",
+      "address": "0x8231fdf9997c003a267374b45fb25c0455aa1dcb",
+      "weight": 0.0128,
+      "return_all": 235.4077,
+      "mdd": 0.1507,
+      "drawdown_now": 0.1507,
+      "recovery_factor": 1562.4456
+    },
+    {
+      "leg": "recovery",
+      "name": "Growi HF",
+      "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+      "weight": 0.0096,
+      "return_all": 814.3255,
+      "mdd": 0.6937,
+      "drawdown_now": 0.1587,
+      "recovery_factor": 1173.8169
+    },
+    {
+      "leg": "recovery",
+      "name": "FC Genesis - Quantum",
+      "address": "0xa6a34f0bf2ccea9a1ddf9e9a973f17c498dc5e40",
+      "weight": 0.0006,
+      "return_all": 16.3425,
+      "mdd": 0.2155,
+      "drawdown_now": 0.2155,
+      "recovery_factor": 75.8279
+    },
+    {
+      "leg": "recovery",
+      "name": "Delta_01",
+      "address": "0x3005fade4c0df5e1cd187d7062da359416f0eb8e",
+      "weight": 0.0008,
+      "return_all": 46.7299,
+      "mdd": 0.4896,
+      "drawdown_now": 0.1386,
+      "recovery_factor": 95.4394
+    }
+  ]
+}

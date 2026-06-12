@@ -31,6 +31,7 @@ SNAPSHOTS_DIR  = DATA_DIR / "snapshots"
 REPORTS_DIR    = DATA_DIR / "reports"
 PORTFOLIO_FILE = BASE_DIR / "my_portfolio.json"
 DISCORD_CFG    = BASE_DIR / "discord_config.json"
+TELEGRAM_CFG   = BASE_DIR / "telegram_config.json"
 
 for d in [SNAPSHOTS_DIR, REPORTS_DIR]: os.makedirs(d, exist_ok=True)
 
@@ -125,6 +126,27 @@ def send_discord(msg):
         req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=5) as r: return r.status in (200, 204)
     except: return False
+
+def send_telegram(msg):
+    try:
+        if not os.path.exists(TELEGRAM_CFG): return False
+        with open(str(TELEGRAM_CFG), encoding="utf-8") as f:
+            cfg = json.load(f)
+            bot_token = cfg.get("bot_token", "")
+            chat_id = cfg.get("chat_id", "")
+        if not bot_token or not chat_id: return False
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        payload = {
+            "chat_id": chat_id,
+            "text": msg,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": True
+        }
+        data = json.dumps(payload).encode()
+        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r: return r.status == 200
+    except: return False
+
 
 # ── 라우트 ────────────────────────────────────────────────────────────────────
 
@@ -290,20 +312,107 @@ def api_simulate():
     if not res: return jsonify({"error": "데이터 또는 시뮬레이션 결과가 없습니다."})
     return jsonify(res)
 
+@app.route("/settings")
 @app.route("/discord")
 @jwt_required()
-def discord_gui():
+def settings_gui():
     wk = ""
     if os.path.exists(DISCORD_CFG):
-        with open(str(DISCORD_CFG), encoding="utf-8") as f: wk = json.load(f).get("webhook_url", "")
-    return render_template_string(DISCORD_HTML, wk=wk)
+        try:
+            with open(str(DISCORD_CFG), encoding="utf-8") as f: wk = json.load(f).get("webhook_url", "")
+        except: pass
+    
+    tg_token = ""
+    tg_chat_id = ""
+    if os.path.exists(TELEGRAM_CFG):
+        try:
+            with open(str(TELEGRAM_CFG), encoding="utf-8") as f:
+                cfg = json.load(f)
+                tg_token = cfg.get("bot_token", "")
+                tg_chat_id = cfg.get("chat_id", "")
+        except: pass
+        
+    return render_template_string(SETTINGS_HTML, wk=wk, bot_token=tg_token, chat_id=tg_chat_id)
+
+@app.route("/api/settings", methods=["GET"])
+@jwt_required()
+def api_get_settings():
+    wk = ""
+    if os.path.exists(DISCORD_CFG):
+        try:
+            with open(str(DISCORD_CFG), encoding="utf-8") as f: wk = json.load(f).get("webhook_url", "")
+        except: pass
+    
+    tg_token = ""
+    tg_chat_id = ""
+    if os.path.exists(TELEGRAM_CFG):
+        try:
+            with open(str(TELEGRAM_CFG), encoding="utf-8") as f:
+                cfg = json.load(f)
+                tg_token = cfg.get("bot_token", "")
+                tg_chat_id = cfg.get("chat_id", "")
+        except: pass
+        
+    return jsonify({
+        "webhook_url": wk,
+        "bot_token": tg_token,
+        "chat_id": tg_chat_id
+    })
+
+@app.route("/api/settings", methods=["POST"])
+@jwt_required()
+def api_save_settings():
+    data = request.get_json() or {}
+    webhook_url = data.get("webhook_url", "").strip()
+    with open(str(DISCORD_CFG), "w", encoding="utf-8") as f:
+        json.dump({"webhook_url": webhook_url}, f, indent=2, ensure_ascii=False)
+    if webhook_url:
+        send_discord("✅ 연결 성공! Hyperliquid Vault Analyzer와 연동되었습니다.")
+        
+    bot_token = data.get("bot_token", "").strip()
+    chat_id = data.get("chat_id", "").strip()
+    with open(str(TELEGRAM_CFG), "w", encoding="utf-8") as f:
+        json.dump({"bot_token": bot_token, "chat_id": chat_id}, f, indent=2, ensure_ascii=False)
+    if bot_token and chat_id:
+        send_telegram("✅ <b>연결 성공! Hyperliquid Vault Analyzer와 연동되었습니다.</b>")
+        
+    return jsonify({"status": "ok", "message": "Settings saved successfully"})
+
+@app.route("/api/settings/test", methods=["POST"])
+@jwt_required()
+def api_test_telegram():
+    data = request.get_json() or {}
+    bot_token = data.get("bot_token", "").strip()
+    chat_id = data.get("chat_id", "").strip()
+    
+    if not bot_token or not chat_id:
+        return jsonify({"error": "Bot Token and Chat ID are required"}), 400
+        
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": "🔔 <b>Hyperliquid Vault Analyzer: 텔레그램 연동이 성공적으로 활성화되었습니다!</b>",
+        "parse_mode": "HTML"
+    }
+    try:
+        data_bytes = json.dumps(payload).encode()
+        req = urllib.request.Request(url, data=data_bytes, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            if r.status == 200:
+                return jsonify({"status": "ok", "message": "Test message sent successfully"})
+            else:
+                return jsonify({"error": f"Failed with HTTP {r.status}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Connection failed: {str(e)}"}), 500
 
 @app.route("/api/discord-setup", methods=["POST"])
 @jwt_required()
 def api_discord_save():
     data = request.get_json() or {}
-    with open(str(DISCORD_CFG), "w", encoding="utf-8") as f: json.dump({"webhook_url": data.get("webhook_url","")}, f)
-    send_discord("✅ 연결 성공! Hyperliquid Vault Analyzer와 연동되었습니다.")
+    webhook_url = data.get("webhook_url", "").strip()
+    with open(str(DISCORD_CFG), "w", encoding="utf-8") as f: json.dump({"webhook_url": webhook_url}, f)
+    if webhook_url:
+        send_discord("✅ 연결 성공! Hyperliquid Vault Analyzer와 연동되었습니다.")
     return jsonify({"status": "ok"})
 
 @app.route("/api/portfolio/save", methods=["POST"])
@@ -702,7 +811,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="view
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>""" + COMMON_STYLE + """</style></head>
 <body><header><div><h1 style="background:linear-gradient(90deg, #4f8ef7, #1abc9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">HL Vault Analyzer Pro v3.1</h1></div><div>
-<a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/discord">🔔 Discord</a><a class="btn" href="/logout" style="color:var(--danger);">🚪 Logout</a>
+<a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/settings">⚙️ Settings</a><a class="btn" href="/logout" style="color:var(--danger);">🚪 Logout</a>
 </div></header><main>
 <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
 <div class="card stat-box"><div class="stat-label">Analysis Date</div><div class="stat-val" style="color:#fff">{{date}} <small style="font-size:0.8rem;color:var(--muted)">{% if stats.prev_date %}(vs {{stats.prev_date}}){% endif %}</small></div></div>
@@ -1114,7 +1223,7 @@ document.addEventListener('DOMContentLoaded', filterTable);
 <div class="mobile-tab-bar">
     <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
-    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
 </div>
 <script>
@@ -1122,8 +1231,8 @@ document.addEventListener('DOMContentLoaded', filterTable);
         const path = window.location.pathname;
         if(path==='/m'||path==='/my-portfolio') {
             document.getElementById('tab-portfolio').classList.add('active');
-        } else if(path==='/discord') {
-            document.getElementById('tab-discord').classList.add('active');
+        } else if(path==='/settings'||path==='/discord') {
+            document.getElementById('tab-settings').classList.add('active');
         } else if(path==='/'||path.includes('/portfolio')) {
             document.getElementById('tab-analysis').classList.add('active');
         }
@@ -1675,7 +1784,7 @@ function runBacktest() {
 <div class="mobile-tab-bar">
     <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
-    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
 </div>
 <script>
@@ -1683,8 +1792,8 @@ function runBacktest() {
         const path = window.location.pathname;
         if(path==='/m'||path==='/my-portfolio') {
             document.getElementById('tab-portfolio').classList.add('active');
-        } else if(path==='/discord') {
-            document.getElementById('tab-discord').classList.add('active');
+        } else if(path==='/settings'||path==='/discord') {
+            document.getElementById('tab-settings').classList.add('active');
         } else if(path==='/'||path.includes('/portfolio')) {
             document.getElementById('tab-analysis').classList.add('active');
         }
@@ -1722,31 +1831,143 @@ fetch('/api/backtest').then(r=>r.json()).then(d=>{
 });
 </script></body></html>"""
 
-DISCORD_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>""" + COMMON_STYLE + """</style></head><body>
-<header><h1>🔔 Discord Notifications</h1><a class="btn back-btn" href="/">← Back</a></header>
-<main><div class="card" style="max-width:600px;margin:auto;">
-<h3>Webhook Integration</h3>
-<p style="color:var(--muted);font-size:0.9rem;margin:15px 0;">Receive daily analysis reports and rebalancing alerts directly on your Discord server.</p>
-<input id="url" style="width:100%;padding:14px;background:#0b0f1a;border:1px solid var(--border);color:#fff;border-radius:10px;margin-bottom:20px;" placeholder="https://discord.com/api/webhooks/..." value="{{wk}}">
-<button class="btn btn-primary" style="width:100%;padding:14px;margin:0;" onclick="save()">Save & Connect</button>
-<p id="msg" style="text-align:center;margin-top:15px;"></p>
-</div></main>
+SETTINGS_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>⚙️ Settings</title><style>""" + COMMON_STYLE + """
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 20px;
+}
+@media (max-width: 768px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.setting-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+</style></head><body>
+<header><div><h1 style="background:linear-gradient(90deg, #4f8ef7, #a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">⚙️ Settings & Integrations</h1></div><a class="btn back-btn" href="/">← Back</a></header>
+<main>
+    <div class="settings-grid" style="max-width:1100px; margin:auto;">
+        <!-- Discord Card -->
+        <div class="glass-card" style="padding:24px; margin-bottom:0;">
+            <div class="setting-section-title" style="color:#5865F2;">
+                <span>🔔 Discord Webhook Integration</span>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px; line-height:1.5;">
+                Receive daily analysis reports and rebalancing alerts directly on your Discord server channel via webhook.
+            </p>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;">Discord Webhook URL</label>
+                <input id="discord-url" style="width:100%; padding:14px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:10px; box-sizing:border-box;" placeholder="https://discord.com/api/webhooks/..." value="{{wk}}">
+            </div>
+            <button class="btn btn-primary" style="width:100%; padding:14px; margin:0;" onclick="saveDiscord()">Save & Connect</button>
+            <p id="discord-msg" style="text-align:center; margin-top:15px; font-size:0.9rem; font-weight:600;"></p>
+        </div>
+
+        <!-- Telegram Card -->
+        <div class="glass-card" style="padding:24px; margin-bottom:0;">
+            <div class="setting-section-title" style="color:#0088cc;">
+                <span>✈️ Telegram Alert Configuration</span>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px; line-height:1.5;">
+                Receive real-time recommended portfolio reports, rebalancing suggestions, and system alerts via your custom Telegram Bot.
+            </p>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;">Telegram Bot Token</label>
+                <input id="telegram-token" type="password" style="width:100%; padding:14px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:10px; box-sizing:border-box;" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ" value="{{bot_token}}">
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;">Telegram Chat ID</label>
+                <input id="telegram-chat-id" style="width:100%; padding:14px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:10px; box-sizing:border-box;" placeholder="e.g. 987654321" value="{{chat_id}}">
+            </div>
+            <div style="display:flex; gap:12px;">
+                <button class="btn" style="flex:1; padding:14px; margin:0; background:rgba(255,255,255,0.05);" onclick="testTelegram()">Test Notification</button>
+                <button class="btn btn-primary" style="flex:1; padding:14px; margin:0;" onclick="saveTelegram()">Save settings</button>
+            </div>
+            <p id="telegram-msg" style="text-align:center; margin-top:15px; font-size:0.9rem; font-weight:600;"></p>
+        </div>
+    </div>
+</main>
 <script>
-function save(){
-  const url = document.getElementById('url').value;
-  if(!url.startsWith('http')){ alert('Invalid URL'); return; }
-  fetch('/api/discord-setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhook_url:url})})
+function saveDiscord(){
+  const url = document.getElementById('discord-url').value.trim();
+  if(url && !url.startsWith('http')){ alert('Invalid URL'); return; }
+  
+  fetch('/api/settings', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      webhook_url: url,
+      bot_token: document.getElementById('telegram-token').value.trim(),
+      chat_id: document.getElementById('telegram-chat-id').value.trim()
+    })
+  })
   .then(r=>r.json()).then(d=>{
-    document.getElementById('msg').innerHTML='<span style="color:var(--success)">✅ Successfully Connected!</span>';
-    setTimeout(()=>location.reload(), 2000);
+    document.getElementById('discord-msg').innerHTML='<span style="color:var(--success)">✅ Discord Settings Saved!</span>';
+    setTimeout(()=>location.reload(), 1500);
+  });
+}
+
+function saveTelegram(){
+  const token = document.getElementById('telegram-token').value.trim();
+  const chatId = document.getElementById('telegram-chat-id').value.trim();
+  
+  fetch('/api/settings', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      webhook_url: document.getElementById('discord-url').value.trim(),
+      bot_token: token,
+      chat_id: chatId
+    })
+  })
+  .then(r=>r.json()).then(d=>{
+    document.getElementById('telegram-msg').innerHTML='<span style="color:var(--success)">✅ Telegram Settings Saved!</span>';
+    setTimeout(()=>location.reload(), 1500);
+  });
+}
+
+function testTelegram(){
+  const token = document.getElementById('telegram-token').value.trim();
+  const chatId = document.getElementById('telegram-chat-id').value.trim();
+  if(!token || !chatId){ alert('Please enter both Bot Token and Chat ID first.'); return; }
+  
+  const msgEl = document.getElementById('telegram-msg');
+  msgEl.innerHTML = '<span style="color:var(--accent)">📤 Sending test message...</span>';
+  
+  fetch('/api/settings/test', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      bot_token: token,
+      chat_id: chatId
+    })
+  })
+  .then(r=>r.json()).then(d=>{
+    if(d.status === 'ok') {
+      msgEl.innerHTML = '<span style="color:var(--success)">✅ Test message sent successfully! Check Telegram.</span>';
+    } else {
+      msgEl.innerHTML = `<span style="color:var(--danger)">❌ Error: ${d.error || 'Failed to send'}</span>`;
+    }
+  }).catch(e=>{
+    msgEl.innerHTML = `<span style="color:var(--danger)">❌ Network Error: ${e.message}</span>`;
   });
 }
 </script>
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">
-    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
+    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">💼</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
-    <a href="/discord" id="tab-discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
 </div>
 <script>
@@ -1754,8 +1975,8 @@ function save(){
         const path = window.location.pathname;
         if(path==='/m'||path==='/my-portfolio') {
             document.getElementById('tab-portfolio').classList.add('active');
-        } else if(path==='/discord') {
-            document.getElementById('tab-discord').classList.add('active');
+        } else if(path==='/settings'||path==='/discord') {
+            document.getElementById('tab-settings').classList.add('active');
         } else if(path==='/'||path.includes('/portfolio')) {
             document.getElementById('tab-analysis').classList.add('active');
         }
@@ -2567,7 +2788,7 @@ MY_HTML = """<!DOCTYPE html>
 <div class="mobile-tab-bar">
     <a href="/m" class="tab-item active"><span class="icon">💼</span><span>Portfolios</span></a>
     <a href="/" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
-    <a href="/discord" class="tab-item"><span class="icon">🔔</span><span>Discord</span></a>
+    <a href="/settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
 </div>
 

@@ -18,7 +18,8 @@ Hyperliquid 상위 200 볼트 분석기  (Robust Curve Edition)
   python analyze_top_vaults.py --mdd 25  # MDD 상한 25%로 변경
 """
 
-import json, os, sys, time, argparse, glob
+import json, os, sys, time, argparse, glob, random, asyncio
+import aiohttp
 import numpy as np
 import pandas as pd
 import requests
@@ -146,25 +147,76 @@ def _get_latest_snapshot_path():
     return None
 
 
-def analyze_vault_from_details(addr, info_client):
+async def fetch_vault_details_single(session, addr, semaphore, api_url, retry_base=1.0, max_attempts=5):
+    url = f"{api_url}/info"
+    payload = {"type": "vaultDetails", "vaultAddress": addr}
+    headers = {"Content-Type": "application/json"}
+    
+    async with semaphore:
+        for attempt in range(max_attempts):
+            try:
+                async with session.post(url, json=payload, headers=headers, timeout=20) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        if isinstance(data, dict):
+                            return addr, data
+                        else:
+                            raise ValueError("Response is not a dict")
+                    elif resp.status == 429:
+                        retry_after = resp.headers.get("Retry-After")
+                        if retry_after:
+                            try:
+                                delay = float(retry_after)
+                            except ValueError:
+                                delay = retry_base * (2 ** attempt) + random.uniform(0, 0.5)
+                        else:
+                            delay = retry_base * (2 ** attempt) + random.uniform(0, 0.5)
+                        print(f"    [429 Rate Limit] {addr[:12]}... Waiting {delay:.2f}s (Attempt {attempt+1}/{max_attempts})")
+                        await asyncio.sleep(delay)
+                    else:
+                        delay = retry_base * (2 ** attempt) + random.uniform(0, 0.5)
+                        print(f"    [HTTP {resp.status}] {addr[:12]}... Waiting {delay:.2f}s (Attempt {attempt+1}/{max_attempts})")
+                        await asyncio.sleep(delay)
+            except Exception as e:
+                delay = retry_base * (2 ** attempt) + random.uniform(0, 0.5)
+                print(f"    [Network Error] {addr[:12]}...: {e}. Waiting {delay:.2f}s (Attempt {attempt+1}/{max_attempts})")
+                await asyncio.sleep(delay)
+        return addr, None
+
+
+async def async_fetch_all_vault_details(addresses, api_url):
+    semaphore = asyncio.Semaphore(5)
+    connector = aiohttp.TCPConnector(limit=5)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        tasks = [
+            fetch_vault_details_single(session, addr, semaphore, api_url)
+            for addr in addresses
+        ]
+        results = await asyncio.gather(*tasks)
+        return {addr: details for addr, details in results if details is not None}
+
+
+def analyze_vault_from_details(addr, info_client_or_details):
     """공식 vaultDetails API를 사용해 단일 볼트를 분석.
     stats-data API가 Cloudflare 차단될 때 사용하는 fallback 함수."""
     details = None
-    for attempt in range(1, 4):
-        try:
-            details = info_client.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
-            if details and isinstance(details, dict):
-                break
-            details = None
-        except Exception as e:
-            err_str = str(e)
-            if "429" in err_str:
-                # Rate Limit — 대기 후 재시도
-                wait = attempt * 3  # 3초, 6초, 9초
-                time.sleep(wait)
-                continue
-            print(f"    ⚠️ vaultDetails API 실패 ({addr[:12]}...): {e}")
-            return None
+    if isinstance(info_client_or_details, dict):
+        details = info_client_or_details.get(addr)
+    elif info_client_or_details is not None:
+        for attempt in range(1, 4):
+            try:
+                details = info_client_or_details.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
+                if details and isinstance(details, dict):
+                    break
+                details = None
+            except Exception as e:
+                err_str = str(e)
+                if "429" in err_str:
+                    wait = attempt * 3  # 3초, 6초, 9초
+                    time.sleep(wait)
+                    continue
+                print(f"    ⚠️ vaultDetails API 실패 ({addr[:12]}...): {e}")
+                return None
     if not details:
         return None
 
@@ -284,16 +336,25 @@ def run_analysis_fallback(top_n=TOP_N):
                 "age_days": v.get("age_days", 0),
             }
 
-    print(f"  📡 공식 API로 {len(addresses)}개 볼트 데이터 갱신 중 (순차 처리)...")
-    info_client = Info(API_URL, skip_ws=True)
+    print(f"  📡 공식 API로 {len(addresses)}개 볼트 데이터 비동기 병렬 수집 중...")
+    try:
+        cached_details = asyncio.run(async_fetch_all_vault_details(addresses, API_URL))
+    except Exception as e:
+        print(f"  ⚠️ 비동기 수집 중 에러 발생: {e}. 동기 수집으로 진행합니다.")
+        cached_details = {}
+
     results, failed = [], 0
+    info_client = None
 
     for i, addr in enumerate(addresses):
-        time.sleep(3.0)  # 봇 판정 및 Rate Limit 방지를 위해 매 요청마다 3초 휴식
-        if (i + 1) % 10 == 0 or (i + 1) == len(addresses):
-            print(f"    진행: {i+1}/{len(addresses)} ({(i+1) * 100 // len(addresses)}%)")
         try:
-            res = analyze_vault_from_details(addr, info_client)
+            res = None
+            if addr in cached_details:
+                res = analyze_vault_from_details(addr, cached_details)
+            if not res:
+                if info_client is None:
+                    info_client = Info(API_URL, skip_ws=True)
+                res = analyze_vault_from_details(addr, info_client)
             if res:
                 # 이전 스냅샷의 created_at/age_days 보존
                 if addr in prev_meta:
@@ -335,7 +396,7 @@ def run_analysis_fallback(top_n=TOP_N):
 
 
 # ── 단일 볼트 분석 ────────────────────────────────────────────────────────────
-def analyze_vault_from_stats(v_data, info_client):
+def analyze_vault_from_stats(v_data, info_client_or_details):
     """stats-data 응답 하나를 분석해서 dict 반환"""
     s    = v_data["summary"]
     addr = s.get("vaultAddress", "")
@@ -383,33 +444,40 @@ def analyze_vault_from_stats(v_data, info_client):
     leader_equity_ratio = 0.0
     leader_equity_usd   = 0.0
     num_followers       = 0
-    for attempt in range(1, 6):
-        try:
-            details = info_client.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
-            if details and isinstance(details, dict):
-                allow_deposits = details.get("allowDeposits", True)
-                followers      = details.get("followers", [])
-                num_followers  = len(followers)
 
-                # ★ 사용자 요청: 리더 에쿼티 비율 (leaderFraction 필드가 리더의 지분 비율임)
-                leader_equity_ratio = sf(details.get("leaderFraction"), 0.0)
-                leader_equity_usd   = round(leader_equity_ratio * tvl, 2)
-                
-                # 리더가 followers 목록에 없을 수 있으므로(UI에서 별도 처리), 전체 팔로워 수에 리더(+1) 고려
-                if leader_equity_ratio > 0:
-                    num_followers += 1
-            break
-        except Exception as e:
-            if "429" in str(e):
-                time.sleep(attempt * 2)
-            else:
-                if attempt < 5:
-                    time.sleep(2) # 오류 시 휴식 후 재시도
+    details = None
+    if isinstance(info_client_or_details, dict):
+        details = info_client_or_details.get(addr)
+    elif info_client_or_details is not None:
+        for attempt in range(1, 6):
+            try:
+                details = info_client_or_details.post("/info", {"type": "vaultDetails", "vaultAddress": addr})
+                if details and isinstance(details, dict):
+                    break
+                details = None
+            except Exception as e:
+                if "429" in str(e):
+                    time.sleep(attempt * 2)
                 else:
-                    pass
-    
-    # 봇 판정 방지 및 Rate Limit 회피를 위해 매 요청마다 3초 휴식
-    time.sleep(3.0)
+                    if attempt < 5:
+                        time.sleep(2) # 오류 시 휴식 후 재시도
+                    else:
+                        pass
+        # 봇 판정 방지 및 Rate Limit 회피를 위해 매 요청마다 3초 휴식
+        time.sleep(3.0)
+
+    if details and isinstance(details, dict):
+        allow_deposits = details.get("allowDeposits", True)
+        followers      = details.get("followers", [])
+        num_followers  = len(followers) if isinstance(followers, list) else 0
+
+        # ★ 사용자 요청: 리더 에쿼티 비율 (leaderFraction 필드가 리더의 지분 비율임)
+        leader_equity_ratio = sf(details.get("leaderFraction"), 0.0)
+        leader_equity_usd   = round(leader_equity_ratio * tvl, 2)
+        
+        # 리더가 followers 목록에 없을 수 있으므로(UI에서 별도 처리), 전체 팔로워 수에 리더(+1) 고려
+        if leader_equity_ratio > 0:
+            num_followers += 1
 
     # ★ 사용자 요청 (TVL 금액 + 에쿼티 금액 절대값 중심의 가중치 보정)
     # 리더 지분율(%)보다 리더가 꽂아넣은 '진짜 돈의 크기(USD)'가 안정성의 핵심이라는 보스의 철학 반영!
@@ -518,6 +586,7 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct, day_pnl=None, week_p
     if week_pnl is None: week_pnl = []
     base = dict(
         vol_score=0.0, sharpe_ratio=0.0, max_drawdown=0.0,
+        drawdown_now=0.0, recovery_factor=0.0,
         apr_30d=0.0, monthly_return=0.0,
         pnl_30d=0.0, pnl_alltime=0.0,
         data_points=0, score=0.0,
@@ -616,6 +685,24 @@ def _calc_pnl_metrics(alltime_pnl, month_pnl, tvl, apr_pct, day_pnl=None, week_p
         rob = _calc_robustness(alltime_pnl, tvl)
         base.update(rob)
 
+        # ★ 현재 실제 낙폭 (drawdown_now) & 과거 회복력 (recovery_factor) 계산
+        current_pnl = pnl_curve[-1]
+        all_time_peak_pnl = float(np.max(pnl_curve))
+        drawdown_now_dollar = max(0.0, all_time_peak_pnl - current_pnl)
+        if all_time_peak_pnl > 0:
+            drawdown_now_pct = drawdown_now_dollar / all_time_peak_pnl * 100
+        else:
+            drawdown_now_pct = drawdown_now_dollar / (tvl + 1e-9) * 100
+        base["drawdown_now"] = round(max(0.0, drawdown_now_pct), 2)
+
+        return_all = (pnl_alltime / (tvl + 1e-9) * 100)
+        mdd_val = base["max_drawdown"]
+        if mdd_val <= 0.01:
+            recovery_factor = max(return_all, 0.0) * 100.0
+        else:
+            recovery_factor = return_all / mdd_val
+        base["recovery_factor"] = round(recovery_factor, 4)
+
     # 30일 PnL
     if len(month_pnl) >= 2 and tvl > 0:
         arr30 = np.array(month_pnl)
@@ -657,39 +744,35 @@ def run_analysis(top_n=TOP_N):
         print("  🔄 stats-data API 실패 → 공식 vaultDetails API fallback 모드 전환...")
         return run_analysis_fallback(top_n)
 
-    info_client = None
-    for attempt in range(1, 6):
-        try:
-            info_client = Info(API_URL, skip_ws=True)
-            break
-        except Exception as e:
-            if "429" in str(e):
-                wait = attempt * 2
-                print(f"  [Info 초기화] 429 방어: {wait}초 대기 후 재시도...")
-                time.sleep(wait)
-            else:
-                raise
-    if not info_client:
-        raise RuntimeError("Info client init failed (Rate limited API_URL)")
-        
-    results, failed = [], 0
+    addresses = [v["summary"].get("vaultAddress", "") for v in top_vaults if v["summary"].get("vaultAddress", "")]
+    print(f"  📡 공식 API로 {len(addresses)}개 볼트의 상세정보를 비동기 병렬 수집 중...")
+    
+    try:
+        cached_details = asyncio.run(async_fetch_all_vault_details(addresses, API_URL))
+    except Exception as e:
+        print(f"  ⚠️ 비동기 수집 중 에러 발생: {e}. 동기 수집으로 진행합니다.")
+        cached_details = {}
 
-    print(f"  {len(top_vaults)}개 볼트 병렬 분석 중 (스레드 {MAX_WORKERS}개)...")
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
-        futures = {ex.submit(analyze_vault_from_stats, v, info_client): v for v in top_vaults}
-        done = 0
-        for fut in as_completed(futures, timeout=3600):
-            done += 1
-            if done % 25 == 0 or done == len(top_vaults):
-                print(f"    진행: {done}/{len(top_vaults)} ({done * 100 // len(top_vaults)}%)")
-            try:
-                res = fut.result(timeout=20)
-                if res:
-                    results.append(res)
-                else:
-                    failed += 1
-            except Exception:
+    results, failed = [], 0
+    info_client = None
+
+    print(f"  {len(top_vaults)}개 볼트 데이터 분석 중...")
+    for i, v in enumerate(top_vaults):
+        addr = v["summary"].get("vaultAddress", "")
+        try:
+            res = None
+            if addr in cached_details:
+                res = analyze_vault_from_stats(v, cached_details)
+            if not res:
+                if info_client is None:
+                    info_client = Info(API_URL, skip_ws=True)
+                res = analyze_vault_from_stats(v, info_client)
+            if res:
+                results.append(res)
+            else:
                 failed += 1
+        except Exception:
+            failed += 1
 
     print(f"  완료: 분석 시도 {len(top_vaults)}개 / 성공 {len(results)}개 / 실패 {failed}개")
 
@@ -820,7 +903,6 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
         v["undervalue_score"] = round(_calc_undervalue_score(v), 3)
 
     # ★ 바벨 전략 (Barbell Strategy) 적용
-    # eligible 볼트 개수가 부족할 경우, 동적으로 half_k를 조정하여 CORE와 SATELLITE 비율이 고르게 유지되도록 개선 (엣지 케이스 버그 해결)
     if len(eligible) <= 1:
         recs = eligible
         if recs:
@@ -836,9 +918,12 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
     eligible_core = sorted(eligible, key=lambda x: x.get("robustness_score", 0), reverse=True)
     core_vaults = eligible_core[:half_k]
     
-    # Group B: Satellite (회복탄력성 - Undervalue 점수 최상위)
+    # Group B: Satellite (현재 실제 낙폭 5% 이상인 볼트 중 undervalue_score 최상위)
     core_addrs = {v["address"] for v in core_vaults}
     eligible_sat = [v for v in eligible if v["address"] not in core_addrs]
+    
+    # SATELLITE 후보 필터: drawdown_now >= 5.0%
+    eligible_sat = [v for v in eligible_sat if v.get("drawdown_now", 0.0) >= 5.0]
     eligible_sat = sorted(eligible_sat, key=lambda x: x.get("undervalue_score", 0), reverse=True)
     
     sat_k = min(top_k - len(core_vaults), len(eligible_sat))
@@ -846,26 +931,39 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
 
     recs = core_vaults + sat_vaults
 
-    # 가중치 분배 (50% : 50%)
-    if len(core_vaults) > 0 and len(sat_vaults) > 0:
-        for v in core_vaults:
-            v["suggested_allocation"] = round(50.0 / len(core_vaults), 1)
+    # 가중치 분배 대상 비율 설정 (기본 50% : 50%)
+    core_target = 50.0
+    sat_target = 50.0
+    if len(core_vaults) == 0:
+        sat_target = 100.0
+    elif len(sat_vaults) == 0:
+        core_target = 100.0
+
+    # 1) CORE 그룹: 위험 역가중 공식 (1 / MDD) 적용
+    if len(core_vaults) > 0:
+        # 분모 0 방지를 위해 max_drawdown 최소값 0.01 설정
+        raw_core_weights = [1.0 / max(v.get("max_drawdown", 0.0), 0.01) for v in core_vaults]
+        sum_core_weights = sum(raw_core_weights)
+        for idx, v in enumerate(core_vaults):
+            alloc = (raw_core_weights[idx] / sum_core_weights) * core_target
+            v["suggested_allocation"] = round(alloc, 2)
             v["barbell_group"] = "CORE"
-        for v in sat_vaults:
-            v["suggested_allocation"] = round(50.0 / len(sat_vaults), 1)
+
+    # 2) SATELLITE 그룹: 과거 회복력 (Recovery Factor) 수치에 정비례하여 분배
+    if len(sat_vaults) > 0:
+        # 음수/0 방지를 위해 최소값 0.0001 설정
+        raw_sat_weights = [max(v.get("recovery_factor", 0.0), 0.0001) for v in sat_vaults]
+        sum_sat_weights = sum(raw_sat_weights)
+        for idx, v in enumerate(sat_vaults):
+            alloc = (raw_sat_weights[idx] / sum_sat_weights) * sat_target
+            v["suggested_allocation"] = round(alloc, 2)
             v["barbell_group"] = "SATELLITE"
-    else:
-        active_group = core_vaults if len(core_vaults) > 0 else sat_vaults
-        group_name = "CORE" if len(core_vaults) > 0 else "SATELLITE"
-        for v in active_group:
-            v["suggested_allocation"] = round(100.0 / len(active_group), 1)
-            v["barbell_group"] = group_name
 
     # 총합이 100이 되도록 미세 조정
     total = sum(v["suggested_allocation"] for v in recs)
     if total != 100.0 and len(recs) > 0:
-        diff = round(100.0 - total, 1)
-        recs[0]["suggested_allocation"] = round(recs[0]["suggested_allocation"] + diff, 1)
+        diff = round(100.0 - total, 2)
+        recs[0]["suggested_allocation"] = round(recs[0]["suggested_allocation"] + diff, 2)
 
     return recs
 

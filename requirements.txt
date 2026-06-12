@@ -14,3 +14,4 @@ flask
 flask-jwt-extended
 bcrypt
 pyjwt
+aiohttp

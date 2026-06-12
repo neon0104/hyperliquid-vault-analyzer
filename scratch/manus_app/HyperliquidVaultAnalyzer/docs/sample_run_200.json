@@ -1,0 +1,226 @@
+{
+  "ok": true,
+  "collection_stats": {
+    "total_vaults_seen": 9451,
+    "user_vault_pool_size": 3276,
+    "top_n_selected": 200,
+    "details_fetched": 182,
+    "details_failed": 18,
+    "history_points_total": 9675,
+    "elapsed_seconds": 56.57,
+    "filter_stats": {
+      "total_in": 9451,
+      "excluded_closed": 6164,
+      "excluded_address": 4,
+      "excluded_leader": 0,
+      "excluded_child": 4,
+      "excluded_name": 3,
+      "total_excluded_protocol": 11
+    }
+  },
+  "metrics_count": 200,
+  "stable_picks": 10,
+  "recovery_picks": 10,
+  "holdings": [
+    {
+      "leg": "stable",
+      "name": "Quantitative Market Neutral Strategy",
+      "address": "0x14ecb3f4932522b8d508fa6e237e2746a4999feb",
+      "weight": 0.3308,
+      "return_all": 657.4374,
+      "mdd": 0.017,
+      "drawdown_now": 0.0048,
+      "recovery_factor": 38621.0434
+    },
+    {
+      "leg": "stable",
+      "name": "Equinox · Blackalgo",
+      "address": "0x7048b287889c5913d59f812795d7fd5d724be77a",
+      "weight": 0.0248,
+      "return_all": 7541.6168,
+      "mdd": 0.2268,
+      "drawdown_now": 0.1682,
+      "recovery_factor": 33259.264
+    },
+    {
+      "leg": "stable",
+      "name": "LowRiskCryptoGainer",
+      "address": "0xd57c9295947b5a616a3933344ef03a1ad67318ea",
+      "weight": 0.0202,
+      "return_all": 1415.4752,
+      "mdd": 0.2783,
+      "drawdown_now": 0.1312,
+      "recovery_factor": 5086.4473
+    },
+    {
+      "leg": "stable",
+      "name": "drkmttr",
+      "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+      "weight": 0.014,
+      "return_all": 1215.282,
+      "mdd": 0.4021,
+      "drawdown_now": 0.0935,
+      "recovery_factor": 3022.5954
+    },
+    {
+      "leg": "stable",
+      "name": "[A] Downside",
+      "address": "0x4af52283ea6de9236c47b28e5dbf156453df8efb",
+      "weight": 0.0269,
+      "return_all": 558.0181,
+      "mdd": 0.2095,
+      "drawdown_now": 0.0837,
+      "recovery_factor": 2663.7189
+    },
+    {
+      "leg": "stable",
+      "name": "pmalt",
+      "address": "0x4dec0a851849056e259128464ef28ce78afa27f6",
+      "weight": 0.0056,
+      "return_all": 2373.0963,
+      "mdd": 0.9978,
+      "drawdown_now": 0.0,
+      "recovery_factor": 2378.2919
+    },
+    {
+      "leg": "stable",
+      "name": "3xBTC脉冲",
+      "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
+      "weight": 0.0235,
+      "return_all": 568.3636,
+      "mdd": 0.24,
+      "drawdown_now": 0.0249,
+      "recovery_factor": 2368.6092
+    },
+    {
+      "leg": "stable",
+      "name": "Scott Phillips Trading Vault",
+      "address": "0x1840bdb83caff17de910ec407cafb817678786b5",
+      "weight": 0.0094,
+      "return_all": 1048.3975,
+      "mdd": 0.5976,
+      "drawdown_now": 0.2657,
+      "recovery_factor": 1754.3431
+    },
+    {
+      "leg": "stable",
+      "name": "AIQuantPulse",
+      "address": "0x8231fdf9997c003a267374b45fb25c0455aa1dcb",
+      "weight": 0.0376,
+      "return_all": 235.662,
+      "mdd": 0.1498,
+      "drawdown_now": 0.1498,
+      "recovery_factor": 1573.6766
+    },
+    {
+      "leg": "stable",
+      "name": "Deposit. Forget. Wake up richer",
+      "address": "0x253b88ebaa7c321d4803c0cfaf708684e3de32be",
+      "weight": 0.007,
+      "return_all": 1038.1202,
+      "mdd": 0.8002,
+      "drawdown_now": 0.0225,
+      "recovery_factor": 1297.3549
+    },
+    {
+      "leg": "recovery",
+      "name": "Equinox · Blackalgo",
+      "address": "0x7048b287889c5913d59f812795d7fd5d724be77a",
+      "weight": 0.3285,
+      "return_all": 7541.6168,
+      "mdd": 0.2268,
+      "drawdown_now": 0.1682,
+      "recovery_factor": 33259.264
+    },
+    {
+      "leg": "recovery",
+      "name": "Growi HF-2",
+      "address": "0x9b5b1931fa5838a891973f9877c7648c93ee80cc",
+      "weight": 0.011,
+      "return_all": 881.2257,
+      "mdd": 0.7941,
+      "drawdown_now": 0.7431,
+      "recovery_factor": 1109.7217
+    },
+    {
+      "leg": "recovery",
+      "name": "LowRiskCryptoGainer",
+      "address": "0xd57c9295947b5a616a3933344ef03a1ad67318ea",
+      "weight": 0.0502,
+      "return_all": 1415.4752,
+      "mdd": 0.2783,
+      "drawdown_now": 0.1312,
+      "recovery_factor": 5086.4473
+    },
+    {
+      "leg": "recovery",
+      "name": "Scott Phillips Trading Vault",
+      "address": "0x1840bdb83caff17de910ec407cafb817678786b5",
+      "weight": 0.0173,
+      "return_all": 1048.3975,
+      "mdd": 0.5976,
+      "drawdown_now": 0.2657,
+      "recovery_factor": 1754.3431
+    },
+    {
+      "leg": "recovery",
+      "name": "RedCoast",
+      "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+      "weight": 0.0087,
+      "return_all": 463.5998,
+      "mdd": 0.5279,
+      "drawdown_now": 0.4642,
+      "recovery_factor": 878.2559
+    },
+    {
+      "leg": "recovery",
+      "name": "drkmttr",
+      "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+      "weight": 0.0299,
+      "return_all": 1215.282,
+      "mdd": 0.4021,
+      "drawdown_now": 0.0935,
+      "recovery_factor": 3022.5954
+    },
+    {
+      "leg": "recovery",
+      "name": "AIQuantPulse",
+      "address": "0x8231fdf9997c003a267374b45fb25c0455aa1dcb",
+      "weight": 0.0155,
+      "return_all": 235.662,
+      "mdd": 0.1498,
+      "drawdown_now": 0.1498,
+      "recovery_factor": 1573.6766
+    },
+    {
+      "leg": "recovery",
+      "name": "[A] Downside",
+      "address": "0x4af52283ea6de9236c47b28e5dbf156453df8efb",
+      "weight": 0.0263,
+      "return_all": 558.0181,
+      "mdd": 0.2095,
+      "drawdown_now": 0.0837,
+      "recovery_factor": 2663.7189
+    },
+    {
+      "leg": "recovery",
+      "name": "Growi HF",
+      "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+      "weight": 0.0116,
+      "return_all": 814.1899,
+      "mdd": 0.6937,
+      "drawdown_now": 0.1588,
+      "recovery_factor": 1173.6215
+    },
+    {
+      "leg": "recovery",
+      "name": "Goat Capital",
+      "address": "0x07372a6543b694e3a77a6b03a2f7dc6e9d8493d8",
+      "weight": 0.0011,
+      "return_all": 49.4968,
+      "mdd": 0.4623,
+      "drawdown_now": 0.4014,
+      "recovery_factor": 107.0681
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+ok: True
+collection_stats: {
+  "total_vaults_seen": 9451,
+  "user_vault_pool_size": 3276,
+  "top_n_selected": 200,
+  "details_fetched": 182,
+  "details_failed": 18,
+  "history_points_total": 9675,
+  "elapsed_seconds": 56.57,
+  "filter_stats": {
+    "total_in": 9451,
+    "excluded_closed": 6164,
+    "excluded_address": 4,
+    "excluded_leader": 0,
+    "excluded_child": 4,
+    "excluded_name": 3,
+    "total_excluded_protocol": 11
+  }
+}
+metrics_count: 200
+stable_picks: 10 recovery_picks: 10
+
+--- HOLDINGS ( 20 ) ---
+  [STABLE  ] w= 33.08%  ret= +65743.74%  mdd=  1.70%  ddnow=  0.48%  rec=  38621.04  | Quantitative Market Neutral Strategy  (0x14ecb3...9feb)
+  [STABLE  ] w=  2.48%  ret=+754161.68%  mdd= 22.68%  ddnow= 16.82%  rec=  33259.26  | Equinox · Blackalgo  (0x7048b2...e77a)
+  [STABLE  ] w=  2.02%  ret=+141547.52%  mdd= 27.83%  ddnow= 13.12%  rec=   5086.45  | LowRiskCryptoGainer  (0xd57c92...18ea)
+  [STABLE  ] w=  1.40%  ret=+121528.20%  mdd= 40.21%  ddnow=  9.35%  rec=   3022.60  | drkmttr  (0xc179e0...e0c8)
+  [STABLE  ] w=  2.69%  ret= +55801.81%  mdd= 20.95%  ddnow=  8.37%  rec=   2663.72  | [A] Downside  (0x4af522...8efb)
+  [STABLE  ] w=  0.56%  ret=+237309.63%  mdd= 99.78%  ddnow=  0.00%  rec=   2378.29  | pmalt  (0x4dec0a...27f6)
+  [STABLE  ] w=  2.35%  ret= +56836.36%  mdd= 24.00%  ddnow=  2.49%  rec=   2368.61  | 3xBTC脉冲  (0xac02cf...0d17)
+  [STABLE  ] w=  0.94%  ret=+104839.75%  mdd= 59.76%  ddnow= 26.57%  rec=   1754.34  | Scott Phillips Trading Vault  (0x1840bd...86b5)
+  [STABLE  ] w=  3.76%  ret= +23566.20%  mdd= 14.98%  ddnow= 14.98%  rec=   1573.68  | AIQuantPulse  (0x8231fd...1dcb)
+  [STABLE  ] w=  0.70%  ret=+103812.02%  mdd= 80.02%  ddnow=  2.25%  rec=   1297.35  | Deposit. Forget. Wake up richer  (0x253b88...32be)
+  [RECOVERY] w= 32.85%  ret=+754161.68%  mdd= 22.68%  ddnow= 16.82%  rec=  33259.26  | Equinox · Blackalgo  (0x7048b2...e77a)
+  [RECOVERY] w=  1.10%  ret= +88122.57%  mdd= 79.41%  ddnow= 74.31%  rec=   1109.72  | Growi HF-2  (0x9b5b19...80cc)
+  [RECOVERY] w=  5.02%  ret=+141547.52%  mdd= 27.83%  ddnow= 13.12%  rec=   5086.45  | LowRiskCryptoGainer  (0xd57c92...18ea)
+  [RECOVERY] w=  1.73%  ret=+104839.75%  mdd= 59.76%  ddnow= 26.57%  rec=   1754.34  | Scott Phillips Trading Vault  (0x1840bd...86b5)
+  [RECOVERY] w=  0.87%  ret= +46359.98%  mdd= 52.79%  ddnow= 46.42%  rec=    878.26  | RedCoast  (0x8fafc2...eb4d)
+  [RECOVERY] w=  2.99%  ret=+121528.20%  mdd= 40.21%  ddnow=  9.35%  rec=   3022.60  | drkmttr  (0xc179e0...e0c8)
+  [RECOVERY] w=  1.55%  ret= +23566.20%  mdd= 14.98%  ddnow= 14.98%  rec=   1573.68  | AIQuantPulse  (0x8231fd...1dcb)
+  [RECOVERY] w=  2.63%  ret= +55801.81%  mdd= 20.95%  ddnow=  8.37%  rec=   2663.72  | [A] Downside  (0x4af522...8efb)
+  [RECOVERY] w=  1.16%  ret= +81418.99%  mdd= 69.37%  ddnow= 15.88%  rec=   1173.62  | Growi HF  (0x1e37a3...8d5e)
+  [RECOVERY] w=  0.11%  ret=  +4949.68%  mdd= 46.23%  ddnow= 40.14%  rec=    107.07  | Goat Capital  (0x07372a...93d8)
+
+stable leg total weight: 0.4998, recovery leg total weight: 0.5001
+protocol-vault leaks in holdings: 0

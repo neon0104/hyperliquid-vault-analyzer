@@ -754,8 +754,7 @@ def run_polling():
 # ── 알림 전송 (scheduler.py 에서 호출 가능) ───────────────────────────────────
 def notify(title: str, message: str, level: str = "INFO"):
     global BOT_TOKEN, CHAT_ID
-    if not BOT_TOKEN or not CHAT_ID:
-        BOT_TOKEN, CHAT_ID = load_config()
+    BOT_TOKEN, CHAT_ID = load_config()
 
     icon = "🔴" if level == "ERROR" else "⚠️" if level == "WARNING" else "ℹ️"
     text = f"{icon} <b>{title}</b>\n{message}"

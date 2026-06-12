@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
+*.spec
+.venv/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
