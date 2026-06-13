@@ -7314,5 +7314,63 @@
         "leader_eq": 0.43641352692074425
       }
     ]
+  },
+  "2026-06-14": {
+    "portfolio_value": 141653.05,
+    "daily_pnl": 515.64,
+    "daily_return_pct": 0.3653,
+    "cumulative_pnl": 41653.05,
+    "cumulative_pct": 41.6531,
+    "max_equity_ever": 141653.05,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3561,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 6.94,
+        "apr_30d": 50.38,
+        "robustness": 0.8923,
+        "undervalue": 1.043,
+        "leader_eq": 0.4714160166967458
+      },
+      {
+        "name": "Hyper6",
+        "address": "0xe438e2d09ccb8e4728fc3a0a85f3cd868efcc04a",
+        "alloc_pct": 24.55,
+        "apr_30d": 23.52,
+        "robustness": 0.8802,
+        "undervalue": 1.02,
+        "leader_eq": 0.9939094704868917
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 11.87,
+        "apr_30d": 111.91,
+        "robustness": 0.789,
+        "undervalue": 0.732,
+        "leader_eq": 0.837216689080144
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 6.64,
+        "apr_30d": 94.31,
+        "robustness": 0.7191,
+        "undervalue": 1.085,
+        "leader_eq": 0.9809697354747505
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 50.0,
+        "apr_30d": 209.07,
+        "robustness": 0.6907,
+        "undervalue": 0.596,
+        "leader_eq": 0.4604358935177989
+      }
+    ]
   }
 }
