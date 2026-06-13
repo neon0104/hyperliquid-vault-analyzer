@@ -7256,5 +7256,63 @@
         "leader_eq": 0.840028124245312
       }
     ]
+  },
+  "2026-06-13": {
+    "portfolio_value": 141137.41,
+    "daily_pnl": 494.17,
+    "daily_return_pct": 0.3514,
+    "cumulative_pnl": 41137.41,
+    "cumulative_pct": 41.1374,
+    "max_equity_ever": 141137.41,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2736,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 41.64,
+        "apr_30d": 34.82,
+        "robustness": 0.9214,
+        "undervalue": 0.992,
+        "leader_eq": 0.9771857309814094
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 1.19,
+        "apr_30d": 53.19,
+        "robustness": 0.8923,
+        "undervalue": 1.047,
+        "leader_eq": 0.48796936477782255
+      },
+      {
+        "name": "Hyper6",
+        "address": "0xe438e2d09ccb8e4728fc3a0a85f3cd868efcc04a",
+        "alloc_pct": 5.18,
+        "apr_30d": 23.52,
+        "robustness": 0.8919,
+        "undervalue": 1.02,
+        "leader_eq": 0.9939094704868917
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 1.99,
+        "apr_30d": 105.61,
+        "robustness": 0.7875,
+        "undervalue": 0.728,
+        "leader_eq": 0.8367070335482961
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 50.0,
+        "apr_30d": 219.59,
+        "robustness": 0.7114,
+        "undervalue": 0.64,
+        "leader_eq": 0.43641352692074425
+      }
+    ]
   }
 }
