@@ -7372,5 +7372,63 @@
         "leader_eq": 0.4604358935177989
       }
     ]
+  },
+  "2026-06-15": {
+    "portfolio_value": 141879.54,
+    "daily_pnl": 226.49,
+    "daily_return_pct": 0.1599,
+    "cumulative_pnl": 41879.54,
+    "cumulative_pct": 41.8795,
+    "max_equity_ever": 141879.54,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2624,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 21.77,
+        "apr_30d": 76.61,
+        "robustness": 0.8951,
+        "undervalue": 1.069,
+        "leader_eq": 0.8941992744820326
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 9.96,
+        "apr_30d": 49.39,
+        "robustness": 0.8923,
+        "undervalue": 1.042,
+        "leader_eq": 0.4668012394788105
+      },
+      {
+        "name": "Hyper6",
+        "address": "0xe438e2d09ccb8e4728fc3a0a85f3cd868efcc04a",
+        "alloc_pct": 14.95,
+        "apr_30d": 23.08,
+        "robustness": 0.8802,
+        "undervalue": 1.021,
+        "leader_eq": 0.9939094704868917
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 3.32,
+        "apr_30d": 298.9,
+        "robustness": 0.8512,
+        "undervalue": 0.76,
+        "leader_eq": 0.45465899293996925
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 50.0,
+        "apr_30d": 46.78,
+        "robustness": 0.6168,
+        "undervalue": 1.039,
+        "leader_eq": 0.9999995793952422
+      }
+    ]
   }
 }
