@@ -7430,5 +7430,63 @@
         "leader_eq": 0.9999995793952422
       }
     ]
+  },
+  "2026-06-16": {
+    "portfolio_value": 142243.41,
+    "daily_pnl": 363.87,
+    "daily_return_pct": 0.2565,
+    "cumulative_pnl": 42243.41,
+    "cumulative_pct": 42.2434,
+    "max_equity_ever": 142243.41,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3394,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 11.46,
+        "apr_30d": 51.45,
+        "robustness": 0.8924,
+        "undervalue": 1.044,
+        "leader_eq": 0.4488282126274581
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 23.76,
+        "apr_30d": 186.13,
+        "robustness": 0.84,
+        "undervalue": 0.787,
+        "leader_eq": 0.8360907856715829
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 10.84,
+        "apr_30d": 95.02,
+        "robustness": 0.7189,
+        "undervalue": 1.086,
+        "leader_eq": 0.9809697354747505
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 3.94,
+        "apr_30d": 444.77,
+        "robustness": 0.6774,
+        "undervalue": 1.589,
+        "leader_eq": 0.8007354208298411
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 50.0,
+        "apr_30d": 31.33,
+        "robustness": 0.4766,
+        "undervalue": 1.026,
+        "leader_eq": 0.9999995793952422
+      }
+    ]
   }
 }
