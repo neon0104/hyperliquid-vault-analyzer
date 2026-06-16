@@ -7488,5 +7488,72 @@
         "leader_eq": 0.9999995793952422
       }
     ]
+  },
+  "2026-06-17": {
+    "portfolio_value": 142495.41,
+    "daily_pnl": 252.0,
+    "daily_return_pct": 0.1772,
+    "cumulative_pnl": 42495.41,
+    "cumulative_pct": 42.4954,
+    "max_equity_ever": 142495.41,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3732,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 16.23,
+        "apr_30d": 52.44,
+        "robustness": 0.8925,
+        "undervalue": 1.046,
+        "leader_eq": 0.4404811812226964
+      },
+      {
+        "name": "Crypto Czars - Road to 100k ",
+        "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+        "alloc_pct": 4.3,
+        "apr_30d": 211.33,
+        "robustness": 0.8532,
+        "undervalue": 0.82,
+        "leader_eq": 0.8235111300285642
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 9.84,
+        "apr_30d": 79.3,
+        "robustness": 0.7744,
+        "undervalue": 1.071,
+        "leader_eq": 0.8941992744820326
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 15.32,
+        "apr_30d": 97.76,
+        "robustness": 0.7447,
+        "undervalue": 1.088,
+        "leader_eq": 0.9796395678260117
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 4.31,
+        "apr_30d": 494.55,
+        "robustness": 0.6817,
+        "undervalue": 1.701,
+        "leader_eq": 0.7926461655051158
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 50.0,
+        "apr_30d": 5.94,
+        "robustness": 0.4256,
+        "undervalue": 0.995,
+        "leader_eq": 0.9990526719251269
+      }
+    ]
   }
 }
