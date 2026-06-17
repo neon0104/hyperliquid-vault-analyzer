@@ -2933,6 +2933,30 @@ MY_HTML = """<!DOCTYPE html>
             const netPnlColor = (perf.net_total_pnl || 0) >= 0 ? 'pnl-green' : 'pnl-red';
             const netSign = (perf.net_total_pnl || 0) >= 0 ? '+' : '';
 
+            // 투자기간 대비 순수익률 (연환산 APY) 계산
+            const daysHeld = perf.days_held || 0;
+            const netPnlPct = perf.net_total_pnl_pct || 0;
+            let apyText = '0.00% (APY)';
+
+            if (daysHeld > 0) {
+                if (netPnlPct > -100) {
+                    let apy;
+                    if (daysHeld < 7) {
+                        apy = (netPnlPct / daysHeld) * 365;
+                    } else {
+                        apy = (Math.pow(1 + netPnlPct / 100, 365 / daysHeld) - 1) * 100;
+                    }
+                    if (Math.abs(apy) > 10000) {
+                        apyText = (apy > 0 ? '>' : '<') + '9999% (APY)';
+                    } else {
+                        const apySign = apy >= 0 ? '+' : '';
+                        apyText = `${apySign}${apy.toFixed(2)}% (APY)`;
+                    }
+                } else {
+                    apyText = '-100.00% (APY)';
+                }
+            }
+
             const card = document.createElement('div');
             card.className = `glass-card p-card ${isSelected ? 'active-port' : ''}`;
             card.onclick = () => {
@@ -2970,6 +2994,14 @@ MY_HTML = """<!DOCTYPE html>
                     <div>
                         <div class="p-card-stat-label">공제 후 순수익 / 순수익률</div>
                         <div class="p-card-stat-val ${netPnlColor}">${netSign}$${Math.round(perf.net_total_pnl || 0).toLocaleString()} (${netSign}${perf.net_total_pnl_pct || 0}%)</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">투자 기간</div>
+                        <div class="p-card-stat-val">${daysHeld}일 (${p.invest_date})</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">투자기간대비 순수익률</div>
+                        <div class="p-card-stat-val ${netPnlColor}">${apyText}</div>
                     </div>
                 </div>
             `;
