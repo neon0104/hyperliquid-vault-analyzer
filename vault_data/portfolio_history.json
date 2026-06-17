@@ -7555,5 +7555,45 @@
         "leader_eq": 0.9990526719251269
       }
     ]
+  },
+  "2026-06-18": {
+    "portfolio_value": 142949.16,
+    "daily_pnl": 453.75,
+    "daily_return_pct": 0.3184,
+    "cumulative_pnl": 42949.16,
+    "cumulative_pct": 42.9492,
+    "max_equity_ever": 142949.16,
+    "mdd_pct": 0.0,
+    "risk_score": 0.233,
+    "n_vaults": 3,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 25.3,
+        "apr_30d": 52.83,
+        "robustness": 0.8925,
+        "undervalue": 1.039,
+        "leader_eq": 0.44003796319808514
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 68.21,
+        "apr_30d": 98.91,
+        "robustness": 0.8206,
+        "undervalue": 1.09,
+        "leader_eq": 0.9796395678260117
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 6.49,
+        "apr_30d": 545.39,
+        "robustness": 0.6812,
+        "undervalue": 1.419,
+        "leader_eq": 0.9201032181152862
+      }
+    ]
   }
 }
