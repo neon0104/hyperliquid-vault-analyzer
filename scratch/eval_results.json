@@ -1,0 +1,47 @@
+[
+  {
+    "name": "기본 포트폴리오",
+    "invest_date": "2026-03-12",
+    "total_capital": 100000.0,
+    "total_value": 107463.66,
+    "total_pnl": 7463.66,
+    "total_pnl_pct": 7.46,
+    "days_held": 98
+  },
+  {
+    "name": "AI 추천 1",
+    "invest_date": "2026-06-08",
+    "total_capital": 100000.0,
+    "total_value": 109192.13,
+    "total_pnl": 9192.13,
+    "total_pnl_pct": 9.19,
+    "days_held": 10
+  },
+  {
+    "name": "AI 추천 2(분산)",
+    "invest_date": "2026-06-08",
+    "total_capital": 100000.0,
+    "total_value": 107296.08,
+    "total_pnl": 7296.08,
+    "total_pnl_pct": 7.3,
+    "days_held": 10
+  },
+  {
+    "name": "AI 추천 3(위험평균)",
+    "invest_date": "2026-06-08",
+    "total_capital": 100000.0,
+    "total_value": 106563.84,
+    "total_pnl": 6563.84,
+    "total_pnl_pct": 6.56,
+    "days_held": 10
+  },
+  {
+    "name": "AI 추천 4(원금보호형)",
+    "invest_date": "2026-06-08",
+    "total_capital": 100000.0,
+    "total_value": 105071.77,
+    "total_pnl": 5071.77,
+    "total_pnl_pct": 5.07,
+    "days_held": 10
+  }
+]
