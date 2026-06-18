@@ -7595,5 +7595,72 @@
         "leader_eq": 0.9201032181152862
       }
     ]
+  },
+  "2026-06-19": {
+    "portfolio_value": 143929.63,
+    "daily_pnl": 980.47,
+    "daily_return_pct": 0.6859,
+    "cumulative_pnl": 43929.63,
+    "cumulative_pct": 43.9296,
+    "max_equity_ever": 143929.63,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4196,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 8.64,
+        "apr_30d": 50.86,
+        "robustness": 0.8924,
+        "undervalue": 1.014,
+        "leader_eq": 0.43721777200793116
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 27.17,
+        "apr_30d": 98.11,
+        "robustness": 0.8524,
+        "undervalue": 1.089,
+        "leader_eq": 0.9796395678260117
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 11.41,
+        "apr_30d": 30.17,
+        "robustness": 0.7651,
+        "undervalue": 1.027,
+        "leader_eq": 0.9999997460284779
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.78,
+        "apr_30d": 58.59,
+        "robustness": 0.645,
+        "undervalue": 1.05,
+        "leader_eq": 0.9278869192845185
+      },
+      {
+        "name": "Buyback Spread Engine",
+        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
+        "alloc_pct": 32.35,
+        "apr_30d": 430.86,
+        "robustness": 0.4833,
+        "undervalue": 1.56,
+        "leader_eq": 0.7555982258380175
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 17.65,
+        "apr_30d": 424.04,
+        "robustness": 0.6388,
+        "undervalue": 1.522,
+        "leader_eq": 0.7992224517413309
+      }
+    ]
   }
 }
