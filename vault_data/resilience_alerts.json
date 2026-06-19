@@ -1,0 +1,625 @@
+[
+  {
+    "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+    "name": "Jade Lotus Capital",
+    "historical_max_mdd": 11.57,
+    "current_drawdown": 11.57,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 5.0,
+    "resilience_score": 0.558,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-12",
+        "end_date": "2026-03-17",
+        "peak_drawdown": 8.26,
+        "recovery_days": 5,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-04-20",
+        "end_date": "Ongoing",
+        "peak_drawdown": 11.57,
+        "recovery_days": 60,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+    "name": "Realist Capital",
+    "historical_max_mdd": 31.28,
+    "current_drawdown": 23.5,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 16.0,
+    "resilience_score": 0.467,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-05-21",
+        "end_date": "2026-06-06",
+        "peak_drawdown": 19.53,
+        "recovery_days": 16,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-14",
+        "end_date": "Ongoing",
+        "peak_drawdown": 31.28,
+        "recovery_days": 5,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xcae0d1558b70b92ee9fd0acb20cb639c8c28ae69",
+    "name": "DOEZOE",
+    "historical_max_mdd": 21.77,
+    "current_drawdown": 19.21,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 18.0,
+    "resilience_score": 0.45,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-04-17",
+        "end_date": "2026-05-05",
+        "peak_drawdown": 21.77,
+        "recovery_days": 18,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-07",
+        "end_date": "Ongoing",
+        "peak_drawdown": 19.21,
+        "recovery_days": 43,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x071a1341c9d00a5537ff4bf8289049f045fe3abb",
+    "name": "HyperSonic",
+    "historical_max_mdd": 22.95,
+    "current_drawdown": 19.96,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 4.0,
+    "resilience_score": 0.567,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-20",
+        "end_date": "2026-03-24",
+        "peak_drawdown": 10.57,
+        "recovery_days": 4,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-08",
+        "end_date": "Ongoing",
+        "peak_drawdown": 22.95,
+        "recovery_days": 11,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xe6b679488d19045a5e4cf7815e35ddc98d0479fa",
+    "name": "BTC AUREX",
+    "historical_max_mdd": 15.36,
+    "current_drawdown": 11.95,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 17.0,
+    "resilience_score": 0.458,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-04-16",
+        "peak_drawdown": 9.58,
+        "recovery_days": 17,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-28",
+        "end_date": "Ongoing",
+        "peak_drawdown": 15.36,
+        "recovery_days": 22,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x9a3006e0b7ffacf11729103098ff16fa6e17bd24",
+    "name": "HyperTwin - Blue Whale",
+    "historical_max_mdd": 39.85,
+    "current_drawdown": 30.43,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 44.0,
+    "resilience_score": 0.233,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-04-03",
+        "end_date": "2026-05-17",
+        "peak_drawdown": 27.27,
+        "recovery_days": 44,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-27",
+        "end_date": "Ongoing",
+        "peak_drawdown": 39.85,
+        "recovery_days": 23,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xe44bed760c2f1a03a03bd1b8911f025d96e6eb04",
+    "name": "IKAGI",
+    "historical_max_mdd": 67.67,
+    "current_drawdown": 67.67,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 2.0,
+    "resilience_score": 0.583,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-06-04",
+        "end_date": "2026-06-06",
+        "peak_drawdown": 42.58,
+        "recovery_days": 2,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-18",
+        "end_date": "Ongoing",
+        "peak_drawdown": 67.67,
+        "recovery_days": 1,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+    "name": "Long LINK Short XRP",
+    "historical_max_mdd": 86675374.2,
+    "current_drawdown": 73230503.09,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 36.0,
+    "resilience_score": 0.3,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-05-05",
+        "peak_drawdown": 50273656.3,
+        "recovery_days": 36,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-27",
+        "end_date": "Ongoing",
+        "peak_drawdown": 86675374.2,
+        "recovery_days": 23,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x36c88d0fbe990a6e5042b378a860909a05749f22",
+    "name": "prof's ai vault",
+    "historical_max_mdd": 8.21,
+    "current_drawdown": 8.21,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 33.0,
+    "resilience_score": 0.325,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-05-16",
+        "end_date": "2026-06-18",
+        "peak_drawdown": 7.69,
+        "recovery_days": 33,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-19",
+        "end_date": "Ongoing",
+        "peak_drawdown": 8.21,
+        "recovery_days": 0,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xcc40cd47d97f2570eb8befd8737de1488a472ad1",
+    "name": "Stratisma Vault No.1",
+    "historical_max_mdd": 17.52,
+    "current_drawdown": 16.23,
+    "total_drawdown_events": 3,
+    "recovered_count": 2,
+    "avg_recovery_days": 9.5,
+    "resilience_score": 0.621,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-04-17",
+        "end_date": "2026-04-27",
+        "peak_drawdown": 16.42,
+        "recovery_days": 10,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-07",
+        "end_date": "2026-05-16",
+        "peak_drawdown": 15.21,
+        "recovery_days": 9,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-03",
+        "end_date": "Ongoing",
+        "peak_drawdown": 17.52,
+        "recovery_days": 16,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x45e7014f092c5f9c39482caec131346f13ac5e73",
+    "name": "Ultron",
+    "historical_max_mdd": 68.52,
+    "current_drawdown": 61.46,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 10.0,
+    "resilience_score": 0.517,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-04-09",
+        "peak_drawdown": 29.17,
+        "recovery_days": 10,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-02",
+        "end_date": "Ongoing",
+        "peak_drawdown": 68.52,
+        "recovery_days": 17,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
+    "name": "RedCoast",
+    "historical_max_mdd": 13.39,
+    "current_drawdown": 10.3,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 25.0,
+    "resilience_score": 0.392,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-04-09",
+        "end_date": "2026-05-04",
+        "peak_drawdown": 11.32,
+        "recovery_days": 25,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-29",
+        "end_date": "Ongoing",
+        "peak_drawdown": 13.39,
+        "recovery_days": 21,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x565ab99e1515c6dd3b8852b15354638d467f999a",
+    "name": "Darkframe",
+    "historical_max_mdd": 49.53,
+    "current_drawdown": 44.28,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 19.0,
+    "resilience_score": 0.442,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-04-18",
+        "peak_drawdown": 24.2,
+        "recovery_days": 19,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-28",
+        "end_date": "Ongoing",
+        "peak_drawdown": 49.53,
+        "recovery_days": 22,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x5a9e0f6c1a702b039de10c757e5ac0670d798eec",
+    "name": "Crypto Cycle Trading 20 day 1/2",
+    "historical_max_mdd": 9.65,
+    "current_drawdown": 9.58,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 19.0,
+    "resilience_score": 0.442,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-04-18",
+        "peak_drawdown": 6.34,
+        "recovery_days": 19,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-16",
+        "end_date": "Ongoing",
+        "peak_drawdown": 9.65,
+        "recovery_days": 34,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xe72ac0f30dca336d04c8417c3e513b0ff3a69d3e",
+    "name": "Crypto Cycle Trading",
+    "historical_max_mdd": 7.92,
+    "current_drawdown": 7.0,
+    "total_drawdown_events": 3,
+    "recovered_count": 2,
+    "avg_recovery_days": 19.5,
+    "resilience_score": 0.538,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-04-18",
+        "peak_drawdown": 7.92,
+        "recovery_days": 19,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-04-20",
+        "end_date": "2026-05-10",
+        "peak_drawdown": 7.41,
+        "recovery_days": 20,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-16",
+        "end_date": "Ongoing",
+        "peak_drawdown": 7.0,
+        "recovery_days": 34,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xb11fe7f2e97bd02b2da909b32f4a5e7fcb0df099",
+    "name": "Crypto_Lab28",
+    "historical_max_mdd": 83.84,
+    "current_drawdown": 64.24,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 6.0,
+    "resilience_score": 0.55,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-04-10",
+        "end_date": "2026-04-16",
+        "peak_drawdown": 42.16,
+        "recovery_days": 6,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-06",
+        "end_date": "Ongoing",
+        "peak_drawdown": 83.84,
+        "recovery_days": 44,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x32b1223d162056db0fb94ab244d1ef821421b95c",
+    "name": "一三七",
+    "historical_max_mdd": 85.12,
+    "current_drawdown": 84.42,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 3.0,
+    "resilience_score": 0.575,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-06-07",
+        "end_date": "2026-06-10",
+        "peak_drawdown": 85.12,
+        "recovery_days": 3,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-12",
+        "end_date": "Ongoing",
+        "peak_drawdown": 84.42,
+        "recovery_days": 7,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xe40cb11e79bc6c046a53df495b908b11864c75c2",
+    "name": "BTC 2X Bitcoin and Gold Daily Rebalancin",
+    "historical_max_mdd": 51.81,
+    "current_drawdown": 46.71,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 19.0,
+    "resilience_score": 0.442,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-04-18",
+        "peak_drawdown": 24.51,
+        "recovery_days": 19,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-28",
+        "end_date": "Ongoing",
+        "peak_drawdown": 51.81,
+        "recovery_days": 22,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x44ff912d0f88e27419ec0ddc950096609a9b6997",
+    "name": "DailyTradeAI  Low risk",
+    "historical_max_mdd": 7572093.62,
+    "current_drawdown": 5985316.0,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 39.0,
+    "resilience_score": 0.275,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-05-08",
+        "peak_drawdown": 4080203.5,
+        "recovery_days": 39,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-27",
+        "end_date": "Ongoing",
+        "peak_drawdown": 7572093.62,
+        "recovery_days": 23,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xbe9ee55bc95b43b6a31bad63d5934492b99c6a87",
+    "name": "Gizbar Gird",
+    "historical_max_mdd": 143.57,
+    "current_drawdown": 115.85,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 23.0,
+    "resilience_score": 0.408,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-24",
+        "end_date": "2026-04-16",
+        "peak_drawdown": 64.83,
+        "recovery_days": 23,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-19",
+        "end_date": "Ongoing",
+        "peak_drawdown": 143.57,
+        "recovery_days": 31,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x07372a6543b694e3a77a6b03a2f7dc6e9d8493d8",
+    "name": "Goat Capital",
+    "historical_max_mdd": 7436009.39,
+    "current_drawdown": 7436009.39,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 17.0,
+    "resilience_score": 0.458,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-05-04",
+        "end_date": "2026-05-21",
+        "peak_drawdown": 3872054.05,
+        "recovery_days": 17,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-23",
+        "end_date": "Ongoing",
+        "peak_drawdown": 7436009.39,
+        "recovery_days": 27,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  }
+]

@@ -155,37 +155,107 @@ def get_smart_recommendations(
 ) -> list:
     """
     평균회귀 전략 기반 추천 볼트 선정.
-    기존 get_recommendations()와 달리:
-      - 현재 APR이 낮아도 장기 Sharpe + Robustness가 높으면 추천
-      - undervalue_score 가 높을수록 우선 (= 현재 저평가된 우량 볼트)
-      - 14일 모멘텀 필터를 통해 장기 추세가 무너진 볼트는 필터링
+    - 현재 APR이 낮아도 장기 Sharpe + Robustness가 높으면 추천
+    - undervalue_score 가 높을수록 우선 (= 현재 저평가된 우량 볼트)
+    - 회복탄력성(과거 원복 횟수/일수 및 역사적 MDD 지지선) 필터링 결합
+    - 추세가 붕괴(지지선 뚫림)된 Falling Knife는 완벽 배제
     """
     if not vaults:
         return []
 
-    # 1단계 필터 (모멘텀 필터 포함)
-    filtered = [
-        v for v in vaults
-        if (not min_allow_deposits or v.get("allow_deposits", True))
-        and v.get("leader_equity_ratio", 0) >= min_leader_equity
-        and v.get("robustness_score", 0) >= min_robustness
-        and v.get("apr_30d", 0) >= min_apr
-        and calc_momentum_14d(v) >= min_mom_14d
-        and v.get("data_points", 0) >= 5
-    ]
+    import portfolio_tracker
+    from resilience_analyzer import analyze_vault_resilience
+    snapshots = portfolio_tracker.load_snapshots_all()
+
+    # 1단계 필터 (모멘텀 및 회복탄력성 예외 처리 결합)
+    filtered = []
+    for v in vaults:
+        if min_allow_deposits and not v.get("allow_deposits", True):
+            continue
+        if v.get("leader_equity_ratio", 0) < min_leader_equity:
+            continue
+        if v.get("robustness_score", 0) < min_robustness:
+            continue
+        if v.get("apr_30d", 0) < min_apr:
+            continue
+        if v.get("data_points", 0) < 5:
+            continue
+
+        # 회복탄력성 지표 연산
+        res = analyze_vault_resilience(v["address"], snapshots)
+        is_buy_the_dip = False
+        is_broken = False
+        if res:
+            hist_mdd = res["historical_max_mdd"]
+            curr_dd = res["current_drawdown"]
+            rec_count = res["recovered_count"]
+            avg_rec_days = res["avg_recovery_days"]
+            
+            # 지지선 부근이고, 과거 원복 성공한 회복탄력성 기회
+            is_buy_the_dip = (
+                curr_dd >= hist_mdd * 0.70
+                and curr_dd <= hist_mdd * 1.15
+                and rec_count >= 1
+                and avg_rec_days <= 45.0
+            )
+            # 역사적 최대 MDD를 크게 돌파하여 하향하는 추세 붕괴 상태
+            is_broken = (
+                curr_dd > hist_mdd * 1.15
+                and (rec_count == 0 or avg_rec_days > 45.0)
+            )
+
+        # 14일 모멘텀이 무너진 Falling Knife는 제외하되, 회복탄력성 기회 자산이면 통과
+        mom_val = calc_momentum_14d(v)
+        if mom_val < min_mom_14d and not is_buy_the_dip:
+            continue
+
+        # 진짜 추세 붕괴는 무조건 탈락
+        if is_broken:
+            continue
+
+        filtered.append(v)
 
     # 필터가 너무 엄격하면 완화
     if len(filtered) < 3:
-        filtered = [
-            v for v in vaults
-            if v.get("allow_deposits", True)
-            and v.get("robustness_score", 0) >= min_robustness * 0.5
-            and calc_momentum_14d(v) >= min_mom_14d * 2.0
-            and v.get("data_points", 0) >= 5
-        ]
+        filtered = []
+        for v in vaults:
+            if not v.get("allow_deposits", True):
+                continue
+            if v.get("robustness_score", 0) < min_robustness * 0.5:
+                continue
+            if v.get("data_points", 0) < 5:
+                continue
+
+            res = analyze_vault_resilience(v["address"], snapshots)
+            is_buy_the_dip = False
+            is_broken = False
+            if res:
+                hist_mdd = res["historical_max_mdd"]
+                curr_dd = res["current_drawdown"]
+                rec_count = res["recovered_count"]
+                avg_rec_days = res["avg_recovery_days"]
+                
+                is_buy_the_dip = (
+                    curr_dd >= hist_mdd * 0.60
+                    and curr_dd <= hist_mdd * 1.25
+                    and rec_count >= 1
+                    and avg_rec_days <= 60.0
+                )
+                is_broken = (
+                    curr_dd > hist_mdd * 1.25
+                    and (rec_count == 0 or avg_rec_days > 60.0)
+                )
+
+            mom_val = calc_momentum_14d(v)
+            if mom_val < min_mom_14d * 2.0 and not is_buy_the_dip:
+                continue
+            if is_broken:
+                continue
+
+            filtered.append(v)
         print(f"  [Smart] 필터 완화 적용: {len(filtered)}개")
 
-    # smart_score 기준 정렬 (이미 compute_smart_scores에서 정렬됨)
+    # smart_score 기준 정렬
     filtered.sort(key=lambda v: v["smart_score"], reverse=True)
     selected = filtered[:top_k]
 

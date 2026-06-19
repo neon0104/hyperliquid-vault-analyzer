@@ -212,6 +212,10 @@ def evaluate_portfolio(vaults: list, portfolio: dict) -> dict:
     if not vaults or not portfolio:
         return {}
 
+    import portfolio_tracker
+    from resilience_analyzer import analyze_vault_resilience
+    snapshots = portfolio_tracker.load_snapshots_all()
+
     vault_map = {v["address"]: v for v in vaults}
     total_invested = sum(portfolio.values())
 
@@ -228,8 +232,44 @@ def evaluate_portfolio(vaults: list, portfolio: dict) -> dict:
         monthly_est = invested_usd * apr_30d / 100 / 12
         total_monthly_return += monthly_est
 
-        # 위험 감지: MDD > 20% or APR < 0
-        danger = mdd > 20 or apr_30d < 0 or not v.get("allow_deposits", True)
+        # 회복탄력성 기반 위험 예외 검증
+        res = analyze_vault_resilience(addr, snapshots)
+        is_buy_the_dip = False
+        is_broken = False
+        is_resilient = False
+        if res:
+            hist_mdd = res["historical_max_mdd"]
+            curr_dd = res["current_drawdown"]
+            rec_count = res["recovered_count"]
+            avg_rec_days = res["avg_recovery_days"]
+            
+            is_buy_the_dip = (
+                curr_dd >= hist_mdd * 0.70
+                and curr_dd <= hist_mdd * 1.15
+                and rec_count >= 1
+                and avg_rec_days <= 45.0
+            )
+            is_broken = (
+                curr_dd > hist_mdd * 1.15
+                and (rec_count == 0 or avg_rec_days > 45.0)
+            )
+            is_resilient = rec_count >= 1 and avg_rec_days <= 45.0
+
+        basic_danger = (
+            mdd > 20
+            or apr_30d < 0
+            or not v.get("allow_deposits", True)
+        )
+
+        danger = False
+        if is_broken:
+            danger = True
+        elif basic_danger:
+            if is_resilient and not is_broken:
+                danger = False
+            else:
+                danger = True
+
         if danger:
             has_danger = True
 
@@ -358,6 +398,44 @@ def daily_job():
         return
 
     vaults = result["vaults"]
+
+    # 1.5. 회복탄력성 분석 실행
+    log.info("📊 회복탄력성 및 저점 매수 분석 시작")
+    try:
+        res_result = subprocess.run(
+            [sys.executable, str(BASE_DIR / "resilience_analyzer.py")],
+            cwd=str(BASE_DIR),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+        if res_result.returncode == 0:
+            log.info("✅ 회복탄력성 및 저점 매수 분석 완료")
+        else:
+            log.warning(f"⚠️ 회복탄력성 분석 실패 (code={res_result.returncode}): {res_result.stderr[:200]}")
+    except Exception as e:
+        log.warning(f"⚠️ 회복탄력성 분석 오류: {e}")
+
+    # 1.8. 30일 리밸런싱 엔진 실행
+    log.info("⚖️ 리밸런싱 계획 수립 시작")
+    try:
+        reb_result = subprocess.run(
+            [sys.executable, str(BASE_DIR / "rebalance_engine.py")],
+            cwd=str(BASE_DIR),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+        if reb_result.returncode == 0:
+            log.info("✅ 리밸런싱 계획 수립 완료")
+        else:
+            log.warning(f"⚠️ 리밸런싱 계획 수립 실패 (code={reb_result.returncode}): {reb_result.stderr[:200]}")
+    except Exception as e:
+        log.warning(f"⚠️ 리밸런싱 계획 수립 오류: {e}")
 
     # 2. 포트폴리오 평가
     portfolio = load_portfolio()

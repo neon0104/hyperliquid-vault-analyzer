@@ -193,6 +193,10 @@ def evaluate_current_portfolio(
     if total_invested <= 0:
         return {"error": "포트폴리오 총투자금이 0입니다."}
 
+    import portfolio_tracker
+    from resilience_analyzer import analyze_vault_resilience
+    snapshots = portfolio_tracker.load_snapshots_all()
+
     opt_map = {v["address"]: v for v in optimal}
     holdings = []
     danger_vaults   = []
@@ -210,11 +214,48 @@ def evaluate_current_portfolio(
         target_pct  = _sf(target_v.get("suggested_allocation")) if target_v else 0.0
         drift_pct   = current_pct - target_pct
 
-        is_danger = (
+        # 회복탄력성 기반 위험 예외 검증
+        res = analyze_vault_resilience(addr, snapshots)
+        is_buy_the_dip = False
+        is_broken = False
+        is_resilient = False
+        if res:
+            hist_mdd = res["historical_max_mdd"]
+            curr_dd = res["current_drawdown"]
+            rec_count = res["recovered_count"]
+            avg_rec_days = res["avg_recovery_days"]
+            
+            # 과거 원복 성공 이력이 있고, 역사적 MDD 지지선 범위 내인 경우
+            is_buy_the_dip = (
+                curr_dd >= hist_mdd * 0.70
+                and curr_dd <= hist_mdd * 1.15
+                and rec_count >= 1
+                and avg_rec_days <= 45.0
+            )
+            # 역사적 MDD를 한참 뚫고 내려가 복구가 보이지 않는 지지선 붕괴 상태
+            is_broken = (
+                curr_dd > hist_mdd * 1.15
+                and (rec_count == 0 or avg_rec_days > 45.0)
+            )
+            # 회복탄력성이 검증된 자산인지 여부
+            is_resilient = rec_count >= 1 and avg_rec_days <= 45.0
+
+        basic_danger = (
             mdd > DANGER_MDD
             or apr < DANGER_APR
             or not v.get("allow_deposits", True)
         )
+
+        is_danger = False
+        if is_broken:
+            is_danger = True
+        elif basic_danger:
+            # 기본 위험군이라도 회복탄력성이 입증되었고 추세가 붕괴되지 않았다면 위험에서 제외
+            if is_resilient and not is_broken:
+                is_danger = False
+            else:
+                is_danger = True
+
         if is_danger:
             danger_vaults.append(addr)
 
