@@ -45,7 +45,7 @@ def load_virtual_portfolios():
             my_port = load_my_portfolio()
             default_port = {
                 "id": "default",
-                "name": "기본 포트폴리오",
+                "name": "나의 실제 포트폴리오",
                 "ptype": "custom",
                 "total_capital": my_port.get("total_capital", 100000.0),
                 "invest_date": my_port.get("invest_date") or datetime.now().strftime("%Y-%m-%d"),

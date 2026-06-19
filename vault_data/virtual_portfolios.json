@@ -1,18 +1,12 @@
 [
   {
     "id": "default",
-    "name": "기본 포트폴리오",
+    "name": "나의 실제 포트폴리오",
     "ptype": "custom",
-    "total_capital": 100000.0,
+    "total_capital": 23.4692,
     "invest_date": "2026-03-12",
     "positions": {
-      "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 20.0,
-      "0xd6e56265890b76413d1d527eb9b75e334c0c5b42": 20.0,
-      "0xda51323fe9800c8365646ad5c7ade0dd17fdc167": 20.0,
-      "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802": 10.0,
-      "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8": 10.0,
-      "0x93ad52177d0795de8c67c92b1a72035293cb7aac": 10.0,
-      "0x8bd03b8a06612cdb83ebee91e901dae9203ef537": 10.0
+      "0x1e37a337ed460039d1b15bd3bc489de789768d5e": 23.469235
     }
   },
   {

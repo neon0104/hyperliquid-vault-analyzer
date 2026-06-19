@@ -88,4 +88,27 @@ with open(pf_path, "w", encoding="utf-8") as f:
     json.dump(pf_data, f, ensure_ascii=False, indent=2)
 
 print("\nmy_portfolio.json 저장 완료")
+
+# virtual_portfolios.json 에도 실시간 싱크 처리
+vp_path = os.path.join("vault_data", "virtual_portfolios.json")
+if os.path.exists(vp_path):
+    try:
+        with open(vp_path, encoding="utf-8") as f:
+            vp_data = json.load(f)
+        
+        updated = False
+        for p in vp_data:
+            if p.get("id") == "default":
+                p["positions"] = portfolio
+                p["total_capital"] = round(total, 4)
+                updated = True
+                break
+        
+        if updated:
+            with open(vp_path, "w", encoding="utf-8") as f:
+                json.dump(vp_data, f, ensure_ascii=False, indent=2)
+            print("virtual_portfolios.json 에 나의 실제 포트폴리오 싱크 완료")
+    except Exception as e:
+        print(f"virtual_portfolios.json 싱크 오류: {e}")
+
 print(json.dumps(pf_data, ensure_ascii=False, indent=2))

@@ -2924,6 +2924,13 @@ MY_HTML = """<!DOCTYPE html>
         const grid = document.getElementById('portfolios-grid');
         grid.innerHTML = '';
 
+        // default(실제 포트폴리오)가 가장 먼저 오도록 정렬
+        portfolios.sort((a, b) => {
+            if (a.id === 'default') return -1;
+            if (b.id === 'default') return 1;
+            return 0;
+        });
+
         portfolios.forEach(p => {
             const perf = p.performance || {};
             const isSelected = p.id === activePortfolioId;
@@ -2965,10 +2972,18 @@ MY_HTML = """<!DOCTYPE html>
                 switchTab('tab-details');
             };
 
+            // p.id === 'default' 일 때 배지를 '실제 보유'로 다르게 지정
+            let badgeHtml = '';
+            if (p.id === 'default') {
+                badgeHtml = `<span class="p-card-type" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight:700;">실제 보유</span>`;
+            } else {
+                badgeHtml = `<span class="p-card-type ${p.ptype === 'custom' ? 'custom' : 'ai'}">${p.ptype === 'custom' ? '수동' : 'AI 최적화'}</span>`;
+            }
+
             card.innerHTML = `
                 <div class="p-card-header">
                     <div class="p-card-title">📂 ${escapeHtml(p.name)}</div>
-                    <span class="p-card-type ${p.ptype === 'custom' ? 'custom' : 'ai'}">${p.ptype === 'custom' ? '수동' : 'AI 최적화'}</span>
+                    ${badgeHtml}
                 </div>
                 <div class="p-card-stats">
                     <div>

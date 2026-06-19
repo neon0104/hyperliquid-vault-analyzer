@@ -23,6 +23,9 @@ echo Pulling latest changes from GitHub... >> %LOG_FILE%
 git pull origin main --no-rebase >> %LOG_FILE% 2>&1
 
 :: Run data collection (no skip check - collect every 4 hours)
+echo Running fetch_my_portfolio.py... >> %LOG_FILE%
+python fetch_my_portfolio.py >> %LOG_FILE% 2>&1
+
 echo Running analyze_top_vaults.py... >> %LOG_FILE%
 python analyze_top_vaults.py >> %LOG_FILE% 2>&1
 
