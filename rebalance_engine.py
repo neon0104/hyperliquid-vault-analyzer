@@ -35,10 +35,11 @@ PORTFOLIO_FILE = BASE_DIR / "my_portfolio.json"
 STATUS_FILE     = DATA_DIR / "status.json"
 REBALANCE_FILE  = DATA_DIR / "rebalance_plan.json"   # ★ 메인 출력
 
-REBALANCE_DAYS  = 30   # 30일 주기 리밸런싱
-MIN_DRIFT_PCT   = 5.0  # 비중 드리프트 임계값 (%)
-DANGER_MDD      = 20.0 # 위험 MDD 기준 (%)
-DANGER_APR      = 0.0  # 위험 APR 기준
+REBALANCE_DAYS  = 30   # 기본 리밸런싱 주기 (일)
+MAX_REBALANCE_DAYS = 60 # 시간 가드레일 (일)
+MIN_DRIFT_PCT   = 5.0  # 개별 자산 비중 드리프트 임계값 (%)
+DANGER_MDD      = 15.0 # 위험 MDD 기준 (%)
+DANGER_APR      = 0.0  # 위험 APR 기준 (%)
 
 
 # ── 유틸 ─────────────────────────────────────────────────────────────────────
@@ -119,7 +120,7 @@ def update_status(patch: dict):
 # ── 리밸런싱 주기 판단 ────────────────────────────────────────────────────────
 def should_rebalance(force: bool = False) -> tuple[bool, str, int]:
     """
-    30일 주기 리밸런싱 여부 판단.
+    30일 주기 리밸런싱 여부 및 60일 시간 가드레일 도달 여부 판단.
     Returns:
         (should_run: bool, reason: str, days_left: int)
     """
@@ -135,12 +136,17 @@ def should_rebalance(force: bool = False) -> tuple[bool, str, int]:
     try:
         last_date = datetime.fromisoformat(last_date_str[:10])
         days_since = (datetime.now() - last_date).days
+        
+        # 60일 가드레일 체크
+        if days_since >= MAX_REBALANCE_DAYS:
+            return True, f"시간 가드레일 초과 도달 ({days_since}일 경과 >= {MAX_REBALANCE_DAYS}일)", 0
+            
         days_left  = max(0, REBALANCE_DAYS - days_since)
 
         if days_left <= 0:
-            return True, f"30일 주기 도달 ({days_since}일 경과)", 0
+            return True, f"기본 30일 주기 도달 ({days_since}일 경과)", 0
         else:
-            return False, f"리밸런싱까지 {days_left}일 남음", days_left
+            return False, f"기본 리밸런싱까지 {days_left}일 남음", days_left
     except Exception:
         return True, "날짜 파싱 오류 → 재실행", 0
 
@@ -251,12 +257,20 @@ def evaluate_current_portfolio(
         needs_rebalance = True
         reasons.append(f"🔴 위험 볼트 {len(danger_vaults)}개 (MDD>{DANGER_MDD}% 또는 APR<0)")
 
+    # 전체 비중 괴리 합산 계산 (Total absolute drift)
+    total_absolute_drift = sum(abs(h["drift_pct"]) for h in holdings)
+    total_absolute_drift += sum(abs(v["target_pct"]) for v in missing_vaults)
+    
+    if total_absolute_drift >= 15.0:
+        needs_rebalance = True
+        reasons.append(f"⚖️ 전체 포트폴리오 비중 괴리 누적치 임계값 도달 ({total_absolute_drift:.1f}% >= 15%)")
+
     drifted = [h for h in holdings if abs(h["drift_pct"]) >= MIN_DRIFT_PCT]
     if drifted:
         needs_rebalance = True
         top_drift = sorted(drifted, key=lambda x: abs(x["drift_pct"]), reverse=True)[0]
         reasons.append(
-            f"📊 비중 드리프트 {len(drifted)}개 볼트 (최대 {top_drift['name']}: {top_drift['drift_pct']:+.1f}%)"
+            f"📊 개별 비중 드리프트 {len(drifted)}개 볼트 (최대 {top_drift['name']}: {top_drift['drift_pct']:+.1f}%)"
         )
 
     if missing_vaults:

@@ -28,6 +28,17 @@ from datetime import datetime
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+def calc_momentum_14d(vault: dict) -> float:
+    """
+    최근 14일간 누적 PnL 대비 자산 등락 모멘텀 계산 (Falling Knife 감지용).
+    """
+    alltime_pnl = vault.get("alltime_pnl", [])
+    tvl = float(vault.get("tvl", 1) or 1)
+    if len(alltime_pnl) < 15 or tvl <= 0:
+        return 0.0
+    pnl_diff = alltime_pnl[-1] - alltime_pnl[-15]
+    return float(pnl_diff / tvl)
+
 # ── 평균회귀 기회 점수 계산 ───────────────────────────────────────────────────
 def calc_undervalue_score(vault: dict) -> float:
     """
@@ -140,23 +151,26 @@ def get_smart_recommendations(
     min_leader_equity: float = 0.30,
     min_robustness: float = 0.20,
     min_apr: float = -999,       # APR 최소값 (음수도 허용, 회복 기대)
+    min_mom_14d: float = -0.05,  # 14일 모멘텀 필터 (Falling Knife 방지)
 ) -> list:
     """
     평균회귀 전략 기반 추천 볼트 선정.
     기존 get_recommendations()와 달리:
       - 현재 APR이 낮아도 장기 Sharpe + Robustness가 높으면 추천
       - undervalue_score 가 높을수록 우선 (= 현재 저평가된 우량 볼트)
+      - 14일 모멘텀 필터를 통해 장기 추세가 무너진 볼트는 필터링
     """
     if not vaults:
         return []
 
-    # 1단계 필터
+    # 1단계 필터 (모멘텀 필터 포함)
     filtered = [
         v for v in vaults
         if (not min_allow_deposits or v.get("allow_deposits", True))
         and v.get("leader_equity_ratio", 0) >= min_leader_equity
         and v.get("robustness_score", 0) >= min_robustness
         and v.get("apr_30d", 0) >= min_apr
+        and calc_momentum_14d(v) >= min_mom_14d
         and v.get("data_points", 0) >= 5
     ]
 
@@ -166,6 +180,7 @@ def get_smart_recommendations(
             v for v in vaults
             if v.get("allow_deposits", True)
             and v.get("robustness_score", 0) >= min_robustness * 0.5
+            and calc_momentum_14d(v) >= min_mom_14d * 2.0
             and v.get("data_points", 0) >= 5
         ]
         print(f"  [Smart] 필터 완화 적용: {len(filtered)}개")

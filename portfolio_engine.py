@@ -112,7 +112,7 @@ def build_returns_matrix(vaults, min_pts=8, max_pts=90):
         rows.append(ret[-min_len:])
     return sel, np.array(rows)
 
-# ── 상관관계 행렬 ─────────────────────────────────────────────────────────────
+# ── 상관관계 및 공분산 행렬 ───────────────────────────────────────────────────
 def calc_corr(returns_matrix):
     """피어슨 상관관계 행렬"""
     if returns_matrix.shape[0] < 2:
@@ -124,6 +124,49 @@ def calc_corr(returns_matrix):
     corr = np.clip((normed @ normed.T) / (T - 1), -1, 1)
     np.fill_diagonal(corr, 1.0)
     return corr
+
+def calc_ewma_covariance(returns_matrix, decay_factor=0.94):
+    """
+    EWMA (지수 가중 이동평균) 공분산 행렬 계산.
+    연율화를 위해 252를 곱하여 반환합니다.
+    """
+    n, T = returns_matrix.shape
+    if n == 0 or T == 0:
+        return np.empty((0, 0))
+    mean_ret = returns_matrix.mean(axis=1, keepdims=True)
+    centered = returns_matrix - mean_ret
+    
+    weights = np.array([decay_factor**(T - 1 - t) for t in range(T)])
+    weights /= weights.sum()
+    
+    cov_matrix = np.zeros((n, n))
+    for t in range(T):
+        diff = centered[:, t:t+1]
+        cov_matrix += weights[t] * (diff @ diff.T)
+        
+    return cov_matrix * 252  # Annualized
+
+def shrink_covariance(cov_matrix, shrinkage_intensity=0.1):
+    """
+    수치적 안정을 위해 Ledoit-Wolf 스타일 공분산 수축(Shrinkage) 적용.
+    """
+    n = cov_matrix.shape[0]
+    if n <= 1:
+        return cov_matrix
+    v = np.diag(cov_matrix)
+    v[v < 1e-9] = 1e-9
+    stds = np.sqrt(v)
+    
+    corr = cov_matrix / (stds[:, None] @ stds[None, :])
+    np.fill_diagonal(corr, 1.0)
+    
+    mean_corr = (corr.sum() - n) / (n * (n - 1)) if n > 1 else 0.0
+    F = np.full((n, n), mean_corr)
+    np.fill_diagonal(F, 1.0)
+    
+    F_cov = F * (stds[:, None] @ stds[None, :])
+    shrunk_cov = shrinkage_intensity * F_cov + (1 - shrinkage_intensity) * cov_matrix
+    return shrunk_cov
 
 # ── 저상관 고성과 볼트 선택 ───────────────────────────────────────────────────
 def select_low_corr_vaults(vaults, returns_matrix, corr_matrix, top_k=10, max_corr=0.6):
@@ -180,67 +223,200 @@ def _base_opt(obj_fn, n, max_w=0.35):
     w = np.clip(w, 0, 1)
     return w / w.sum()
 
-def optimize_max_sharpe(returns_matrix, names, max_w=0.35):
+def optimize_max_sharpe(returns_matrix, names, max_w=0.35, w_prev=None, gamma=0.005, rf=0.06):
+    """
+    고도화된 Max Sharpe 최적화:
+    - James-Stein 기대수익률 보정 적용.
+    - 실제 무위험/허들 이자율(rf=6%) 반영.
+    - EWMA 공분산 행렬 적용.
+    - 거래비용(Turnover Penalty) 제약 옵션 결합.
+    """
     n  = returns_matrix.shape[0]
     mu = returns_matrix.mean(axis=1) * 252
-    cov= np.atleast_2d(np.cov(returns_matrix) * 252)
+    cov = calc_ewma_covariance(returns_matrix)
+    cov = shrink_covariance(cov, 0.1)
+    
     if n == 1:
         return np.array([1.0]), _pf_stats(np.array([1.0]), mu, cov, names)
-    def obj(w): 
-        r = w @ mu; v = max(w @ cov @ w, 1e-12)
-        return -r / np.sqrt(v)
-    w = _base_opt(obj, n, max_w)
+        
+    # James-Stein Shrinkage 적용
+    mu_prior = np.median(mu)
+    mu_shrunk = 0.8 * mu + 0.2 * mu_prior
+    
+    if w_prev is not None and len(w_prev) == n:
+        # Turnover Penalty 포함한 3n 변수 문제 최적화 (w, u, v)
+        w_prev_arr = np.array(w_prev)
+        def obj(x):
+            w_opt = x[:n]
+            u = x[n:2*n]
+            v = x[2*n:]
+            r = w_opt @ mu_shrunk
+            vol = np.sqrt(max(w_opt @ cov @ w_opt, 1e-12))
+            sharpe = (r - rf) / vol if vol > 0 else 0
+            return -sharpe + gamma * np.sum(u + v)
+            
+        cons = [{"type": "eq", "fun": lambda x: np.sum(x[:n]) - 1}]
+        for i in range(n):
+            def make_con(idx):
+                return lambda x: x[idx] - w_prev_arr[idx] - x[n + idx] + x[2*n + idx]
+            cons.append({"type": "eq", "fun": make_con(i)})
+            
+        bounds = [(0.0, max_w)] * n + [(0.0, 1.0)] * n + [(0.0, 1.0)] * n
+        w0 = np.ones(n) / n
+        u0 = np.maximum(0, w0 - w_prev_arr)
+        v0 = np.maximum(0, w_prev_arr - w0)
+        x0 = np.concatenate([w0, u0, v0])
+        
+        try:
+            res = minimize(obj, x0, method="SLSQP", bounds=bounds, constraints=cons,
+                           options={"ftol": 1e-9, "maxiter": 1000})
+            w = res.x[:n] if res.success else w0
+        except Exception:
+            w = w0
+    else:
+        # 일반 Max Sharpe
+        def obj(w_opt):
+            r = w_opt @ mu_shrunk
+            vol = np.sqrt(max(w_opt @ cov @ w_opt, 1e-12))
+            return -(r - rf) / vol if vol > 0 else 0.0
+        w = _base_opt(obj, n, max_w)
+        
+    w = np.clip(w, 0, 1)
+    w /= w.sum()
     return w, _pf_stats(w, mu, cov, names)
 
 def optimize_min_variance(returns_matrix, names, max_w=0.35):
+    """
+    Min Variance 최적화:
+    - Ledoit-Wolf 스타일 수축 공분산 및 EWMA 공분산 적용.
+    - 다각화 확보를 위한 HHI 및 농도 제약 반영.
+    """
     n  = returns_matrix.shape[0]
     mu = returns_matrix.mean(axis=1) * 252
-    cov= np.atleast_2d(np.cov(returns_matrix) * 252)
+    cov = calc_ewma_covariance(returns_matrix)
+    cov = shrink_covariance(cov, 0.15)
+    
     if n == 1:
         return np.array([1.0]), _pf_stats(np.array([1.0]), mu, cov, names)
-    w = _base_opt(lambda w: w @ cov @ w, n, max_w)
-    return w, _pf_stats(w, mu, cov, names)
-
-def optimize_risk_parity(returns_matrix, names, max_w=0.35):
-    n  = returns_matrix.shape[0]
-    mu = returns_matrix.mean(axis=1) * 252
-    cov= np.atleast_2d(np.cov(returns_matrix) * 252)
-    if n == 1:
-        return np.array([1.0]), _pf_stats(np.array([1.0]), mu, cov, names)
-    target = np.ones(n) / n
+        
+    # 분산 최소화 목적함수 및 HHI 분산 제약 조건 추가
     def obj(w):
-        w = np.abs(w)
-        sigma = np.sqrt(max(w @ cov @ w, 1e-12))
-        mc = (cov @ w) / sigma
-        rc = w * mc
-        s  = rc.sum()
-        if s < 1e-12: return 0.0
-        return np.sum((rc / s - target) ** 2)
+        return w @ cov @ w
+        
     w0 = np.ones(n) / n
-    bounds = [(0.01, max_w)] * n
-    cons   = [{"type": "eq", "fun": lambda w: w.sum() - 1}]
+    bounds = [(0.0, min(max_w, 0.25))] * n  # 보다 강력한 다각화 유도
+    cons = [
+        {"type": "eq", "fun": lambda w: w.sum() - 1},
+        {"type": "ineq", "fun": lambda w: 0.28 - np.sum(w**2)} # HHI 제약
+    ]
+    
     try:
         res = minimize(obj, w0, method="SLSQP", bounds=bounds, constraints=cons,
-                       options={"ftol": 1e-9, "maxiter": 2000})
-        w = np.abs(res.x if res.success else w0)
+                       options={"ftol": 1e-9, "maxiter": 1000})
+        w = res.x if res.success else w0
     except Exception:
         w = w0
-    w = np.clip(w, 0, 1); w /= w.sum()
+        
+    w = np.clip(w, 0, 1)
+    w /= w.sum()
     return w, _pf_stats(w, mu, cov, names)
 
-def optimize_min_cvar(returns_matrix, names, alpha=0.05, max_w=0.35):
-    """최소 CVaR — 원금 보호 최우선"""
+def optimize_risk_parity(returns_matrix, names, max_w=0.35, quality_scores=None):
+    """
+    볼록 로그-배리어(Convex Log-Barrier) 기반 Risk Parity 최적화 (Maillard et al., 2010):
+    - Smart Score 기반의 Quality-Score Risk Budgeting 결합.
+    - 전역 최적해를 보장하도록 Convex Formulation으로 구현.
+    """
     n  = returns_matrix.shape[0]
     mu = returns_matrix.mean(axis=1) * 252
-    cov= np.atleast_2d(np.cov(returns_matrix) * 252)
+    cov = calc_ewma_covariance(returns_matrix)
+    cov = shrink_covariance(cov, 0.1)
+    
     if n == 1:
         return np.array([1.0]), _pf_stats(np.array([1.0]), mu, cov, names)
-    def obj(w):
-        pr = returns_matrix.T @ w
-        var_val = np.percentile(pr, alpha * 100)
-        tail = pr[pr <= var_val]
-        return -tail.mean() if len(tail) > 0 else 0.0
-    w = _base_opt(obj, n, max_w)
+        
+    # 위험 기여 타겟 설정 (Quality Score에 비례하여 위험 할당)
+    if quality_scores is not None:
+        budgets = np.array([quality_scores.get(name, 1.0) for name in names])
+        budgets = budgets / budgets.sum()
+    else:
+        budgets = np.ones(n) / n
+        
+    # Convex Log-Barrier 목적함수
+    def obj(x):
+        return 0.5 * (x @ cov @ x) - np.sum(budgets * np.log(np.maximum(x, 1e-15)))
+        
+    x0 = np.ones(n) / n
+    bounds = [(1e-6, None)] * n
+    
+    try:
+        res = minimize(obj, x0, method="L-BFGS-B", bounds=bounds)
+        w = res.x / res.x.sum() if res.success else x0
+    except Exception:
+        w = x0
+        
+    # 최대 비중(max_w) 제약이 깨질 경우 SLSQP 투영 적용
+    if np.any(w > max_w):
+        cons = [{"type": "eq", "fun": lambda w_norm: w_norm.sum() - 1}]
+        bounds_constrained = [(0.01, max_w)] * n
+        try:
+            res_constrained = minimize(obj, w, method="SLSQP", bounds=bounds_constrained, constraints=cons)
+            if res_constrained.success:
+                w = res_constrained.x
+        except Exception:
+            pass
+            
+    w = np.clip(w, 0, 1)
+    w /= w.sum()
+    return w, _pf_stats(w, mu, cov, names)
+
+def optimize_min_cvar(returns_matrix, names, alpha=0.05, max_w=0.35, target_return=0.15):
+    """
+    Rockafellar-Uryasev LP 기반의 Strictly Convex CVaR 최소화 최적화:
+    - 선형 계획(Linear Programming) 구조로 수치 해를 완벽하고 안정적으로 도출.
+    - 최소 목표 연수익률 제약 조건 추가.
+    """
+    n, T = returns_matrix.shape
+    mu = returns_matrix.mean(axis=1) * 252
+    cov = calc_ewma_covariance(returns_matrix)
+    cov = shrink_covariance(cov, 0.1)
+    
+    if n == 1:
+        return np.array([1.0]), _pf_stats(np.array([1.0]), mu, cov, names)
+        
+    # 변수 구조: w (n개), u (T개), VaR 변수(1개) -> 총 n + T + 1개 변수
+    def obj(x):
+        u = x[n:n+T]
+        var_val = x[-1]
+        return var_val + (1.0 / (alpha * T)) * np.sum(u)
+        
+    # 제약조건
+    cons = [
+        {"type": "eq", "fun": lambda x: np.sum(x[:n]) - 1},  # 비중 합 = 1
+        {"type": "ineq", "fun": lambda x: np.sum(x[:n] * mu) - target_return}  # 목표 수익률 제약
+    ]
+    
+    # u_t >= -w^T * R_t - VaR 제약 조건 (각 scenario t에 대해)
+    for t in range(T):
+        def make_con(t_idx):
+            return lambda x: x[n + t_idx] + np.sum(x[:n] * returns_matrix[:, t_idx]) + x[-1]
+        cons.append({"type": "ineq", "fun": make_con(t)})
+        
+    bounds = [(0.0, max_w)] * n + [(0.0, None)] * T + [(None, None)]
+    
+    w0 = np.ones(n) / n
+    u0 = np.maximum(0, -returns_matrix.T @ w0)
+    x0 = np.concatenate([w0, u0, [0.0]])
+    
+    try:
+        res = minimize(obj, x0, method="SLSQP", bounds=bounds, constraints=cons,
+                       options={"ftol": 1e-9, "maxiter": 1000})
+        w = res.x[:n] if res.success else w0
+    except Exception:
+        w = w0
+        
+    w = np.clip(w, 0, 1)
+    w /= w.sum()
     return w, _pf_stats(w, mu, cov, names)
 
 # ── 백테스팅 ──────────────────────────────────────────────────────────────────

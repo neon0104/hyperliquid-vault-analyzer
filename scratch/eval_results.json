@@ -1,47 +1,47 @@
 [
   {
-    "name": "기본 포트폴리오",
+    "name": "나의 실제 포트폴리오",
     "invest_date": "2026-03-12",
-    "total_capital": 100000.0,
-    "total_value": 107463.66,
-    "total_pnl": 7463.66,
-    "total_pnl_pct": 7.46,
-    "days_held": 98
+    "total_capital": 23.4692,
+    "total_value": 23.29,
+    "total_pnl": -0.18,
+    "total_pnl_pct": -0.76,
+    "days_held": 99
   },
   {
     "name": "AI 추천 1",
     "invest_date": "2026-06-08",
     "total_capital": 100000.0,
-    "total_value": 109192.13,
-    "total_pnl": 9192.13,
-    "total_pnl_pct": 9.19,
-    "days_held": 10
+    "total_value": 109417.27,
+    "total_pnl": 9417.27,
+    "total_pnl_pct": 9.42,
+    "days_held": 11
   },
   {
     "name": "AI 추천 2(분산)",
     "invest_date": "2026-06-08",
     "total_capital": 100000.0,
-    "total_value": 107296.08,
-    "total_pnl": 7296.08,
-    "total_pnl_pct": 7.3,
-    "days_held": 10
+    "total_value": 107446.38,
+    "total_pnl": 7446.38,
+    "total_pnl_pct": 7.45,
+    "days_held": 11
   },
   {
     "name": "AI 추천 3(위험평균)",
     "invest_date": "2026-06-08",
     "total_capital": 100000.0,
-    "total_value": 106563.84,
-    "total_pnl": 6563.84,
-    "total_pnl_pct": 6.56,
-    "days_held": 10
+    "total_value": 108609.15,
+    "total_pnl": 8609.15,
+    "total_pnl_pct": 8.61,
+    "days_held": 11
   },
   {
     "name": "AI 추천 4(원금보호형)",
     "invest_date": "2026-06-08",
     "total_capital": 100000.0,
-    "total_value": 105071.77,
-    "total_pnl": 5071.77,
-    "total_pnl_pct": 5.07,
-    "days_held": 10
+    "total_value": 104948.75,
+    "total_pnl": 4948.75,
+    "total_pnl_pct": 4.95,
+    "days_held": 11
   }
 ]
