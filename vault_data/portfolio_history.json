@@ -7885,5 +7885,54 @@
         "leader_eq": 0.7972303535170802
       }
     ]
+  },
+  "2026-06-24": {
+    "portfolio_value": 147693.38,
+    "daily_pnl": 534.8,
+    "daily_return_pct": 0.3634,
+    "cumulative_pnl": 47693.38,
+    "cumulative_pct": 47.6934,
+    "max_equity_ever": 147693.38,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4495,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 11.09,
+        "apr_30d": 56.04,
+        "robustness": 0.8926,
+        "undervalue": 1.039,
+        "leader_eq": 0.414242470119201
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 34.14,
+        "apr_30d": 93.72,
+        "robustness": 0.8511,
+        "undervalue": 1.085,
+        "leader_eq": 0.9796395678260117
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 4.77,
+        "apr_30d": 25.91,
+        "robustness": 0.7665,
+        "undervalue": 1.02,
+        "leader_eq": 0.9999998916381335
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 50.0,
+        "apr_30d": 186.4,
+        "robustness": 0.4198,
+        "undervalue": 1.145,
+        "leader_eq": 0.8136417995112515
+      }
+    ]
   }
 }
