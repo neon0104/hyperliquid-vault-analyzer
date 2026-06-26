@@ -8032,5 +8032,72 @@
         "leader_eq": 0.8136417995112515
       }
     ]
+  },
+  "2026-06-27": {
+    "portfolio_value": 149102.71,
+    "daily_pnl": 548.14,
+    "daily_return_pct": 0.369,
+    "cumulative_pnl": 49102.71,
+    "cumulative_pct": 49.1027,
+    "max_equity_ever": 149102.71,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3906,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.0,
+        "apr_30d": 55.59,
+        "robustness": 0.8926,
+        "undervalue": 1.017,
+        "leader_eq": 0.4155255982701215
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 34.23,
+        "apr_30d": 103.39,
+        "robustness": 0.8892,
+        "undervalue": 1.092,
+        "leader_eq": 0.9791950904739235
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 3.12,
+        "apr_30d": 13.34,
+        "robustness": 0.615,
+        "undervalue": 0.982,
+        "leader_eq": 0.9416878288643433
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 2.65,
+        "apr_30d": 131.21,
+        "robustness": 0.5826,
+        "undervalue": 1.073,
+        "leader_eq": 0.789185666688895
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 47.7,
+        "apr_30d": 187.58,
+        "robustness": 0.4693,
+        "undervalue": 1.147,
+        "leader_eq": 0.8136417995112515
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 2.3,
+        "apr_30d": 15.7,
+        "robustness": 0.5386,
+        "undervalue": 1.011,
+        "leader_eq": 0.9999998916381335
+      }
+    ]
   }
 }
