@@ -8166,5 +8166,63 @@
         "leader_eq": 0.9999998916381335
       }
     ]
+  },
+  "2026-06-29": {
+    "portfolio_value": 149896.27,
+    "daily_pnl": 328.46,
+    "daily_return_pct": 0.2196,
+    "cumulative_pnl": 49896.27,
+    "cumulative_pct": 49.8963,
+    "max_equity_ever": 149896.27,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3224,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 2.77,
+        "apr_30d": 81.05,
+        "robustness": 0.8868,
+        "undervalue": 1.073,
+        "leader_eq": 0.8941992744820326
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 0.19,
+        "apr_30d": 96.53,
+        "robustness": 0.886,
+        "undervalue": 1.087,
+        "leader_eq": 0.9791950904739235
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 47.04,
+        "apr_30d": 36.02,
+        "robustness": 0.8593,
+        "undervalue": 0.942,
+        "leader_eq": 0.9999999999605561
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 47.02,
+        "apr_30d": 129.05,
+        "robustness": 0.4402,
+        "undervalue": 1.121,
+        "leader_eq": 0.6806938569955611
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 2.98,
+        "apr_30d": 3.5,
+        "robustness": 0.5858,
+        "undervalue": 1.009,
+        "leader_eq": 0.9999998916381335
+      }
+    ]
   }
 }
