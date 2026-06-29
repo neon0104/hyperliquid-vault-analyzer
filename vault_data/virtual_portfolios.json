@@ -3,10 +3,10 @@
     "id": "default",
     "name": "나의 실제 포트폴리오",
     "ptype": "custom",
-    "total_capital": 23.2481,
+    "total_capital": 23.1486,
     "invest_date": "2026-03-12",
     "positions": {
-      "0x1e37a337ed460039d1b15bd3bc489de789768d5e": 23.24807
+      "0x1e37a337ed460039d1b15bd3bc489de789768d5e": 23.148633
     }
   },
   {
