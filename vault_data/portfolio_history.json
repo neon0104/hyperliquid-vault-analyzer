@@ -8273,5 +8273,45 @@
         "leader_eq": 0.6806938569955611
       }
     ]
+  },
+  "2026-07-01": {
+    "portfolio_value": 150628.55,
+    "daily_pnl": 279.04,
+    "daily_return_pct": 0.1856,
+    "cumulative_pnl": 50628.55,
+    "cumulative_pct": 50.6285,
+    "max_equity_ever": 150628.55,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3606,
+    "n_vaults": 3,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 49.18,
+        "apr_30d": 37.24,
+        "robustness": 0.8944,
+        "undervalue": 0.978,
+        "leader_eq": 0.9660328358451209
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 0.82,
+        "apr_30d": 95.95,
+        "robustness": 0.8845,
+        "undervalue": 1.085,
+        "leader_eq": 0.9791950904739235
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 50.0,
+        "apr_30d": 97.28,
+        "robustness": 0.4949,
+        "undervalue": 1.088,
+        "leader_eq": 0.6449649444390743
+      }
+    ]
   }
 }
