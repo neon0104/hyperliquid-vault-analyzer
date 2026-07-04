@@ -8442,5 +8442,36 @@
         "leader_eq": 0.9796395674191304
       }
     ]
+  },
+  "2026-07-05": {
+    "portfolio_value": 151220.94,
+    "daily_pnl": 146.8,
+    "daily_return_pct": 0.0972,
+    "cumulative_pnl": 51220.94,
+    "cumulative_pct": 51.2209,
+    "max_equity_ever": 151220.94,
+    "mdd_pct": 0.0,
+    "risk_score": 0.0618,
+    "n_vaults": 2,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 95.35,
+        "apr_30d": 35.54,
+        "robustness": 0.9149,
+        "undervalue": 0.943,
+        "leader_eq": 0.9999999999053022
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 4.65,
+        "apr_30d": 33.98,
+        "robustness": 0.8926,
+        "undervalue": 0.938,
+        "leader_eq": 0.4191374478727351
+      }
+    ]
   }
 }
