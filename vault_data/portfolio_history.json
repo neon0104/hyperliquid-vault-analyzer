@@ -8473,5 +8473,54 @@
         "leader_eq": 0.4191374478727351
       }
     ]
+  },
+  "2026-07-06": {
+    "portfolio_value": 151769.84,
+    "daily_pnl": 548.9,
+    "daily_return_pct": 0.363,
+    "cumulative_pnl": 51769.84,
+    "cumulative_pct": 51.7698,
+    "max_equity_ever": 151769.84,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2903,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 49.46,
+        "apr_30d": 34.52,
+        "robustness": 0.9215,
+        "undervalue": 0.94,
+        "leader_eq": 0.9997166718950424
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 0.13,
+        "apr_30d": 27.4,
+        "robustness": 0.8926,
+        "undervalue": 0.927,
+        "leader_eq": 0.4222274069637218
+      },
+      {
+        "name": "Hyperliquid Banana",
+        "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+        "alloc_pct": 0.41,
+        "apr_30d": 7.97,
+        "robustness": 0.8478,
+        "undervalue": 1.011,
+        "leader_eq": 0.9796395674191304
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 50.0,
+        "apr_30d": 230.69,
+        "robustness": 0.5417,
+        "undervalue": 1.238,
+        "leader_eq": 0.5897321862935347
+      }
+    ]
   }
 }
