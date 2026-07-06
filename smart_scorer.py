@@ -127,7 +127,13 @@ def compute_smart_scores(vaults: list) -> list:
 
     sharpe_norm = normalize([v["longterm_sharpe"] for v in vaults])
     rob_vals    = [float(v.get("robustness_score", 0)) for v in vaults]
-    leader_vals = [float(v.get("leader_equity_ratio", 0)) for v in vaults]
+    
+    # 리더 투자 비율(Ratio, 40% 기준) 또는 절대 금액(USD, $50,000 기준) 중 더 나은 것으로 유연화된 점수 반영
+    leader_vals = []
+    for v in vaults:
+        ratio_score = float(v.get("leader_equity_ratio", 0)) / 0.40
+        usd_score = float(v.get("leader_equity_usd", 0)) / 50000.0
+        leader_vals.append(min(max(ratio_score, usd_score), 1.0))
 
     for i, v in enumerate(vaults):
         smart = (

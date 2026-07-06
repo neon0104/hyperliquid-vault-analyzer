@@ -9,7 +9,7 @@ import os
 import sys
 import json
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 if sys.platform == "win32":
@@ -22,6 +22,32 @@ SNAPSHOTS_DIR   = DATA_DIR / "snapshots"
 STATUS_FILE     = DATA_DIR / "status.json"
 ALERTS_LOG      = DATA_DIR / "alerts.jsonl"
 RESILIENCE_FILE = DATA_DIR / "resilience_alerts.json"
+
+def get_tvl_change_7d(vault_addr: str, snapshots: dict) -> float:
+    dates = sorted(snapshots.keys())
+    if len(dates) < 2:
+        return 0.0
+    latest_date_str = dates[-1]
+    latest_date = datetime.strptime(latest_date_str, "%Y-%m-%d")
+    target_date = latest_date - timedelta(days=7)
+    
+    # 7일 전과 가장 가까운 날짜의 스냅샷 찾기
+    closest_date_str = min(dates[:-1], key=lambda d: abs(datetime.strptime(d, "%Y-%m-%d") - target_date))
+    
+    latest_snap = snapshots[latest_date_str]
+    old_snap = snapshots[closest_date_str]
+    
+    if vault_addr not in latest_snap or vault_addr not in old_snap:
+        return 0.0
+        
+    latest_tvl = float(latest_snap[vault_addr].get("tvl", 0.0) or 0.0)
+    old_tvl = float(old_snap[vault_addr].get("tvl", 0.0) or 0.0)
+    
+    if old_tvl <= 0:
+        return 0.0
+        
+    return float((latest_tvl - old_tvl) / old_tvl * 100)
+
 
 # ── 드로우다운 및 회복 패턴 계산 ────────────────────────────────────────────────
 def analyze_vault_resilience(vault_addr: str, snapshots: dict) -> dict:
@@ -222,6 +248,62 @@ def send_resilience_alerts(opportunities: list):
         except Exception as e:
             print(f"[Resilience] Failed to write alert log: {e}")
 
+def check_and_alert_tvl_outflows(snapshots: dict):
+    """최근 7일간 TVL이 20% 이상 급감한 볼트를 감지하여 경고 알림 전송 및 기록"""
+    latest_date = sorted(snapshots.keys())[-1]
+    latest_snap = snapshots[latest_date]
+    outflows = []
+    
+    for addr, v in latest_snap.items():
+        change = get_tvl_change_7d(addr, snapshots)
+        if change <= -20.0:
+            outflows.append({
+                "address": addr,
+                "name": v.get("name", addr[:16]),
+                "tvl_change_7d": round(change, 2),
+                "current_tvl": float(v.get("tvl", 0.0) or 0.0)
+            })
+            
+    if not outflows:
+        return
+        
+    print(f"[Resilience] Detected {len(outflows)} vaults with severe TVL outflow.")
+    
+    # 텔레그램 알림 발송 시도
+    try:
+        from telegram_bot import send_message
+    except ImportError:
+        send_message = None
+        
+    for opp in outflows:
+        msg = (
+            f"⚠️ <b>[볼트 자금 급격 유출 경고]</b>\n\n"
+            f"볼트명: <b>{opp['name']}</b>\n"
+            f"주소: <code>{opp['address']}</code>\n"
+            f"최근 7일 TVL 변동률: <b>{opp['tvl_change_7d']:.1f}%</b> (자금 급유출)\n"
+            f"현재 TVL: <b>${opp['current_tvl']:,.0f}</b>\n\n"
+            f"👉 <i>최근 7일간 볼트에서 20% 이상의 자금이 급격히 유출되었습니다. 뱅크런 또는 운용 전략의 신뢰 붕괴 위험이 있으므로 상태를 긴밀히 점검하시길 권장합니다.</i>"
+        )
+        if send_message:
+            send_message(msg)
+            
+        # alerts.jsonl에 기록
+        alert_log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "type": "TVL_OUTFLOW_ALERT",
+            "vault_name": opp["name"],
+            "vault_address": opp["address"],
+            "tvl_change_7d": opp["tvl_change_7d"],
+            "current_tvl": opp["current_tvl"],
+            "message": f"{opp['name']} 볼트 7일 TVL 급감 경고 ({opp['tvl_change_7d']:.1f}%)"
+        }
+        try:
+            with open(ALERTS_LOG, "a", encoding="utf-8") as f:
+                f.write(json.dumps(alert_log_entry, ensure_ascii=False) + "\n")
+        except Exception as e:
+            print(f"[Resilience] Failed to write outflow alert log: {e}")
+
+
 # ── 메인 분석 실행 ────────────────────────────────────────────────────────────
 def run_resilience_analysis():
     import portfolio_tracker
@@ -244,6 +326,9 @@ def run_resilience_analysis():
         
     # 알림 발송
     send_resilience_alerts(opps)
+    
+    # TVL 유출 검사 및 알림
+    check_and_alert_tvl_outflows(snapshots)
     
     # status.json 에 알림 수 업데이트
     if STATUS_FILE.exists():

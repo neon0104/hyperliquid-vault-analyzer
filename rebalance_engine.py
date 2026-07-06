@@ -118,20 +118,38 @@ def update_status(patch: dict):
 
 
 # ── 리밸런싱 주기 판단 ────────────────────────────────────────────────────────
-def should_rebalance(force: bool = False) -> tuple[bool, str, int]:
+def should_rebalance(vault_map: dict = None, my_portfolio: dict = None, force: bool = False) -> tuple[bool, str, int]:
     """
-    30일 주기 리밸런싱 여부 및 60일 시간 가드레일 도달 여부 판단.
+    포트폴리오 변동성에 따라 가변적인 리밸런싱 주기(14일 ~ 45일)를 산출하고 여부를 판단.
     Returns:
         (should_run: bool, reason: str, days_left: int)
     """
     if force:
         return True, "강제 실행 (--force)", 0
 
+    # 1. 포트폴리오 가중 변동성 계산
+    vols = []
+    weights = []
+    if my_portfolio and vault_map:
+        total = sum(my_portfolio.values())
+        if total > 0:
+            for addr, usd in my_portfolio.items():
+                v = vault_map.get(addr, {})
+                vols.append(float(v.get("vol_score", 30.0)))
+                weights.append(usd / total)
+    if not vols:
+        vols = [30.0]
+        weights = [1.0]
+    
+    weighted_vol = sum(v * w for v, w in zip(vols, weights))
+    # 변동성이 높을수록 주기를 단축 (14일 ~ 45일)
+    adaptive_days = int(np.clip(30.0 * (30.0 / max(weighted_vol, 5.0)), 14, 45))
+
     plan = load_rebalance_plan()
     last_date_str = plan.get("generated_at", "")
 
     if not last_date_str:
-        return True, "첫 리밸런싱 실행", 0
+        return True, f"첫 리밸런싱 실행 (가변 주기: {adaptive_days}일, 가중 변동성: {weighted_vol:.1f}%)", 0
 
     try:
         last_date = datetime.fromisoformat(last_date_str[:10])
@@ -141,12 +159,12 @@ def should_rebalance(force: bool = False) -> tuple[bool, str, int]:
         if days_since >= MAX_REBALANCE_DAYS:
             return True, f"시간 가드레일 초과 도달 ({days_since}일 경과 >= {MAX_REBALANCE_DAYS}일)", 0
             
-        days_left  = max(0, REBALANCE_DAYS - days_since)
+        days_left  = max(0, adaptive_days - days_since)
 
         if days_left <= 0:
-            return True, f"기본 30일 주기 도달 ({days_since}일 경과)", 0
+            return True, f"가변 리밸런싱 주기 도달 (변동성 {weighted_vol:.1f}% -> 주기 {adaptive_days}일, {days_since}일 경과)", 0
         else:
-            return False, f"기본 리밸런싱까지 {days_left}일 남음", days_left
+            return False, f"가변 리밸런싱(주기 {adaptive_days}일, 변동성 {weighted_vol:.1f}%)까지 {days_left}일 남음", days_left
     except Exception:
         return True, "날짜 파싱 오류 → 재실행", 0
 
@@ -184,6 +202,7 @@ def evaluate_current_portfolio(
     my_portfolio: dict,    # {address: usd_invested}
     vault_map: dict,       # {address: vault_dict}
     optimal: list,         # get_recommendations() 결과
+    min_drift_pct: float = 5.0,
 ) -> dict:
     """
     현재 포트폴리오 vs 최적 포트폴리오 상태 분석.
@@ -194,7 +213,7 @@ def evaluate_current_portfolio(
         return {"error": "포트폴리오 총투자금이 0입니다."}
 
     import portfolio_tracker
-    from resilience_analyzer import analyze_vault_resilience
+    from resilience_analyzer import analyze_vault_resilience, get_tvl_change_7d
     snapshots = portfolio_tracker.load_snapshots_all()
 
     opt_map = {v["address"]: v for v in optimal}
@@ -246,15 +265,30 @@ def evaluate_current_portfolio(
             or not v.get("allow_deposits", True)
         )
 
+        # 7일 TVL 변동률 감시 (자금 급유출 감지 시 위험 처리)
+        tvl_change = get_tvl_change_7d(addr, snapshots)
+        is_tvl_bankrun = tvl_change <= -25.0
+
         is_danger = False
+        danger_reason = ""
         if is_broken:
             is_danger = True
+            danger_reason = f"추세 붕괴 (MDD {mdd:.1f}%)"
+        elif is_tvl_bankrun:
+            is_danger = True
+            danger_reason = f"급격한 자금 유출 (7일 TVL {tvl_change:.1f}%)"
         elif basic_danger:
             # 기본 위험군이라도 회복탄력성이 입증되었고 추세가 붕괴되지 않았다면 위험에서 제외
             if is_resilient and not is_broken:
                 is_danger = False
             else:
                 is_danger = True
+                if not v.get("allow_deposits", True):
+                    danger_reason = "입금 불가 상태"
+                elif apr < DANGER_APR:
+                    danger_reason = f"수익률 음수 (APR {apr:.1f}%)"
+                elif mdd > DANGER_MDD:
+                    danger_reason = f"MDD 허용치 초과 ({mdd:.1f}% > {DANGER_MDD}%)"
 
         if is_danger:
             danger_vaults.append(addr)
@@ -271,6 +305,7 @@ def evaluate_current_portfolio(
             "robustness":   _sf(v.get("robustness_score")),
             "allow_deposits": v.get("allow_deposits", True),
             "is_danger":    is_danger,
+            "danger_reason": danger_reason,
             "in_optimal":   addr in opt_map,
         }
         holdings.append(h)
@@ -306,12 +341,12 @@ def evaluate_current_portfolio(
         needs_rebalance = True
         reasons.append(f"⚖️ 전체 포트폴리오 비중 괴리 누적치 임계값 도달 ({total_absolute_drift:.1f}% >= 15%)")
 
-    drifted = [h for h in holdings if abs(h["drift_pct"]) >= MIN_DRIFT_PCT]
+    drifted = [h for h in holdings if abs(h["drift_pct"]) >= min_drift_pct]
     if drifted:
         needs_rebalance = True
         top_drift = sorted(drifted, key=lambda x: abs(x["drift_pct"]), reverse=True)[0]
         reasons.append(
-            f"📊 개별 비중 드리프트 {len(drifted)}개 볼트 (최대 {top_drift['name']}: {top_drift['drift_pct']:+.1f}%)"
+            f"📊 개별 비중 드리프트 {len(drifted)}개 볼트 (임계값 {min_drift_pct:.1f}%, 최대 {top_drift['name']}: {top_drift['drift_pct']:+.1f}%)"
         )
 
     if missing_vaults:
@@ -343,6 +378,7 @@ def generate_rebalance_plan(
     evaluation: dict,
     optimal: list,
     my_portfolio: dict,
+    min_drift_pct: float = 5.0,
 ) -> dict:
     """
     평가 결과 → 구체적 실행 계획 (출금 / 입금 USD 금액).
@@ -369,6 +405,12 @@ def generate_rebalance_plan(
 
         # 위험 볼트는 목표 0% → 전액 출금
         if h["is_danger"] and addr not in opt_map:
+            danger_r = h.get("danger_reason")
+            if not danger_r:
+                mdd_val = h.get("max_drawdown", 0.0)
+                apr_val = h.get("apr_30d", 0.0)
+                danger_r = f"MDD {mdd_val:.1f}% / APR {apr_val:.1f}%"
+            reason_str = f"🔴 위험 볼트 ({danger_r})"
             actions.append({
                 "step":       "D-1 오늘 출금 신청",
                 "action":     "WITHDRAW",
@@ -377,12 +419,12 @@ def generate_rebalance_plan(
                 "amount_usd": round(h["invested_usd"], 2),
                 "current_pct": current_pct,
                 "target_pct": 0.0,
-                "reason":     f"🔴 위험 볼트 (MDD {h['max_drawdown']:.1f}% / APR {h['apr_30d']:.1f}%)",
+                "reason":     reason_str,
                 "deadline":   "⚠️ 오늘 출금 신청 필요 (1일 지연 — 내일 완료)",
                 "priority":   1,
             })
         # 비중 과잉 볼트 (드리프트 > 임계값)
-        elif drift > MIN_DRIFT_PCT and addr in opt_map:
+        elif drift > min_drift_pct and addr in opt_map:
             reduce_usd = drift / 100 * total
             actions.append({
                 "step":       "D-1 오늘 출금 신청",
@@ -409,7 +451,7 @@ def generate_rebalance_plan(
         current_pct = current_h["current_pct"] if current_h else 0.0
         drift_pct   = current_pct - target_pct
 
-        if drift_pct < -MIN_DRIFT_PCT:   # 목표보다 부족
+        if drift_pct < -min_drift_pct:   # 목표보다 부족
             add_usd = abs(drift_pct) / 100 * total
             deposit_actions.append({
                 "step":       "D0 내일 입금",
@@ -444,6 +486,42 @@ def generate_rebalance_plan(
             "reason":      "⭐ 신규 추천 볼트 진입",
             "priority":    4,
         })
+
+    # ── 거래 비용 및 슬리피지 모델링 필터 (Friction Cost vs Expected Gain)
+    opt_weighted_apr = sum(v.get("apr_30d", 0.0) * (v.get("suggested_allocation", 0.0) / 100.0) for v in optimal)
+    filtered_actions = []
+    for a in actions:
+        if a["action"] == "WITHDRAW":
+            # 위험군 탈출이거나 강제 실행이면 무조건 실행 (비용 무시)
+            is_danger = any(h["address"] == a["address"] and h["is_danger"] for h in evaluation.get("holdings", []))
+            if is_danger:
+                filtered_actions.append(a)
+                continue
+            
+            # 일반 비중 축소의 경우 비용-편익 분석 진행
+            # 1일 출금 지연 기회비용 = W_usd * (old_apr / 100) / 365
+            old_apr = sum(h["apr_30d"] for h in evaluation.get("holdings", []) if h["address"] == a["address"])
+            opp_cost = a["amount_usd"] * (old_apr / 100.0) / 365.0
+            # 슬리피지 및 수수료 마찰비용 = 0.2%
+            friction_cost = a["amount_usd"] * 0.002
+            total_cost = friction_cost + opp_cost
+            
+            # 30일간의 기대 수익 상승분 = W_usd * (new_apr - old_apr) / 100 * (30 / 365)
+            new_apr = opt_weighted_apr
+            expected_gain = a["amount_usd"] * (new_apr - old_apr) / 100.0 * (30.0 / 365.0)
+            
+            if expected_gain <= total_cost:
+                a["action"] = "SKIPPED_WITHDRAW"
+                a["skipped"] = True
+                a["skip_reason"] = f"비용-편익 미달 (예상수익 ${expected_gain:.2f} <= 마찰비용 ${total_cost:.2f})"
+                a["reason"] += f" [⚠️ 비용미달로 실행생략]"
+                filtered_actions.append(a)
+            else:
+                filtered_actions.append(a)
+        else:
+            filtered_actions.append(a)
+            
+    actions = filtered_actions
 
     # ── 우선순위 정렬
     actions.sort(key=lambda a: a["priority"])
@@ -597,11 +675,26 @@ def run_rebalance_analysis(
     print(f"  [RE] 총 투자금: ${total_invested:,.0f} ({'시뮬레이션' if simulation_mode else '실제'})")
 
     # ── 리밸런싱 주기 판단
-    should_run, timing_reason, days_left = should_rebalance(force=force)
+    should_run, timing_reason, days_left = should_rebalance(vault_map, my_portfolio, force=force)
     print(f"  [RE] 리밸런싱 여부: {should_run} ({timing_reason})")
 
+    # ── 가변 비중 임계값 계산 (3.0% ~ 8.0%)
+    vols = []
+    weights = []
+    if my_portfolio and vault_map:
+        for addr, usd in my_portfolio.items():
+            v = vault_map.get(addr, {})
+            vols.append(float(v.get("vol_score", 30.0)))
+            weights.append(usd / total_invested)
+    if not vols:
+        vols = [30.0]
+        weights = [1.0]
+    weighted_vol = sum(v * w for v, w in zip(vols, weights))
+    adaptive_drift = float(np.clip(5.0 * (weighted_vol / 30.0), 3.0, 8.0))
+    print(f"  [RE] 가변 비중 임계값: {adaptive_drift:.2f}% (가중 변동성: {weighted_vol:.1f}%)")
+
     # ── 현재 포트폴리오 평가
-    evaluation = evaluate_current_portfolio(my_portfolio, vault_map, optimal)
+    evaluation = evaluate_current_portfolio(my_portfolio, vault_map, optimal, min_drift_pct=adaptive_drift)
     if "error" in evaluation:
         return evaluation
 
@@ -612,7 +705,7 @@ def run_rebalance_analysis(
     # ── 리밸런싱 계획 생성 (리밸런싱 필요 시)
     rebalance_plan = {}
     if evaluation.get("needs_rebalance") or should_run:
-        rebalance_plan = generate_rebalance_plan(evaluation, optimal, my_portfolio)
+        rebalance_plan = generate_rebalance_plan(evaluation, optimal, my_portfolio, min_drift_pct=adaptive_drift)
         n_actions = rebalance_plan.get("total_actions", 0)
         print(f"  [RE] 리밸런싱 액션: {n_actions}개")
         if n_actions > 0:

@@ -865,13 +865,13 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
     eligible = [
         v for v in vault_data
         if v.get("allow_deposits", True)
-        and v.get("leader_equity_ratio", 0) >= min_leader_equity
+        and (v.get("leader_equity_ratio", 0) >= min_leader_equity or v.get("leader_equity_usd", 0) >= 50000.0)
         and v.get("robustness_score", 0.0) >= min_robustness
         and v.get("apr_30d", 0) > 0          # ★ 최근 30일 수익 양수만 (회복탄력성 최소 기준)
         and v.get("_ok_no_loss", True)       # ★ 초기 손실 없는 볼트만 추천
         and v.get("max_drawdown", 0.0) <= 30.0  # ★ MDD 30% 이하 하드캡 적용
     ]
-    print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}+로버스트≥{min_robustness:.2f}+APR>0+MDD≤30%): {len(eligible)}개")
+    print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}또는$50k+로버스트≥{min_robustness:.2f}+APR>0+MDD≤30%): {len(eligible)}개")
 
     # 2차: robustness 기준만 완화 (APR > 0, _ok_no_loss, MDD 하드캡은 유지)
     if len(eligible) < top_k:
@@ -879,7 +879,7 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
         eligible = [
             v for v in vault_data
             if v.get("allow_deposits", True)
-            and v.get("leader_equity_ratio", 0) >= min_leader_equity
+            and (v.get("leader_equity_ratio", 0) >= min_leader_equity or v.get("leader_equity_usd", 0) >= 50000.0)
             and v.get("robustness_score", 0.0) >= fallback_rob
             and v.get("apr_30d", 0) > 0      # ★ APR > 0 유지
             and v.get("_ok_no_loss", True)       # ★ 안전장치 유지
@@ -941,8 +941,8 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
 
     # 1) CORE 그룹: 위험 역가중 공식 (1 / MDD) 적용
     if len(core_vaults) > 0:
-        # 분모 0 방지를 위해 max_drawdown 최소값 0.01 설정
-        raw_core_weights = [1.0 / max(v.get("max_drawdown", 0.0), 0.01) for v in core_vaults]
+        # 분모 0 및 극단적 비중 쏠림 방지를 위해 max_drawdown 최소값 2.0% 설정
+        raw_core_weights = [1.0 / max(v.get("max_drawdown", 0.0), 2.0) for v in core_vaults]
         sum_core_weights = sum(raw_core_weights)
         for idx, v in enumerate(core_vaults):
             alloc = (raw_core_weights[idx] / sum_core_weights) * core_target
