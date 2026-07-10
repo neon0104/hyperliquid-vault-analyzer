@@ -654,10 +654,13 @@ def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90, addre
     filter_details = []
     for v in valid:
         ok_deposit  = v.get("allow_deposits", True)
-        ok_leader   = v.get("leader_equity_ratio", 0) >= MIN_LEADER_EQ
-        # 리더 에쿼티 데이터가 없는 경우(0.0) → 데이터 부족으로 일단 통과
         leader_ratio = v.get("leader_equity_ratio", -1)
-        ok_leader_pass = (leader_ratio < 0 or leader_ratio >= MIN_LEADER_EQ)
+        leader_usd = v.get("leader_equity_usd", 0.0)
+        
+        # 리더 투자 비율(40%) 또는 절대 금액($50k) 중 하나를 만족하면 통과
+        ok_leader = (leader_ratio >= MIN_LEADER_EQ or leader_usd >= 50000.0)
+        ok_leader_pass = (leader_ratio < 0 or leader_ratio >= MIN_LEADER_EQ or leader_usd >= 50000.0)
+        
         # 사용자가 직접 선택한 볼트는 필터 무조건 통과
         user_selected = bool(addresses)
         filter_details.append({
@@ -672,7 +675,7 @@ def run_portfolio_analysis(top_k=25, max_corr=0.55, min_pts=8, max_pts=90, addre
     if not addresses and len(filtered) < 5:
         filtered = [v for v in filter_details if v.get("allow_deposits", True)]
         print(f"  [PE] 리더에쿼티 데이터 부족 → 입금가능 폴백: {len(filtered)}개")
-    print(f"  [PE] 기본 필터 통과: {len(filtered)}개 {'(사용자 선택 모드)' if addresses else f'(입금가능+리더에쿼티≥{MIN_LEADER_EQ:.0%})'}")
+    print(f"  [PE] 기본 필터 통과: {len(filtered)}개 {'(사용자 선택 모드)' if addresses else f'(입금가능+리더에쿼티≥{MIN_LEADER_EQ:.0%}또는$50k)'}")
 
     # 수익률 행렬
     all_sel, R = build_returns_matrix(filtered, min_pts, max_pts)
