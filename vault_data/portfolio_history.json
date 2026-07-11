@@ -8740,5 +8740,63 @@
         "leader_eq": 0.5875575052052511
       }
     ]
+  },
+  "2026-07-12": {
+    "portfolio_value": 153074.54,
+    "daily_pnl": 482.54,
+    "daily_return_pct": 0.3162,
+    "cumulative_pnl": 53074.54,
+    "cumulative_pct": 53.0745,
+    "max_equity_ever": 153074.54,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4444,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 32.57,
+        "apr_30d": 31.38,
+        "robustness": 0.9255,
+        "undervalue": 0.973,
+        "leader_eq": 0.9990986966852689
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 8.98,
+        "apr_30d": 33.07,
+        "robustness": 0.8923,
+        "undervalue": 0.917,
+        "leader_eq": 0.4262662225999651
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 5.72,
+        "apr_30d": 241.49,
+        "robustness": 0.8039,
+        "undervalue": 1.252,
+        "leader_eq": 0.28030322273674224
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.73,
+        "apr_30d": 41.18,
+        "robustness": 0.6454,
+        "undervalue": 1.022,
+        "leader_eq": 0.925184106869723
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 50.0,
+        "apr_30d": 174.59,
+        "robustness": 0.3909,
+        "undervalue": 1.17,
+        "leader_eq": 0.5875575052052511
+      }
+    ]
   }
 }
