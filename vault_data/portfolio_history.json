@@ -8798,5 +8798,63 @@
         "leader_eq": 0.5875575052052511
       }
     ]
+  },
+  "2026-07-13": {
+    "portfolio_value": 153485.11,
+    "daily_pnl": 410.57,
+    "daily_return_pct": 0.2682,
+    "cumulative_pnl": 53485.11,
+    "cumulative_pct": 53.4851,
+    "max_equity_ever": 153485.11,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3838,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 31.0,
+        "apr_30d": 33.04,
+        "robustness": 0.9307,
+        "undervalue": 0.975,
+        "leader_eq": 0.9990986966852689
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 8.55,
+        "apr_30d": 24.47,
+        "robustness": 0.8925,
+        "undervalue": 0.897,
+        "leader_eq": 0.4332606353035355
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 10.45,
+        "apr_30d": 278.09,
+        "robustness": 0.7965,
+        "undervalue": 1.302,
+        "leader_eq": 0.2500863929286552
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 32.81,
+        "apr_30d": 113.27,
+        "robustness": 0.3912,
+        "undervalue": 1.104,
+        "leader_eq": 0.5875575052052511
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 17.19,
+        "apr_30d": 112.51,
+        "robustness": 0.5266,
+        "undervalue": 1.065,
+        "leader_eq": 0.051554827785013024
+      }
+    ]
   }
 }
