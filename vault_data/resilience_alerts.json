@@ -2,8 +2,8 @@
   {
     "address": "0x2431edfcb662e6ff6deab113cc91878a0b53fb0f",
     "name": "Goon Edging",
-    "historical_max_mdd": 11.78,
-    "current_drawdown": 11.78,
+    "historical_max_mdd": 11.74,
+    "current_drawdown": 10.76,
     "total_drawdown_events": 3,
     "recovered_count": 2,
     "avg_recovery_days": 40.5,
@@ -13,22 +13,22 @@
       {
         "start_date": "2026-03-24",
         "end_date": "2026-05-29",
-        "peak_drawdown": 11.34,
+        "peak_drawdown": 11.29,
         "recovery_days": 66,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-11",
         "end_date": "2026-06-26",
-        "peak_drawdown": 11.67,
+        "peak_drawdown": 11.63,
         "recovery_days": 15,
         "status": "Recovered"
       },
       {
         "start_date": "2026-07-03",
         "end_date": "Ongoing",
-        "peak_drawdown": 11.78,
-        "recovery_days": 8,
+        "peak_drawdown": 11.74,
+        "recovery_days": 9,
         "status": "Ongoing"
       }
     ],
@@ -57,43 +57,7 @@
         "start_date": "2026-05-07",
         "end_date": "Ongoing",
         "peak_drawdown": 23.73,
-        "recovery_days": 65,
-        "status": "Ongoing"
-      }
-    ],
-    "is_buy_the_dip_opportunity": true,
-    "is_broken_trend": false
-  },
-  {
-    "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
-    "name": "winning fortunes",
-    "historical_max_mdd": 21.09,
-    "current_drawdown": 17.54,
-    "total_drawdown_events": 3,
-    "recovered_count": 2,
-    "avg_recovery_days": 7.5,
-    "resilience_score": 0.637,
-    "allow_deposits": true,
-    "events": [
-      {
-        "start_date": "2026-05-13",
-        "end_date": "2026-05-19",
-        "peak_drawdown": 21.09,
-        "recovery_days": 6,
-        "status": "Recovered"
-      },
-      {
-        "start_date": "2026-06-07",
-        "end_date": "2026-06-16",
-        "peak_drawdown": 18.6,
-        "recovery_days": 9,
-        "status": "Recovered"
-      },
-      {
-        "start_date": "2026-06-24",
-        "end_date": "Ongoing",
-        "peak_drawdown": 19.82,
-        "recovery_days": 17,
+        "recovery_days": 66,
         "status": "Ongoing"
       }
     ],
@@ -103,8 +67,8 @@
   {
     "address": "0x45c42fbd450b5506f8dc819d46036630fe75b81e",
     "name": "Octavious Maximus",
-    "historical_max_mdd": 15.26,
-    "current_drawdown": 14.31,
+    "historical_max_mdd": 15.22,
+    "current_drawdown": 14.24,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 34.0,
@@ -114,15 +78,51 @@
       {
         "start_date": "2026-04-03",
         "end_date": "2026-05-07",
-        "peak_drawdown": 13.14,
+        "peak_drawdown": 13.09,
         "recovery_days": 34,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-10",
         "end_date": "Ongoing",
-        "peak_drawdown": 15.26,
-        "recovery_days": 31,
+        "peak_drawdown": 15.22,
+        "recovery_days": 32,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+    "name": "winning fortunes",
+    "historical_max_mdd": 23.22,
+    "current_drawdown": 23.22,
+    "total_drawdown_events": 3,
+    "recovered_count": 2,
+    "avg_recovery_days": 7.5,
+    "resilience_score": 0.637,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-05-13",
+        "end_date": "2026-05-19",
+        "peak_drawdown": 22.33,
+        "recovery_days": 6,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-07",
+        "end_date": "2026-06-16",
+        "peak_drawdown": 19.55,
+        "recovery_days": 9,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-24",
+        "end_date": "Ongoing",
+        "peak_drawdown": 23.22,
+        "recovery_days": 18,
         "status": "Ongoing"
       }
     ],
@@ -132,8 +132,8 @@
   {
     "address": "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01",
     "name": "Orion",
-    "historical_max_mdd": 19.19,
-    "current_drawdown": 19.19,
+    "historical_max_mdd": 19.09,
+    "current_drawdown": 18.52,
     "total_drawdown_events": 5,
     "recovered_count": 4,
     "avg_recovery_days": 13.8,
@@ -143,72 +143,36 @@
       {
         "start_date": "2026-03-30",
         "end_date": "2026-04-18",
-        "peak_drawdown": 14.01,
+        "peak_drawdown": 13.89,
         "recovery_days": 19,
         "status": "Recovered"
       },
       {
         "start_date": "2026-04-20",
         "end_date": "2026-05-01",
-        "peak_drawdown": 9.89,
+        "peak_drawdown": 9.81,
         "recovery_days": 11,
         "status": "Recovered"
       },
       {
         "start_date": "2026-05-18",
         "end_date": "2026-06-03",
-        "peak_drawdown": 16.37,
+        "peak_drawdown": 16.25,
         "recovery_days": 16,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-16",
         "end_date": "2026-06-25",
-        "peak_drawdown": 11.74,
+        "peak_drawdown": 11.67,
         "recovery_days": 9,
         "status": "Recovered"
       },
       {
         "start_date": "2026-07-03",
         "end_date": "Ongoing",
-        "peak_drawdown": 19.19,
-        "recovery_days": 8,
-        "status": "Ongoing"
-      }
-    ],
-    "is_buy_the_dip_opportunity": true,
-    "is_broken_trend": false
-  },
-  {
-    "address": "0x08dcbb771f997544f2015f8530e50a234ab71818",
-    "name": "DaoScience Quant",
-    "historical_max_mdd": 14.57,
-    "current_drawdown": 14.57,
-    "total_drawdown_events": 3,
-    "recovered_count": 2,
-    "avg_recovery_days": 22.0,
-    "resilience_score": 0.517,
-    "allow_deposits": true,
-    "events": [
-      {
-        "start_date": "2026-04-29",
-        "end_date": "2026-05-28",
-        "peak_drawdown": 8.38,
-        "recovery_days": 29,
-        "status": "Recovered"
-      },
-      {
-        "start_date": "2026-06-09",
-        "end_date": "2026-06-24",
-        "peak_drawdown": 13.08,
-        "recovery_days": 15,
-        "status": "Recovered"
-      },
-      {
-        "start_date": "2026-07-03",
-        "end_date": "Ongoing",
-        "peak_drawdown": 14.57,
-        "recovery_days": 8,
+        "peak_drawdown": 19.09,
+        "recovery_days": 9,
         "status": "Ongoing"
       }
     ],
@@ -237,7 +201,101 @@
         "start_date": "2026-07-03",
         "end_date": "Ongoing",
         "peak_drawdown": 6.57,
-        "recovery_days": 8,
+        "recovery_days": 9,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x08dcbb771f997544f2015f8530e50a234ab71818",
+    "name": "DaoScience Quant",
+    "historical_max_mdd": 17.15,
+    "current_drawdown": 17.15,
+    "total_drawdown_events": 3,
+    "recovered_count": 2,
+    "avg_recovery_days": 22.0,
+    "resilience_score": 0.517,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-04-29",
+        "end_date": "2026-05-28",
+        "peak_drawdown": 8.62,
+        "recovery_days": 29,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-06-09",
+        "end_date": "2026-06-24",
+        "peak_drawdown": 13.38,
+        "recovery_days": 15,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-07-03",
+        "end_date": "Ongoing",
+        "peak_drawdown": 17.15,
+        "recovery_days": 9,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0xe6b679488d19045a5e4cf7815e35ddc98d0479fa",
+    "name": "BTC AUREX",
+    "historical_max_mdd": 15.35,
+    "current_drawdown": 10.92,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 17.0,
+    "resilience_score": 0.458,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-30",
+        "end_date": "2026-04-16",
+        "peak_drawdown": 9.49,
+        "recovery_days": 17,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-28",
+        "end_date": "Ongoing",
+        "peak_drawdown": 15.35,
+        "recovery_days": 45,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x152a06f737861b04e99691bbadf6166d64acb921",
+    "name": "HindenShort v0.1",
+    "historical_max_mdd": 11.19,
+    "current_drawdown": 7.97,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 36.0,
+    "resilience_score": 0.3,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-04-18",
+        "end_date": "2026-05-24",
+        "peak_drawdown": 11.19,
+        "recovery_days": 36,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-07-03",
+        "end_date": "Ongoing",
+        "peak_drawdown": 7.97,
+        "recovery_days": 9,
         "status": "Ongoing"
       }
     ],
@@ -247,8 +305,8 @@
   {
     "address": "0xe40cb11e79bc6c046a53df495b908b11864c75c2",
     "name": "BTC 2X Bitcoin and Gold Daily Rebalancin",
-    "historical_max_mdd": 51.93,
-    "current_drawdown": 41.87,
+    "historical_max_mdd": 52.26,
+    "current_drawdown": 42.76,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 19.0,
@@ -258,15 +316,15 @@
       {
         "start_date": "2026-03-30",
         "end_date": "2026-04-18",
-        "peak_drawdown": 21.99,
+        "peak_drawdown": 22.13,
         "recovery_days": 19,
         "status": "Recovered"
       },
       {
         "start_date": "2026-05-28",
         "end_date": "Ongoing",
-        "peak_drawdown": 51.93,
-        "recovery_days": 44,
+        "peak_drawdown": 52.26,
+        "recovery_days": 45,
         "status": "Ongoing"
       }
     ],
@@ -276,8 +334,8 @@
   {
     "address": "0x36c88d0fbe990a6e5042b378a860909a05749f22",
     "name": "prof's ai vault",
-    "historical_max_mdd": 12.09,
-    "current_drawdown": 9.58,
+    "historical_max_mdd": 12.12,
+    "current_drawdown": 9.88,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 33.0,
@@ -287,15 +345,15 @@
       {
         "start_date": "2026-05-16",
         "end_date": "2026-06-18",
-        "peak_drawdown": 8.3,
+        "peak_drawdown": 8.33,
         "recovery_days": 33,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-19",
         "end_date": "Ongoing",
-        "peak_drawdown": 12.09,
-        "recovery_days": 22,
+        "peak_drawdown": 12.12,
+        "recovery_days": 23,
         "status": "Ongoing"
       }
     ],
@@ -305,8 +363,8 @@
   {
     "address": "0x45e7014f092c5f9c39482caec131346f13ac5e73",
     "name": "Ultron",
-    "historical_max_mdd": 96.09,
-    "current_drawdown": 86.59,
+    "historical_max_mdd": 96.35,
+    "current_drawdown": 87.09,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 10.0,
@@ -316,15 +374,15 @@
       {
         "start_date": "2026-03-30",
         "end_date": "2026-04-09",
-        "peak_drawdown": 53.97,
+        "peak_drawdown": 54.31,
         "recovery_days": 10,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-02",
         "end_date": "Ongoing",
-        "peak_drawdown": 96.09,
-        "recovery_days": 39,
+        "peak_drawdown": 96.35,
+        "recovery_days": 40,
         "status": "Ongoing"
       }
     ],
@@ -334,8 +392,8 @@
   {
     "address": "0x239f1ba2dc337485f691e326fca45f8f11f7900a",
     "name": "SG trading ",
-    "historical_max_mdd": 53.83,
-    "current_drawdown": 42.13,
+    "historical_max_mdd": 52.85,
+    "current_drawdown": 39.4,
     "total_drawdown_events": 3,
     "recovered_count": 2,
     "avg_recovery_days": 28.0,
@@ -345,51 +403,22 @@
       {
         "start_date": "2026-04-18",
         "end_date": "2026-06-04",
-        "peak_drawdown": 37.62,
+        "peak_drawdown": 36.7,
         "recovery_days": 47,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-16",
         "end_date": "2026-06-25",
-        "peak_drawdown": 23.27,
+        "peak_drawdown": 22.84,
         "recovery_days": 9,
         "status": "Recovered"
       },
       {
         "start_date": "2026-07-02",
         "end_date": "Ongoing",
-        "peak_drawdown": 53.83,
-        "recovery_days": 9,
-        "status": "Ongoing"
-      }
-    ],
-    "is_buy_the_dip_opportunity": true,
-    "is_broken_trend": false
-  },
-  {
-    "address": "0x4a01f1097a03495ac0054a845c991d9749f81a00",
-    "name": "FKA - FK Capital Alpha Fund",
-    "historical_max_mdd": 43.35,
-    "current_drawdown": 34.47,
-    "total_drawdown_events": 2,
-    "recovered_count": 1,
-    "avg_recovery_days": 29.0,
-    "resilience_score": 0.358,
-    "allow_deposits": true,
-    "events": [
-      {
-        "start_date": "2026-03-20",
-        "end_date": "2026-04-18",
-        "peak_drawdown": 43.35,
-        "recovery_days": 29,
-        "status": "Recovered"
-      },
-      {
-        "start_date": "2026-05-18",
-        "end_date": "Ongoing",
-        "peak_drawdown": 35.27,
-        "recovery_days": 54,
+        "peak_drawdown": 52.85,
+        "recovery_days": 10,
         "status": "Ongoing"
       }
     ],
@@ -399,8 +428,8 @@
   {
     "address": "0x565ab99e1515c6dd3b8852b15354638d467f999a",
     "name": "Darkframe",
-    "historical_max_mdd": 52.24,
-    "current_drawdown": 40.05,
+    "historical_max_mdd": 52.51,
+    "current_drawdown": 40.78,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 19.0,
@@ -410,15 +439,15 @@
       {
         "start_date": "2026-03-30",
         "end_date": "2026-04-18",
-        "peak_drawdown": 23.37,
+        "peak_drawdown": 23.51,
         "recovery_days": 19,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-02",
         "end_date": "Ongoing",
-        "peak_drawdown": 52.24,
-        "recovery_days": 39,
+        "peak_drawdown": 52.51,
+        "recovery_days": 40,
         "status": "Ongoing"
       }
     ],
@@ -428,8 +457,8 @@
   {
     "address": "0x5a9e0f6c1a702b039de10c757e5ac0670d798eec",
     "name": "Crypto Cycle Trading 20 day 1/2",
-    "historical_max_mdd": 10.07,
-    "current_drawdown": 9.92,
+    "historical_max_mdd": 10.09,
+    "current_drawdown": 10.07,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 19.0,
@@ -439,15 +468,15 @@
       {
         "start_date": "2026-03-30",
         "end_date": "2026-04-18",
-        "peak_drawdown": 6.36,
+        "peak_drawdown": 6.37,
         "recovery_days": 19,
         "status": "Recovered"
       },
       {
         "start_date": "2026-05-16",
         "end_date": "Ongoing",
-        "peak_drawdown": 10.07,
-        "recovery_days": 56,
+        "peak_drawdown": 10.09,
+        "recovery_days": 57,
         "status": "Ongoing"
       }
     ],
@@ -458,7 +487,7 @@
     "address": "0x8e108f7c619ab460885edd0f84e313daf119c779",
     "name": "Hyperland",
     "historical_max_mdd": 1194845.97,
-    "current_drawdown": 961262.87,
+    "current_drawdown": 999022.24,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 38.0,
@@ -476,7 +505,7 @@
         "start_date": "2026-05-18",
         "end_date": "Ongoing",
         "peak_drawdown": 1194845.97,
-        "recovery_days": 54,
+        "recovery_days": 55,
         "status": "Ongoing"
       }
     ],
@@ -487,7 +516,7 @@
     "address": "0x44ff912d0f88e27419ec0ddc950096609a9b6997",
     "name": "DailyTradeAI  Low risk",
     "historical_max_mdd": 8148813.29,
-    "current_drawdown": 6396759.25,
+    "current_drawdown": 6429843.93,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 39.0,
@@ -505,7 +534,36 @@
         "start_date": "2026-05-28",
         "end_date": "Ongoing",
         "peak_drawdown": 8148813.29,
-        "recovery_days": 44,
+        "recovery_days": 45,
+        "status": "Ongoing"
+      }
+    ],
+    "is_buy_the_dip_opportunity": true,
+    "is_broken_trend": false
+  },
+  {
+    "address": "0x4a01f1097a03495ac0054a845c991d9749f81a00",
+    "name": "FKA - FK Capital Alpha Fund",
+    "historical_max_mdd": 43.91,
+    "current_drawdown": 35.94,
+    "total_drawdown_events": 2,
+    "recovered_count": 1,
+    "avg_recovery_days": 29.0,
+    "resilience_score": 0.358,
+    "allow_deposits": true,
+    "events": [
+      {
+        "start_date": "2026-03-20",
+        "end_date": "2026-04-18",
+        "peak_drawdown": 43.91,
+        "recovery_days": 29,
+        "status": "Recovered"
+      },
+      {
+        "start_date": "2026-05-18",
+        "end_date": "Ongoing",
+        "peak_drawdown": 35.94,
+        "recovery_days": 55,
         "status": "Ongoing"
       }
     ],
@@ -515,8 +573,8 @@
   {
     "address": "0xbe9ee55bc95b43b6a31bad63d5934492b99c6a87",
     "name": "Gizbar Gird",
-    "historical_max_mdd": 211.12,
-    "current_drawdown": 180.24,
+    "historical_max_mdd": 217.06,
+    "current_drawdown": 188.12,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 23.0,
@@ -526,15 +584,15 @@
       {
         "start_date": "2026-03-24",
         "end_date": "2026-04-16",
-        "peak_drawdown": 86.74,
+        "peak_drawdown": 89.51,
         "recovery_days": 23,
         "status": "Recovered"
       },
       {
         "start_date": "2026-05-27",
         "end_date": "Ongoing",
-        "peak_drawdown": 211.12,
-        "recovery_days": 45,
+        "peak_drawdown": 217.06,
+        "recovery_days": 46,
         "status": "Ongoing"
       }
     ],
@@ -544,8 +602,8 @@
   {
     "address": "0x020c922cbd53d08f797f8bebaa69541c65bd8313",
     "name": "kusa",
-    "historical_max_mdd": 9.87,
-    "current_drawdown": 8.79,
+    "historical_max_mdd": 9.91,
+    "current_drawdown": 9.2,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 26.0,
@@ -555,15 +613,15 @@
       {
         "start_date": "2026-05-15",
         "end_date": "2026-06-10",
-        "peak_drawdown": 7.37,
+        "peak_drawdown": 7.4,
         "recovery_days": 26,
         "status": "Recovered"
       },
       {
         "start_date": "2026-06-27",
         "end_date": "Ongoing",
-        "peak_drawdown": 9.87,
-        "recovery_days": 14,
+        "peak_drawdown": 9.91,
+        "recovery_days": 15,
         "status": "Ongoing"
       }
     ],
@@ -574,7 +632,7 @@
     "address": "0x07372a6543b694e3a77a6b03a2f7dc6e9d8493d8",
     "name": "Goat Capital",
     "historical_max_mdd": 7744239.3,
-    "current_drawdown": 7740417.51,
+    "current_drawdown": 7740320.65,
     "total_drawdown_events": 2,
     "recovered_count": 1,
     "avg_recovery_days": 16.0,
@@ -592,7 +650,7 @@
         "start_date": "2026-05-25",
         "end_date": "Ongoing",
         "peak_drawdown": 7744239.3,
-        "recovery_days": 47,
+        "recovery_days": 48,
         "status": "Ongoing"
       }
     ],

@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-07-11",
-  "generated_at_full": "2026-07-11T09:03:14.313605",
-  "snapshot_date": "2026-07-11",
+  "generated_at": "2026-07-12",
+  "generated_at_full": "2026-07-12T09:03:03.526017",
+  "snapshot_date": "2026-07-12",
   "simulation_mode": false,
   "rebalance_cycle_days": 30,
   "should_rebalance": true,
-  "timing_reason": "첫 리밸런싱 실행 (가변 주기: 14일, 가중 변동성: 77.1%)",
-  "days_to_next_rebalance": 0,
+  "timing_reason": "가변 리밸런싱(주기 14일, 변동성 79.1%)까지 13일 남음",
+  "days_to_next_rebalance": 13,
   "current_portfolio": {
-    "total_invested": 25.05,
+    "total_invested": 25.08,
     "n_vaults": 1,
-    "estimated_monthly": 3.16,
-    "estimated_annual": 37.92,
+    "estimated_monthly": 2.4,
+    "estimated_annual": 28.85,
     "holdings": [
       {
         "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
         "name": "Growi HF",
-        "invested_usd": 25.05,
+        "invested_usd": 25.08,
         "current_pct": 100.0,
         "target_pct": 0.0,
         "drift_pct": 100.0,
-        "apr_30d": 151.36,
-        "max_drawdown": 26.66,
-        "robustness": 0.5593,
+        "apr_30d": 115.04,
+        "max_drawdown": 25.75,
+        "robustness": 0.5267,
         "allow_deposits": true,
         "is_danger": false,
         "danger_reason": "",
@@ -34,52 +34,42 @@
     {
       "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
       "name": "Infinite Vault Robot",
-      "target_pct": 34.09,
-      "target_usd": 8.54,
-      "apr_30d": 28.58,
-      "max_drawdown": 0.1,
-      "robustness": 0.9229,
-      "sharpe": 10.482
+      "target_pct": 34.27,
+      "target_usd": 8.59,
+      "apr_30d": 31.33,
+      "max_drawdown": 0.09,
+      "robustness": 0.9254,
+      "sharpe": 11.104
     },
     {
       "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
       "name": "22Cap",
-      "target_pct": 9.41,
-      "target_usd": 2.36,
-      "apr_30d": 26.19,
+      "target_pct": 9.45,
+      "target_usd": 2.37,
+      "apr_30d": 33.19,
       "max_drawdown": 7.25,
       "robustness": 0.8923,
-      "sharpe": 13.317
+      "sharpe": 13.322
     },
     {
       "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
       "name": "Realist Capital",
-      "target_pct": 6.5,
-      "target_usd": 1.63,
-      "apr_30d": 286.1,
-      "max_drawdown": 10.49,
-      "robustness": 0.6609,
-      "sharpe": 5.568
-    },
-    {
-      "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
-      "name": "Aaroh",
-      "target_pct": 21.94,
-      "target_usd": 5.5,
-      "apr_30d": 305.94,
-      "max_drawdown": 27.64,
-      "robustness": 0.5562,
-      "sharpe": 8.4
+      "target_pct": 6.28,
+      "target_usd": 1.57,
+      "apr_30d": 263.56,
+      "max_drawdown": 10.92,
+      "robustness": 0.797,
+      "sharpe": 9.016
     },
     {
       "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
       "name": "GeorgV Copytrading",
-      "target_pct": 28.06,
-      "target_usd": 7.03,
-      "apr_30d": 172.56,
+      "target_pct": 50.0,
+      "target_usd": 12.54,
+      "apr_30d": 106.77,
       "max_drawdown": 24.41,
-      "robustness": 0.3902,
-      "sharpe": 4.641
+      "robustness": 0.3891,
+      "sharpe": 4.598
     }
   ],
   "evaluation": {
@@ -87,49 +77,41 @@
     "reasons": [
       "⚖️ 전체 포트폴리오 비중 괴리 누적치 임계값 도달 (200.0% >= 15%)",
       "📊 개별 비중 드리프트 1개 볼트 (임계값 8.0%, 최대 Growi HF: +100.0%)",
-      "⭐ 신규 추천 볼트 5개 미보유"
+      "⭐ 신규 추천 볼트 4개 미보유"
     ],
     "danger_vaults": [],
     "missing_vaults": [
       {
         "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
         "name": "Infinite Vault Robot",
-        "target_pct": 34.09,
-        "apr_30d": 28.58,
-        "max_drawdown": 0.1,
-        "robustness": 0.9229
+        "target_pct": 34.27,
+        "apr_30d": 31.33,
+        "max_drawdown": 0.09,
+        "robustness": 0.9254
       },
       {
         "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
         "name": "22Cap",
-        "target_pct": 9.41,
-        "apr_30d": 26.19,
+        "target_pct": 9.45,
+        "apr_30d": 33.19,
         "max_drawdown": 7.25,
         "robustness": 0.8923
       },
       {
         "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
         "name": "Realist Capital",
-        "target_pct": 6.5,
-        "apr_30d": 286.1,
-        "max_drawdown": 10.49,
-        "robustness": 0.6609
-      },
-      {
-        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
-        "name": "Aaroh",
-        "target_pct": 21.94,
-        "apr_30d": 305.94,
-        "max_drawdown": 27.64,
-        "robustness": 0.5562
+        "target_pct": 6.28,
+        "apr_30d": 263.56,
+        "max_drawdown": 10.92,
+        "robustness": 0.797
       },
       {
         "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
         "name": "GeorgV Copytrading",
-        "target_pct": 28.06,
-        "apr_30d": 172.56,
+        "target_pct": 50.0,
+        "apr_30d": 106.77,
         "max_drawdown": 24.41,
-        "robustness": 0.3902
+        "robustness": 0.3891
       }
     ],
     "excess_vaults": [
@@ -140,38 +122,38 @@
     ]
   },
   "health": {
-    "score": 63.4,
+    "score": 62.9,
     "grade": "B",
     "details": {
       "danger_score": 30.0,
       "drift_score": 0,
       "apr_score": 25,
-      "robust_score": 8.4,
+      "robust_score": 7.9,
       "coverage_score": 0.0,
       "danger_pct": 0.0,
       "drift_sum_pct": 100.0,
-      "weighted_apr": 151.36,
-      "weighted_rob": 0.5593,
+      "weighted_apr": 115.04,
+      "weighted_rob": 0.5267,
       "opt_coverage_pct": 0.0
     }
   },
   "rebalance_plan": {
-    "total_actions": 9,
+    "total_actions": 7,
     "total_withdraw_usd": 0,
-    "total_deposit_usd": 48.49,
-    "net_movement_usd": -48.49,
-    "expected_monthly_usd": 3.06,
+    "total_deposit_usd": 48.58,
+    "net_movement_usd": -48.58,
+    "expected_monthly_usd": 1.75,
     "actions": [
       {
         "step": "D0 내일 입금",
         "action": "DEPOSIT",
         "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
         "name": "Infinite Vault Robot",
-        "amount_usd": 8.54,
+        "amount_usd": 8.59,
         "current_pct": 0.0,
-        "target_pct": 34.09,
-        "apr_30d": 28.58,
-        "reason": "비중 추가 (0.0% → 34.1%)",
+        "target_pct": 34.27,
+        "apr_30d": 31.33,
+        "reason": "비중 추가 (0.0% → 34.3%)",
         "priority": 3
       },
       {
@@ -179,23 +161,11 @@
         "action": "DEPOSIT",
         "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
         "name": "22Cap",
-        "amount_usd": 2.36,
+        "amount_usd": 2.37,
         "current_pct": 0.0,
-        "target_pct": 9.41,
-        "apr_30d": 26.19,
+        "target_pct": 9.45,
+        "apr_30d": 33.19,
         "reason": "비중 추가 (0.0% → 9.4%)",
-        "priority": 3
-      },
-      {
-        "step": "D0 내일 입금",
-        "action": "DEPOSIT",
-        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
-        "name": "Aaroh",
-        "amount_usd": 5.5,
-        "current_pct": 0.0,
-        "target_pct": 21.94,
-        "apr_30d": 305.94,
-        "reason": "비중 추가 (0.0% → 21.9%)",
         "priority": 3
       },
       {
@@ -203,11 +173,11 @@
         "action": "DEPOSIT",
         "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
         "name": "GeorgV Copytrading",
-        "amount_usd": 7.03,
+        "amount_usd": 12.54,
         "current_pct": 0.0,
-        "target_pct": 28.06,
-        "apr_30d": 172.56,
-        "reason": "비중 추가 (0.0% → 28.1%)",
+        "target_pct": 50.0,
+        "apr_30d": 106.77,
+        "reason": "비중 추가 (0.0% → 50.0%)",
         "priority": 3
       },
       {
@@ -215,10 +185,10 @@
         "action": "NEW_DEPOSIT",
         "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
         "name": "Infinite Vault Robot",
-        "amount_usd": 8.54,
+        "amount_usd": 8.59,
         "current_pct": 0.0,
-        "target_pct": 34.09,
-        "apr_30d": 28.58,
+        "target_pct": 34.27,
+        "apr_30d": 31.33,
         "reason": "⭐ 신규 추천 볼트 진입",
         "priority": 4
       },
@@ -227,10 +197,10 @@
         "action": "NEW_DEPOSIT",
         "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
         "name": "22Cap",
-        "amount_usd": 2.36,
+        "amount_usd": 2.37,
         "current_pct": 0.0,
-        "target_pct": 9.41,
-        "apr_30d": 26.19,
+        "target_pct": 9.45,
+        "apr_30d": 33.19,
         "reason": "⭐ 신규 추천 볼트 진입",
         "priority": 4
       },
@@ -239,22 +209,10 @@
         "action": "NEW_DEPOSIT",
         "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
         "name": "Realist Capital",
-        "amount_usd": 1.63,
+        "amount_usd": 1.58,
         "current_pct": 0.0,
-        "target_pct": 6.5,
-        "apr_30d": 286.1,
-        "reason": "⭐ 신규 추천 볼트 진입",
-        "priority": 4
-      },
-      {
-        "step": "D0 내일 입금",
-        "action": "NEW_DEPOSIT",
-        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
-        "name": "Aaroh",
-        "amount_usd": 5.5,
-        "current_pct": 0.0,
-        "target_pct": 21.94,
-        "apr_30d": 305.94,
+        "target_pct": 6.28,
+        "apr_30d": 263.56,
         "reason": "⭐ 신규 추천 볼트 진입",
         "priority": 4
       },
@@ -263,18 +221,18 @@
         "action": "NEW_DEPOSIT",
         "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
         "name": "GeorgV Copytrading",
-        "amount_usd": 7.03,
+        "amount_usd": 12.54,
         "current_pct": 0.0,
-        "target_pct": 28.06,
-        "apr_30d": 172.56,
+        "target_pct": 50.0,
+        "apr_30d": 106.77,
         "reason": "⭐ 신규 추천 볼트 진입",
         "priority": 4
       }
     ],
     "action_summary": {
       "withdrawals": 0,
-      "deposits": 4,
-      "new_deposits": 5
+      "deposits": 3,
+      "new_deposits": 4
     },
     "timeline": {
       "today": "출금 신청 (WITHDRAW 항목)",
@@ -284,8 +242,8 @@
   "alert_summary": {
     "level": "WARNING",
     "title": "⚠️ 리밸런싱 권고",
-    "message": "⚖️ 전체 포트폴리오 비중 괴리 누적치 임계값 도달 (200.0% >= 15%)\n📊 개별 비중 드리프트 1개 볼트 (임계값 8.0%, 최대 Growi HF: +100.0%)\n⭐ 신규 추천 볼트 5개 미보유",
-    "health_score": 63.4,
+    "message": "⚖️ 전체 포트폴리오 비중 괴리 누적치 임계값 도달 (200.0% >= 15%)\n📊 개별 비중 드리프트 1개 볼트 (임계값 8.0%, 최대 Growi HF: +100.0%)\n⭐ 신규 추천 볼트 4개 미보유",
+    "health_score": 62.9,
     "health_grade": "B",
     "action_required": false,
     "withdrawal_items": []
