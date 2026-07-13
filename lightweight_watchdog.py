@@ -44,6 +44,8 @@ def load_tg_config():
     if CONFIG_FILE.exists():
         try:
             cfg = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+            if not cfg.get("enabled", True):
+                return "", ""
             token = token or cfg.get("bot_token", "")
             chat_id = chat_id or cfg.get("chat_id", "")
         except Exception:

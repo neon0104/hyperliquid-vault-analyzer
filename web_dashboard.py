@@ -132,6 +132,8 @@ def send_telegram(msg):
         if not os.path.exists(TELEGRAM_CFG): return False
         with open(str(TELEGRAM_CFG), encoding="utf-8") as f:
             cfg = json.load(f)
+            if not cfg.get("enabled", True):
+                return False
             bot_token = cfg.get("bot_token", "")
             chat_id = cfg.get("chat_id", "")
         if not bot_token or not chat_id: return False
@@ -1336,6 +1338,53 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name=
     <canvas id="walkforwardChart"></canvas>
   </div>
 
+  <!-- Daily Holdings Inspector -->
+  <div style="background:rgba(255,255,255,0.02); padding:20px; border-radius:8px; border:1px solid var(--border); margin-bottom:30px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+      <h4 style="margin:0; color:#fff; display:flex; align-items:center; gap:10px;">
+        📅 일자별 상세 포트폴리오 조회 (Daily Holdings Inspector)
+      </h4>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:0.85rem; color:var(--muted);">날짜 선택:</span>
+        <select id="wfDateSelect" onchange="window.showDailyDetails(this.value)" style="padding:8px 12px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:6px; font-weight:bold; font-size:0.9rem; cursor:pointer; width:150px;">
+          <!-- Dates populated dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
+      <div style="padding:8px 12px; background:rgba(0,0,0,0.15); border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:0.75rem; color:var(--muted); display:block;">총 자산 가치</span>
+        <strong style="font-size:1rem; color:#fff;" id="detTotalVal">-</strong>
+      </div>
+      <div style="padding:8px 12px; background:rgba(0,0,0,0.15); border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:0.75rem; color:var(--muted); display:block;">누적 수익률</span>
+        <strong style="font-size:1rem; color:#2ecc71;" id="detTotalRet">-</strong>
+      </div>
+      <div style="padding:8px 12px; background:rgba(0,0,0,0.15); border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:0.75rem; color:var(--muted); display:block;">현금 잔고</span>
+        <strong style="font-size:1rem; color:#fff;" id="detCash">-</strong>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.85rem;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border); color:var(--muted);">
+            <th style="padding:8px 5px;">볼트명 (Vault Name)</th>
+            <th style="padding:8px 5px; text-align:right;">현재 평가 금액</th>
+            <th style="padding:8px 5px; text-align:right;">최초 매수 금액</th>
+            <th style="padding:8px 5px; text-align:right;">누적 수익금</th>
+            <th style="padding:8px 5px; text-align:right; width:120px;">수익률 (ROI)</th>
+          </tr>
+        </thead>
+        <tbody id="wfDetailLog">
+          <tr><td colspan="5" style="text-align:center; padding:15px; color:var(--muted);">데이터를 불러오는 중입니다...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <h4 style="margin:20px 0 10px 0; color:#fff;">🔄 리밸런싱 및 위험 회피 내역 (Rebalancing History)</h4>
   <div style="overflow-x:auto;">
     <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9rem; margin-top:10px;">
@@ -1862,12 +1911,66 @@ function runBacktest() {
     .then(res => {
       if (res.error) return;
       
+      // Store globally for date inspector
+      window.wfDailyDetails = res.daily_details;
+      
       // Update UI Stats
       document.getElementById('wfAiFinal').innerText = '$' + Math.round(res.ai.final_value).toLocaleString();
       document.getElementById('wfAiReturn').innerText = (res.ai.total_return >= 0 ? '+' : '') + res.ai.total_return.toFixed(2) + '%';
       document.getElementById('wfAiMdd').innerText = res.ai.mdd.toFixed(2) + '%';
       document.getElementById('wfAiFees').innerText = '$' + Math.round(res.ai.fees).toLocaleString();
       document.getElementById('wfBenchReturn').innerText = (res.benchmark.total_return >= 0 ? '+' : '') + res.benchmark.total_return.toFixed(2) + '%';
+      
+      // Populate Date Inspector Dropdown
+      const dateSelect = document.getElementById('wfDateSelect');
+      dateSelect.innerHTML = '';
+      res.history.dates.forEach(date => {
+        const opt = document.createElement('option');
+        opt.value = date;
+        opt.innerText = date;
+        dateSelect.appendChild(opt);
+      });
+      
+      // Function to show daily holdings details
+      window.showDailyDetails = function(date) {
+        const day = window.wfDailyDetails[date];
+        if (!day) return;
+        
+        document.getElementById('detTotalVal').innerText = '$' + Math.round(day.total_value).toLocaleString();
+        document.getElementById('detTotalRet').innerText = (day.total_return >= 0 ? '+' : '') + day.total_return.toFixed(2) + '%';
+        document.getElementById('detTotalRet').style.color = day.total_return >= 0 ? 'var(--success)' : 'var(--danger)';
+        document.getElementById('detCash').innerText = '$' + Math.round(day.cash).toLocaleString();
+        
+        const detailBody = document.getElementById('wfDetailLog');
+        detailBody.innerHTML = '';
+        
+        if (!day.holdings || day.holdings.length === 0) {
+          detailBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; color:var(--muted);">보유 중인 볼트 자산이 없습니다.</td></tr>';
+          return;
+        }
+        
+        day.holdings.forEach(hold => {
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+          
+          const profitColor = hold.profit >= 0 ? 'var(--success)' : 'var(--danger)';
+          const profitPrefix = hold.profit >= 0 ? '+' : '';
+          
+          tr.innerHTML = `
+            <td style="padding:10px 5px; font-weight:600; color:#fff;">📁 ${hold.name}</td>
+            <td style="padding:10px 5px; text-align:right; font-weight:bold;">$${Math.round(hold.amount).toLocaleString()}</td>
+            <td style="padding:10px 5px; text-align:right; color:var(--muted);">$${Math.round(hold.cost).toLocaleString()}</td>
+            <td style="padding:10px 5px; text-align:right; color:${profitColor};">${profitPrefix}$${Math.round(hold.profit).toLocaleString()}</td>
+            <td style="padding:10px 5px; text-align:right; font-weight:bold; color:${profitColor};">${profitPrefix}${hold.return_pct.toFixed(2)}%</td>
+          `;
+          detailBody.appendChild(tr);
+        });
+      };
+      
+      // Select last date by default
+      const lastDate = res.history.dates[res.history.dates.length - 1];
+      dateSelect.value = lastDate;
+      window.showDailyDetails(lastDate);
       
       // Draw Chart
       const ctx = document.getElementById('walkforwardChart').getContext('2d');
@@ -1894,7 +1997,25 @@ function runBacktest() {
         },
         options: {
           responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: true, labels: { color: '#e8eaf0' } } },
+          plugins: { 
+            legend: { display: true, labels: { color: '#e8eaf0' } },
+            tooltip: {
+              callbacks: {
+                title: function(context) {
+                  const date = context[0].label;
+                  return '날짜: ' + date;
+                }
+              }
+            }
+          },
+          onClick: (evt, activeElements, chart) => {
+            if (activeElements && activeElements.length > 0) {
+              const idx = activeElements[0].index;
+              const date = chart.data.labels[idx];
+              document.getElementById('wfDateSelect').value = date;
+              window.showDailyDetails(date);
+            }
+          },
           scales: { 
             x: { grid: { display: false }, ticks: { color: '#7b8db0', maxRotation: 0, font: {size: 10} } }, 
             y: { grid: { color: 'rgba(255,255,255,0.05)'}, ticks:{color:'#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } }}
@@ -1911,11 +2032,11 @@ function runBacktest() {
         
         let allocsStr = '';
         for (const [name, weight] of Object.entries(evt.allocations)) {
-          allocsStr += `<span style="display:inline-block; padding:2px 6px; background:rgba(255,255,255,0.05); border-radius:4px; font-size:0.75rem; margin:2px;">${name}: <b>${weight}</b></span> `;
+          allocsStr += `<span style="display:inline-block; padding:2px 6px; background:rgba(255,255,255,0.05); border-radius:4px; font-size:0.75rem; margin:2px; cursor:pointer;" onclick="document.getElementById('wfDateSelect').value='${evt.date}'; window.showDailyDetails('${evt.date}');">${name}: <b>${weight}</b></span> `;
         }
         
         tr.innerHTML = `
-          <td style="padding:10px 5px; font-weight:bold; color:var(--muted);">${evt.date}</td>
+          <td style="padding:10px 5px; font-weight:bold; color:var(--muted); cursor:pointer;" onclick="document.getElementById('wfDateSelect').value='${evt.date}'; window.showDailyDetails('${evt.date}');">${evt.date}</td>
           <td style="padding:10px 5px;"><strong style="color:${evt.reason.includes('위험') ? 'var(--danger)' : evt.reason.includes('초기') ? 'var(--accent2)' : 'var(--accent)'}">${evt.reason}</strong></td>
           <td style="padding:10px 5px; color:#e8eaf0;">${evt.details}</td>
           <td style="padding:10px 5px; max-width:300px; word-wrap:break-word;">${allocsStr}</td>

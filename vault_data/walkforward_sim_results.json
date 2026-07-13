@@ -342,5 +342,3075 @@
         "Marvin": "50.0%"
       }
     }
-  ]
+  ],
+  "daily_details": {
+    "2026-04-09": {
+      "total_value": 100000.0,
+      "total_return": 0.0,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 31566.74,
+          "cost": 31566.74,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 61087.58,
+          "cost": 61087.58,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7145.68,
+          "cost": 7145.68,
+          "profit": 0.0,
+          "return_pct": 0.0
+        }
+      ]
+    },
+    "2026-04-10": {
+      "total_value": 98458.35,
+      "total_return": -1.54,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 31882.48,
+          "cost": 31566.74,
+          "profit": 315.74,
+          "return_pct": 1.0
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 59411.53,
+          "cost": 61087.58,
+          "profit": -1676.05,
+          "return_pct": -2.74
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7164.34,
+          "cost": 7145.68,
+          "profit": 18.66,
+          "return_pct": 0.26
+        }
+      ]
+    },
+    "2026-04-11": {
+      "total_value": 97586.98,
+      "total_return": -2.41,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32132.01,
+          "cost": 31566.74,
+          "profit": 565.27,
+          "return_pct": 1.79
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 58278.26,
+          "cost": 61087.58,
+          "profit": -2809.32,
+          "return_pct": -4.6
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7176.71,
+          "cost": 7145.68,
+          "profit": 31.03,
+          "return_pct": 0.43
+        }
+      ]
+    },
+    "2026-04-12": {
+      "total_value": 97471.67,
+      "total_return": -2.53,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32022.04,
+          "cost": 31566.74,
+          "profit": 455.3,
+          "return_pct": 1.44
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 58278.26,
+          "cost": 61087.58,
+          "profit": -2809.32,
+          "return_pct": -4.6
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7171.36,
+          "cost": 7145.68,
+          "profit": 25.68,
+          "return_pct": 0.36
+        }
+      ]
+    },
+    "2026-04-13": {
+      "total_value": 95258.5,
+      "total_return": -4.74,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32641.14,
+          "cost": 31566.74,
+          "profit": 1074.4,
+          "return_pct": 3.4
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 55441.67,
+          "cost": 61087.58,
+          "profit": -5645.91,
+          "return_pct": -9.24
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7175.69,
+          "cost": 7145.68,
+          "profit": 30.01,
+          "return_pct": 0.42
+        }
+      ]
+    },
+    "2026-04-14": {
+      "total_value": 97292.27,
+      "total_return": -2.71,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32560.23,
+          "cost": 31566.74,
+          "profit": 993.49,
+          "return_pct": 3.15
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 57527.0,
+          "cost": 61087.58,
+          "profit": -3560.58,
+          "return_pct": -5.83
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7205.04,
+          "cost": 7145.68,
+          "profit": 59.36,
+          "return_pct": 0.83
+        }
+      ]
+    },
+    "2026-04-16": {
+      "total_value": 104116.4,
+      "total_return": 4.12,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32811.71,
+          "cost": 31566.74,
+          "profit": 1244.97,
+          "return_pct": 3.94
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 64103.05,
+          "cost": 61087.58,
+          "profit": 3015.47,
+          "return_pct": 4.94
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7201.64,
+          "cost": 7145.68,
+          "profit": 55.96,
+          "return_pct": 0.78
+        }
+      ]
+    },
+    "2026-04-17": {
+      "total_value": 101796.09,
+      "total_return": 1.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32398.88,
+          "cost": 31566.74,
+          "profit": 832.14,
+          "return_pct": 2.64
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 62202.2,
+          "cost": 61087.58,
+          "profit": 1114.62,
+          "return_pct": 1.82
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7195.01,
+          "cost": 7145.68,
+          "profit": 49.33,
+          "return_pct": 0.69
+        }
+      ]
+    },
+    "2026-04-18": {
+      "total_value": 96781.85,
+      "total_return": -3.22,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 31814.62,
+          "cost": 31566.74,
+          "profit": 247.88,
+          "return_pct": 0.79
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 57763.2,
+          "cost": 61087.58,
+          "profit": -3324.38,
+          "return_pct": -5.44
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7204.02,
+          "cost": 7145.68,
+          "profit": 58.34,
+          "return_pct": 0.82
+        }
+      ]
+    },
+    "2026-04-20": {
+      "total_value": 90804.04,
+      "total_return": -9.2,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33469.49,
+          "cost": 31566.74,
+          "profit": 1902.75,
+          "return_pct": 6.03
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 50167.3,
+          "cost": 61087.58,
+          "profit": -10920.28,
+          "return_pct": -17.88
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7167.25,
+          "cost": 7145.68,
+          "profit": 21.57,
+          "return_pct": 0.3
+        }
+      ]
+    },
+    "2026-04-22": {
+      "total_value": 100329.39,
+      "total_return": 0.33,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33235.54,
+          "cost": 31566.74,
+          "profit": 1668.8,
+          "return_pct": 5.29
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 59935.7,
+          "cost": 61087.58,
+          "profit": -1151.88,
+          "return_pct": -1.89
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7158.15,
+          "cost": 7145.68,
+          "profit": 12.47,
+          "return_pct": 0.17
+        }
+      ]
+    },
+    "2026-04-23": {
+      "total_value": 100799.7,
+      "total_return": 0.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33271.7,
+          "cost": 31566.74,
+          "profit": 1704.96,
+          "return_pct": 5.4
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 60357.66,
+          "cost": 61087.58,
+          "profit": -729.92,
+          "return_pct": -1.19
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7170.34,
+          "cost": 7145.68,
+          "profit": 24.66,
+          "return_pct": 0.35
+        }
+      ]
+    },
+    "2026-04-24": {
+      "total_value": 101253.09,
+      "total_return": 1.25,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33385.45,
+          "cost": 31566.74,
+          "profit": 1818.71,
+          "return_pct": 5.76
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 60697.14,
+          "cost": 61087.58,
+          "profit": -390.44,
+          "return_pct": -0.64
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7170.49,
+          "cost": 7145.68,
+          "profit": 24.81,
+          "return_pct": 0.35
+        }
+      ]
+    },
+    "2026-04-25": {
+      "total_value": 101798.78,
+      "total_return": 1.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33544.03,
+          "cost": 31566.74,
+          "profit": 1977.29,
+          "return_pct": 6.26
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 61084.47,
+          "cost": 61087.58,
+          "profit": -3.11,
+          "return_pct": -0.01
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7170.28,
+          "cost": 7145.68,
+          "profit": 24.6,
+          "return_pct": 0.34
+        }
+      ]
+    },
+    "2026-04-27": {
+      "total_value": 100483.37,
+      "total_return": 0.48,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33857.29,
+          "cost": 31566.74,
+          "profit": 2290.55,
+          "return_pct": 7.26
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 59454.47,
+          "cost": 61087.58,
+          "profit": -1633.11,
+          "return_pct": -2.67
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7171.61,
+          "cost": 7145.68,
+          "profit": 25.93,
+          "return_pct": 0.36
+        }
+      ]
+    },
+    "2026-04-28": {
+      "total_value": 101920.09,
+      "total_return": 1.92,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33766.35,
+          "cost": 31566.74,
+          "profit": 2199.61,
+          "return_pct": 6.97
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 60996.87,
+          "cost": 61087.58,
+          "profit": -90.71,
+          "return_pct": -0.15
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7156.87,
+          "cost": 7145.68,
+          "profit": 11.19,
+          "return_pct": 0.16
+        }
+      ]
+    },
+    "2026-04-29": {
+      "total_value": 101551.33,
+      "total_return": 1.55,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 34343.01,
+          "cost": 31566.74,
+          "profit": 2776.27,
+          "return_pct": 8.79
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 60050.5,
+          "cost": 61087.58,
+          "profit": -1037.08,
+          "return_pct": -1.7
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7157.83,
+          "cost": 7145.68,
+          "profit": 12.15,
+          "return_pct": 0.17
+        }
+      ]
+    },
+    "2026-04-30": {
+      "total_value": 100552.69,
+      "total_return": 0.55,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 34493.61,
+          "cost": 31566.74,
+          "profit": 2926.87,
+          "return_pct": 9.27
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 58907.09,
+          "cost": 61087.58,
+          "profit": -2180.49,
+          "return_pct": -3.57
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7151.99,
+          "cost": 7145.68,
+          "profit": 6.31,
+          "return_pct": 0.09
+        }
+      ]
+    },
+    "2026-05-01": {
+      "total_value": 100224.97,
+      "total_return": 0.22,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 34775.83,
+          "cost": 31566.74,
+          "profit": 3209.09,
+          "return_pct": 10.17
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 58281.49,
+          "cost": 61087.58,
+          "profit": -2806.09,
+          "return_pct": -4.59
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7167.65,
+          "cost": 7145.68,
+          "profit": 21.97,
+          "return_pct": 0.31
+        }
+      ]
+    },
+    "2026-05-02": {
+      "total_value": 100186.3,
+      "total_return": 0.19,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 34732.0,
+          "cost": 31566.74,
+          "profit": 3165.26,
+          "return_pct": 10.03
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 58281.49,
+          "cost": 61087.58,
+          "profit": -2806.09,
+          "return_pct": -4.59
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7172.81,
+          "cost": 7145.68,
+          "profit": 27.13,
+          "return_pct": 0.38
+        }
+      ]
+    },
+    "2026-05-03": {
+      "total_value": 100019.46,
+      "total_return": 0.02,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 34569.31,
+          "cost": 31566.74,
+          "profit": 3002.57,
+          "return_pct": 9.51
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 58281.49,
+          "cost": 61087.58,
+          "profit": -2806.09,
+          "return_pct": -4.59
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7168.67,
+          "cost": 7145.68,
+          "profit": 22.99,
+          "return_pct": 0.32
+        }
+      ]
+    },
+    "2026-05-04": {
+      "total_value": 99769.56,
+      "total_return": -0.23,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 34312.23,
+          "cost": 31566.74,
+          "profit": 2745.49,
+          "return_pct": 8.7
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 58281.49,
+          "cost": 61087.58,
+          "profit": -2806.09,
+          "return_pct": -4.59
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7175.83,
+          "cost": 7145.68,
+          "profit": 30.15,
+          "return_pct": 0.42
+        }
+      ]
+    },
+    "2026-05-05": {
+      "total_value": 96359.58,
+      "total_return": -3.64,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 34187.74,
+          "cost": 31566.74,
+          "profit": 2621.0,
+          "return_pct": 8.3
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 54974.17,
+          "cost": 61087.58,
+          "profit": -6113.41,
+          "return_pct": -10.01
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7197.67,
+          "cost": 7145.68,
+          "profit": 51.99,
+          "return_pct": 0.73
+        }
+      ]
+    },
+    "2026-05-06": {
+      "total_value": 95396.37,
+      "total_return": -4.6,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33860.53,
+          "cost": 31566.74,
+          "profit": 2293.79,
+          "return_pct": 7.27
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 54346.12,
+          "cost": 61087.58,
+          "profit": -6741.46,
+          "return_pct": -11.04
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7189.73,
+          "cost": 7145.68,
+          "profit": 44.05,
+          "return_pct": 0.62
+        }
+      ]
+    },
+    "2026-05-07": {
+      "total_value": 105748.23,
+      "total_return": 5.75,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33356.26,
+          "cost": 31566.74,
+          "profit": 1789.52,
+          "return_pct": 5.67
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 65209.41,
+          "cost": 61087.58,
+          "profit": 4121.83,
+          "return_pct": 6.75
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7182.56,
+          "cost": 7145.68,
+          "profit": 36.88,
+          "return_pct": 0.52
+        }
+      ]
+    },
+    "2026-05-08": {
+      "total_value": 104507.16,
+      "total_return": 4.51,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32949.06,
+          "cost": 31566.74,
+          "profit": 1382.32,
+          "return_pct": 4.38
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 64368.87,
+          "cost": 61087.58,
+          "profit": 3281.29,
+          "return_pct": 5.37
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7189.23,
+          "cost": 7145.68,
+          "profit": 43.55,
+          "return_pct": 0.61
+        }
+      ]
+    },
+    "2026-05-09": {
+      "total_value": 101628.08,
+      "total_return": 1.63,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32944.83,
+          "cost": 31566.74,
+          "profit": 1378.09,
+          "return_pct": 4.37
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 61497.96,
+          "cost": 61087.58,
+          "profit": 410.38,
+          "return_pct": 0.67
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7185.29,
+          "cost": 7145.68,
+          "profit": 39.61,
+          "return_pct": 0.55
+        }
+      ]
+    },
+    "2026-05-10": {
+      "total_value": 104146.34,
+      "total_return": 4.15,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33081.78,
+          "cost": 31566.74,
+          "profit": 1515.04,
+          "return_pct": 4.8
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 63881.88,
+          "cost": 61087.58,
+          "profit": 2794.3,
+          "return_pct": 4.57
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7182.69,
+          "cost": 7145.68,
+          "profit": 37.01,
+          "return_pct": 0.52
+        }
+      ]
+    },
+    "2026-05-11": {
+      "total_value": 95719.51,
+      "total_return": -4.28,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 32334.54,
+          "cost": 31566.74,
+          "profit": 767.8,
+          "return_pct": 2.43
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 56209.2,
+          "cost": 61087.58,
+          "profit": -4878.38,
+          "return_pct": -7.99
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7175.77,
+          "cost": 7145.68,
+          "profit": 30.09,
+          "return_pct": 0.42
+        }
+      ]
+    },
+    "2026-05-12": {
+      "total_value": 105947.24,
+      "total_return": 5.95,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 33104.4,
+          "cost": 31566.74,
+          "profit": 1537.66,
+          "return_pct": 4.87
+        },
+        {
+          "name": "Prudentia Asset Management",
+          "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
+          "amount": 65682.15,
+          "cost": 61087.58,
+          "profit": 4594.57,
+          "return_pct": 7.52
+        },
+        {
+          "name": "Loop Fund",
+          "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+          "amount": 7160.69,
+          "cost": 7145.68,
+          "profit": 15.01,
+          "return_pct": 0.21
+        }
+      ]
+    },
+    "2026-05-13": {
+      "total_value": 119616.0,
+      "total_return": 19.62,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18575.02,
+          "cost": 18575.02,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 82190.9,
+          "cost": 82190.9,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18610.84,
+          "cost": 18610.84,
+          "profit": 0.0,
+          "return_pct": 0.0
+        }
+      ]
+    },
+    "2026-05-14": {
+      "total_value": 119274.18,
+      "total_return": 19.27,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18088.22,
+          "cost": 18575.02,
+          "profit": -486.8,
+          "return_pct": -2.62
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 82575.12,
+          "cost": 82190.9,
+          "profit": 384.22,
+          "return_pct": 0.47
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18610.84,
+          "cost": 18610.84,
+          "profit": 0.0,
+          "return_pct": 0.0
+        }
+      ]
+    },
+    "2026-05-15": {
+      "total_value": 119802.27,
+      "total_return": 19.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 19117.59,
+          "cost": 18575.02,
+          "profit": 542.57,
+          "return_pct": 2.92
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 82073.84,
+          "cost": 82190.9,
+          "profit": -117.06,
+          "return_pct": -0.14
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18610.84,
+          "cost": 18610.84,
+          "profit": 0.0,
+          "return_pct": 0.0
+        }
+      ]
+    },
+    "2026-05-16": {
+      "total_value": 119994.88,
+      "total_return": 19.99,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 19665.26,
+          "cost": 18575.02,
+          "profit": 1090.23,
+          "return_pct": 5.87
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81716.41,
+          "cost": 82190.9,
+          "profit": -474.49,
+          "return_pct": -0.58
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18613.21,
+          "cost": 18610.84,
+          "profit": 2.38,
+          "return_pct": 0.01
+        }
+      ]
+    },
+    "2026-05-17": {
+      "total_value": 119492.8,
+      "total_return": 19.49,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 19128.09,
+          "cost": 18575.02,
+          "profit": 553.07,
+          "return_pct": 2.98
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81751.29,
+          "cost": 82190.9,
+          "profit": -439.61,
+          "return_pct": -0.53
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18613.42,
+          "cost": 18610.84,
+          "profit": 2.58,
+          "return_pct": 0.01
+        }
+      ]
+    },
+    "2026-05-18": {
+      "total_value": 119420.49,
+      "total_return": 19.42,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 19303.12,
+          "cost": 18575.02,
+          "profit": 728.1,
+          "return_pct": 3.92
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81510.32,
+          "cost": 82190.9,
+          "profit": -680.59,
+          "return_pct": -0.83
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18607.06,
+          "cost": 18610.84,
+          "profit": -3.78,
+          "return_pct": -0.02
+        }
+      ]
+    },
+    "2026-05-19": {
+      "total_value": 118485.13,
+      "total_return": 18.49,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18496.21,
+          "cost": 18575.02,
+          "profit": -78.82,
+          "return_pct": -0.42
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81394.38,
+          "cost": 82190.9,
+          "profit": -796.52,
+          "return_pct": -0.97
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18594.55,
+          "cost": 18610.84,
+          "profit": -16.29,
+          "return_pct": -0.09
+        }
+      ]
+    },
+    "2026-05-20": {
+      "total_value": 118435.52,
+      "total_return": 18.44,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18233.11,
+          "cost": 18575.02,
+          "profit": -341.92,
+          "return_pct": -1.84
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81607.86,
+          "cost": 82190.9,
+          "profit": -583.04,
+          "return_pct": -0.71
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18594.55,
+          "cost": 18610.84,
+          "profit": -16.29,
+          "return_pct": -0.09
+        }
+      ]
+    },
+    "2026-05-21": {
+      "total_value": 117933.05,
+      "total_return": 17.93,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17467.13,
+          "cost": 18575.02,
+          "profit": -1107.89,
+          "return_pct": -5.96
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81871.38,
+          "cost": 82190.9,
+          "profit": -319.52,
+          "return_pct": -0.39
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18594.54,
+          "cost": 18610.84,
+          "profit": -16.3,
+          "return_pct": -0.09
+        }
+      ]
+    },
+    "2026-05-22": {
+      "total_value": 118309.91,
+      "total_return": 18.31,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17937.31,
+          "cost": 18575.02,
+          "profit": -637.72,
+          "return_pct": -3.43
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81768.26,
+          "cost": 82190.9,
+          "profit": -422.64,
+          "return_pct": -0.51
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18604.34,
+          "cost": 18610.84,
+          "profit": -6.5,
+          "return_pct": -0.03
+        }
+      ]
+    },
+    "2026-05-23": {
+      "total_value": 117886.01,
+      "total_return": 17.89,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17336.27,
+          "cost": 18575.02,
+          "profit": -1238.76,
+          "return_pct": -6.67
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81947.67,
+          "cost": 82190.9,
+          "profit": -243.23,
+          "return_pct": -0.3
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18602.07,
+          "cost": 18610.84,
+          "profit": -8.77,
+          "return_pct": -0.05
+        }
+      ]
+    },
+    "2026-05-24": {
+      "total_value": 117662.05,
+      "total_return": 17.66,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17322.18,
+          "cost": 18575.02,
+          "profit": -1252.85,
+          "return_pct": -6.74
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81688.44,
+          "cost": 82190.9,
+          "profit": -502.46,
+          "return_pct": -0.61
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18651.43,
+          "cost": 18610.84,
+          "profit": 40.59,
+          "return_pct": 0.22
+        }
+      ]
+    },
+    "2026-05-25": {
+      "total_value": 118739.38,
+      "total_return": 18.74,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18114.8,
+          "cost": 18575.02,
+          "profit": -460.22,
+          "return_pct": -2.48
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81984.66,
+          "cost": 82190.9,
+          "profit": -206.24,
+          "return_pct": -0.25
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18639.91,
+          "cost": 18610.84,
+          "profit": 29.08,
+          "return_pct": 0.16
+        }
+      ]
+    },
+    "2026-05-26": {
+      "total_value": 118798.08,
+      "total_return": 18.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18303.28,
+          "cost": 18575.02,
+          "profit": -271.75,
+          "return_pct": -1.46
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81840.52,
+          "cost": 82190.9,
+          "profit": -350.39,
+          "return_pct": -0.43
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18654.29,
+          "cost": 18610.84,
+          "profit": 43.45,
+          "return_pct": 0.23
+        }
+      ]
+    },
+    "2026-05-27": {
+      "total_value": 119055.96,
+      "total_return": 19.06,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18787.27,
+          "cost": 18575.02,
+          "profit": 212.24,
+          "return_pct": 1.14
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81548.08,
+          "cost": 82190.9,
+          "profit": -642.82,
+          "return_pct": -0.78
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18720.61,
+          "cost": 18610.84,
+          "profit": 109.77,
+          "return_pct": 0.59
+        }
+      ]
+    },
+    "2026-05-28": {
+      "total_value": 119473.69,
+      "total_return": 19.47,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 19619.51,
+          "cost": 18575.02,
+          "profit": 1044.48,
+          "return_pct": 5.62
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81137.27,
+          "cost": 82190.9,
+          "profit": -1053.63,
+          "return_pct": -1.28
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18716.91,
+          "cost": 18610.84,
+          "profit": 106.07,
+          "return_pct": 0.57
+        }
+      ]
+    },
+    "2026-05-29": {
+      "total_value": 118797.91,
+      "total_return": 18.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18564.19,
+          "cost": 18575.02,
+          "profit": -10.83,
+          "return_pct": -0.06
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81355.72,
+          "cost": 82190.9,
+          "profit": -835.18,
+          "return_pct": -1.02
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18878.0,
+          "cost": 18610.84,
+          "profit": 267.16,
+          "return_pct": 1.44
+        }
+      ]
+    },
+    "2026-05-30": {
+      "total_value": 119139.29,
+      "total_return": 19.14,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18128.73,
+          "cost": 18575.02,
+          "profit": -446.3,
+          "return_pct": -2.4
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 82106.26,
+          "cost": 82190.9,
+          "profit": -84.64,
+          "return_pct": -0.1
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18904.31,
+          "cost": 18610.84,
+          "profit": 293.47,
+          "return_pct": 1.58
+        }
+      ]
+    },
+    "2026-05-31": {
+      "total_value": 118215.82,
+      "total_return": 18.22,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17398.81,
+          "cost": 18575.02,
+          "profit": -1176.21,
+          "return_pct": -6.33
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81882.08,
+          "cost": 82190.9,
+          "profit": -308.82,
+          "return_pct": -0.38
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18934.92,
+          "cost": 18610.84,
+          "profit": 324.09,
+          "return_pct": 1.74
+        }
+      ]
+    },
+    "2026-06-01": {
+      "total_value": 117997.32,
+      "total_return": 18.0,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17143.42,
+          "cost": 18575.02,
+          "profit": -1431.6,
+          "return_pct": -7.71
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81912.43,
+          "cost": 82190.9,
+          "profit": -278.47,
+          "return_pct": -0.34
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18941.47,
+          "cost": 18610.84,
+          "profit": 330.64,
+          "return_pct": 1.78
+        }
+      ]
+    },
+    "2026-06-02": {
+      "total_value": 118035.54,
+      "total_return": 18.04,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17188.71,
+          "cost": 18575.02,
+          "profit": -1386.31,
+          "return_pct": -7.46
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 81851.91,
+          "cost": 82190.9,
+          "profit": -338.99,
+          "return_pct": -0.41
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18994.92,
+          "cost": 18610.84,
+          "profit": 384.09,
+          "return_pct": 2.06
+        }
+      ]
+    },
+    "2026-06-03": {
+      "total_value": 118648.34,
+      "total_return": 18.65,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 18771.44,
+          "cost": 18575.02,
+          "profit": 196.42,
+          "return_pct": 1.06
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 80883.54,
+          "cost": 82190.9,
+          "profit": -1307.36,
+          "return_pct": -1.59
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 18993.36,
+          "cost": 18610.84,
+          "profit": 382.52,
+          "return_pct": 2.06
+        }
+      ]
+    },
+    "2026-06-04": {
+      "total_value": 116600.69,
+      "total_return": 16.6,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 17756.66,
+          "cost": 18575.02,
+          "profit": -818.37,
+          "return_pct": -4.41
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 79801.79,
+          "cost": 82190.9,
+          "profit": -2389.12,
+          "return_pct": -2.91
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19042.24,
+          "cost": 18610.84,
+          "profit": 431.41,
+          "return_pct": 2.32
+        }
+      ]
+    },
+    "2026-06-05": {
+      "total_value": 118030.28,
+      "total_return": 18.03,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 19807.29,
+          "cost": 18575.02,
+          "profit": 1232.26,
+          "return_pct": 6.63
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 79137.38,
+          "cost": 82190.9,
+          "profit": -3053.52,
+          "return_pct": -3.72
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19085.61,
+          "cost": 18610.84,
+          "profit": 474.77,
+          "return_pct": 2.55
+        }
+      ]
+    },
+    "2026-06-06": {
+      "total_value": 113860.72,
+      "total_return": 13.86,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 22316.34,
+          "cost": 18575.02,
+          "profit": 3741.32,
+          "return_pct": 20.14
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 72530.07,
+          "cost": 82190.9,
+          "profit": -9660.83,
+          "return_pct": -11.75
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19014.31,
+          "cost": 18610.84,
+          "profit": 403.47,
+          "return_pct": 2.17
+        }
+      ]
+    },
+    "2026-06-07": {
+      "total_value": 112792.98,
+      "total_return": 12.79,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 21292.07,
+          "cost": 18575.02,
+          "profit": 2717.04,
+          "return_pct": 14.63
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 72488.35,
+          "cost": 82190.9,
+          "profit": -9702.55,
+          "return_pct": -11.8
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19012.56,
+          "cost": 18610.84,
+          "profit": 401.72,
+          "return_pct": 2.16
+        }
+      ]
+    },
+    "2026-06-08": {
+      "total_value": 117802.59,
+      "total_return": 17.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 20809.84,
+          "cost": 18575.02,
+          "profit": 2234.82,
+          "return_pct": 12.03
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 77904.58,
+          "cost": 82190.9,
+          "profit": -4286.33,
+          "return_pct": -5.22
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19088.17,
+          "cost": 18610.84,
+          "profit": 477.34,
+          "return_pct": 2.56
+        }
+      ]
+    },
+    "2026-06-09": {
+      "total_value": 118153.82,
+      "total_return": 18.15,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 20395.4,
+          "cost": 18575.02,
+          "profit": 1820.38,
+          "return_pct": 9.8
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 78522.69,
+          "cost": 82190.9,
+          "profit": -3668.21,
+          "return_pct": -4.46
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19235.73,
+          "cost": 18610.84,
+          "profit": 624.89,
+          "return_pct": 3.36
+        }
+      ]
+    },
+    "2026-06-10": {
+      "total_value": 116873.23,
+      "total_return": 16.87,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 24445.2,
+          "cost": 18575.02,
+          "profit": 5870.17,
+          "return_pct": 31.6
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 73260.72,
+          "cost": 82190.9,
+          "profit": -8930.18,
+          "return_pct": -10.87
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19167.31,
+          "cost": 18610.84,
+          "profit": 556.47,
+          "return_pct": 2.99
+        }
+      ]
+    },
+    "2026-06-11": {
+      "total_value": 119630.17,
+      "total_return": 19.63,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 23836.78,
+          "cost": 18575.02,
+          "profit": 5261.75,
+          "return_pct": 28.33
+        },
+        {
+          "name": "Growi HF",
+          "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+          "amount": 76567.08,
+          "cost": 82190.9,
+          "profit": -5623.82,
+          "return_pct": -6.84
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 19226.31,
+          "cost": 18610.84,
+          "profit": 615.47,
+          "return_pct": 3.31
+        }
+      ]
+    },
+    "2026-06-12": {
+      "total_value": 120830.73,
+      "total_return": 20.83,
+      "cash": -0.0,
+      "holdings": [
+        {
+          "name": "Infinite Vault Robot",
+          "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+          "amount": 88681.2,
+          "cost": 88681.2,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 22996.34,
+          "cost": 22996.34,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 8911.53,
+          "cost": 8911.53,
+          "profit": 0.0,
+          "return_pct": 0.0
+        }
+      ]
+    },
+    "2026-06-13": {
+      "total_value": 120006.37,
+      "total_return": 20.01,
+      "cash": -0.0,
+      "holdings": [
+        {
+          "name": "Infinite Vault Robot",
+          "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+          "amount": 88677.82,
+          "cost": 88681.2,
+          "profit": -3.38,
+          "return_pct": -0.0
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 22980.73,
+          "cost": 22996.34,
+          "profit": -15.6,
+          "return_pct": -0.07
+        },
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 8347.82,
+          "cost": 8911.53,
+          "profit": -563.71,
+          "return_pct": -6.33
+        }
+      ]
+    },
+    "2026-06-14": {
+      "total_value": 119880.12,
+      "total_return": 19.88,
+      "cash": -0.0,
+      "holdings": [
+        {
+          "name": "Infinite Vault Robot",
+          "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+          "amount": 88677.82,
+          "cost": 88681.2,
+          "profit": -3.38,
+          "return_pct": -0.0
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 22965.36,
+          "cost": 22996.34,
+          "profit": -30.98,
+          "return_pct": -0.13
+        },
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 8236.94,
+          "cost": 8911.53,
+          "profit": -674.59,
+          "return_pct": -7.57
+        }
+      ]
+    },
+    "2026-06-15": {
+      "total_value": 120195.58,
+      "total_return": 20.2,
+      "cash": -0.0,
+      "holdings": [
+        {
+          "name": "Infinite Vault Robot",
+          "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+          "amount": 88677.82,
+          "cost": 88681.2,
+          "profit": -3.38,
+          "return_pct": -0.0
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 22957.87,
+          "cost": 22996.34,
+          "profit": -38.47,
+          "return_pct": -0.17
+        },
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 8559.89,
+          "cost": 8911.53,
+          "profit": -351.64,
+          "return_pct": -3.95
+        }
+      ]
+    },
+    "2026-06-16": {
+      "total_value": 118545.16,
+      "total_return": 18.55,
+      "cash": -0.0,
+      "holdings": [
+        {
+          "name": "Infinite Vault Robot",
+          "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+          "amount": 88677.82,
+          "cost": 88681.2,
+          "profit": -3.38,
+          "return_pct": -0.0
+        },
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 23019.43,
+          "cost": 22996.34,
+          "profit": 23.1,
+          "return_pct": 0.1
+        },
+        {
+          "name": "Realist Capital",
+          "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+          "amount": 6847.91,
+          "cost": 8911.53,
+          "profit": -2063.62,
+          "return_pct": -23.16
+        }
+      ]
+    },
+    "2026-06-17": {
+      "total_value": 119046.11,
+      "total_return": 19.05,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31757.38,
+          "cost": 31757.38,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19235.02,
+          "cost": 19235.02,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59404.01,
+          "cost": 59404.01,
+          "profit": 0.0,
+          "return_pct": 0.0
+        }
+      ]
+    },
+    "2026-06-18": {
+      "total_value": 119037.63,
+      "total_return": 19.04,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31767.59,
+          "cost": 31757.38,
+          "profit": 10.21,
+          "return_pct": 0.03
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19258.42,
+          "cost": 19235.02,
+          "profit": 23.4,
+          "return_pct": 0.12
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59600.01,
+          "cost": 59404.01,
+          "profit": 196.0,
+          "return_pct": 0.33
+        }
+      ]
+    },
+    "2026-06-19": {
+      "total_value": 119422.66,
+      "total_return": 19.42,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31726.61,
+          "cost": 31757.38,
+          "profit": -30.78,
+          "return_pct": -0.1
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19255.62,
+          "cost": 19235.02,
+          "profit": 20.6,
+          "return_pct": 0.11
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60028.83,
+          "cost": 59404.01,
+          "profit": 624.82,
+          "return_pct": 1.05
+        }
+      ]
+    },
+    "2026-06-20": {
+      "total_value": 119796.71,
+      "total_return": 19.8,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31745.22,
+          "cost": 31757.38,
+          "profit": -12.16,
+          "return_pct": -0.04
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19262.1,
+          "cost": 19235.02,
+          "profit": 27.08,
+          "return_pct": 0.14
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60377.78,
+          "cost": 59404.01,
+          "profit": 973.78,
+          "return_pct": 1.64
+        }
+      ]
+    },
+    "2026-06-21": {
+      "total_value": 119524.93,
+      "total_return": 19.52,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31782.31,
+          "cost": 31757.38,
+          "profit": 24.93,
+          "return_pct": 0.08
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19264.47,
+          "cost": 19235.02,
+          "profit": 29.45,
+          "return_pct": 0.15
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60066.54,
+          "cost": 59404.01,
+          "profit": 662.53,
+          "return_pct": 1.12
+        }
+      ]
+    },
+    "2026-06-22": {
+      "total_value": 119986.36,
+      "total_return": 19.99,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31877.9,
+          "cost": 31757.38,
+          "profit": 120.51,
+          "return_pct": 0.38
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19264.91,
+          "cost": 19235.02,
+          "profit": 29.89,
+          "return_pct": 0.16
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60431.95,
+          "cost": 59404.01,
+          "profit": 1027.94,
+          "return_pct": 1.73
+        }
+      ]
+    },
+    "2026-06-23": {
+      "total_value": 120361.18,
+      "total_return": 20.36,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31912.9,
+          "cost": 31757.38,
+          "profit": 155.51,
+          "return_pct": 0.49
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19264.91,
+          "cost": 19235.02,
+          "profit": 29.89,
+          "return_pct": 0.16
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60771.77,
+          "cost": 59404.01,
+          "profit": 1367.76,
+          "return_pct": 2.3
+        }
+      ]
+    },
+    "2026-06-24": {
+      "total_value": 119769.58,
+      "total_return": 19.77,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31887.58,
+          "cost": 31757.38,
+          "profit": 130.2,
+          "return_pct": 0.41
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19262.61,
+          "cost": 19235.02,
+          "profit": 27.59,
+          "return_pct": 0.14
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60207.78,
+          "cost": 59404.01,
+          "profit": 803.77,
+          "return_pct": 1.35
+        }
+      ]
+    },
+    "2026-06-25": {
+      "total_value": 119377.11,
+      "total_return": 19.38,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31921.16,
+          "cost": 31757.38,
+          "profit": 163.78,
+          "return_pct": 0.52
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19237.61,
+          "cost": 19235.02,
+          "profit": 2.59,
+          "return_pct": 0.01
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59806.73,
+          "cost": 59404.01,
+          "profit": 402.73,
+          "return_pct": 0.68
+        }
+      ]
+    },
+    "2026-06-26": {
+      "total_value": 120221.07,
+      "total_return": 20.22,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31963.32,
+          "cost": 31757.38,
+          "profit": 205.93,
+          "return_pct": 0.65
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19301.88,
+          "cost": 19235.02,
+          "profit": 66.86,
+          "return_pct": 0.35
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60544.27,
+          "cost": 59404.01,
+          "profit": 1140.26,
+          "return_pct": 1.92
+        }
+      ]
+    },
+    "2026-06-27": {
+      "total_value": 119924.13,
+      "total_return": 19.92,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31978.9,
+          "cost": 31757.38,
+          "profit": 221.51,
+          "return_pct": 0.7
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19308.32,
+          "cost": 19235.02,
+          "profit": 73.3,
+          "return_pct": 0.38
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60225.31,
+          "cost": 59404.01,
+          "profit": 821.3,
+          "return_pct": 1.38
+        }
+      ]
+    },
+    "2026-06-28": {
+      "total_value": 119715.42,
+      "total_return": 19.72,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31949.85,
+          "cost": 31757.38,
+          "profit": 192.46,
+          "return_pct": 0.61
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19307.92,
+          "cost": 19235.02,
+          "profit": 72.9,
+          "return_pct": 0.38
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60046.04,
+          "cost": 59404.01,
+          "profit": 642.03,
+          "return_pct": 1.08
+        }
+      ]
+    },
+    "2026-06-29": {
+      "total_value": 119398.12,
+      "total_return": 19.4,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31950.01,
+          "cost": 31757.38,
+          "profit": 192.62,
+          "return_pct": 0.61
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19309.95,
+          "cost": 19235.02,
+          "profit": 74.93,
+          "return_pct": 0.39
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59726.56,
+          "cost": 59404.01,
+          "profit": 322.56,
+          "return_pct": 0.54
+        }
+      ]
+    },
+    "2026-06-30": {
+      "total_value": 119244.01,
+      "total_return": 19.24,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31987.71,
+          "cost": 31757.38,
+          "profit": 230.33,
+          "return_pct": 0.73
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19313.2,
+          "cost": 19235.02,
+          "profit": 78.18,
+          "return_pct": 0.41
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59531.49,
+          "cost": 59404.01,
+          "profit": 127.48,
+          "return_pct": 0.21
+        }
+      ]
+    },
+    "2026-07-01": {
+      "total_value": 119199.99,
+      "total_return": 19.2,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31993.81,
+          "cost": 31757.38,
+          "profit": 236.43,
+          "return_pct": 0.74
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19313.57,
+          "cost": 19235.02,
+          "profit": 78.55,
+          "return_pct": 0.41
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59481.0,
+          "cost": 59404.01,
+          "profit": 77.0,
+          "return_pct": 0.13
+        }
+      ]
+    },
+    "2026-07-02": {
+      "total_value": 119646.82,
+      "total_return": 19.65,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31991.96,
+          "cost": 31757.38,
+          "profit": 234.58,
+          "return_pct": 0.74
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19317.53,
+          "cost": 19235.02,
+          "profit": 82.51,
+          "return_pct": 0.43
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59925.72,
+          "cost": 59404.01,
+          "profit": 521.72,
+          "return_pct": 0.88
+        }
+      ]
+    },
+    "2026-07-03": {
+      "total_value": 119233.94,
+      "total_return": 19.23,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31991.57,
+          "cost": 31757.38,
+          "profit": 234.18,
+          "return_pct": 0.74
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19319.79,
+          "cost": 19235.02,
+          "profit": 84.77,
+          "return_pct": 0.44
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59510.98,
+          "cost": 59404.01,
+          "profit": 106.97,
+          "return_pct": 0.18
+        }
+      ]
+    },
+    "2026-07-04": {
+      "total_value": 119319.79,
+      "total_return": 19.32,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 31995.97,
+          "cost": 31757.38,
+          "profit": 238.59,
+          "return_pct": 0.75
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19319.79,
+          "cost": 19235.02,
+          "profit": 84.77,
+          "return_pct": 0.44
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59592.42,
+          "cost": 59404.01,
+          "profit": 188.41,
+          "return_pct": 0.32
+        }
+      ]
+    },
+    "2026-07-05": {
+      "total_value": 119233.45,
+      "total_return": 19.23,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32019.16,
+          "cost": 31757.38,
+          "profit": 261.78,
+          "return_pct": 0.82
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19319.79,
+          "cost": 19235.02,
+          "profit": 84.77,
+          "return_pct": 0.44
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59482.89,
+          "cost": 59404.01,
+          "profit": 78.88,
+          "return_pct": 0.13
+        }
+      ]
+    },
+    "2026-07-06": {
+      "total_value": 119223.61,
+      "total_return": 19.22,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32006.04,
+          "cost": 31757.38,
+          "profit": 248.66,
+          "return_pct": 0.78
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19319.79,
+          "cost": 19235.02,
+          "profit": 84.77,
+          "return_pct": 0.44
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59486.17,
+          "cost": 59404.01,
+          "profit": 82.16,
+          "return_pct": 0.14
+        }
+      ]
+    },
+    "2026-07-07": {
+      "total_value": 119309.52,
+      "total_return": 19.31,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32091.95,
+          "cost": 31757.38,
+          "profit": 334.57,
+          "return_pct": 1.05
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19319.79,
+          "cost": 19235.02,
+          "profit": 84.77,
+          "return_pct": 0.44
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59486.17,
+          "cost": 59404.01,
+          "profit": 82.16,
+          "return_pct": 0.14
+        }
+      ]
+    },
+    "2026-07-08": {
+      "total_value": 119770.89,
+      "total_return": 19.77,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32116.26,
+          "cost": 31757.38,
+          "profit": 358.88,
+          "return_pct": 1.13
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19350.82,
+          "cost": 19235.02,
+          "profit": 115.8,
+          "return_pct": 0.6
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59892.2,
+          "cost": 59404.01,
+          "profit": 488.2,
+          "return_pct": 0.82
+        }
+      ]
+    },
+    "2026-07-09": {
+      "total_value": 119694.78,
+      "total_return": 19.69,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32115.83,
+          "cost": 31757.38,
+          "profit": 358.45,
+          "return_pct": 1.13
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19350.82,
+          "cost": 19235.02,
+          "profit": 115.8,
+          "return_pct": 0.6
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59816.52,
+          "cost": 59404.01,
+          "profit": 412.52,
+          "return_pct": 0.69
+        }
+      ]
+    },
+    "2026-07-10": {
+      "total_value": 119947.42,
+      "total_return": 19.95,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32142.49,
+          "cost": 31757.38,
+          "profit": 385.1,
+          "return_pct": 1.21
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19350.82,
+          "cost": 19235.02,
+          "profit": 115.8,
+          "return_pct": 0.6
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60042.51,
+          "cost": 59404.01,
+          "profit": 638.5,
+          "return_pct": 1.07
+        }
+      ]
+    },
+    "2026-07-11": {
+      "total_value": 119920.67,
+      "total_return": 19.92,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32156.37,
+          "cost": 31757.38,
+          "profit": 398.99,
+          "return_pct": 1.26
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19350.82,
+          "cost": 19235.02,
+          "profit": 115.8,
+          "return_pct": 0.6
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 60001.87,
+          "cost": 59404.01,
+          "profit": 597.86,
+          "return_pct": 1.01
+        }
+      ]
+    },
+    "2026-07-12": {
+      "total_value": 119535.93,
+      "total_return": 19.54,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32155.98,
+          "cost": 31757.38,
+          "profit": 398.6,
+          "return_pct": 1.26
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19350.82,
+          "cost": 19235.02,
+          "profit": 115.8,
+          "return_pct": 0.6
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59617.52,
+          "cost": 59404.01,
+          "profit": 213.51,
+          "return_pct": 0.36
+        }
+      ]
+    },
+    "2026-07-13": {
+      "total_value": 119550.6,
+      "total_return": 19.55,
+      "cash": 0.0,
+      "holdings": [
+        {
+          "name": "22Cap",
+          "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+          "amount": 32165.94,
+          "cost": 31757.38,
+          "profit": 408.55,
+          "return_pct": 1.29
+        },
+        {
+          "name": "Crypto Czars - Road to 100k ",
+          "address": "0x3eaf61e9ebe3edae184c14841d5bb8203611d96f",
+          "amount": 8411.61,
+          "cost": 8411.61,
+          "profit": 0.0,
+          "return_pct": 0.0
+        },
+        {
+          "name": "Algo1",
+          "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+          "amount": 19350.82,
+          "cost": 19235.02,
+          "profit": 115.8,
+          "return_pct": 0.6
+        },
+        {
+          "name": "Marvin",
+          "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+          "amount": 59622.23,
+          "cost": 59404.01,
+          "profit": 218.23,
+          "return_pct": 0.37
+        }
+      ]
+    }
+  }
 }
