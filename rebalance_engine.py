@@ -265,9 +265,13 @@ def evaluate_current_portfolio(
             or not v.get("allow_deposits", True)
         )
 
-        # 7일 TVL 변동률 감시 (자금 급유출 감지 임계값 35%로 완화 적용)
+        # 7일 TVL 변동률 감시 (자금 급유출 감지 임계값 35%로 완화 적용 + 스마트 리더에쿼티 필터링)
         tvl_change = get_tvl_change_7d(addr, snapshots)
-        is_tvl_bankrun = tvl_change <= -35.0
+        
+        # 스마트 엑싯 필터: TVL이 급감해도 리더의 예치 비율이나 자금이 든든하다면 뱅크런으로 감지하지 않음
+        leader_ratio = v.get("leader_equity_ratio", 0.0)
+        leader_usd = v.get("leader_equity_usd", 0.0)
+        is_tvl_bankrun = (tvl_change <= -35.0) and (leader_ratio < 0.35 and leader_usd < 30000.0)
 
         is_danger = False
         danger_reason = ""

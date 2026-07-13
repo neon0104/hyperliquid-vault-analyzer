@@ -1305,8 +1305,18 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name=
       <p style="margin:5px 0 0 0; font-size:0.9rem; color:var(--muted);">
         실제 92일간의 과거 스냅샷 데이터 기반 AI 바벨 포트폴리오 ($100k) 거래비용 반영 시뮬레이션 결과입니다.
       </p>
+      
+      <div style="display:flex; align-items:center; gap:10px; margin-top:12px;">
+        <span style="font-size:0.85rem; color:var(--muted); font-weight:bold;">전략 시나리오 선택:</span>
+        <select id="wfStrategySelect" onchange="window.switchWfStrategy(this.value)" style="padding:8px 12px; background:#0b0f1a; border:1px solid var(--border); color:#fff; border-radius:6px; font-weight:bold; font-size:0.9rem; cursor:pointer; width:220px;">
+          <option value="optimized">✨ Optimized Barbell (최적화 바벨)</option>
+          <option value="baseline">📉 Baseline Barbell (기본 바벨)</option>
+          <option value="core_only">🛡️ Core Only (안정형 CORE 전용)</option>
+          <option value="satellite_only">🚀 Satellite Only (공격형 SATELLITE)</option>
+        </select>
+      </div>
     </div>
-    <span style="font-size:0.85rem; padding:6px 12px; background:rgba(155,89,182,0.2); border:1px solid #9b59b6; color:#e0b0ff; border-radius:30px; font-weight:bold;">
+    <span style="font-size:0.85rem; padding:6px 12px; background:rgba(155,89,182,0.2); border:1px solid #9b59b6; color:#e0b0ff; border-radius:30px; font-weight:bold;" id="wfStrategyTag">
       CAGR 103.1% 최적화 적용됨
     </span>
   </div>
@@ -1906,25 +1916,21 @@ function runBacktest() {
 
 // Load Walk-Forward Simulation Data
 (function() {
+  window.wfChartInstance = null;
+  window.wfRawData = null;
+  window.wfDailyDetails = null;
+
   fetch('/api/walkforward')
     .then(r => r.json())
     .then(res => {
       if (res.error) return;
       
-      // Store globally for date inspector
-      window.wfDailyDetails = res.daily_details;
-      
-      // Update UI Stats
-      document.getElementById('wfAiFinal').innerText = '$' + Math.round(res.ai.final_value).toLocaleString();
-      document.getElementById('wfAiReturn').innerText = (res.ai.total_return >= 0 ? '+' : '') + res.ai.total_return.toFixed(2) + '%';
-      document.getElementById('wfAiMdd').innerText = res.ai.mdd.toFixed(2) + '%';
-      document.getElementById('wfAiFees').innerText = '$' + Math.round(res.ai.fees).toLocaleString();
-      document.getElementById('wfBenchReturn').innerText = (res.benchmark.total_return >= 0 ? '+' : '') + res.benchmark.total_return.toFixed(2) + '%';
+      window.wfRawData = res;
       
       // Populate Date Inspector Dropdown
       const dateSelect = document.getElementById('wfDateSelect');
       dateSelect.innerHTML = '';
-      res.history.dates.forEach(date => {
+      res.dates.forEach(date => {
         const opt = document.createElement('option');
         opt.value = date;
         opt.innerText = date;
@@ -1933,7 +1939,7 @@ function runBacktest() {
       
       // Function to show daily holdings details
       window.showDailyDetails = function(date) {
-        const day = window.wfDailyDetails[date];
+        const day = window.wfDailyDetails ? window.wfDailyDetails[date] : null;
         if (!day) return;
         
         document.getElementById('detTotalVal').innerText = '$' + Math.round(day.total_value).toLocaleString();
@@ -1966,29 +1972,92 @@ function runBacktest() {
           detailBody.appendChild(tr);
         });
       };
-      
-      // Select last date by default
-      const lastDate = res.history.dates[res.history.dates.length - 1];
-      dateSelect.value = lastDate;
-      window.showDailyDetails(lastDate);
+
+      // Function to switch strategy
+      window.switchWfStrategy = function(stratName) {
+        const strat = window.wfRawData.strategies[stratName];
+        if (!strat) return;
+        
+        // Update Stats
+        document.getElementById('wfAiFinal').innerText = '$' + Math.round(strat.final_value).toLocaleString();
+        document.getElementById('wfAiReturn').innerText = (strat.total_return >= 0 ? '+' : '') + strat.total_return.toFixed(2) + '%';
+        document.getElementById('wfAiMdd').innerText = strat.mdd.toFixed(2) + '%';
+        document.getElementById('wfAiFees').innerText = '$' + Math.round(strat.fees).toLocaleString();
+        document.getElementById('wfBenchReturn').innerText = (window.wfRawData.benchmark.total_return >= 0 ? '+' : '') + window.wfRawData.benchmark.total_return.toFixed(2) + '%';
+        
+        // Update tags
+        const tag = document.getElementById('wfStrategyTag');
+        if (stratName === 'optimized') {
+          tag.innerText = 'CAGR 103.1% 최적화 적용됨';
+          tag.style.borderColor = '#9b59b6';
+          tag.style.color = '#e0b0ff';
+        } else if (stratName === 'baseline') {
+          tag.innerText = '기본 바벨 셋업';
+          tag.style.borderColor = '#e74c3c';
+          tag.style.color = '#ff9999';
+        } else if (stratName === 'core_only') {
+          tag.innerText = '원금 보존형';
+          tag.style.borderColor = '#2ecc71';
+          tag.style.color = '#a3f3c3';
+        } else {
+          tag.innerText = '고위험 고수익형';
+          tag.style.borderColor = '#f39c12';
+          tag.style.color = '#fcd090';
+        }
+
+        // Set active daily details
+        window.wfDailyDetails = strat.daily_details;
+        
+        // Refresh Inspector
+        const currentSelDate = document.getElementById('wfDateSelect').value || window.wfRawData.dates[window.wfRawData.dates.length - 1];
+        window.showDailyDetails(currentSelDate);
+        
+        // Update Chart
+        if (window.wfChartInstance) {
+          window.wfChartInstance.data.datasets[0].label = stratName.toUpperCase() + ' Portfolio ($)';
+          window.wfChartInstance.data.datasets[0].data = strat.values;
+          window.wfChartInstance.update();
+        }
+        
+        // Populate Event Log Table
+        const logBody = document.getElementById('wfEventLog');
+        logBody.innerHTML = '';
+        strat.rebalance_events.forEach(evt => {
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+          
+          let allocsStr = '';
+          for (const [name, weight] of Object.entries(evt.allocations)) {
+            allocsStr += `<span style="display:inline-block; padding:2px 6px; background:rgba(255,255,255,0.05); border-radius:4px; font-size:0.75rem; margin:2px; cursor:pointer;" onclick="document.getElementById('wfDateSelect').value='${evt.date}'; window.showDailyDetails('${evt.date}');">${name}: <b>${weight}</b></span> `;
+          }
+          
+          tr.innerHTML = `
+            <td style="padding:10px 5px; font-weight:bold; color:var(--muted); cursor:pointer;" onclick="document.getElementById('wfDateSelect').value='${evt.date}'; window.showDailyDetails('${evt.date}');">${evt.date}</td>
+            <td style="padding:10px 5px;"><strong style="color:${evt.reason.includes('위험') ? 'var(--danger)' : evt.reason.includes('초기') ? 'var(--accent2)' : 'var(--accent)'}">${evt.reason}</strong></td>
+            <td style="padding:10px 5px; color:#e8eaf0;">${evt.details}</td>
+            <td style="padding:10px 5px; max-width:300px; word-wrap:break-word;">${allocsStr}</td>
+          `;
+          logBody.appendChild(tr);
+        });
+      };
       
       // Draw Chart
       const ctx = document.getElementById('walkforwardChart').getContext('2d');
-      new Chart(ctx, {
+      window.wfChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: res.history.dates,
+          labels: res.dates,
           datasets: [
             {
               label: 'AI Barbell Portfolio ($)',
-              data: res.history.ai_values,
+              data: res.strategies.optimized.values,
               borderColor: '#9b59b6',
               backgroundColor: 'rgba(155, 89, 182, 0.05)',
               fill: true, tension: 0.3, borderWidth: 3, pointRadius: 0
             },
             {
               label: 'Equal Weight Benchmark ($)',
-              data: res.history.bench_values,
+              data: res.benchmark.values,
               borderColor: '#7b8db0',
               borderDash: [5, 5],
               fill: false, tension: 0.3, borderWidth: 2, pointRadius: 0
@@ -2023,26 +2092,9 @@ function runBacktest() {
         }
       });
       
-      // Populate Event Log Table
-      const logBody = document.getElementById('wfEventLog');
-      logBody.innerHTML = '';
-      res.rebalance_events.forEach(evt => {
-        const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-        
-        let allocsStr = '';
-        for (const [name, weight] of Object.entries(evt.allocations)) {
-          allocsStr += `<span style="display:inline-block; padding:2px 6px; background:rgba(255,255,255,0.05); border-radius:4px; font-size:0.75rem; margin:2px; cursor:pointer;" onclick="document.getElementById('wfDateSelect').value='${evt.date}'; window.showDailyDetails('${evt.date}');">${name}: <b>${weight}</b></span> `;
-        }
-        
-        tr.innerHTML = `
-          <td style="padding:10px 5px; font-weight:bold; color:var(--muted); cursor:pointer;" onclick="document.getElementById('wfDateSelect').value='${evt.date}'; window.showDailyDetails('${evt.date}');">${evt.date}</td>
-          <td style="padding:10px 5px;"><strong style="color:${evt.reason.includes('위험') ? 'var(--danger)' : evt.reason.includes('초기') ? 'var(--accent2)' : 'var(--accent)'}">${evt.reason}</strong></td>
-          <td style="padding:10px 5px; color:#e8eaf0;">${evt.details}</td>
-          <td style="padding:10px 5px; max-width:300px; word-wrap:break-word;">${allocsStr}</td>
-        `;
-        logBody.appendChild(tr);
-      });
+      // Initialize with optimized strategy
+      window.switchWfStrategy('optimized');
+      
     })
     .catch(err => console.error("Failed to load walkforward simulation data:", err));
 })();
