@@ -918,13 +918,40 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
     eligible_core = sorted(eligible, key=lambda x: x.get("robustness_score", 0), reverse=True)
     core_vaults = eligible_core[:half_k]
     
-    # Group B: Satellite (현재 실제 낙폭 5% 이상인 볼트 중 undervalue_score 최상위)
+    # Group B: Satellite (현재 실제 낙폭 5% 이상인 볼트 중 undervalue_score 및 회복탄력성 우수 자산)
     core_addrs = {v["address"] for v in core_vaults}
     eligible_sat = [v for v in eligible if v["address"] not in core_addrs]
     
     # SATELLITE 후보 필터: drawdown_now >= 5.0%
     eligible_sat = [v for v in eligible_sat if v.get("drawdown_now", 0.0) >= 5.0]
-    eligible_sat = sorted(eligible_sat, key=lambda x: x.get("undervalue_score", 0), reverse=True)
+    
+    # 회복탄력성 저점매수(Buy-the-Dip) 기회 식별 (역사적 MDD의 70% ~ 115% 범위 및 회복성 검증)
+    try:
+        import portfolio_tracker
+        from resilience_analyzer import analyze_vault_resilience
+        snapshots = portfolio_tracker.load_snapshots_all()
+        for v in eligible_sat:
+            res = analyze_vault_resilience(v["address"], snapshots)
+            if res:
+                hist_mdd = res["historical_max_mdd"]
+                curr_dd = res["current_drawdown"]
+                rec_count = res["recovered_count"]
+                avg_rec_days = res["avg_recovery_days"]
+                v["is_resilience_opp"] = (
+                    curr_dd >= hist_mdd * 0.70
+                    and curr_dd <= hist_mdd * 1.15
+                    and rec_count >= 1
+                    and avg_rec_days <= 45.0
+                )
+            else:
+                v["is_resilience_opp"] = False
+    except Exception as e:
+        print(f"  [Warning] 회복탄력성 기회 분석 실패: {e}")
+        for v in eligible_sat:
+            v["is_resilience_opp"] = False
+
+    # 회복탄력성 저점매수(Buy-the-Dip) 기회를 최우선 배치하고, 나머지는 저평가 점수순 정렬
+    eligible_sat = sorted(eligible_sat, key=lambda x: (x.get("is_resilience_opp", False), x.get("undervalue_score", 0)), reverse=True)
     
     sat_k = min(top_k - len(core_vaults), len(eligible_sat))
     sat_vaults = eligible_sat[:sat_k]
@@ -949,10 +976,15 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
             v["suggested_allocation"] = round(alloc, 2)
             v["barbell_group"] = "CORE"
 
-    # 2) SATELLITE 그룹: 과거 회복력 (Recovery Factor) 수치에 정비례하여 분배
+    # 2) SATELLITE 그룹: 과거 회복력 (Recovery Factor) 수치에 비례하여 분배하되, 저점매수(Resilience Opp) 기회는 비중 2.0배 가중치 부스팅
     if len(sat_vaults) > 0:
-        # 음수/0 방지를 위해 최소값 0.0001 설정
-        raw_sat_weights = [max(v.get("recovery_factor", 0.0), 0.0001) for v in sat_vaults]
+        raw_sat_weights = []
+        for v in sat_vaults:
+            w = max(v.get("recovery_factor", 0.0), 0.0001)
+            if v.get("is_resilience_opp", False):
+                w *= 2.0  # 회복탄력성 저점매수 기회 가중치 적용!
+            raw_sat_weights.append(w)
+            
         sum_sat_weights = sum(raw_sat_weights)
         for idx, v in enumerate(sat_vaults):
             alloc = (raw_sat_weights[idx] / sum_sat_weights) * sat_target

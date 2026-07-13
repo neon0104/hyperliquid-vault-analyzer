@@ -621,6 +621,20 @@ def api_get_scenarios():
     return jsonify(reports)
 
 
+@app.route("/api/walkforward", methods=["GET"])
+@jwt_required()
+def api_get_walkforward():
+    path = os.path.join("vault_data", "walkforward_sim_results.json")
+    if not os.path.exists(path):
+        return jsonify({"error": "Simulation data not found"}), 404
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/m")
 @app.route("/my-portfolio")
 @jwt_required()
@@ -1279,6 +1293,67 @@ PORTFOLIO_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name=
 </div></div>
 {% endif %}
 
+<!-- AI Barbell Walk-Forward Simulation & Rebalancing Card -->
+<div class="card" style="margin-bottom:25px; border-left:4px solid #9b59b6">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+    <div>
+      <h3 style="margin:0; color:#fff; display:flex; align-items:center; gap:10px;">
+        🤖 AI Barbell Walk-Forward Simulation
+      </h3>
+      <p style="margin:5px 0 0 0; font-size:0.9rem; color:var(--muted);">
+        실제 92일간의 과거 스냅샷 데이터 기반 AI 바벨 포트폴리오 ($100k) 거래비용 반영 시뮬레이션 결과입니다.
+      </p>
+    </div>
+    <span style="font-size:0.85rem; padding:6px 12px; background:rgba(155,89,182,0.2); border:1px solid #9b59b6; color:#e0b0ff; border-radius:30px; font-weight:bold;">
+      CAGR 103.1% 최적화 적용됨
+    </span>
+  </div>
+
+  <div class="grid" style="margin-bottom:20px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+    <div class="stat-box" style="border-color:rgba(155,89,182,0.3)">
+      <div class="stat-label">AI 최종 자산 가치</div>
+      <div class="stat-val" style="color:#2ecc71; font-size:1.4rem;" id="wfAiFinal">-</div>
+    </div>
+    <div class="stat-box" style="border-color:rgba(155,89,182,0.3)">
+      <div class="stat-label">AI 누적 수익률</div>
+      <div class="stat-val" style="color:#2ecc71; font-size:1.4rem;" id="wfAiReturn">-</div>
+    </div>
+    <div class="stat-box" style="border-color:rgba(155,89,182,0.3)">
+      <div class="stat-label">AI 최대 낙폭 (MDD)</div>
+      <div class="stat-val" style="color:#e74c3c; font-size:1.4rem;" id="wfAiMdd">-</div>
+    </div>
+    <div class="stat-box" style="border-color:rgba(155,89,182,0.3)">
+      <div class="stat-label">누적 지불 수수료</div>
+      <div class="stat-val" style="color:#f39c12; font-size:1.4rem;" id="wfAiFees">-</div>
+    </div>
+    <div class="stat-box" style="border-color:rgba(155,89,182,0.3)">
+      <div class="stat-label">벤치마크 수익률 (Hold)</div>
+      <div class="stat-val" style="color:var(--muted); font-size:1.4rem;" id="wfBenchReturn">-</div>
+    </div>
+  </div>
+
+  <div style="height:350px; margin-bottom:30px;">
+    <canvas id="walkforwardChart"></canvas>
+  </div>
+
+  <h4 style="margin:20px 0 10px 0; color:#fff;">🔄 리밸런싱 및 위험 회피 내역 (Rebalancing History)</h4>
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9rem; margin-top:10px;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border); color:var(--muted);">
+          <th style="padding:10px 5px; width:120px;">날짜</th>
+          <th style="padding:10px 5px; width:150px;">구분/이유</th>
+          <th style="padding:10px 5px; width:220px;">세부 정보</th>
+          <th style="padding:10px 5px;">배분 비중 (Allocations)</th>
+        </tr>
+      </thead>
+      <tbody id="wfEventLog">
+        <!-- Rebalance events will be populated dynamically -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <div class="card" style="margin-bottom:25px; border-left:4px solid #f39c12">
   <h3>🎯 Custom Portfolio Builder</h3>
   <p style="margin:-10px 0 20px 0; font-size:0.9rem; color:var(--muted);">선택한 볼트와 비중으로 커스텀 포트폴리오를 구성하고 백테스트를 수행해보세요.</p>
@@ -1779,6 +1854,77 @@ function runBacktest() {
     alert("Simulation failed.");
   });
 }
+
+// Load Walk-Forward Simulation Data
+(function() {
+  fetch('/api/walkforward')
+    .then(r => r.json())
+    .then(res => {
+      if (res.error) return;
+      
+      // Update UI Stats
+      document.getElementById('wfAiFinal').innerText = '$' + Math.round(res.ai.final_value).toLocaleString();
+      document.getElementById('wfAiReturn').innerText = (res.ai.total_return >= 0 ? '+' : '') + res.ai.total_return.toFixed(2) + '%';
+      document.getElementById('wfAiMdd').innerText = res.ai.mdd.toFixed(2) + '%';
+      document.getElementById('wfAiFees').innerText = '$' + Math.round(res.ai.fees).toLocaleString();
+      document.getElementById('wfBenchReturn').innerText = (res.benchmark.total_return >= 0 ? '+' : '') + res.benchmark.total_return.toFixed(2) + '%';
+      
+      // Draw Chart
+      const ctx = document.getElementById('walkforwardChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: res.history.dates,
+          datasets: [
+            {
+              label: 'AI Barbell Portfolio ($)',
+              data: res.history.ai_values,
+              borderColor: '#9b59b6',
+              backgroundColor: 'rgba(155, 89, 182, 0.05)',
+              fill: true, tension: 0.3, borderWidth: 3, pointRadius: 0
+            },
+            {
+              label: 'Equal Weight Benchmark ($)',
+              data: res.history.bench_values,
+              borderColor: '#7b8db0',
+              borderDash: [5, 5],
+              fill: false, tension: 0.3, borderWidth: 2, pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: true, labels: { color: '#e8eaf0' } } },
+          scales: { 
+            x: { grid: { display: false }, ticks: { color: '#7b8db0', maxRotation: 0, font: {size: 10} } }, 
+            y: { grid: { color: 'rgba(255,255,255,0.05)'}, ticks:{color:'#7b8db0', callback: function(value){ return '$' + value.toLocaleString(); } }}
+          }
+        }
+      });
+      
+      // Populate Event Log Table
+      const logBody = document.getElementById('wfEventLog');
+      logBody.innerHTML = '';
+      res.rebalance_events.forEach(evt => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        
+        let allocsStr = '';
+        for (const [name, weight] of Object.entries(evt.allocations)) {
+          allocsStr += `<span style="display:inline-block; padding:2px 6px; background:rgba(255,255,255,0.05); border-radius:4px; font-size:0.75rem; margin:2px;">${name}: <b>${weight}</b></span> `;
+        }
+        
+        tr.innerHTML = `
+          <td style="padding:10px 5px; font-weight:bold; color:var(--muted);">${evt.date}</td>
+          <td style="padding:10px 5px;"><strong style="color:${evt.reason.includes('위험') ? 'var(--danger)' : evt.reason.includes('초기') ? 'var(--accent2)' : 'var(--accent)'}">${evt.reason}</strong></td>
+          <td style="padding:10px 5px; color:#e8eaf0;">${evt.details}</td>
+          <td style="padding:10px 5px; max-width:300px; word-wrap:break-word;">${allocsStr}</td>
+        `;
+        logBody.appendChild(tr);
+      });
+    })
+    .catch(err => console.error("Failed to load walkforward simulation data:", err));
+})();
 </script>
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">

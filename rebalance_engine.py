@@ -142,8 +142,8 @@ def should_rebalance(vault_map: dict = None, my_portfolio: dict = None, force: b
         weights = [1.0]
     
     weighted_vol = sum(v * w for v, w in zip(vols, weights))
-    # 변동성이 높을수록 주기를 단축 (14일 ~ 45일)
-    adaptive_days = int(np.clip(30.0 * (30.0 / max(weighted_vol, 5.0)), 14, 45))
+    # 변동성이 높을수록 주기를 단축 (30일 ~ 60일 최적화 적용)
+    adaptive_days = int(np.clip(45.0 * (30.0 / max(weighted_vol, 5.0)), 30, 60))
 
     plan = load_rebalance_plan()
     last_date_str = plan.get("generated_at", "")
@@ -265,9 +265,9 @@ def evaluate_current_portfolio(
             or not v.get("allow_deposits", True)
         )
 
-        # 7일 TVL 변동률 감시 (자금 급유출 감지 시 위험 처리)
+        # 7일 TVL 변동률 감시 (자금 급유출 감지 임계값 35%로 완화 적용)
         tvl_change = get_tvl_change_7d(addr, snapshots)
-        is_tvl_bankrun = tvl_change <= -25.0
+        is_tvl_bankrun = tvl_change <= -35.0
 
         is_danger = False
         danger_reason = ""

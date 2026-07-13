@@ -153,7 +153,7 @@ def shrink_covariance(cov_matrix, shrinkage_intensity=0.1):
     n = cov_matrix.shape[0]
     if n <= 1:
         return cov_matrix
-    v = np.diag(cov_matrix)
+    v = np.diag(cov_matrix).copy()
     v[v < 1e-9] = 1e-9
     stds = np.sqrt(v)
     
