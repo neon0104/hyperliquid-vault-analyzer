@@ -8856,5 +8856,72 @@
         "leader_eq": 0.051554827785013024
       }
     ]
+  },
+  "2026-07-14": {
+    "portfolio_value": 153895.67,
+    "daily_pnl": 410.56,
+    "daily_return_pct": 0.2675,
+    "cumulative_pnl": 53895.67,
+    "cumulative_pct": 53.8957,
+    "max_equity_ever": 153895.67,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3935,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 33.48,
+        "apr_30d": 10.84,
+        "robustness": 0.8945,
+        "undervalue": 1.013,
+        "leader_eq": 0.8941992744820326
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 9.22,
+        "apr_30d": 24.48,
+        "robustness": 0.8925,
+        "undervalue": 0.889,
+        "leader_eq": 0.437355228252013
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 7.3,
+        "apr_30d": 276.54,
+        "robustness": 0.7939,
+        "undervalue": 1.256,
+        "leader_eq": 0.25727804331775644
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 16.49,
+        "apr_30d": 268.81,
+        "robustness": 0.5372,
+        "undervalue": 1.274,
+        "leader_eq": 0.5710036435730141
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 15.97,
+        "apr_30d": 115.37,
+        "robustness": 0.5267,
+        "undervalue": 1.071,
+        "leader_eq": 0.05151270024413966
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 17.54,
+        "apr_30d": 50.23,
+        "robustness": 0.373,
+        "undervalue": 0.967,
+        "leader_eq": 0.6292036770608167
+      }
+    ]
   }
 }
