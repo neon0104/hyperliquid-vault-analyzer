@@ -8923,5 +8923,54 @@
         "leader_eq": 0.6292036770608167
       }
     ]
+  },
+  "2026-07-15": {
+    "portfolio_value": 154403.19,
+    "daily_pnl": 507.52,
+    "daily_return_pct": 0.3298,
+    "cumulative_pnl": 54403.19,
+    "cumulative_pct": 54.4032,
+    "max_equity_ever": 154403.19,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4729,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 13.75,
+        "apr_30d": 23.02,
+        "robustness": 0.8925,
+        "undervalue": 0.951,
+        "leader_eq": 0.40839096557423304
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 10.64,
+        "apr_30d": 23.24,
+        "robustness": 0.8378,
+        "undervalue": 0.984,
+        "leader_eq": 0.9991025991160771
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 25.61,
+        "apr_30d": 359.38,
+        "robustness": 0.7888,
+        "undervalue": 1.387,
+        "leader_eq": 0.25564982838568723
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 50.0,
+        "apr_30d": 45.39,
+        "robustness": 0.369,
+        "undervalue": 0.946,
+        "leader_eq": 0.642938364861282
+      }
+    ]
   }
 }
