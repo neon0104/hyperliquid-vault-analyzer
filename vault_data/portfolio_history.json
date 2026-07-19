@@ -9132,5 +9132,45 @@
         "leader_eq": 0.9991070350117407
       }
     ]
+  },
+  "2026-07-20": {
+    "portfolio_value": 154863.07,
+    "daily_pnl": 177.44,
+    "daily_return_pct": 0.1147,
+    "cumulative_pnl": 54863.07,
+    "cumulative_pct": 54.8631,
+    "max_equity_ever": 154863.07,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3847,
+    "n_vaults": 3,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 36.64,
+        "apr_30d": 19.26,
+        "robustness": 0.9265,
+        "undervalue": 1.015,
+        "leader_eq": 0.2520392924014452
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 13.36,
+        "apr_30d": 17.94,
+        "robustness": 0.8925,
+        "undervalue": 1.006,
+        "leader_eq": 0.38675734619917623
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 50.0,
+        "apr_30d": 64.83,
+        "robustness": 0.5269,
+        "undervalue": 1.036,
+        "leader_eq": 0.05122697923714761
+      }
+    ]
   }
 }
