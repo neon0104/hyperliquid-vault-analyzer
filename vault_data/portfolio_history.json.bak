@@ -9212,54 +9212,5 @@
         "leader_eq": 0.26258851549179035
       }
     ]
-  },
-  "2026-07-22": {
-    "portfolio_value": 155844.8,
-    "daily_pnl": 758.9,
-    "daily_return_pct": 0.4893,
-    "cumulative_pnl": 55844.8,
-    "cumulative_pct": 55.8448,
-    "max_equity_ever": 155844.8,
-    "mdd_pct": 0.0,
-    "risk_score": 0.4452,
-    "n_vaults": 4,
-    "vaults": [
-      {
-        "name": "Citadel",
-        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
-        "alloc_pct": 27.25,
-        "apr_30d": 19.22,
-        "robustness": 0.9265,
-        "undervalue": 1.015,
-        "leader_eq": 0.25159774950426983
-      },
-      {
-        "name": "22Cap",
-        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
-        "alloc_pct": 15.26,
-        "apr_30d": 16.87,
-        "robustness": 0.8925,
-        "undervalue": 0.953,
-        "leader_eq": 0.3926797528016146
-      },
-      {
-        "name": "Realist Capital",
-        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
-        "alloc_pct": 7.49,
-        "apr_30d": 256.58,
-        "robustness": 0.8309,
-        "undervalue": 1.124,
-        "leader_eq": 0.26555668330348936
-      },
-      {
-        "name": "Official Jane street ",
-        "address": "0x68c707e9fd21644c0d1b19d55b0ae96bd9ef32b3",
-        "alloc_pct": 50.0,
-        "apr_30d": 303.16,
-        "robustness": 0.504,
-        "undervalue": 1.338,
-        "leader_eq": 0.768304985014545
-      }
-    ]
   }
 }
