@@ -1,12 +1,14 @@
 # Hyperliquid Vault Analyzer
 
-An advanced ML-powered analysis tool for Hyperliquid vaults that provides portfolio optimization, risk analysis, and performance predictions.
+A heuristic analysis tool for Hyperliquid vaults that provides portfolio scoring, risk metrics, and rebalancing suggestions.
+
+> Note: This project uses **rule-based heuristic scoring** (weighted metric sums, robustness of the PnL curve, drawdown/Sharpe filters). It does **not** use machine-learning models. Any "prediction" is an extrapolation of recent APR, not an ML forecast. Treat all projected returns as rough estimates, not guarantees.
 
 ## Features
 
-### ML-Based Portfolio Optimization
-- Intelligent weight allocation across vaults
-- Risk-adjusted return optimization
+### Heuristic Portfolio Scoring
+- Weighted-metric allocation across vaults (Sharpe, APR, drawdown, robustness)
+- Risk-adjusted ranking and filters
 - Dynamic rebalancing recommendations
 
 ### Risk Analysis & Metrics
@@ -15,10 +17,9 @@ An advanced ML-powered analysis tool for Hyperliquid vaults that provides portfo
 - Sharpe ratio computation
 - Risk level classification
 
-### Performance Prediction
-- Machine learning-based return forecasting
-- Confidence interval estimation
-- Feature importance analysis
+### Performance Estimation
+- Recent-APR-based return extrapolation (rough estimate, not a forecast)
+- Heuristic robustness scoring of the PnL curve
 
 ### APR Calculations
 - 30-day and all-time APR tracking
@@ -50,67 +51,49 @@ pip install -r requirements.txt
 cp config.example.json config.json
 ```
 
-2. Edit `config.json` with your credentials:
+2. Edit `config.json` with your **public wallet address only**:
 ```json
 {
-    "account_address": "your_wallet_address",
-    "secret_key": "your_api_key"
+    "account_address": "your_wallet_address"
 }
 ```
-Generate API Key from here - https://app.hyperliquid.xyz/API
+
+> ⚠️ **Do NOT put a private key / API secret in this file.** This tool only reads public
+> vault data, so no secret key is required. `config.json` is git-ignored, but committing a
+> private key here would expose your funds. For CI, set the `ACCOUNT_ADDRESS` secret instead
+> of committing the file.
 
 
 ## Usage
 
-### Basic Usage
+The actual entry points are the scripts in the repository root (there is no `analyzer` package):
 
-```python
-from analyzer.vault_analyzer import EnhancedVaultAnalyzer
-
-# Initialize analyzer
-analyzer = EnhancedVaultAnalyzer()
-
-# Analyze vaults for a user
-results = analyzer.analyze_vault(user_address="your_address")
-
-# Print analysis results
-if results['status'] == 'success':
-    data = results['data']
-    print("\nTop Performing Vaults:")
-    for vault in data['ranked_vaults']:
-        print(f"\n{vault['name']}")
-        print(f"Predicted Monthly Return: {vault['predicted_return']:.2f}%")
-        print(f"Risk Level: {vault['risk_level']}")
-        print(f"Recommended Allocation: {vault['recommended_allocation']:.1f}%")
+### Run a one-off vault analysis
+```bash
+python analyze_top_vaults.py          # 최신 스냅샷 분석 + 추천 + Excel 리포트
+python analyze_top_vaults.py --force  # 캐시 무시하고 새로 수집
 ```
 
-### ML Optimization
-
-```python
-from analyzer.ml_optimizer import EnhancedMLPortfolioOptimizer
-
-# Initialize optimizer
-optimizer = EnhancedMLPortfolioOptimizer()
-
-# Fetch and analyze historical data
-hist_data = optimizer.fetch_historical_data(vault_address)
-if hist_data is not None:
-    prediction, importances = optimizer.predict_expected_returns(hist_data)
+### Collect daily PnL history
+```bash
+python daily_pnl_collector.py         # 상위 볼트 PnL을 vault_data/pnl_history.db 에 축적
 ```
 
-### Performance Prediction
-
-```python
-from analyzer.predictor import predict_profit
-
-# Predict future profit
-future_profit = predict_profit(
-    initial_equity=1000,
-    apr=20,
-    months=3,
-    compounding=True
-)
+### Run the scheduler (daily automation)
+```bash
+python scheduler.py                   # 매일 09:00 자동 분석 (계속 실행)
+python scheduler.py --now             # 즉시 1회 실행 후 종료
 ```
+
+### Launch the web dashboard
+```bash
+python web_dashboard.py               # http://localhost:5001 (PORT 환경변수로 변경 가능)
+```
+
+Environment variables (recommended for anything public):
+`JWT_SECRET_KEY`, `ADMIN_PASSWORD`, `ADMIN_EMAIL`, `SECURE_COOKIES=1` (HTTPS 배포),
+`ALLOW_REGISTRATION=1` (로컬 계정 생성 시에만), `EXPORT_MY_PORTFOLIO=1` (개인 포트폴리오 공개 시에만),
+`ACCOUNT_ADDRESS` (CI에서 config.json 대체).
 
 ## Security Considerations
 

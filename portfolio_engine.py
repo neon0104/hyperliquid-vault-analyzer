@@ -11,6 +11,7 @@
 
 import json, os, sys, glob
 import numpy as np
+from io_utils import atomic_write_json
 from datetime import datetime
 from pathlib import Path
 from scipy.optimize import minimize
@@ -96,8 +97,13 @@ def extract_returns(alltime_pnl, tvl, min_pts=8, max_pts=90):
     denom = tvl + np.abs(arr[:-1]) + 1e-9
     return np.clip(diffs / denom, -0.5, 0.5)
 
-def build_returns_matrix(vaults, min_pts=8, max_pts=90):
-    """볼트 리스트 → (선택 볼트, 수익률 행렬 (n, T))"""
+def build_returns_matrix(vaults, min_pts=8, max_pts=90, min_window=30):
+    """볼트 리스트 → (선택 볼트, 수익률 행렬 (n, T))
+
+    주의: 예전 구현은 공통 분석창(min_len)을 '가장 이력이 짧은 볼트'에 맞춰 잘랐다.
+    신규 볼트 하나가 10개 포인트만 있으면 전체 123개 볼트가 10일로 잘려 상관/공분산/
+    최적화가 표본 10개로 계산되고, 백테스트 연율화가 폭주(연 20만%)했다.
+    → 공통창을 min_window 이상으로 확보하고, 그보다 이력이 짧은 볼트는 제외한다."""
     vr = {}
     for v in vaults:
         r = extract_returns(v.get("alltime_pnl", []), v.get("tvl", 0), min_pts, max_pts)
@@ -105,9 +111,24 @@ def build_returns_matrix(vaults, min_pts=8, max_pts=90):
             vr[v["address"]] = (v, r)
     if len(vr) < 2:
         return [], np.empty((0, 0))
-    min_len = max(min_pts, min(min(len(r) for _, r in vr.values()), max_pts))
+
+    lengths = [len(r) for _, r in vr.values()]
+    # 가능한 한 긴 공통창을 쓰되(데이터 낭비 방지), 신규 볼트 때문에 과도하게 짧아지지
+    # 않도록 이력 길이의 '중앙값'으로 창을 잡고, 그보다 짧은 볼트는 제외한다.
+    # 창은 [min_window, max_pts] 범위로 제한.
+    med = int(np.median(lengths))
+    desired = int(min(max_pts, max(min_window, med)))
+    kept = {a: (v, r) for a, (v, r) in vr.items() if len(r) >= desired}
+    if len(kept) >= 2:
+        min_len = desired
+    else:
+        # 충분히 긴 이력의 볼트가 2개 미만이면 기존 방식(가능한 최소 공통창)으로 폴백
+        kept = vr
+        min_len = max(min_pts, min(lengths))
+    min_len = min(min_len, max_pts)
+
     sel, rows = [], []
-    for addr, (vault, ret) in vr.items():
+    for addr, (vault, ret) in kept.items():
         sel.append(vault)
         rows.append(ret[-min_len:])
     return sel, np.array(rows)
@@ -432,8 +453,17 @@ def backtest(weights, returns_matrix, initial_capital=SIM_CAPITAL):
     rm  = np.maximum.accumulate(eq)
     dd  = (rm - eq) / rm * 100
     T   = len(pr)
-    ann_r = ((eq[-1] / eq[0]) ** (252 / T) - 1) * 100 if T > 0 else 0
-    vol   = float(pr.std() * np.sqrt(252) * 100)
+    total_ret_pct = float((eq[-1] / eq[0] - 1) * 100) if eq[0] > 0 else 0.0
+    # 표본이 짧으면 연율화가 며칠 성과를 수십 배로 증폭(예: 10일 → **(365/10))하므로
+    # 최소 관측일(MIN_ANN_DAYS) 이상일 때만 연율화한다. 크립토는 연 365일 기준.
+    MIN_ANN_DAYS = 60
+    if T >= MIN_ANN_DAYS and eq[0] > 0:
+        ann_r = ((eq[-1] / eq[0]) ** (365.0 / T) - 1) * 100
+        annualized = True
+    else:
+        ann_r = total_ret_pct          # 연율화 없이 누적수익만 표시
+        annualized = False
+    vol   = float(pr.std() * np.sqrt(365) * 100)
     sharpe= ann_r / vol if vol > 0 else 0
 
     # 간략 equity curve (최대 60 포인트)
@@ -444,12 +474,14 @@ def backtest(weights, returns_matrix, initial_capital=SIM_CAPITAL):
         "initial_capital":    initial_capital,
         "final_value":        round(float(eq[-1]), 2),
         "total_profit":       round(float(eq[-1] - initial_capital), 2),
-        "total_return_pct":   round(float((eq[-1] / eq[0] - 1) * 100), 2),
+        "total_return_pct":   round(total_ret_pct, 2),
         "annual_return_pct":  round(ann_r, 2),
+        "annualized":         annualized,   # False면 annual_return_pct는 누적수익(연율화 아님)
         "max_drawdown_pct":   round(float(dd.max()), 2),
         "sharpe_ratio":       round(sharpe, 3),
         "volatility_pct":     round(vol, 2),
         "n_periods":          T,
+        "in_sample":          True,         # 최적화·평가가 동일 구간(인샘플)임을 명시
         "equity_curve":       curve,
     }
 
@@ -472,8 +504,7 @@ def load_portfolio_history():
 def save_portfolio_history(history):
     """포트폴리오 이력 저장"""
     os.makedirs(DATA_DIR, exist_ok=True)
-    with open(str(PORTFOLIO_HISTORY_FILE), "w", encoding="utf-8") as f:
-        json.dump(history, f, ensure_ascii=False, indent=2, default=float)
+    atomic_write_json(str(PORTFOLIO_HISTORY_FILE), history, indent=2, default=float)
 
 
 def calc_portfolio_risk_score(recommendations):
@@ -616,6 +647,9 @@ def get_portfolio_summary(history=None):
         "avg_risk_score":   round(float(np.mean(risk_vals)), 4),
         "current_risk":     last["risk_score"],
         "sharpe_ratio":     round(sharpe, 3),
+        # ⚠️ 이 시리즈는 실현손익이 아니라 추천 볼트의 apr_30d를 매일 복리로 연장한 '추정치'다.
+        "is_projection":    True,
+        "method":           "apr_30d_extrapolation",
         # 시계열 (대시보드/웹 시각화용)
         "value_series":     [(d, history[d]["portfolio_value"]) for d in sorted_dates],
         "mdd_series":       [(d, history[d]["mdd_pct"])         for d in sorted_dates],

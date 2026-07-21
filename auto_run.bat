@@ -41,10 +41,11 @@ git commit -m "Auto-update vault data [%date% %time%]" >> %LOG_FILE% 2>&1
 git pull origin main --no-rebase >> %LOG_FILE% 2>&1
 git push origin main >> %LOG_FILE% 2>&1
 
-:: If push failed, force push as fallback
+:: 강제푸시(force push) 폴백 제거:
+:: 원격의 더 최신 데이터(예: GitHub Actions 커밋)를 덮어써 유실시킬 수 있어 삭제했습니다.
+:: 푸시가 실패하면 그대로 두고 다음 주기에 pull 후 재시도하는 것이 안전합니다.
 if %errorlevel% neq 0 (
-    echo [WARN] Normal push failed, trying force push... >> %LOG_FILE%
-    git push origin main --force-with-lease >> %LOG_FILE% 2>&1
+    echo [WARN] Push failed. 다음 주기에 pull 후 재시도합니다. 반복되면 수동 확인 필요. >> %LOG_FILE%
 )
 
 echo [%date% %time%] Update completed. >> %LOG_FILE%

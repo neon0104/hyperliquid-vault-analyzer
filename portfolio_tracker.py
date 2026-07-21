@@ -5,6 +5,7 @@ portfolio_tracker.py  —  실제 투자 수익률 추적 (요청 5, 6번)
 import json, os, glob
 from datetime import datetime
 import numpy as np
+from io_utils import atomic_write_json
 
 DATA_DIR      = "vault_data"
 SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
@@ -66,8 +67,7 @@ def load_virtual_portfolios():
 
 def save_virtual_portfolios(portfolios):
     os.makedirs(os.path.dirname(VIRTUAL_PORTFOLIOS_FILE), exist_ok=True)
-    with open(VIRTUAL_PORTFOLIOS_FILE, "w", encoding="utf-8") as f:
-        json.dump(portfolios, f, ensure_ascii=False, indent=2)
+    atomic_write_json(VIRTUAL_PORTFOLIOS_FILE, portfolios, indent=2)
 
 
 def calc_portfolio_performance(positions, invest_date, total_capital, snapshots):

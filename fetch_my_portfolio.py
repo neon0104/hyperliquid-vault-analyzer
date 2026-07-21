@@ -8,6 +8,7 @@ if sys.platform == "win32":
 
 from hyperliquid.info import Info
 from hyperliquid.utils import constants
+from io_utils import atomic_write_json
 
 with open("config.json", encoding="utf-8") as f:
     config = json.load(f)
@@ -19,7 +20,16 @@ info = Info(constants.MAINNET_API_URL, skip_ws=True)
 
 # 볼트 에쿼티 조회
 equities = info.post("/info", {"type": "userVaultEquities", "user": user_addr})
-print(f"\n볼트 수: {len(equities) if equities else 0}개")
+
+# 방어: 응답이 리스트가 아니면(None=일시적 실패, dict=오류 응답) 기존 파일을 덮어쓰지 않고 종료.
+# 예전엔 None 응답 시 positions={} 가 저장되어 실제 포트폴리오가 사라지고
+# rebalance_engine 이 $100k 시뮬 모드로 오작동했다. (빈 리스트=실제 무포지션은 정상 진행)
+if not isinstance(equities, list):
+    print(f"⚠️ 볼트 에쿼티 응답 형식 오류(type={type(equities).__name__}). "
+          f"기존 my_portfolio.json 을 보존하고 종료합니다.", file=sys.stderr)
+    sys.exit(1)
+
+print(f"\n볼트 수: {len(equities)}개")
 
 portfolio = {}
 holdings  = []
@@ -84,8 +94,7 @@ pf_data = {
     "positions": portfolio,
 }
 
-with open(pf_path, "w", encoding="utf-8") as f:
-    json.dump(pf_data, f, ensure_ascii=False, indent=2)
+atomic_write_json(pf_path, pf_data, indent=2)
 
 print("\nmy_portfolio.json 저장 완료")
 
@@ -105,8 +114,7 @@ if os.path.exists(vp_path):
                 break
         
         if updated:
-            with open(vp_path, "w", encoding="utf-8") as f:
-                json.dump(vp_data, f, ensure_ascii=False, indent=2)
+            atomic_write_json(vp_path, vp_data, indent=2)
             print("virtual_portfolios.json 에 나의 실제 포트폴리오 싱크 완료")
     except Exception as e:
         print(f"virtual_portfolios.json 싱크 오류: {e}")

@@ -23,6 +23,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 import numpy as np
+from io_utils import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -92,8 +93,7 @@ def load_rebalance_plan():
 def save_rebalance_plan(plan: dict):
     """리밸런싱 플랜 저장"""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    with open(REBALANCE_FILE, "w", encoding="utf-8") as f:
-        json.dump(plan, f, ensure_ascii=False, indent=2, default=float)
+    atomic_write_json(REBALANCE_FILE, plan, indent=2, default=float)
     print(f"  [RE] ✅ 플랜 저장: {REBALANCE_FILE}")
 
 

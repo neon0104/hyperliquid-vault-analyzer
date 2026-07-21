@@ -20,6 +20,7 @@ Hyperliquid 상위 200 볼트 분석기  (Robust Curve Edition)
 
 import json, os, sys, time, argparse, glob, random, asyncio
 import aiohttp
+from io_utils import atomic_write_json
 import numpy as np
 import pandas as pd
 import requests
@@ -46,20 +47,53 @@ MIN_LEADER_EQUITY = 0.40   # ★ 리더 에쿼티 최소 비율 (40% = skin-in-t
 STATS_URL = "https://stats-data.hyperliquid.xyz/Mainnet/vaults"
 API_URL   = constants.MAINNET_API_URL
 
+
+def _make_info_client(retries=4, delay=5):
+    """Hyperliquid SDK의 Info() 초기화를 재시도로 감싼다.
+    spot_meta 파싱 실패(IndexError 등)가 간헐적으로 발생하므로 백오프 후 재시도하고,
+    끝내 실패하면 명확히 예외를 올려 상위(run_analysis→main)가 실패를 감지하도록 한다."""
+    last_err = None
+    for attempt in range(1, retries + 1):
+        try:
+            return Info(API_URL, skip_ws=True)
+        except Exception as e:
+            last_err = e
+            print(f"  [WARN] Info() 초기화 실패 ({attempt}/{retries}): {e}")
+            if attempt < retries:
+                time.sleep(delay * attempt)
+    raise RuntimeError(f"Info() 클라이언트 초기화 최종 실패: {last_err}")
+
 DATA_DIR      = "vault_data"
 SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
 REPORTS_DIR   = os.path.join(DATA_DIR, "reports")
 
 # ── 유틸 ──────────────────────────────────────────────────────────────────────
 def load_config():
-    with open("config.json", encoding="utf-8") as f:
-        return json.load(f)
+    # config.json 은 gitignore 대상(지갑주소 보호). 파일이 없으면 환경변수로 대체.
+    # CI(GitHub Actions)에서는 ACCOUNT_ADDRESS 시크릿을 설정하세요.
+    cfg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+    if os.path.exists(cfg_path):
+        with open(cfg_path, encoding="utf-8") as f:
+            return json.load(f)
+    env_addr = os.environ.get("ACCOUNT_ADDRESS", "").strip()
+    if env_addr:
+        return {"account_address": env_addr}
+    raise FileNotFoundError(
+        "config.json 이 없고 ACCOUNT_ADDRESS 환경변수도 비어 있습니다. "
+        "로컬은 config.json 을, CI는 ACCOUNT_ADDRESS 시크릿을 설정하세요."
+    )
+
+# 모든 날짜 키를 KST(UTC+9)로 통일. 예전엔 naive datetime.now() 라서 로컬 PC(KST)와
+# GitHub Actions 러너(UTC)가 서로 다른 날짜로 스냅샷을 저장 → CI 헬스체크(KST 기준)가
+# 항상 '오늘 데이터 없음'으로 실패하고 중복방지 가드도 안 걸렸다. (pre_run_check /
+# check_data_health 는 이미 KST 사용 → 이제 세 곳이 일치한다.)
+KST = timezone(timedelta(hours=9))
 
 def today_str():
-    return datetime.now().strftime("%Y-%m-%d")
+    return datetime.now(KST).strftime("%Y-%m-%d")
 
 def yesterday_str():
-    return (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    return (datetime.now(KST) - timedelta(days=1)).strftime("%Y-%m-%d")
 
 def snapshot_path(ds):
     return os.path.join(SNAPSHOTS_DIR, f"{ds}.json")
@@ -67,8 +101,7 @@ def snapshot_path(ds):
 def save_snapshot(data, ds=None):
     ds = ds or today_str()
     os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
-    with open(snapshot_path(ds), "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2, default=float)
+    atomic_write_json(snapshot_path(ds), data, indent=2, default=float)
     print(f"  >> 스냅샷 저장: {os.path.abspath(snapshot_path(ds))}")
 
 def load_snapshot(ds):
@@ -353,7 +386,7 @@ def run_analysis_fallback(top_n=TOP_N):
                 res = analyze_vault_from_details(addr, cached_details)
             if not res:
                 if info_client is None:
-                    info_client = Info(API_URL, skip_ws=True)
+                    info_client = _make_info_client()
                 res = analyze_vault_from_details(addr, info_client)
             if res:
                 # 이전 스냅샷의 created_at/age_days 보존
@@ -765,7 +798,7 @@ def run_analysis(top_n=TOP_N):
                 res = analyze_vault_from_stats(v, cached_details)
             if not res:
                 if info_client is None:
-                    info_client = Info(API_URL, skip_ws=True)
+                    info_client = _make_info_client()
                 res = analyze_vault_from_stats(v, info_client)
             if res:
                 results.append(res)
@@ -1367,8 +1400,8 @@ def main():
         vault_data = run_analysis(top_n=TOP_N)
 
     if not vault_data:
-        print("ERROR: 볼트 데이터 없음")
-        return
+        print("ERROR: 볼트 데이터 없음", file=sys.stderr)
+        sys.exit(1)  # 실패를 종료코드로 알림 → CI 재시도/실패 알림이 정상 작동
 
     # 2. 일별 변화
     print(f"\n[2/5] 일별 변화 비교...")
@@ -1396,7 +1429,7 @@ def main():
     print(f"\n[4/5] 현재 포트폴리오 조회...")
     current_portfolio = {}
     try:
-        info = Info(API_URL, skip_ws=True)
+        info = _make_info_client()
         resp = info.post("/info", {"type": "userVaultEquities", "user": user_address})
         if resp and isinstance(resp, list):
             for item in resp:

@@ -16,11 +16,34 @@ if sys.platform == "win32":
 app = Flask(__name__)
 
 # JWT 쿠키 기반 인증 환경설정
-app.config["JWT_SECRET_KEY"] = "hyperliquid-vault-analyzer-secret-2026-key"
+def _load_jwt_secret():
+    """JWT 서명키: 환경변수 JWT_SECRET_KEY 우선, 없으면 로컬 .jwt_secret 파일에
+    랜덤 생성·보관(소스에 하드코딩 금지). .jwt_secret 은 gitignore 대상."""
+    env_secret = os.environ.get("JWT_SECRET_KEY")
+    if env_secret:
+        return env_secret
+    import secrets as _secrets
+    secret_file = Path(__file__).parent / ".jwt_secret"
+    try:
+        if secret_file.exists():
+            val = secret_file.read_text(encoding="utf-8").strip()
+            if val:
+                return val
+        val = _secrets.token_hex(32)
+        secret_file.write_text(val, encoding="utf-8")
+        print("🔐 [SECURITY] 새 JWT 서명키를 생성해 .jwt_secret 에 저장했습니다.")
+        return val
+    except Exception:
+        return _secrets.token_hex(32)
+
+# 공개 HTTPS 배포 시 SECURE_COOKIES=1 로 설정 (쿠키 Secure/SameSite 강화)
+_secure_cookies = os.environ.get("SECURE_COOKIES", "0").lower() in ("1", "true", "yes")
+app.config["JWT_SECRET_KEY"] = _load_jwt_secret()
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-app.config["JWT_COOKIE_CSRF_PROTECT"] = False  # 모바일 브라우저 편의를 위해 CSRF 비활성화
+app.config["JWT_COOKIE_CSRF_PROTECT"] = False  # 프론트엔드 토큰 연동 시 SECURE_COOKIES와 함께 활성화 권장
 app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
-app.config["JWT_COOKIE_SECURE"] = False  # 로컬 및 프라이빗 터널(HTTP/HTTPS) 호환용
+app.config["JWT_COOKIE_SECURE"] = _secure_cookies       # HTTPS 배포 시 1
+app.config["JWT_COOKIE_SAMESITE"] = "Strict" if _secure_cookies else "Lax"
 
 jwt = JWTManager(app)
 
@@ -47,13 +70,25 @@ def create_default_admin():
     cursor = conn.cursor()
     cursor.execute("SELECT count(*) FROM users")
     if cursor.fetchone()[0] == 0:
-        pw_hash = _hash_password("admin1234")
+        admin_email = os.environ.get("ADMIN_EMAIL", "admin@hyperliquid.com")
+        admin_pw = os.environ.get("ADMIN_PASSWORD")
+        generated = False
+        if not admin_pw:
+            import secrets as _secrets
+            admin_pw = _secrets.token_urlsafe(12)  # 하드코딩 기본비번 대신 랜덤 생성
+            generated = True
+        pw_hash = _hash_password(admin_pw)
         cursor.execute(
             "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)",
-            ("admin", "admin@hyperliquid.com", pw_hash, "admin")
+            ("admin", admin_email, pw_hash, "admin")
         )
         conn.commit()
-        print("👤 [SECURITY] 기본 관리자 계정이 생성되었습니다. (ID: admin@hyperliquid.com / PW: admin1234)")
+        if generated:
+            print(f"👤 [SECURITY] 기본 관리자 계정 생성됨 (ID: {admin_email})")
+            print(f"🔑 [SECURITY] 임시 비밀번호(이번 1회만 표시): {admin_pw}")
+            print("   → 로그인 후 즉시 변경하고, 이 콘솔/로그 기록은 삭제하세요.")
+        else:
+            print(f"👤 [SECURITY] 기본 관리자 계정 생성됨 (ID: {admin_email}, 비밀번호: 환경변수 ADMIN_PASSWORD 사용)")
     conn.close()
 
 create_default_admin()
@@ -154,12 +189,12 @@ def send_telegram(msg):
 
 def get_historical_snapshots():
     files = sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json")), reverse=True)
-    if not files: return [], None, {}, None
+    if not files: return [], None, {}, None, {}
     try:
         with open(str(files[0]), encoding="utf-8") as f:
             latest = json.load(f)
             latest_date = os.path.basename(files[0])[:-5]
-    except: return [], None, {}, None
+    except: return [], None, {}, None, {}
     
     prev_vaults = {}
     prev_date = None
@@ -3858,6 +3893,9 @@ MY_HTML = """<!DOCTYPE html>
 
 
 if __name__ == "__main__":
-    print("🚀 Hyperliquid Dashboard Pro v3.1 - Port 5001")
-    app.run(host="0.0.0.0", port=5001)
+    # 포트는 PORT 환경변수로 제어(기본 5001). 터널/도메인 설정(domain_config.json)과
+    # 반드시 동일한 포트를 쓰세요. 공개 배포 시엔 gunicorn/waitress 사용을 권장합니다.
+    port = int(os.environ.get("PORT", "5001"))
+    print(f"🚀 Hyperliquid Dashboard Pro v3.1 - Port {port}")
+    app.run(host="0.0.0.0", port=port)
 

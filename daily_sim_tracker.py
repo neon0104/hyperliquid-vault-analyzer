@@ -21,6 +21,7 @@ daily_sim_tracker.py — 일별 추천 포트폴리오 시뮬레이션 추적기
 
 import sys, os, json, argparse
 import numpy as np
+from io_utils import atomic_write_json
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -47,8 +48,7 @@ def load_sim() -> dict:
 def save_sim(data: dict):
     os.makedirs(DATA_DIR, exist_ok=True)
     data["updated_at"] = datetime.now().isoformat()
-    with open(SIM_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2, default=float)
+    atomic_write_json(SIM_FILE, data, indent=2, default=float)
     print(f"  >> 시뮬레이션 저장: {os.path.abspath(SIM_FILE)}")
 
 

@@ -9,6 +9,7 @@ Flask 대시보드(web_dashboard.py)의 **전체 기능**을 GitHub Pages 정적
 """
 import json, os, glob, sys
 import numpy as np
+from io_utils import atomic_write_json
 from datetime import datetime
 from pathlib import Path
 
@@ -346,9 +347,15 @@ def main():
         latest_key = list(portfolio_by_date.keys())[-1]  # 가장 최근 날짜
         portfolio_export = portfolio_by_date[latest_key]
 
-    # ── 내 포트폴리오 ──
-    my_portfolio = load_my_portfolio(vault_map)
-    print(f"  [Export] My Portfolio: {len(my_portfolio.get('holdings', []))} holdings")
+    # ── 내 포트폴리오 (기본: 공개 export 제외 — 프라이버시) ──
+    # docs/data.json 은 GitHub Pages 로 공개되므로, 개인 보유·손익은 기본적으로 내보내지 않습니다.
+    # 공개 페이지에 포함하려면 환경변수 EXPORT_MY_PORTFOLIO=1 을 설정하세요.
+    if os.environ.get("EXPORT_MY_PORTFOLIO", "0").lower() in ("1", "true", "yes"):
+        my_portfolio = load_my_portfolio(vault_map)
+        print(f"  [Export] My Portfolio: {len(my_portfolio.get('holdings', []))} holdings (공개 export 포함)")
+    else:
+        my_portfolio = {}
+        print("  [Export] My Portfolio: 제외됨 (프라이버시 기본값). 공개하려면 EXPORT_MY_PORTFOLIO=1")
 
     # ── 시장 현황 ──
     valid = [v for v in vaults if v.get("data_points", 0) >= 3]
@@ -376,8 +383,7 @@ def main():
         "market": market,
     }
 
-    with open(OUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(out, f, ensure_ascii=False, default=float)
+    atomic_write_json(OUT_FILE, out, default=float)
 
     size_mb = os.path.getsize(OUT_FILE) / 1024 / 1024
     print(f"  [Export] Saved → {OUT_FILE} ({size_mb:.1f} MB)")

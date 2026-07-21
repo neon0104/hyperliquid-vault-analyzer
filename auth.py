@@ -243,13 +243,17 @@ def refresh():
     return jsonify(access_token=new_access), 200
 
 
-# ── Dev-only: register a user (remove in production) ─────────────────────────
+# ── 회원가입: 기본 비활성화. ALLOW_REGISTRATION=1 일 때만 동작 ────────────────
 @auth_bp.route("/register", methods=["POST"])
 def register():
     """
-    POST /auth/register  [DEV ONLY — disable in production]
+    POST /auth/register
+    기본적으로 비활성화되어 있습니다(공개 서버에서 임의 계정 생성 방지).
+    로컬에서 계정을 만들 때만 환경변수 ALLOW_REGISTRATION=1 로 켜세요.
     Body: { "username": "...", "email": "...", "password": "..." }
     """
+    if os.environ.get("ALLOW_REGISTRATION", "0").lower() not in ("1", "true", "yes"):
+        return jsonify(error="registration is disabled"), 403
     data     = request.get_json(silent=True) or {}
     username = data.get("username", "").strip()
     email    = data.get("email", "").strip().lower()
