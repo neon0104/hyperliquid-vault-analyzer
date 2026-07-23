@@ -9261,5 +9261,45 @@
         "leader_eq": 0.768304985014545
       }
     ]
+  },
+  "2026-07-23": {
+    "portfolio_value": 156078.25,
+    "daily_pnl": 233.45,
+    "daily_return_pct": 0.1498,
+    "cumulative_pnl": 56078.25,
+    "cumulative_pct": 56.0782,
+    "max_equity_ever": 156078.25,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2321,
+    "n_vaults": 3,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 63.61,
+        "apr_30d": 19.22,
+        "robustness": 0.9265,
+        "undervalue": 1.015,
+        "leader_eq": 0.25150975213499027
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 23.32,
+        "apr_30d": 14.38,
+        "robustness": 0.8925,
+        "undervalue": 0.906,
+        "leader_eq": 0.41219534474177716
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 13.07,
+        "apr_30d": 299.13,
+        "robustness": 0.8183,
+        "undervalue": 1.161,
+        "leader_eq": 0.2686222230135975
+      }
+    ]
   }
 }
