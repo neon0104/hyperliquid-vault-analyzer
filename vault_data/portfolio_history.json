@@ -9332,5 +9332,36 @@
         "leader_eq": 0.4247483746655256
       }
     ]
+  },
+  "2026-07-25": {
+    "portfolio_value": 156232.93,
+    "daily_pnl": 78.02,
+    "daily_return_pct": 0.05,
+    "cumulative_pnl": 56232.93,
+    "cumulative_pct": 56.2329,
+    "max_equity_ever": 156232.93,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2112,
+    "n_vaults": 2,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 78.35,
+        "apr_30d": 19.39,
+        "robustness": 0.9265,
+        "undervalue": 1.012,
+        "leader_eq": 0.25159245597555485
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 21.65,
+        "apr_30d": 14.06,
+        "robustness": 0.8925,
+        "undervalue": 0.88,
+        "leader_eq": 0.4253116097930845
+      }
+    ]
   }
 }
