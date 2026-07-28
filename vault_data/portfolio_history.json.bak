@@ -9425,5 +9425,54 @@
         "leader_eq": 0.4075267968445011
       }
     ]
+  },
+  "2026-07-28": {
+    "portfolio_value": 156728.68,
+    "daily_pnl": 345.35,
+    "daily_return_pct": 0.2208,
+    "cumulative_pnl": 56728.68,
+    "cumulative_pct": 56.7287,
+    "max_equity_ever": 156728.68,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2633,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 35.39,
+        "apr_30d": 18.85,
+        "robustness": 0.9433,
+        "undervalue": 1.015,
+        "leader_eq": 0.24560416423433165
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 10.03,
+        "apr_30d": 17.24,
+        "robustness": 0.8923,
+        "undervalue": 0.995,
+        "leader_eq": 0.3761858286591641
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 4.58,
+        "apr_30d": 319.64,
+        "robustness": 0.8085,
+        "undervalue": 0.912,
+        "leader_eq": 0.3398476777032406
+      },
+      {
+        "name": "Brob",
+        "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+        "alloc_pct": 50.0,
+        "apr_30d": 115.13,
+        "robustness": 0.5599,
+        "undervalue": 1.107,
+        "leader_eq": 0.1918027606486514
+      }
+    ]
   }
 }
