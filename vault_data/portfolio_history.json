@@ -9514,5 +9514,54 @@
         "leader_eq": 0.32596165393131943
       }
     ]
+  },
+  "2026-07-30": {
+    "portfolio_value": 157248.81,
+    "daily_pnl": 286.12,
+    "daily_return_pct": 0.1823,
+    "cumulative_pnl": 57248.81,
+    "cumulative_pct": 57.2488,
+    "max_equity_ever": 157248.81,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3976,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 34.72,
+        "apr_30d": 8.33,
+        "robustness": 0.9011,
+        "undervalue": 1.001,
+        "leader_eq": 0.24793025456838683
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 9.72,
+        "apr_30d": 16.25,
+        "robustness": 0.8924,
+        "undervalue": 0.899,
+        "leader_eq": 0.4174462563840341
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 5.56,
+        "apr_30d": 338.43,
+        "robustness": 0.7993,
+        "undervalue": 1.012,
+        "leader_eq": 0.3217678739786182
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 50.0,
+        "apr_30d": 86.49,
+        "robustness": 0.5275,
+        "undervalue": 1.065,
+        "leader_eq": 0.05090795968211796
+      }
+    ]
   }
 }
