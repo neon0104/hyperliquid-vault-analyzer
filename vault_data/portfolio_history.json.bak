@@ -9643,5 +9643,54 @@
         "leader_eq": 0.28501439747453117
       }
     ]
+  },
+  "2026-08-02": {
+    "portfolio_value": 158429.17,
+    "daily_pnl": 490.86,
+    "daily_return_pct": 0.3108,
+    "cumulative_pnl": 58429.17,
+    "cumulative_pct": 58.4292,
+    "max_equity_ever": 158429.17,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4181,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 21.24,
+        "apr_30d": 6.84,
+        "robustness": 0.8925,
+        "undervalue": 0.842,
+        "leader_eq": 0.44083149527590804
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 18.49,
+        "apr_30d": 281.35,
+        "robustness": 0.7972,
+        "undervalue": 1.245,
+        "leader_eq": 0.2635197451753236
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 10.27,
+        "apr_30d": 53.5,
+        "robustness": 0.764,
+        "undervalue": 1.038,
+        "leader_eq": 0.995752392076125
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 50.0,
+        "apr_30d": 108.94,
+        "robustness": 0.5402,
+        "undervalue": 1.1,
+        "leader_eq": 0.6854436320116537
+      }
+    ]
   }
 }
