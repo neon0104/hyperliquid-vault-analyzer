@@ -9750,5 +9750,54 @@
         "leader_eq": 0.9070823727071969
       }
     ]
+  },
+  "2026-08-04": {
+    "portfolio_value": 158974.52,
+    "daily_pnl": 432.0,
+    "daily_return_pct": 0.2725,
+    "cumulative_pnl": 58974.52,
+    "cumulative_pct": 58.9745,
+    "max_equity_ever": 158974.52,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2968,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 26.4,
+        "apr_30d": 24.33,
+        "robustness": 0.9442,
+        "undervalue": 1.008,
+        "leader_eq": 0.245694458307423
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 15.55,
+        "apr_30d": 7.11,
+        "robustness": 0.8925,
+        "undervalue": 0.836,
+        "leader_eq": 0.4464013073215345
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 8.05,
+        "apr_30d": 58.48,
+        "robustness": 0.7654,
+        "undervalue": 1.044,
+        "leader_eq": 0.995752392076125
+      },
+      {
+        "name": "Realist Capital",
+        "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+        "alloc_pct": 50.0,
+        "apr_30d": 174.44,
+        "robustness": 0.7327,
+        "undervalue": 1.17,
+        "leader_eq": 0.24060718187341307
+      }
+    ]
   }
 }
