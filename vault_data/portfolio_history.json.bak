@@ -9839,5 +9839,45 @@
         "leader_eq": 0.4458368005830106
       }
     ]
+  },
+  "2026-08-06": {
+    "portfolio_value": 159328.5,
+    "daily_pnl": 172.12,
+    "daily_return_pct": 0.1081,
+    "cumulative_pnl": 59328.5,
+    "cumulative_pct": 59.3285,
+    "max_equity_ever": 159328.5,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1146,
+    "n_vaults": 3,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 49.5,
+        "apr_30d": 54.41,
+        "robustness": 0.9923,
+        "undervalue": 1.048,
+        "leader_eq": 0.9725992145100895
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 36.94,
+        "apr_30d": 32.23,
+        "robustness": 0.9442,
+        "undervalue": 1.026,
+        "leader_eq": 0.2199634969614034
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 13.56,
+        "apr_30d": 4.67,
+        "robustness": 0.8925,
+        "undervalue": 0.823,
+        "leader_eq": 0.44901287910350957
+      }
+    ]
   }
 }
