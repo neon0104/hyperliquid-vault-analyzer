@@ -10279,5 +10279,54 @@
         "leader_eq": 0.9876010242561319
       }
     ]
+  },
+  "2026-08-17": {
+    "portfolio_value": 162391.12,
+    "daily_pnl": 407.82,
+    "daily_return_pct": 0.2518,
+    "cumulative_pnl": 62391.12,
+    "cumulative_pct": 62.3911,
+    "max_equity_ever": 162391.12,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3695,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 21.96,
+        "apr_30d": 66.8,
+        "robustness": 0.9472,
+        "undervalue": 1.004,
+        "leader_eq": 0.9746093369401823
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 21.95,
+        "apr_30d": 57.59,
+        "robustness": 0.9425,
+        "undervalue": 1.046,
+        "leader_eq": 0.2120052960715572
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 6.09,
+        "apr_30d": 2.69,
+        "robustness": 0.8924,
+        "undervalue": 0.86,
+        "leader_eq": 0.43765792066052767
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 50.0,
+        "apr_30d": 128.84,
+        "robustness": 0.3394,
+        "undervalue": 1.119,
+        "leader_eq": 0.987997967453293
+      }
+    ]
   }
 }
