@@ -10439,5 +10439,63 @@
         "leader_eq": 0.9920929778665143
       }
     ]
+  },
+  "2026-08-21": {
+    "portfolio_value": 163809.18,
+    "daily_pnl": 359.78,
+    "daily_return_pct": 0.2201,
+    "cumulative_pnl": 63809.18,
+    "cumulative_pct": 63.8092,
+    "max_equity_ever": 163809.18,
+    "mdd_pct": 0.0,
+    "risk_score": 0.239,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 63.37,
+        "apr_30d": 97.02,
+        "robustness": 0.941,
+        "undervalue": 0.968,
+        "leader_eq": 0.21496371227049263
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 17.73,
+        "apr_30d": 7.39,
+        "robustness": 0.8924,
+        "undervalue": 0.696,
+        "leader_eq": 0.5305723321622533
+      },
+      {
+        "name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "alloc_pct": 7.67,
+        "apr_30d": 25.93,
+        "robustness": 0.7927,
+        "undervalue": 0.957,
+        "leader_eq": 0.9885150890061373
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 5.18,
+        "apr_30d": 190.93,
+        "robustness": 0.6296,
+        "undervalue": 1.123,
+        "leader_eq": 0.9920929778665143
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 6.05,
+        "apr_30d": 93.75,
+        "robustness": 0.569,
+        "undervalue": 1.085,
+        "leader_eq": 0.6719330441186244
+      }
+    ]
   }
 }
