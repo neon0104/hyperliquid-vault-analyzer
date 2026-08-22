@@ -10497,5 +10497,63 @@
         "leader_eq": 0.6719330441186244
       }
     ]
+  },
+  "2026-08-22": {
+    "portfolio_value": 164190.95,
+    "daily_pnl": 381.77,
+    "daily_return_pct": 0.2331,
+    "cumulative_pnl": 64190.95,
+    "cumulative_pct": 64.191,
+    "max_equity_ever": 164190.95,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2596,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 65.01,
+        "apr_30d": 104.82,
+        "robustness": 0.941,
+        "undervalue": 0.891,
+        "leader_eq": 0.23346438516021042
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 18.16,
+        "apr_30d": 5.98,
+        "robustness": 0.8924,
+        "undervalue": 0.688,
+        "leader_eq": 0.5465429798497691
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 5.39,
+        "apr_30d": 211.19,
+        "robustness": 0.6308,
+        "undervalue": 1.146,
+        "leader_eq": 0.992035683210095
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 5.75,
+        "apr_30d": 31.17,
+        "robustness": 0.5713,
+        "undervalue": 1.026,
+        "leader_eq": 0.6719330441186244
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 5.69,
+        "apr_30d": 46.78,
+        "robustness": 0.5567,
+        "undervalue": 0.989,
+        "leader_eq": 0.061177386202373674
+      }
+    ]
   }
 }
