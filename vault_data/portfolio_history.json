@@ -10622,5 +10622,72 @@
         "leader_eq": 0.22833520045893815
       }
     ]
+  },
+  "2026-08-24": {
+    "portfolio_value": 165525.07,
+    "daily_pnl": 706.64,
+    "daily_return_pct": 0.4287,
+    "cumulative_pnl": 65525.07,
+    "cumulative_pct": 65.5251,
+    "max_equity_ever": 165525.07,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4157,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 34.37,
+        "apr_30d": 103.97,
+        "robustness": 0.941,
+        "undervalue": 0.904,
+        "leader_eq": 0.23156174608757346
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 9.57,
+        "apr_30d": 2.06,
+        "robustness": 0.869,
+        "undervalue": 0.686,
+        "leader_eq": 0.553604440868738
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 3.0,
+        "apr_30d": 274.87,
+        "robustness": 0.6186,
+        "undervalue": 1.224,
+        "leader_eq": 0.9920929778622762
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 3.06,
+        "apr_30d": 60.18,
+        "robustness": 0.556,
+        "undervalue": 1.007,
+        "leader_eq": 0.0597020944235694
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 24.61,
+        "apr_30d": 216.47,
+        "robustness": 0.3233,
+        "undervalue": 1.178,
+        "leader_eq": 0.9960397795476542
+      },
+      {
+        "name": "Brob",
+        "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+        "alloc_pct": 25.39,
+        "apr_30d": 225.27,
+        "robustness": 0.4867,
+        "undervalue": 0.91,
+        "leader_eq": 0.22856868739519215
+      }
+    ]
   }
 }
