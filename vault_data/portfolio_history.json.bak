@@ -10747,5 +10747,63 @@
         "leader_eq": 0.9848458365219503
       }
     ]
+  },
+  "2026-08-26": {
+    "portfolio_value": 166105.17,
+    "daily_pnl": 280.85,
+    "daily_return_pct": 0.1694,
+    "cumulative_pnl": 66105.17,
+    "cumulative_pct": 66.1052,
+    "max_equity_ever": 166105.17,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1666,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Hyper4",
+        "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+        "alloc_pct": 40.91,
+        "apr_30d": 13.85,
+        "robustness": 0.9652,
+        "undervalue": 1.015,
+        "leader_eq": 0.9980899629881643
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 40.9,
+        "apr_30d": 99.98,
+        "robustness": 0.941,
+        "undervalue": 0.946,
+        "leader_eq": 0.22271966923315173
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 11.39,
+        "apr_30d": 4.69,
+        "robustness": 0.8692,
+        "undervalue": 0.682,
+        "leader_eq": 0.5539563100623179
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 3.5,
+        "apr_30d": 253.53,
+        "robustness": 0.6181,
+        "undervalue": 1.198,
+        "leader_eq": 0.9908261617856147
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 3.3,
+        "apr_30d": 177.38,
+        "robustness": 0.5818,
+        "undervalue": 1.114,
+        "leader_eq": 0.9848458365219503
+      }
+    ]
   }
 }

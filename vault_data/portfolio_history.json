@@ -10805,5 +10805,90 @@
         "leader_eq": 0.9848458365219503
       }
     ]
+  },
+  "2026-08-27": {
+    "portfolio_value": 166776.98,
+    "daily_pnl": 671.81,
+    "daily_return_pct": 0.4044,
+    "cumulative_pnl": 66776.98,
+    "cumulative_pct": 66.777,
+    "max_equity_ever": 166776.98,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4624,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "Hyper4",
+        "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+        "alloc_pct": 15.73,
+        "apr_30d": 13.98,
+        "robustness": 0.9655,
+        "undervalue": 1.016,
+        "leader_eq": 0.9980899629881643
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 15.74,
+        "apr_30d": 88.02,
+        "robustness": 0.941,
+        "undervalue": 1.073,
+        "leader_eq": 0.19596668876645715
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.39,
+        "apr_30d": 328.47,
+        "robustness": 0.6346,
+        "undervalue": 1.318,
+        "leader_eq": 0.99155490219377
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 15.74,
+        "apr_30d": 23.99,
+        "robustness": 0.6211,
+        "undervalue": 1.02,
+        "leader_eq": 0.3498719872815029
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 1.4,
+        "apr_30d": 64.55,
+        "robustness": 0.5561,
+        "undervalue": 1.043,
+        "leader_eq": 0.057495138392657276
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 29.01,
+        "apr_30d": 368.13,
+        "robustness": 0.4309,
+        "undervalue": 1.209,
+        "leader_eq": 0.8392389683613459
+      },
+      {
+        "name": "Brob",
+        "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+        "alloc_pct": 14.23,
+        "apr_30d": 10.12,
+        "robustness": 0.4928,
+        "undervalue": 0.736,
+        "leader_eq": 0.23424907222496086
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 6.76,
+        "apr_30d": 208.44,
+        "robustness": 0.3517,
+        "undervalue": 1.184,
+        "leader_eq": 0.9870145029880873
+      }
+    ]
   }
 }
