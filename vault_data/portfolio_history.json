@@ -10966,5 +10966,72 @@
         "leader_eq": 0.9976595986420551
       }
     ]
+  },
+  "2026-08-29": {
+    "portfolio_value": 168165.34,
+    "daily_pnl": 525.89,
+    "daily_return_pct": 0.3137,
+    "cumulative_pnl": 68165.34,
+    "cumulative_pct": 68.1653,
+    "max_equity_ever": 168165.34,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3006,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 21.11,
+        "apr_30d": 24.39,
+        "robustness": 0.9502,
+        "undervalue": 1.022,
+        "leader_eq": 0.34483737687343147
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 21.1,
+        "apr_30d": 97.44,
+        "robustness": 0.9406,
+        "undervalue": 1.086,
+        "leader_eq": 0.1954656171528221
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 5.94,
+        "apr_30d": 2.19,
+        "robustness": 0.8693,
+        "undervalue": 0.759,
+        "leader_eq": 0.5589689236456037
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.85,
+        "apr_30d": 333.94,
+        "robustness": 0.6033,
+        "undervalue": 1.326,
+        "leader_eq": 0.9909326584581888
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 26.34,
+        "apr_30d": 215.14,
+        "robustness": 0.3849,
+        "undervalue": 1.18,
+        "leader_eq": 0.9976595986420551
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 23.66,
+        "apr_30d": 109.12,
+        "robustness": 0.5705,
+        "undervalue": 1.1,
+        "leader_eq": 0.058672842905423274
+      }
+    ]
   }
 }
