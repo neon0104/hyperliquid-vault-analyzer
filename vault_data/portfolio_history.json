@@ -11033,5 +11033,72 @@
         "leader_eq": 0.058672842905423274
       }
     ]
+  },
+  "2026-08-30": {
+    "portfolio_value": 168659.82,
+    "daily_pnl": 494.48,
+    "daily_return_pct": 0.294,
+    "cumulative_pnl": 68659.82,
+    "cumulative_pct": 68.6598,
+    "max_equity_ever": 168659.82,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3333,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 18.32,
+        "apr_30d": 23.8,
+        "robustness": 0.9898,
+        "undervalue": 1.022,
+        "leader_eq": 0.33756082188249614
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 18.32,
+        "apr_30d": 95.01,
+        "robustness": 0.9406,
+        "undervalue": 1.086,
+        "leader_eq": 0.19060407706263435
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 5.16,
+        "apr_30d": 2.43,
+        "robustness": 0.8923,
+        "undervalue": 0.8,
+        "leader_eq": 0.5299549203827558
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.6,
+        "apr_30d": 342.54,
+        "robustness": 0.6038,
+        "undervalue": 1.341,
+        "leader_eq": 0.9898661633753209
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 6.6,
+        "apr_30d": 109.23,
+        "robustness": 0.5933,
+        "undervalue": 1.1,
+        "leader_eq": 0.05568253745896373
+      },
+      {
+        "name": "Brob",
+        "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+        "alloc_pct": 50.0,
+        "apr_30d": 145.49,
+        "robustness": 0.4823,
+        "undervalue": 0.722,
+        "leader_eq": 0.2650757954906107
+      }
+    ]
   }
 }
