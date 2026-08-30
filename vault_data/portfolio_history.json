@@ -11100,5 +11100,63 @@
         "leader_eq": 0.2650757954906107
       }
     ]
+  },
+  "2026-08-31": {
+    "portfolio_value": 169312.29,
+    "daily_pnl": 652.47,
+    "daily_return_pct": 0.3869,
+    "cumulative_pnl": 69312.29,
+    "cumulative_pct": 69.3123,
+    "max_equity_ever": 169312.29,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3601,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 28.93,
+        "apr_30d": 79.82,
+        "robustness": 0.9406,
+        "undervalue": 1.072,
+        "leader_eq": 0.18856727982357355
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 8.18,
+        "apr_30d": 7.96,
+        "robustness": 0.8923,
+        "undervalue": 0.787,
+        "leader_eq": 0.5360756067199898
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.55,
+        "apr_30d": 309.42,
+        "robustness": 0.6035,
+        "undervalue": 1.293,
+        "leader_eq": 0.9898661633753209
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 10.34,
+        "apr_30d": 93.7,
+        "robustness": 0.578,
+        "undervalue": 1.085,
+        "leader_eq": 0.05000443481305051
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 50.0,
+        "apr_30d": 199.76,
+        "robustness": 0.4521,
+        "undervalue": 1.178,
+        "leader_eq": 0.9862253395664179
+      }
+    ]
   }
 }
