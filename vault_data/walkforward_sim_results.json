@@ -1,6 +1,6 @@
 {
-  "period": "2026-04-09 to 2026-07-13",
-  "days": 92,
+  "period": "2026-04-09 to 2026-08-11",
+  "days": 120,
   "dates": [
     "2026-04-09",
     "2026-04-10",
@@ -93,14 +93,43 @@
     "2026-07-10",
     "2026-07-11",
     "2026-07-12",
-    "2026-07-13"
+    "2026-07-13",
+    "2026-07-14",
+    "2026-07-15",
+    "2026-07-16",
+    "2026-07-17",
+    "2026-07-18",
+    "2026-07-19",
+    "2026-07-20",
+    "2026-07-21",
+    "2026-07-22",
+    "2026-07-23",
+    "2026-07-24",
+    "2026-07-25",
+    "2026-07-26",
+    "2026-07-27",
+    "2026-07-28",
+    "2026-07-29",
+    "2026-07-30",
+    "2026-07-31",
+    "2026-08-01",
+    "2026-08-02",
+    "2026-08-03",
+    "2026-08-04",
+    "2026-08-05",
+    "2026-08-06",
+    "2026-08-07",
+    "2026-08-08",
+    "2026-08-09",
+    "2026-08-10",
+    "2026-08-11"
   ],
   "benchmark": {
-    "final_value": 109135.9983594929,
-    "total_return": 9.135998359492907,
-    "cagr": 41.460117617498724,
+    "final_value": 112280.58744930077,
+    "total_return": 12.28058744930076,
+    "cagr": 42.23617236403594,
     "mdd": -22.14525428298976,
-    "sharpe": 1.10149122441433,
+    "sharpe": 1.1725253039381942,
     "fees": 200.0,
     "values": [
       100000.0,
@@ -194,16 +223,45 @@
       108401.58064526318,
       107782.815331518,
       108607.833444773,
-      109135.9983594929
+      109135.9983594929,
+      108421.63028055926,
+      107296.43248019656,
+      106267.82998728532,
+      105995.74929080631,
+      106576.94594814126,
+      106165.09210333612,
+      106294.98044398101,
+      107514.335086585,
+      106524.5282029166,
+      106015.97654591549,
+      105977.38882031274,
+      103518.63085888825,
+      104423.36709228861,
+      102762.70793650573,
+      102545.97707302119,
+      102370.03183069936,
+      102119.42001538069,
+      102432.04915818914,
+      101970.40585153725,
+      101862.7800075968,
+      102163.87896267405,
+      106271.25966303477,
+      106642.11066109361,
+      106972.2761604486,
+      106911.08294343053,
+      106739.08972603011,
+      107835.75397691096,
+      110006.84600742836,
+      112280.58744930077
     ]
   },
   "strategies": {
     "optimized": {
-      "final_value": 134956.68310837238,
-      "total_return": 34.95668310837238,
-      "cagr": 228.4975342332383,
+      "final_value": 131496.27779736865,
+      "total_return": 31.496277797368656,
+      "cagr": 129.98266721557363,
       "mdd": -7.388851833765966,
-      "sharpe": 2.9259296157776524,
+      "sharpe": 2.3085053116445255,
       "fees": 961.0987771562308,
       "values": [
         100000.0,
@@ -297,7 +355,36 @@
         134544.27636460544,
         134673.00561189099,
         135050.3105875848,
-        134956.68310837238
+        134956.68310837238,
+        135067.658972206,
+        135955.1906303962,
+        132081.6509368191,
+        130805.88135093359,
+        130518.6270654382,
+        130561.8134453209,
+        130857.81105130425,
+        132035.23823727824,
+        131085.15680135568,
+        131222.24224555638,
+        130475.98102294165,
+        130320.3824371672,
+        130248.13187937405,
+        130810.13538599774,
+        130518.93499665856,
+        130015.41724135462,
+        129857.98881840665,
+        130580.92995568196,
+        129644.22812034716,
+        129449.08400675809,
+        129907.10632431047,
+        130169.5546585554,
+        130648.25440289768,
+        131566.42972066998,
+        131470.7873100313,
+        131253.63334952496,
+        131478.40043682224,
+        131662.4155465358,
+        131496.27779736865
       ],
       "rebalance_events": [
         {
@@ -3210,15 +3297,1146 @@
               "return_pct": -0.07
             }
           ]
+        },
+        "2026-07-14": {
+          "total_value": 135067.66,
+          "total_return": 35.07,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46392.5,
+              "cost": 46189.18,
+              "profit": 203.32,
+              "return_pct": 0.44
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12754.83,
+              "cost": 12736.73,
+              "profit": 18.1,
+              "return_pct": 0.14
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8510.24,
+              "cost": 8464.2,
+              "profit": 46.04,
+              "return_pct": 0.54
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 67410.08,
+              "cost": 67390.1,
+              "profit": 19.98,
+              "return_pct": 0.03
+            }
+          ]
+        },
+        "2026-07-15": {
+          "total_value": 135955.19,
+          "total_return": 35.96,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46408.66,
+              "cost": 46189.18,
+              "profit": 219.48,
+              "return_pct": 0.48
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12752.64,
+              "cost": 12736.73,
+              "profit": 15.91,
+              "return_pct": 0.12
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8322.77,
+              "cost": 8464.2,
+              "profit": -141.43,
+              "return_pct": -1.67
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 68471.12,
+              "cost": 67390.1,
+              "profit": 1081.02,
+              "return_pct": 1.6
+            }
+          ]
+        },
+        "2026-07-16": {
+          "total_value": 132081.65,
+          "total_return": 32.08,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46082.32,
+              "cost": 46189.18,
+              "profit": -106.86,
+              "return_pct": -0.23
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12738.85,
+              "cost": 12736.73,
+              "profit": 2.12,
+              "return_pct": 0.02
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8279.73,
+              "cost": 8464.2,
+              "profit": -184.47,
+              "return_pct": -2.18
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 64980.74,
+              "cost": 67390.1,
+              "profit": -2409.36,
+              "return_pct": -3.58
+            }
+          ]
+        },
+        "2026-07-17": {
+          "total_value": 130805.88,
+          "total_return": 30.81,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 45651.66,
+              "cost": 46189.18,
+              "profit": -537.52,
+              "return_pct": -1.16
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12731.1,
+              "cost": 12736.73,
+              "profit": -5.63,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8511.48,
+              "cost": 8464.2,
+              "profit": 47.28,
+              "return_pct": 0.56
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 63911.64,
+              "cost": 67390.1,
+              "profit": -3478.46,
+              "return_pct": -5.16
+            }
+          ]
+        },
+        "2026-07-18": {
+          "total_value": 130518.63,
+          "total_return": 30.52,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 45504.34,
+              "cost": 46189.18,
+              "profit": -684.84,
+              "return_pct": -1.48
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12731.18,
+              "cost": 12736.73,
+              "profit": -5.55,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8452.92,
+              "cost": 8464.2,
+              "profit": -11.28,
+              "return_pct": -0.13
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 63830.2,
+              "cost": 67390.1,
+              "profit": -3559.9,
+              "return_pct": -5.28
+            }
+          ]
+        },
+        "2026-07-19": {
+          "total_value": 130561.81,
+          "total_return": 30.56,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 45495.41,
+              "cost": 46189.18,
+              "profit": -693.77,
+              "return_pct": -1.5
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12727.53,
+              "cost": 12736.73,
+              "profit": -9.2,
+              "return_pct": -0.07
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8379.09,
+              "cost": 8464.2,
+              "profit": -85.11,
+              "return_pct": -1.01
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 63959.79,
+              "cost": 67390.1,
+              "profit": -3430.31,
+              "return_pct": -5.09
+            }
+          ]
+        },
+        "2026-07-20": {
+          "total_value": 130857.81,
+          "total_return": 30.86,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 45748.13,
+              "cost": 46189.18,
+              "profit": -441.05,
+              "return_pct": -0.95
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12729.8,
+              "cost": 12736.73,
+              "profit": -6.93,
+              "return_pct": -0.05
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8278.01,
+              "cost": 8464.2,
+              "profit": -186.19,
+              "return_pct": -2.2
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 64101.87,
+              "cost": 67390.1,
+              "profit": -3288.23,
+              "return_pct": -4.88
+            }
+          ]
+        },
+        "2026-07-21": {
+          "total_value": 132035.24,
+          "total_return": 32.04,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46475.35,
+              "cost": 46189.18,
+              "profit": 286.17,
+              "return_pct": 0.62
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12727.41,
+              "cost": 12736.73,
+              "profit": -9.32,
+              "return_pct": -0.07
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8085.62,
+              "cost": 8464.2,
+              "profit": -378.58,
+              "return_pct": -4.47
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 64746.86,
+              "cost": 67390.1,
+              "profit": -2643.24,
+              "return_pct": -3.92
+            }
+          ]
+        },
+        "2026-07-22": {
+          "total_value": 131085.16,
+          "total_return": 31.09,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46855.31,
+              "cost": 46189.18,
+              "profit": 666.13,
+              "return_pct": 1.44
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12731.14,
+              "cost": 12736.73,
+              "profit": -5.59,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 7851.13,
+              "cost": 8464.2,
+              "profit": -613.07,
+              "return_pct": -7.24
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 63647.58,
+              "cost": 67390.1,
+              "profit": -3742.52,
+              "return_pct": -5.55
+            }
+          ]
+        },
+        "2026-07-23": {
+          "total_value": 131222.24,
+          "total_return": 31.22,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46933.9,
+              "cost": 46189.18,
+              "profit": 744.72,
+              "return_pct": 1.61
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12744.08,
+              "cost": 12736.73,
+              "profit": 7.35,
+              "return_pct": 0.06
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8144.4,
+              "cost": 8464.2,
+              "profit": -319.8,
+              "return_pct": -3.78
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 63399.87,
+              "cost": 67390.1,
+              "profit": -3990.23,
+              "return_pct": -5.92
+            }
+          ]
+        },
+        "2026-07-24": {
+          "total_value": 130475.98,
+          "total_return": 30.48,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46959.86,
+              "cost": 46189.18,
+              "profit": 770.68,
+              "return_pct": 1.67
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12737.07,
+              "cost": 12736.73,
+              "profit": 0.34,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8072.82,
+              "cost": 8464.2,
+              "profit": -391.38,
+              "return_pct": -4.62
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 62706.22,
+              "cost": 67390.1,
+              "profit": -4683.88,
+              "return_pct": -6.95
+            }
+          ]
+        },
+        "2026-07-25": {
+          "total_value": 130320.38,
+          "total_return": 30.32,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46898.03,
+              "cost": 46189.18,
+              "profit": 708.85,
+              "return_pct": 1.53
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12739.82,
+              "cost": 12736.73,
+              "profit": 3.09,
+              "return_pct": 0.02
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8353.9,
+              "cost": 8464.2,
+              "profit": -110.3,
+              "return_pct": -1.3
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 62328.63,
+              "cost": 67390.1,
+              "profit": -5061.47,
+              "return_pct": -7.51
+            }
+          ]
+        },
+        "2026-07-26": {
+          "total_value": 130248.13,
+          "total_return": 30.25,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 46812.21,
+              "cost": 46189.18,
+              "profit": 623.03,
+              "return_pct": 1.35
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12727.05,
+              "cost": 12736.73,
+              "profit": -9.68,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8177.6,
+              "cost": 8464.2,
+              "profit": -286.6,
+              "return_pct": -3.39
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 62531.27,
+              "cost": 67390.1,
+              "profit": -4858.83,
+              "return_pct": -7.21
+            }
+          ]
+        },
+        "2026-07-27": {
+          "total_value": 130810.14,
+          "total_return": 30.81,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47091.73,
+              "cost": 46189.18,
+              "profit": 902.55,
+              "return_pct": 1.95
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12785.77,
+              "cost": 12736.73,
+              "profit": 49.04,
+              "return_pct": 0.39
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8163.57,
+              "cost": 8464.2,
+              "profit": -300.63,
+              "return_pct": -3.55
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 62769.07,
+              "cost": 67390.1,
+              "profit": -4621.03,
+              "return_pct": -6.86
+            }
+          ]
+        },
+        "2026-07-28": {
+          "total_value": 130518.93,
+          "total_return": 30.52,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47119.89,
+              "cost": 46189.18,
+              "profit": 930.71,
+              "return_pct": 2.01
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12814.16,
+              "cost": 12736.73,
+              "profit": 77.43,
+              "return_pct": 0.61
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8587.01,
+              "cost": 8464.2,
+              "profit": 122.81,
+              "return_pct": 1.45
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61997.88,
+              "cost": 67390.1,
+              "profit": -5392.22,
+              "return_pct": -8.0
+            }
+          ]
+        },
+        "2026-07-29": {
+          "total_value": 130015.42,
+          "total_return": 30.02,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47159.7,
+              "cost": 46189.18,
+              "profit": 970.52,
+              "return_pct": 2.1
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12822.09,
+              "cost": 12736.73,
+              "profit": 85.36,
+              "return_pct": 0.67
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8577.09,
+              "cost": 8464.2,
+              "profit": 112.89,
+              "return_pct": 1.33
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61456.55,
+              "cost": 67390.1,
+              "profit": -5933.55,
+              "return_pct": -8.8
+            }
+          ]
+        },
+        "2026-07-30": {
+          "total_value": 129857.99,
+          "total_return": 29.86,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47288.99,
+              "cost": 46189.18,
+              "profit": 1099.81,
+              "return_pct": 2.38
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12783.17,
+              "cost": 12736.73,
+              "profit": 46.44,
+              "return_pct": 0.36
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8932.99,
+              "cost": 8464.2,
+              "profit": 468.79,
+              "return_pct": 5.54
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 60852.83,
+              "cost": 67390.1,
+              "profit": -6537.27,
+              "return_pct": -9.7
+            }
+          ]
+        },
+        "2026-07-31": {
+          "total_value": 130580.93,
+          "total_return": 30.58,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47280.95,
+              "cost": 46189.18,
+              "profit": 1091.77,
+              "return_pct": 2.36
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12790.69,
+              "cost": 12736.73,
+              "profit": 53.96,
+              "return_pct": 0.42
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8865.9,
+              "cost": 8464.2,
+              "profit": 401.7,
+              "return_pct": 4.75
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61643.38,
+              "cost": 67390.1,
+              "profit": -5746.72,
+              "return_pct": -8.53
+            }
+          ]
+        },
+        "2026-08-01": {
+          "total_value": 129644.23,
+          "total_return": 29.64,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47385.38,
+              "cost": 46189.18,
+              "profit": 1196.2,
+              "return_pct": 2.59
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12753.24,
+              "cost": 12736.73,
+              "profit": 16.51,
+              "return_pct": 0.13
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 9017.76,
+              "cost": 8464.2,
+              "profit": 553.56,
+              "return_pct": 6.54
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 60487.85,
+              "cost": 67390.1,
+              "profit": -6902.25,
+              "return_pct": -10.24
+            }
+          ]
+        },
+        "2026-08-02": {
+          "total_value": 129449.08,
+          "total_return": 29.45,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47464.17,
+              "cost": 46189.18,
+              "profit": 1274.99,
+              "return_pct": 2.76
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12724.28,
+              "cost": 12736.73,
+              "profit": -12.45,
+              "return_pct": -0.1
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 9015.77,
+              "cost": 8464.2,
+              "profit": 551.57,
+              "return_pct": 6.52
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 60244.86,
+              "cost": 67390.1,
+              "profit": -7145.24,
+              "return_pct": -10.6
+            }
+          ]
+        },
+        "2026-08-03": {
+          "total_value": 129907.11,
+          "total_return": 29.91,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47649.87,
+              "cost": 46189.18,
+              "profit": 1460.69,
+              "return_pct": 3.16
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12734.7,
+              "cost": 12736.73,
+              "profit": -2.03,
+              "return_pct": -0.02
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8812.23,
+              "cost": 8464.2,
+              "profit": 348.03,
+              "return_pct": 4.11
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 60710.3,
+              "cost": 67390.1,
+              "profit": -6679.8,
+              "return_pct": -9.91
+            }
+          ]
+        },
+        "2026-08-04": {
+          "total_value": 130169.55,
+          "total_return": 30.17,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47711.67,
+              "cost": 46189.18,
+              "profit": 1522.49,
+              "return_pct": 3.3
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12726.12,
+              "cost": 12736.73,
+              "profit": -10.61,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8727.32,
+              "cost": 8464.2,
+              "profit": 263.12,
+              "return_pct": 3.11
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61004.44,
+              "cost": 67390.1,
+              "profit": -6385.66,
+              "return_pct": -9.48
+            }
+          ]
+        },
+        "2026-08-05": {
+          "total_value": 130648.25,
+          "total_return": 30.65,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47726.48,
+              "cost": 46189.18,
+              "profit": 1537.3,
+              "return_pct": 3.33
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12700.73,
+              "cost": 12736.73,
+              "profit": -36.0,
+              "return_pct": -0.28
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8940.23,
+              "cost": 8464.2,
+              "profit": 476.03,
+              "return_pct": 5.62
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61280.81,
+              "cost": 67390.1,
+              "profit": -6109.29,
+              "return_pct": -9.07
+            }
+          ]
+        },
+        "2026-08-06": {
+          "total_value": 131566.43,
+          "total_return": 31.57,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47717.98,
+              "cost": 46189.18,
+              "profit": 1528.8,
+              "return_pct": 3.31
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12714.08,
+              "cost": 12736.73,
+              "profit": -22.65,
+              "return_pct": -0.18
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 9133.14,
+              "cost": 8464.2,
+              "profit": 668.94,
+              "return_pct": 7.9
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 62001.23,
+              "cost": 67390.1,
+              "profit": -5388.87,
+              "return_pct": -8.0
+            }
+          ]
+        },
+        "2026-08-07": {
+          "total_value": 131470.79,
+          "total_return": 31.47,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47771.22,
+              "cost": 46189.18,
+              "profit": 1582.04,
+              "return_pct": 3.43
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12710.7,
+              "cost": 12736.73,
+              "profit": -26.03,
+              "return_pct": -0.2
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 9211.62,
+              "cost": 8464.2,
+              "profit": 747.42,
+              "return_pct": 8.83
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61777.25,
+              "cost": 67390.1,
+              "profit": -5612.85,
+              "return_pct": -8.33
+            }
+          ]
+        },
+        "2026-08-08": {
+          "total_value": 131253.63,
+          "total_return": 31.25,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47538.95,
+              "cost": 46189.18,
+              "profit": 1349.77,
+              "return_pct": 2.92
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12697.54,
+              "cost": 12736.73,
+              "profit": -39.19,
+              "return_pct": -0.31
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 9279.75,
+              "cost": 8464.2,
+              "profit": 815.55,
+              "return_pct": 9.64
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61737.39,
+              "cost": 67390.1,
+              "profit": -5652.71,
+              "return_pct": -8.39
+            }
+          ]
+        },
+        "2026-08-09": {
+          "total_value": 131478.4,
+          "total_return": 31.48,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47493.68,
+              "cost": 46189.18,
+              "profit": 1304.5,
+              "return_pct": 2.82
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12713.93,
+              "cost": 12736.73,
+              "profit": -22.8,
+              "return_pct": -0.18
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 9241.92,
+              "cost": 8464.2,
+              "profit": 777.72,
+              "return_pct": 9.19
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 62028.88,
+              "cost": 67390.1,
+              "profit": -5361.22,
+              "return_pct": -7.96
+            }
+          ]
+        },
+        "2026-08-10": {
+          "total_value": 131662.42,
+          "total_return": 31.66,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47895.35,
+              "cost": 46189.18,
+              "profit": 1706.17,
+              "return_pct": 3.69
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12706.74,
+              "cost": 12736.73,
+              "profit": -29.99,
+              "return_pct": -0.24
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 9043.25,
+              "cost": 8464.2,
+              "profit": 579.05,
+              "return_pct": 6.84
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 62017.08,
+              "cost": 67390.1,
+              "profit": -5373.02,
+              "return_pct": -7.97
+            }
+          ]
+        },
+        "2026-08-11": {
+          "total_value": 131496.28,
+          "total_return": 31.5,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 47953.69,
+              "cost": 46189.18,
+              "profit": 1764.51,
+              "return_pct": 3.82
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 12726.03,
+              "cost": 12736.73,
+              "profit": -10.7,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 8987.47,
+              "cost": 8464.2,
+              "profit": 523.27,
+              "return_pct": 6.18
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 61829.08,
+              "cost": 67390.1,
+              "profit": -5561.02,
+              "return_pct": -8.25
+            }
+          ]
         }
       }
     },
     "baseline": {
-      "final_value": 100642.96093501474,
-      "total_return": 0.6429609350147366,
-      "cagr": 2.575314698162723,
-      "mdd": -12.010707799144326,
-      "sharpe": 0.22632355968841278,
+      "final_value": 96174.26664945859,
+      "total_return": -3.825733350541416,
+      "cagr": -11.188179941401177,
+      "mdd": -12.767164754840401,
+      "sharpe": -0.3694135730050598,
       "fees": 1401.8504431545891,
       "values": [
         100000.0,
@@ -3312,7 +4530,36 @@
         101255.95656233409,
         100834.61487472767,
         100697.6451432015,
-        100642.96093501474
+        100642.96093501474,
+        98355.45457651641,
+        98021.65824751079,
+        95707.9984221542,
+        95003.47483881692,
+        95382.4870201326,
+        95141.34993323756,
+        95383.6565952382,
+        96631.75988893262,
+        95454.07358618689,
+        94959.44270084656,
+        94632.96916719864,
+        92656.40900109375,
+        93423.53726400624,
+        92282.16846060354,
+        95456.7374261558,
+        95083.76612720135,
+        94687.254874189,
+        95267.01004969879,
+        94453.62643936044,
+        94301.03647417999,
+        94742.45106759807,
+        92087.38497708445,
+        92505.13331408166,
+        95714.14838776474,
+        95575.24809587315,
+        95421.01503742867,
+        93072.26337837634,
+        94633.98178478883,
+        96174.26664945859
       ],
       "rebalance_events": [
         {
@@ -6456,15 +7703,1146 @@
               "return_pct": 2.98
             }
           ]
+        },
+        "2026-07-14": {
+          "total_value": 98355.45,
+          "total_return": -1.64,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23651.83,
+              "cost": 23548.17,
+              "profit": 103.66,
+              "return_pct": 0.44
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6368.33,
+              "cost": 6359.29,
+              "profit": 9.04,
+              "return_pct": 0.14
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18870.47,
+              "cost": 19542.71,
+              "profit": -672.24,
+              "return_pct": -3.44
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 49464.83,
+              "cost": 49450.17,
+              "profit": 14.66,
+              "return_pct": 0.03
+            }
+          ]
+        },
+        "2026-07-15": {
+          "total_value": 98021.66,
+          "total_return": -1.98,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23660.07,
+              "cost": 23548.17,
+              "profit": 111.9,
+              "return_pct": 0.48
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6367.23,
+              "cost": 6359.29,
+              "profit": 7.94,
+              "return_pct": 0.12
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 17750.95,
+              "cost": 19542.71,
+              "profit": -1791.76,
+              "return_pct": -9.17
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 50243.41,
+              "cost": 49450.17,
+              "profit": 793.24,
+              "return_pct": 1.6
+            }
+          ]
+        },
+        "2026-07-16": {
+          "total_value": 95708.0,
+          "total_return": -4.29,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23493.69,
+              "cost": 23548.17,
+              "profit": -54.48,
+              "return_pct": -0.23
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6360.35,
+              "cost": 6359.29,
+              "profit": 1.06,
+              "return_pct": 0.02
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18171.75,
+              "cost": 19542.71,
+              "profit": -1370.96,
+              "return_pct": -7.02
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 47682.21,
+              "cost": 49450.17,
+              "profit": -1767.96,
+              "return_pct": -3.58
+            }
+          ]
+        },
+        "2026-07-17": {
+          "total_value": 95003.47,
+          "total_return": -5.0,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23274.13,
+              "cost": 23548.17,
+              "profit": -274.04,
+              "return_pct": -1.16
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6356.48,
+              "cost": 6359.29,
+              "profit": -2.81,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18475.15,
+              "cost": 19542.71,
+              "profit": -1067.56,
+              "return_pct": -5.46
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 46897.71,
+              "cost": 49450.17,
+              "profit": -2552.46,
+              "return_pct": -5.16
+            }
+          ]
+        },
+        "2026-07-18": {
+          "total_value": 95382.49,
+          "total_return": -4.62,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23199.02,
+              "cost": 23548.17,
+              "profit": -349.15,
+              "return_pct": -1.48
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6356.52,
+              "cost": 6359.29,
+              "profit": -2.77,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18989.0,
+              "cost": 19542.71,
+              "profit": -553.71,
+              "return_pct": -2.83
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 46837.95,
+              "cost": 49450.17,
+              "profit": -2612.22,
+              "return_pct": -5.28
+            }
+          ]
+        },
+        "2026-07-19": {
+          "total_value": 95141.35,
+          "total_return": -4.86,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23194.47,
+              "cost": 23548.17,
+              "profit": -353.7,
+              "return_pct": -1.5
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6354.7,
+              "cost": 6359.29,
+              "profit": -4.59,
+              "return_pct": -0.07
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18659.14,
+              "cost": 19542.71,
+              "profit": -883.57,
+              "return_pct": -4.52
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 46933.04,
+              "cost": 49450.17,
+              "profit": -2517.13,
+              "return_pct": -5.09
+            }
+          ]
+        },
+        "2026-07-20": {
+          "total_value": 95383.66,
+          "total_return": -4.62,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23323.31,
+              "cost": 23548.17,
+              "profit": -224.86,
+              "return_pct": -0.95
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6355.83,
+              "cost": 6359.29,
+              "profit": -3.46,
+              "return_pct": -0.05
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18667.21,
+              "cost": 19542.71,
+              "profit": -875.5,
+              "return_pct": -4.48
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 47037.3,
+              "cost": 49450.17,
+              "profit": -2412.87,
+              "return_pct": -4.88
+            }
+          ]
+        },
+        "2026-07-21": {
+          "total_value": 96631.76,
+          "total_return": -3.37,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23694.06,
+              "cost": 23548.17,
+              "profit": 145.89,
+              "return_pct": 0.62
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6354.64,
+              "cost": 6359.29,
+              "profit": -4.65,
+              "return_pct": -0.07
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19072.47,
+              "cost": 19542.71,
+              "profit": -470.24,
+              "return_pct": -2.41
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 47510.59,
+              "cost": 49450.17,
+              "profit": -1939.58,
+              "return_pct": -3.92
+            }
+          ]
+        },
+        "2026-07-22": {
+          "total_value": 95454.07,
+          "total_return": -4.55,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23887.78,
+              "cost": 23548.17,
+              "profit": 339.61,
+              "return_pct": 1.44
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6356.5,
+              "cost": 6359.29,
+              "profit": -2.79,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18505.85,
+              "cost": 19542.71,
+              "profit": -1036.86,
+              "return_pct": -5.31
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 46703.95,
+              "cost": 49450.17,
+              "profit": -2746.22,
+              "return_pct": -5.55
+            }
+          ]
+        },
+        "2026-07-23": {
+          "total_value": 94959.44,
+          "total_return": -5.04,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23927.84,
+              "cost": 23548.17,
+              "profit": 379.67,
+              "return_pct": 1.61
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6362.96,
+              "cost": 6359.29,
+              "profit": 3.67,
+              "return_pct": 0.06
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18146.47,
+              "cost": 19542.71,
+              "profit": -1396.24,
+              "return_pct": -7.14
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 46522.18,
+              "cost": 49450.17,
+              "profit": -2927.99,
+              "return_pct": -5.92
+            }
+          ]
+        },
+        "2026-07-24": {
+          "total_value": 94632.97,
+          "total_return": -5.37,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23941.08,
+              "cost": 23548.17,
+              "profit": 392.91,
+              "return_pct": 1.67
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6359.46,
+              "cost": 6359.29,
+              "profit": 0.17,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18319.24,
+              "cost": 19542.71,
+              "profit": -1223.47,
+              "return_pct": -6.26
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 46013.19,
+              "cost": 49450.17,
+              "profit": -3436.98,
+              "return_pct": -6.95
+            }
+          ]
+        },
+        "2026-07-25": {
+          "total_value": 92656.41,
+          "total_return": -7.34,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23909.56,
+              "cost": 23548.17,
+              "profit": 361.39,
+              "return_pct": 1.53
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6360.83,
+              "cost": 6359.29,
+              "profit": 1.54,
+              "return_pct": 0.02
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 16649.9,
+              "cost": 19542.71,
+              "profit": -2892.81,
+              "return_pct": -14.8
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45736.12,
+              "cost": 49450.17,
+              "profit": -3714.05,
+              "return_pct": -7.51
+            }
+          ]
+        },
+        "2026-07-26": {
+          "total_value": 93423.54,
+          "total_return": -6.58,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 23865.8,
+              "cost": 23548.17,
+              "profit": 317.63,
+              "return_pct": 1.35
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6354.46,
+              "cost": 6359.29,
+              "profit": -4.83,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 17318.47,
+              "cost": 19542.71,
+              "profit": -2224.24,
+              "return_pct": -11.38
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45884.81,
+              "cost": 49450.17,
+              "profit": -3565.36,
+              "return_pct": -7.21
+            }
+          ]
+        },
+        "2026-07-27": {
+          "total_value": 92282.17,
+          "total_return": -7.72,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24008.31,
+              "cost": 23548.17,
+              "profit": 460.14,
+              "return_pct": 1.95
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6383.77,
+              "cost": 6359.29,
+              "profit": 24.48,
+              "return_pct": 0.39
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 15830.78,
+              "cost": 19542.71,
+              "profit": -3711.93,
+              "return_pct": -18.99
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 46059.3,
+              "cost": 49450.17,
+              "profit": -3390.87,
+              "return_pct": -6.86
+            }
+          ]
+        },
+        "2026-07-28": {
+          "total_value": 95456.74,
+          "total_return": -4.54,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24022.66,
+              "cost": 23548.17,
+              "profit": 474.49,
+              "return_pct": 2.01
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6397.95,
+              "cost": 6359.29,
+              "profit": 38.66,
+              "return_pct": 0.61
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45493.41,
+              "cost": 49450.17,
+              "profit": -3956.76,
+              "return_pct": -8.0
+            }
+          ]
+        },
+        "2026-07-29": {
+          "total_value": 95083.77,
+          "total_return": -4.92,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24042.96,
+              "cost": 23548.17,
+              "profit": 494.79,
+              "return_pct": 2.1
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6401.91,
+              "cost": 6359.29,
+              "profit": 42.62,
+              "return_pct": 0.67
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45096.19,
+              "cost": 49450.17,
+              "profit": -4353.98,
+              "return_pct": -8.8
+            }
+          ]
+        },
+        "2026-07-30": {
+          "total_value": 94687.25,
+          "total_return": -5.31,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24108.88,
+              "cost": 23548.17,
+              "profit": 560.71,
+              "return_pct": 2.38
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6382.48,
+              "cost": 6359.29,
+              "profit": 23.19,
+              "return_pct": 0.36
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 44653.19,
+              "cost": 49450.17,
+              "profit": -4796.98,
+              "return_pct": -9.7
+            }
+          ]
+        },
+        "2026-07-31": {
+          "total_value": 95267.01,
+          "total_return": -4.73,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24104.78,
+              "cost": 23548.17,
+              "profit": 556.61,
+              "return_pct": 2.36
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6386.23,
+              "cost": 6359.29,
+              "profit": 26.94,
+              "return_pct": 0.42
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45233.29,
+              "cost": 49450.17,
+              "profit": -4216.88,
+              "return_pct": -8.53
+            }
+          ]
+        },
+        "2026-08-01": {
+          "total_value": 94453.63,
+          "total_return": -5.55,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24158.02,
+              "cost": 23548.17,
+              "profit": 609.85,
+              "return_pct": 2.59
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6367.53,
+              "cost": 6359.29,
+              "profit": 8.24,
+              "return_pct": 0.13
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 44385.37,
+              "cost": 49450.17,
+              "profit": -5064.8,
+              "return_pct": -10.24
+            }
+          ]
+        },
+        "2026-08-02": {
+          "total_value": 94301.04,
+          "total_return": -5.7,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24198.19,
+              "cost": 23548.17,
+              "profit": 650.02,
+              "return_pct": 2.76
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6353.07,
+              "cost": 6359.29,
+              "profit": -6.22,
+              "return_pct": -0.1
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 44207.06,
+              "cost": 49450.17,
+              "profit": -5243.11,
+              "return_pct": -10.6
+            }
+          ]
+        },
+        "2026-08-03": {
+          "total_value": 94742.45,
+          "total_return": -5.26,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24292.86,
+              "cost": 23548.17,
+              "profit": 744.69,
+              "return_pct": 3.16
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6358.28,
+              "cost": 6359.29,
+              "profit": -1.01,
+              "return_pct": -0.02
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 44548.6,
+              "cost": 49450.17,
+              "profit": -4901.57,
+              "return_pct": -9.91
+            }
+          ]
+        },
+        "2026-08-04": {
+          "total_value": 92087.38,
+          "total_return": -7.91,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24324.37,
+              "cost": 23548.17,
+              "profit": 776.2,
+              "return_pct": 3.3
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6353.99,
+              "cost": 6359.29,
+              "profit": -5.3,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 16644.59,
+              "cost": 19542.71,
+              "profit": -2898.12,
+              "return_pct": -14.83
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 44764.44,
+              "cost": 49450.17,
+              "profit": -4685.73,
+              "return_pct": -9.48
+            }
+          ]
+        },
+        "2026-08-05": {
+          "total_value": 92505.13,
+          "total_return": -7.49,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24331.91,
+              "cost": 23548.17,
+              "profit": 783.74,
+              "return_pct": 3.33
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6341.32,
+              "cost": 6359.29,
+              "profit": -17.97,
+              "return_pct": -0.28
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 16864.66,
+              "cost": 19542.71,
+              "profit": -2678.05,
+              "return_pct": -13.7
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 44967.24,
+              "cost": 49450.17,
+              "profit": -4482.93,
+              "return_pct": -9.07
+            }
+          ]
+        },
+        "2026-08-06": {
+          "total_value": 95714.15,
+          "total_return": -4.29,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24327.58,
+              "cost": 23548.17,
+              "profit": 779.41,
+              "return_pct": 3.31
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6347.98,
+              "cost": 6359.29,
+              "profit": -11.31,
+              "return_pct": -0.18
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45495.87,
+              "cost": 49450.17,
+              "profit": -3954.3,
+              "return_pct": -8.0
+            }
+          ]
+        },
+        "2026-08-07": {
+          "total_value": 95575.25,
+          "total_return": -4.42,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24354.72,
+              "cost": 23548.17,
+              "profit": 806.55,
+              "return_pct": 3.43
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6346.29,
+              "cost": 6359.29,
+              "profit": -13.0,
+              "return_pct": -0.2
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45331.52,
+              "cost": 49450.17,
+              "profit": -4118.65,
+              "return_pct": -8.33
+            }
+          ]
+        },
+        "2026-08-08": {
+          "total_value": 95421.02,
+          "total_return": -4.58,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24236.31,
+              "cost": 23548.17,
+              "profit": 688.14,
+              "return_pct": 2.92
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6339.72,
+              "cost": 6359.29,
+              "profit": -19.57,
+              "return_pct": -0.31
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 19542.71,
+              "cost": 19542.71,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45302.27,
+              "cost": 49450.17,
+              "profit": -4147.9,
+              "return_pct": -8.39
+            }
+          ]
+        },
+        "2026-08-09": {
+          "total_value": 93072.26,
+          "total_return": -6.93,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24213.23,
+              "cost": 23548.17,
+              "profit": 665.06,
+              "return_pct": 2.82
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6347.91,
+              "cost": 6359.29,
+              "profit": -11.38,
+              "return_pct": -0.18
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 16994.97,
+              "cost": 19542.71,
+              "profit": -2547.74,
+              "return_pct": -13.04
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45516.16,
+              "cost": 49450.17,
+              "profit": -3934.01,
+              "return_pct": -7.96
+            }
+          ]
+        },
+        "2026-08-10": {
+          "total_value": 94633.98,
+          "total_return": -5.37,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24418.01,
+              "cost": 23548.17,
+              "profit": 869.84,
+              "return_pct": 3.69
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6344.32,
+              "cost": 6359.29,
+              "profit": -14.97,
+              "return_pct": -0.24
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 18364.15,
+              "cost": 19542.71,
+              "profit": -1178.56,
+              "return_pct": -6.03
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45507.5,
+              "cost": 49450.17,
+              "profit": -3942.67,
+              "return_pct": -7.97
+            }
+          ]
+        },
+        "2026-08-11": {
+          "total_value": 96174.27,
+          "total_return": -3.83,
+          "cash": -0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 24447.75,
+              "cost": 23548.17,
+              "profit": 899.58,
+              "return_pct": 3.82
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 6353.95,
+              "cost": 6359.29,
+              "profit": -5.34,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Hyperliquid Banana",
+              "address": "0x8e72bb69abd6f0cf7907fac5ad6fb3f66870e0c6",
+              "amount": 20003.01,
+              "cost": 19542.71,
+              "profit": 460.3,
+              "return_pct": 2.36
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 45369.55,
+              "cost": 49450.17,
+              "profit": -4080.62,
+              "return_pct": -8.25
+            }
+          ]
         }
       }
     },
     "core_only": {
-      "final_value": 121047.88302725198,
-      "total_return": 21.047883027251984,
-      "cagr": 113.36523987151156,
+      "final_value": 124042.53002655543,
+      "total_return": 24.042530026555433,
+      "cagr": 92.57975187419424,
       "mdd": -7.564287044985705,
-      "sharpe": 2.4517489823822394,
+      "sharpe": 2.3795306840099526,
       "fees": 901.5718352494574,
       "values": [
         100000.0,
@@ -6558,7 +8936,36 @@
         120998.77217535223,
         120939.96613795367,
         120996.98540307659,
-        121047.88302725198
+        121047.88302725198,
+        121106.11689476328,
+        120903.20897603231,
+        120280.24354893362,
+        119929.15922882134,
+        119608.90621911662,
+        119471.88490529453,
+        119701.04713056757,
+        120558.63375769914,
+        120793.72409740087,
+        121368.30123156216,
+        121249.68202268466,
+        121576.75562277249,
+        121183.89366460007,
+        121699.1506886959,
+        122321.1554325583,
+        122310.67994839432,
+        122884.55022896775,
+        122908.45752054299,
+        123103.30059372653,
+        123159.98293799836,
+        123201.04013155277,
+        123240.2700787229,
+        123603.79704740063,
+        123960.23092263342,
+        124115.79488921579,
+        123764.2358690082,
+        123709.43890646337,
+        123992.12293887217,
+        124042.53002655543
       ],
       "rebalance_events": [
         {
@@ -11674,15 +14081,1610 @@
               "return_pct": -0.26
             }
           ]
+        },
+        "2026-07-14": {
+          "total_value": 121106.12,
+          "total_return": 21.11,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 71559.06,
+              "cost": 71245.44,
+              "profit": 313.62,
+              "return_pct": 0.44
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19686.85,
+              "cost": 19658.91,
+              "profit": 27.94,
+              "return_pct": 0.14
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13124.62,
+              "cost": 13053.61,
+              "profit": 71.01,
+              "return_pct": 0.54
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5967.7,
+              "cost": 5977.37,
+              "profit": -9.67,
+              "return_pct": -0.16
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5223.13,
+              "cost": 5289.07,
+              "profit": -65.94,
+              "return_pct": -1.25
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5544.76,
+              "cost": 5530.58,
+              "profit": 14.18,
+              "return_pct": 0.26
+            }
+          ]
+        },
+        "2026-07-15": {
+          "total_value": 120903.21,
+          "total_return": 20.9,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 71583.99,
+              "cost": 71245.44,
+              "profit": 338.55,
+              "return_pct": 0.48
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19683.47,
+              "cost": 19658.91,
+              "profit": 24.56,
+              "return_pct": 0.12
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12835.49,
+              "cost": 13053.61,
+              "profit": -218.12,
+              "return_pct": -1.67
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5977.77,
+              "cost": 5977.37,
+              "profit": 0.4,
+              "return_pct": 0.01
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5276.46,
+              "cost": 5289.07,
+              "profit": -12.61,
+              "return_pct": -0.24
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5546.03,
+              "cost": 5530.58,
+              "profit": 15.45,
+              "return_pct": 0.28
+            }
+          ]
+        },
+        "2026-07-16": {
+          "total_value": 120280.24,
+          "total_return": 20.28,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 71080.61,
+              "cost": 71245.44,
+              "profit": -164.83,
+              "return_pct": -0.23
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19662.19,
+              "cost": 19658.91,
+              "profit": 3.28,
+              "return_pct": 0.02
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12769.12,
+              "cost": 13053.61,
+              "profit": -284.49,
+              "return_pct": -2.18
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5940.67,
+              "cost": 5977.37,
+              "profit": -36.7,
+              "return_pct": -0.61
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5538.58,
+              "cost": 5530.58,
+              "profit": 8.0,
+              "return_pct": 0.14
+            }
+          ]
+        },
+        "2026-07-17": {
+          "total_value": 119929.16,
+          "total_return": 19.93,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 70416.34,
+              "cost": 71245.44,
+              "profit": -829.1,
+              "return_pct": -1.16
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19650.21,
+              "cost": 19658.91,
+              "profit": -8.7,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13126.53,
+              "cost": 13053.61,
+              "profit": 72.92,
+              "return_pct": 0.56
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5925.98,
+              "cost": 5977.37,
+              "profit": -51.39,
+              "return_pct": -0.86
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5521.03,
+              "cost": 5530.58,
+              "profit": -9.55,
+              "return_pct": -0.17
+            }
+          ]
+        },
+        "2026-07-18": {
+          "total_value": 119608.91,
+          "total_return": 19.61,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 70189.09,
+              "cost": 71245.44,
+              "profit": -1056.35,
+              "return_pct": -1.48
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19650.34,
+              "cost": 19658.91,
+              "profit": -8.57,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13036.21,
+              "cost": 13053.61,
+              "profit": -17.4,
+              "return_pct": -0.13
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5922.11,
+              "cost": 5977.37,
+              "profit": -55.26,
+              "return_pct": -0.92
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5522.09,
+              "cost": 5530.58,
+              "profit": -8.49,
+              "return_pct": -0.15
+            }
+          ]
+        },
+        "2026-07-19": {
+          "total_value": 119471.88,
+          "total_return": 19.47,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 70175.32,
+              "cost": 71245.44,
+              "profit": -1070.12,
+              "return_pct": -1.5
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19644.71,
+              "cost": 19658.91,
+              "profit": -14.2,
+              "return_pct": -0.07
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12922.35,
+              "cost": 13053.61,
+              "profit": -131.26,
+              "return_pct": -1.01
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5921.82,
+              "cost": 5977.37,
+              "profit": -55.55,
+              "return_pct": -0.93
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5518.62,
+              "cost": 5530.58,
+              "profit": -11.96,
+              "return_pct": -0.22
+            }
+          ]
+        },
+        "2026-07-20": {
+          "total_value": 119701.05,
+          "total_return": 19.7,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 70565.13,
+              "cost": 71245.44,
+              "profit": -680.31,
+              "return_pct": -0.95
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19648.21,
+              "cost": 19658.91,
+              "profit": -10.7,
+              "return_pct": -0.05
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12766.47,
+              "cost": 13053.61,
+              "profit": -287.14,
+              "return_pct": -2.2
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5926.44,
+              "cost": 5977.37,
+              "profit": -50.93,
+              "return_pct": -0.85
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5505.73,
+              "cost": 5530.58,
+              "profit": -24.85,
+              "return_pct": -0.45
+            }
+          ]
+        },
+        "2026-07-21": {
+          "total_value": 120558.63,
+          "total_return": 20.56,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 71686.85,
+              "cost": 71245.44,
+              "profit": 441.41,
+              "return_pct": 0.62
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19644.53,
+              "cost": 19658.91,
+              "profit": -14.38,
+              "return_pct": -0.07
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12469.75,
+              "cost": 13053.61,
+              "profit": -583.86,
+              "return_pct": -4.47
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5938.4,
+              "cost": 5977.37,
+              "profit": -38.97,
+              "return_pct": -0.65
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5530.04,
+              "cost": 5530.58,
+              "profit": -0.54,
+              "return_pct": -0.01
+            }
+          ]
+        },
+        "2026-07-22": {
+          "total_value": 120793.72,
+          "total_return": 20.79,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72272.92,
+              "cost": 71245.44,
+              "profit": 1027.48,
+              "return_pct": 1.44
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19650.28,
+              "cost": 19658.91,
+              "profit": -8.63,
+              "return_pct": -0.04
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12108.12,
+              "cost": 13053.61,
+              "profit": -945.49,
+              "return_pct": -7.24
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5926.92,
+              "cost": 5977.37,
+              "profit": -50.45,
+              "return_pct": -0.84
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5546.41,
+              "cost": 5530.58,
+              "profit": 15.83,
+              "return_pct": 0.29
+            }
+          ]
+        },
+        "2026-07-23": {
+          "total_value": 121368.3,
+          "total_return": 21.37,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72394.14,
+              "cost": 71245.44,
+              "profit": 1148.7,
+              "return_pct": 1.61
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19670.25,
+              "cost": 19658.91,
+              "profit": 11.34,
+              "return_pct": 0.06
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12560.41,
+              "cost": 13053.61,
+              "profit": -493.2,
+              "return_pct": -3.78
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5915.7,
+              "cost": 5977.37,
+              "profit": -61.67,
+              "return_pct": -1.03
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5538.72,
+              "cost": 5530.58,
+              "profit": 8.14,
+              "return_pct": 0.15
+            }
+          ]
+        },
+        "2026-07-24": {
+          "total_value": 121249.68,
+          "total_return": 21.25,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72434.2,
+              "cost": 71245.44,
+              "profit": 1188.76,
+              "return_pct": 1.67
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19659.44,
+              "cost": 19658.91,
+              "profit": 0.53,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12450.02,
+              "cost": 13053.61,
+              "profit": -603.59,
+              "return_pct": -4.62
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5905.64,
+              "cost": 5977.37,
+              "profit": -71.73,
+              "return_pct": -1.2
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5511.31,
+              "cost": 5530.58,
+              "profit": -19.27,
+              "return_pct": -0.35
+            }
+          ]
+        },
+        "2026-07-25": {
+          "total_value": 121576.76,
+          "total_return": 21.58,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72338.82,
+              "cost": 71245.44,
+              "profit": 1093.38,
+              "return_pct": 1.53
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19663.68,
+              "cost": 19658.91,
+              "profit": 4.77,
+              "return_pct": 0.02
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12883.51,
+              "cost": 13053.61,
+              "profit": -170.1,
+              "return_pct": -1.3
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5902.02,
+              "cost": 5977.37,
+              "profit": -75.35,
+              "return_pct": -1.26
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5499.66,
+              "cost": 5530.58,
+              "profit": -30.92,
+              "return_pct": -0.56
+            }
+          ]
+        },
+        "2026-07-26": {
+          "total_value": 121183.89,
+          "total_return": 21.18,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72206.44,
+              "cost": 71245.44,
+              "profit": 961.0,
+              "return_pct": 1.35
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19643.96,
+              "cost": 19658.91,
+              "profit": -14.95,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12611.62,
+              "cost": 13053.61,
+              "profit": -441.99,
+              "return_pct": -3.39
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5906.11,
+              "cost": 5977.37,
+              "profit": -71.26,
+              "return_pct": -1.19
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5526.7,
+              "cost": 5530.58,
+              "profit": -3.88,
+              "return_pct": -0.07
+            }
+          ]
+        },
+        "2026-07-27": {
+          "total_value": 121699.15,
+          "total_return": 21.7,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72637.6,
+              "cost": 71245.44,
+              "profit": 1392.16,
+              "return_pct": 1.95
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19734.6,
+              "cost": 19658.91,
+              "profit": 75.69,
+              "return_pct": 0.39
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 12589.97,
+              "cost": 13053.61,
+              "profit": -463.64,
+              "return_pct": -3.55
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5913.81,
+              "cost": 5977.37,
+              "profit": -63.56,
+              "return_pct": -1.06
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5534.1,
+              "cost": 5530.58,
+              "profit": 3.52,
+              "return_pct": 0.06
+            }
+          ]
+        },
+        "2026-07-28": {
+          "total_value": 122321.16,
+          "total_return": 22.32,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72681.03,
+              "cost": 71245.44,
+              "profit": 1435.59,
+              "return_pct": 2.01
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19778.42,
+              "cost": 19658.91,
+              "profit": 119.51,
+              "return_pct": 0.61
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13243.0,
+              "cost": 13053.61,
+              "profit": 189.39,
+              "return_pct": 1.45
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5811.29,
+              "cost": 5977.37,
+              "profit": -166.08,
+              "return_pct": -2.78
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5518.33,
+              "cost": 5530.58,
+              "profit": -12.25,
+              "return_pct": -0.22
+            }
+          ]
+        },
+        "2026-07-29": {
+          "total_value": 122310.68,
+          "total_return": 22.31,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72742.43,
+              "cost": 71245.44,
+              "profit": 1496.99,
+              "return_pct": 2.1
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19790.65,
+              "cost": 19658.91,
+              "profit": 131.74,
+              "return_pct": 0.67
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13227.71,
+              "cost": 13053.61,
+              "profit": 174.1,
+              "return_pct": 1.33
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5760.75,
+              "cost": 5977.37,
+              "profit": -216.62,
+              "return_pct": -3.62
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5500.07,
+              "cost": 5530.58,
+              "profit": -30.51,
+              "return_pct": -0.55
+            }
+          ]
+        },
+        "2026-07-30": {
+          "total_value": 122884.55,
+          "total_return": 22.88,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72941.87,
+              "cost": 71245.44,
+              "profit": 1696.43,
+              "return_pct": 2.38
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19730.59,
+              "cost": 19658.91,
+              "profit": 71.68,
+              "return_pct": 0.36
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13776.58,
+              "cost": 13053.61,
+              "profit": 722.97,
+              "return_pct": 5.54
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5665.92,
+              "cost": 5977.37,
+              "profit": -311.45,
+              "return_pct": -5.21
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5480.52,
+              "cost": 5530.58,
+              "profit": -50.06,
+              "return_pct": -0.91
+            }
+          ]
+        },
+        "2026-07-31": {
+          "total_value": 122908.46,
+          "total_return": 22.91,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 72929.47,
+              "cost": 71245.44,
+              "profit": 1684.03,
+              "return_pct": 2.36
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19742.2,
+              "cost": 19658.91,
+              "profit": 83.29,
+              "return_pct": 0.42
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13673.11,
+              "cost": 13053.61,
+              "profit": 619.5,
+              "return_pct": 4.75
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5754.34,
+              "cost": 5977.37,
+              "profit": -223.03,
+              "return_pct": -3.73
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5520.26,
+              "cost": 5530.58,
+              "profit": -10.32,
+              "return_pct": -0.19
+            }
+          ]
+        },
+        "2026-08-01": {
+          "total_value": 123103.3,
+          "total_return": 23.1,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73090.54,
+              "cost": 71245.44,
+              "profit": 1845.1,
+              "return_pct": 2.59
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19684.39,
+              "cost": 19658.91,
+              "profit": 25.48,
+              "return_pct": 0.13
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13907.32,
+              "cost": 13053.61,
+              "profit": 853.71,
+              "return_pct": 6.54
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5631.54,
+              "cost": 5977.37,
+              "profit": -345.83,
+              "return_pct": -5.79
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5500.44,
+              "cost": 5530.58,
+              "profit": -30.14,
+              "return_pct": -0.54
+            }
+          ]
+        },
+        "2026-08-02": {
+          "total_value": 123159.98,
+          "total_return": 23.16,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73212.08,
+              "cost": 71245.44,
+              "profit": 1966.64,
+              "return_pct": 2.76
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19639.7,
+              "cost": 19658.91,
+              "profit": -19.21,
+              "return_pct": -0.1
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13904.25,
+              "cost": 13053.61,
+              "profit": 850.64,
+              "return_pct": 6.52
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5616.85,
+              "cost": 5977.37,
+              "profit": -360.52,
+              "return_pct": -6.03
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5498.04,
+              "cost": 5530.58,
+              "profit": -32.54,
+              "return_pct": -0.59
+            }
+          ]
+        },
+        "2026-08-03": {
+          "total_value": 123201.04,
+          "total_return": 23.2,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73498.51,
+              "cost": 71245.44,
+              "profit": 2253.07,
+              "return_pct": 3.16
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19655.78,
+              "cost": 19658.91,
+              "profit": -3.13,
+              "return_pct": -0.02
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13590.34,
+              "cost": 13053.61,
+              "profit": 536.73,
+              "return_pct": 4.11
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5631.41,
+              "cost": 5977.37,
+              "profit": -345.96,
+              "return_pct": -5.79
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5535.92,
+              "cost": 5530.58,
+              "profit": 5.34,
+              "return_pct": 0.1
+            }
+          ]
+        },
+        "2026-08-04": {
+          "total_value": 123240.27,
+          "total_return": 23.24,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73593.83,
+              "cost": 71245.44,
+              "profit": 2348.39,
+              "return_pct": 3.3
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19642.54,
+              "cost": 19658.91,
+              "profit": -16.37,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13459.4,
+              "cost": 13053.61,
+              "profit": 405.79,
+              "return_pct": 3.11
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5705.54,
+              "cost": 5977.37,
+              "profit": -271.83,
+              "return_pct": -4.55
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5549.89,
+              "cost": 5530.58,
+              "profit": 19.31,
+              "return_pct": 0.35
+            }
+          ]
+        },
+        "2026-08-05": {
+          "total_value": 123603.8,
+          "total_return": 23.6,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73616.67,
+              "cost": 71245.44,
+              "profit": 2371.23,
+              "return_pct": 3.33
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19603.35,
+              "cost": 19658.91,
+              "profit": -55.56,
+              "return_pct": -0.28
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13787.76,
+              "cost": 13053.61,
+              "profit": 734.15,
+              "return_pct": 5.62
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5743.18,
+              "cost": 5977.37,
+              "profit": -234.19,
+              "return_pct": -3.92
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5563.77,
+              "cost": 5530.58,
+              "profit": 33.19,
+              "return_pct": 0.6
+            }
+          ]
+        },
+        "2026-08-06": {
+          "total_value": 123960.23,
+          "total_return": 23.96,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73603.57,
+              "cost": 71245.44,
+              "profit": 2358.13,
+              "return_pct": 3.31
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19623.95,
+              "cost": 19658.91,
+              "profit": -34.96,
+              "return_pct": -0.18
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 14085.25,
+              "cost": 13053.61,
+              "profit": 1031.64,
+              "return_pct": 7.9
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5802.19,
+              "cost": 5977.37,
+              "profit": -175.18,
+              "return_pct": -2.93
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5556.2,
+              "cost": 5530.58,
+              "profit": 25.62,
+              "return_pct": 0.46
+            }
+          ]
+        },
+        "2026-08-07": {
+          "total_value": 124115.79,
+          "total_return": 24.12,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73685.68,
+              "cost": 71245.44,
+              "profit": 2440.24,
+              "return_pct": 3.43
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19618.74,
+              "cost": 19658.91,
+              "profit": -40.17,
+              "return_pct": -0.2
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 14206.29,
+              "cost": 13053.61,
+              "profit": 1152.68,
+              "return_pct": 8.83
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5777.53,
+              "cost": 5977.37,
+              "profit": -199.84,
+              "return_pct": -3.34
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5538.48,
+              "cost": 5530.58,
+              "profit": 7.9,
+              "return_pct": 0.14
+            }
+          ]
+        },
+        "2026-08-08": {
+          "total_value": 123764.24,
+          "total_return": 23.76,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73327.42,
+              "cost": 71245.44,
+              "profit": 2081.98,
+              "return_pct": 2.92
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19598.43,
+              "cost": 19658.91,
+              "profit": -60.48,
+              "return_pct": -0.31
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 14311.36,
+              "cost": 13053.61,
+              "profit": 1257.75,
+              "return_pct": 9.64
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5702.91,
+              "cost": 5977.37,
+              "profit": -274.46,
+              "return_pct": -4.59
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5535.06,
+              "cost": 5530.58,
+              "profit": 4.48,
+              "return_pct": 0.08
+            }
+          ]
+        },
+        "2026-08-09": {
+          "total_value": 123709.44,
+          "total_return": 23.71,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73257.59,
+              "cost": 71245.44,
+              "profit": 2012.15,
+              "return_pct": 2.82
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19623.72,
+              "cost": 19658.91,
+              "profit": -35.19,
+              "return_pct": -0.18
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 14253.01,
+              "cost": 13053.61,
+              "profit": 1199.4,
+              "return_pct": 9.19
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5738.07,
+              "cost": 5977.37,
+              "profit": -239.3,
+              "return_pct": -4.0
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5547.98,
+              "cost": 5530.58,
+              "profit": 17.4,
+              "return_pct": 0.31
+            }
+          ]
+        },
+        "2026-08-10": {
+          "total_value": 123992.12,
+          "total_return": 23.99,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73877.16,
+              "cost": 71245.44,
+              "profit": 2631.72,
+              "return_pct": 3.69
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19612.62,
+              "cost": 19658.91,
+              "profit": -46.29,
+              "return_pct": -0.24
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13946.62,
+              "cost": 13053.61,
+              "profit": 893.01,
+              "return_pct": 6.84
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5720.79,
+              "cost": 5977.37,
+              "profit": -256.58,
+              "return_pct": -4.29
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5545.86,
+              "cost": 5530.58,
+              "profit": 15.28,
+              "return_pct": 0.28
+            }
+          ]
+        },
+        "2026-08-11": {
+          "total_value": 124042.53,
+          "total_return": 24.04,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Infinite Vault Robot",
+              "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+              "amount": 73967.15,
+              "cost": 71245.44,
+              "profit": 2721.71,
+              "return_pct": 3.82
+            },
+            {
+              "name": "22Cap",
+              "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+              "amount": 19642.4,
+              "cost": 19658.91,
+              "profit": -16.51,
+              "return_pct": -0.08
+            },
+            {
+              "name": "Realist Capital",
+              "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
+              "amount": 13860.6,
+              "cost": 13053.61,
+              "profit": 806.99,
+              "return_pct": 6.18
+            },
+            {
+              "name": "Loop Fund",
+              "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+              "amount": 5745.81,
+              "cost": 5977.37,
+              "profit": -231.56,
+              "return_pct": -3.87
+            },
+            {
+              "name": "Aaroh",
+              "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+              "amount": 5289.07,
+              "cost": 5289.07,
+              "profit": 0.0,
+              "return_pct": 0.0
+            },
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 5537.51,
+              "cost": 5530.58,
+              "profit": 6.93,
+              "return_pct": 0.13
+            }
+          ]
         }
       }
     },
     "satellite_only": {
-      "final_value": 152086.3306195278,
-      "total_return": 52.08633061952781,
-      "cagr": 427.74363483217667,
+      "final_value": 143472.1961521772,
+      "total_return": 43.47219615217721,
+      "cagr": 199.80248475249834,
       "mdd": -20.0,
-      "sharpe": 2.968449928014072,
+      "sharpe": 2.235559441290166,
       "fees": 504.17266123905557,
       "values": [
         100000.0,
@@ -11776,7 +15778,36 @@
         149769.40568332904,
         147487.2313051329,
         150123.20713124753,
-        152086.3306195278
+        152086.3306195278,
+        151941.27104549154,
+        153550.3264014157,
+        148227.29786206177,
+        146457.95342994394,
+        146344.90566657152,
+        146508.47018700698,
+        146605.121503806,
+        147797.41892047634,
+        146291.23602576635,
+        145848.30556382053,
+        144554.55217849126,
+        143880.01201810676,
+        144431.0979640844,
+        144856.4916807381,
+        143551.90051183198,
+        142570.67361082952,
+        141483.81334617926,
+        143035.70143180384,
+        141115.55933524447,
+        140727.79526019335,
+        141773.23847607587,
+        142343.24764628115,
+        142885.6519233666,
+        143901.4278210305,
+        143403.0464386675,
+        143311.85146244933,
+        143868.3032343639,
+        143831.2197646758,
+        143472.1961521772
       ],
       "rebalance_events": [
         {
@@ -12640,6 +16671,673 @@
               "cost": 101466.37,
               "profit": 0.0,
               "return_pct": 0.0
+            }
+          ]
+        },
+        "2026-07-14": {
+          "total_value": 151941.27,
+          "total_return": 51.94,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50444.82,
+              "cost": 50315.79,
+              "profit": 129.03,
+              "return_pct": 0.26
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 101496.45,
+              "cost": 101466.37,
+              "profit": 30.08,
+              "return_pct": 0.03
+            }
+          ]
+        },
+        "2026-07-15": {
+          "total_value": 153550.33,
+          "total_return": 53.55,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50456.32,
+              "cost": 50315.79,
+              "profit": 140.53,
+              "return_pct": 0.28
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 103094.01,
+              "cost": 101466.37,
+              "profit": 1627.64,
+              "return_pct": 1.6
+            }
+          ]
+        },
+        "2026-07-16": {
+          "total_value": 148227.3,
+          "total_return": 48.23,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50388.59,
+              "cost": 50315.79,
+              "profit": 72.8,
+              "return_pct": 0.14
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 97838.71,
+              "cost": 101466.37,
+              "profit": -3627.66,
+              "return_pct": -3.58
+            }
+          ]
+        },
+        "2026-07-17": {
+          "total_value": 146457.95,
+          "total_return": 46.46,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50228.95,
+              "cost": 50315.79,
+              "profit": -86.84,
+              "return_pct": -0.17
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 96229.0,
+              "cost": 101466.37,
+              "profit": -5237.37,
+              "return_pct": -5.16
+            }
+          ]
+        },
+        "2026-07-18": {
+          "total_value": 146344.91,
+          "total_return": 46.34,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50238.53,
+              "cost": 50315.79,
+              "profit": -77.26,
+              "return_pct": -0.15
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 96106.37,
+              "cost": 101466.37,
+              "profit": -5360.0,
+              "return_pct": -5.28
+            }
+          ]
+        },
+        "2026-07-19": {
+          "total_value": 146508.47,
+          "total_return": 46.51,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50206.98,
+              "cost": 50315.79,
+              "profit": -108.81,
+              "return_pct": -0.22
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 96301.49,
+              "cost": 101466.37,
+              "profit": -5164.88,
+              "return_pct": -5.09
+            }
+          ]
+        },
+        "2026-07-20": {
+          "total_value": 146605.12,
+          "total_return": 46.61,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50089.7,
+              "cost": 50315.79,
+              "profit": -226.09,
+              "return_pct": -0.45
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 96515.42,
+              "cost": 101466.37,
+              "profit": -4950.95,
+              "return_pct": -4.88
+            }
+          ]
+        },
+        "2026-07-21": {
+          "total_value": 147797.42,
+          "total_return": 47.8,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50310.86,
+              "cost": 50315.79,
+              "profit": -4.93,
+              "return_pct": -0.01
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 97486.56,
+              "cost": 101466.37,
+              "profit": -3979.81,
+              "return_pct": -3.92
+            }
+          ]
+        },
+        "2026-07-22": {
+          "total_value": 146291.24,
+          "total_return": 46.29,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50459.81,
+              "cost": 50315.79,
+              "profit": 144.02,
+              "return_pct": 0.29
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 95831.42,
+              "cost": 101466.37,
+              "profit": -5634.95,
+              "return_pct": -5.55
+            }
+          ]
+        },
+        "2026-07-23": {
+          "total_value": 145848.31,
+          "total_return": 45.85,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50389.86,
+              "cost": 50315.79,
+              "profit": 74.07,
+              "return_pct": 0.15
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 95458.45,
+              "cost": 101466.37,
+              "profit": -6007.92,
+              "return_pct": -5.92
+            }
+          ]
+        },
+        "2026-07-24": {
+          "total_value": 144554.55,
+          "total_return": 44.55,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50140.49,
+              "cost": 50315.79,
+              "profit": -175.3,
+              "return_pct": -0.35
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 94414.06,
+              "cost": 101466.37,
+              "profit": -7052.31,
+              "return_pct": -6.95
+            }
+          ]
+        },
+        "2026-07-25": {
+          "total_value": 143880.01,
+          "total_return": 43.88,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50034.48,
+              "cost": 50315.79,
+              "profit": -281.31,
+              "return_pct": -0.56
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 93845.54,
+              "cost": 101466.37,
+              "profit": -7620.83,
+              "return_pct": -7.51
+            }
+          ]
+        },
+        "2026-07-26": {
+          "total_value": 144431.1,
+          "total_return": 44.43,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50280.45,
+              "cost": 50315.79,
+              "profit": -35.34,
+              "return_pct": -0.07
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 94150.65,
+              "cost": 101466.37,
+              "profit": -7315.72,
+              "return_pct": -7.21
+            }
+          ]
+        },
+        "2026-07-27": {
+          "total_value": 144856.49,
+          "total_return": 44.86,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50347.81,
+              "cost": 50315.79,
+              "profit": 32.02,
+              "return_pct": 0.06
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 94508.68,
+              "cost": 101466.37,
+              "profit": -6957.69,
+              "return_pct": -6.86
+            }
+          ]
+        },
+        "2026-07-28": {
+          "total_value": 143551.9,
+          "total_return": 43.55,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50204.37,
+              "cost": 50315.79,
+              "profit": -111.42,
+              "return_pct": -0.22
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 93347.53,
+              "cost": 101466.37,
+              "profit": -8118.84,
+              "return_pct": -8.0
+            }
+          ]
+        },
+        "2026-07-29": {
+          "total_value": 142570.67,
+          "total_return": 42.57,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50038.19,
+              "cost": 50315.79,
+              "profit": -277.6,
+              "return_pct": -0.55
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 92532.48,
+              "cost": 101466.37,
+              "profit": -8933.89,
+              "return_pct": -8.8
+            }
+          ]
+        },
+        "2026-07-30": {
+          "total_value": 141483.81,
+          "total_return": 41.48,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 49860.33,
+              "cost": 50315.79,
+              "profit": -455.46,
+              "return_pct": -0.91
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 91623.49,
+              "cost": 101466.37,
+              "profit": -9842.88,
+              "return_pct": -9.7
+            }
+          ]
+        },
+        "2026-07-31": {
+          "total_value": 143035.7,
+          "total_return": 43.04,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50221.91,
+              "cost": 50315.79,
+              "profit": -93.88,
+              "return_pct": -0.19
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 92813.79,
+              "cost": 101466.37,
+              "profit": -8652.58,
+              "return_pct": -8.53
+            }
+          ]
+        },
+        "2026-08-01": {
+          "total_value": 141115.56,
+          "total_return": 41.12,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50041.61,
+              "cost": 50315.79,
+              "profit": -274.18,
+              "return_pct": -0.54
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 91073.95,
+              "cost": 101466.37,
+              "profit": -10392.42,
+              "return_pct": -10.24
+            }
+          ]
+        },
+        "2026-08-02": {
+          "total_value": 140727.8,
+          "total_return": 40.73,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50019.71,
+              "cost": 50315.79,
+              "profit": -296.08,
+              "return_pct": -0.59
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 90708.09,
+              "cost": 101466.37,
+              "profit": -10758.28,
+              "return_pct": -10.6
+            }
+          ]
+        },
+        "2026-08-03": {
+          "total_value": 141773.24,
+          "total_return": 41.77,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50364.35,
+              "cost": 50315.79,
+              "profit": 48.56,
+              "return_pct": 0.1
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 91408.89,
+              "cost": 101466.37,
+              "profit": -10057.48,
+              "return_pct": -9.91
+            }
+          ]
+        },
+        "2026-08-04": {
+          "total_value": 142343.25,
+          "total_return": 42.34,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50491.48,
+              "cost": 50315.79,
+              "profit": 175.69,
+              "return_pct": 0.35
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 91851.76,
+              "cost": 101466.37,
+              "profit": -9614.61,
+              "return_pct": -9.48
+            }
+          ]
+        },
+        "2026-08-05": {
+          "total_value": 142885.65,
+          "total_return": 42.89,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50617.77,
+              "cost": 50315.79,
+              "profit": 301.98,
+              "return_pct": 0.6
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 92267.88,
+              "cost": 101466.37,
+              "profit": -9198.49,
+              "return_pct": -9.07
+            }
+          ]
+        },
+        "2026-08-06": {
+          "total_value": 143901.43,
+          "total_return": 43.9,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50548.84,
+              "cost": 50315.79,
+              "profit": 233.05,
+              "return_pct": 0.46
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 93352.59,
+              "cost": 101466.37,
+              "profit": -8113.78,
+              "return_pct": -8.0
+            }
+          ]
+        },
+        "2026-08-07": {
+          "total_value": 143403.05,
+          "total_return": 43.4,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50387.7,
+              "cost": 50315.79,
+              "profit": 71.91,
+              "return_pct": 0.14
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 93015.35,
+              "cost": 101466.37,
+              "profit": -8451.02,
+              "return_pct": -8.33
+            }
+          ]
+        },
+        "2026-08-08": {
+          "total_value": 143311.85,
+          "total_return": 43.31,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50356.52,
+              "cost": 50315.79,
+              "profit": 40.73,
+              "return_pct": 0.08
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 92955.33,
+              "cost": 101466.37,
+              "profit": -8511.04,
+              "return_pct": -8.39
+            }
+          ]
+        },
+        "2026-08-09": {
+          "total_value": 143868.3,
+          "total_return": 43.87,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50474.09,
+              "cost": 50315.79,
+              "profit": 158.3,
+              "return_pct": 0.31
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 93394.21,
+              "cost": 101466.37,
+              "profit": -8072.16,
+              "return_pct": -7.96
+            }
+          ]
+        },
+        "2026-08-10": {
+          "total_value": 143831.22,
+          "total_return": 43.83,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50454.78,
+              "cost": 50315.79,
+              "profit": 138.99,
+              "return_pct": 0.28
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 93376.44,
+              "cost": 101466.37,
+              "profit": -8089.93,
+              "return_pct": -7.97
+            }
+          ]
+        },
+        "2026-08-11": {
+          "total_value": 143472.2,
+          "total_return": 43.47,
+          "cash": 0.0,
+          "holdings": [
+            {
+              "name": "Growi HF",
+              "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+              "amount": 50378.81,
+              "cost": 50315.79,
+              "profit": 63.02,
+              "return_pct": 0.13
+            },
+            {
+              "name": "GeorgV Copytrading",
+              "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+              "amount": 93093.39,
+              "cost": 101466.37,
+              "profit": -8372.98,
+              "return_pct": -8.25
             }
           ]
         }

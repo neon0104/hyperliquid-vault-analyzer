@@ -166,6 +166,25 @@ def run_analysis() -> dict:
         except Exception as e:
             log.warning(f"⚠️ PnL 수집 오류 (무시 가능): {e}")
 
+        # ★ 자율 하이브리드 리밸런서 및 MDD 이탈 백테스트 자동 갱신
+        log.info("🤖 자율 하이브리드 리밸런서 및 손절 방출 엔진 실행 중...")
+        try:
+            auto_reb_res = subprocess.run(
+                [sys.executable, str(BASE_DIR / "auto_rebalancer.py")],
+                cwd=str(BASE_DIR),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=180,
+            )
+            if auto_reb_res.returncode == 0:
+                log.info("✅ 자율 하이브리드 리밸런서 시뮬레이션 갱신 완료")
+            else:
+                log.warning(f"⚠️ 자율 리밸런서 실행 실패: {auto_reb_res.stderr[:200]}")
+        except Exception as e:
+            log.warning(f"⚠️ 자율 리밸런서 실행 오류: {e}")
+
         # 최신 스냅샷 로드
         import glob
         snaps = sorted(glob.glob(str(SNAPSHOTS_DIR / "*.json")), reverse=True)

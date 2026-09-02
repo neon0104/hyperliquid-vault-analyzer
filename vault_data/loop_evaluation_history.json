@@ -1,0 +1,52 @@
+[
+  {
+    "evaluated_date": "2026-08-20",
+    "referenced_date": "2026-08-19",
+    "portfolio_24h_profit_usd": 759.7,
+    "portfolio_24h_return_pct": 0.7597,
+    "evaluated_holdings": [
+      {
+        "vault_name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 823.4,
+        "actual_24h_return_pct": 4.117
+      },
+      {
+        "vault_name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 26.47,
+        "actual_24h_return_pct": 0.1323
+      },
+      {
+        "vault_name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -0.0,
+        "actual_24h_return_pct": -0.0
+      },
+      {
+        "vault_name": "Brob",
+        "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -0.0,
+        "actual_24h_return_pct": -0.0
+      },
+      {
+        "vault_name": "Infinite Vault Robot",
+        "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -124.17,
+        "actual_24h_return_pct": -0.9313
+      },
+      {
+        "vault_name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 34.01,
+        "actual_24h_return_pct": 0.255
+      }
+    ]
+  }
+]

@@ -1,0 +1,2918 @@
+[
+  {
+    "timestamp": "2026-08-24 10:41:42",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Mandelbrot Fractal Market Hypothesis",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_trending_discovered": [],
+    "top_mean_reverting_discovered": [],
+    "decision": "⚠️ 추가 검증 대기"
+  },
+  {
+    "timestamp": "2026-08-24 10:42:01",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_trending_discovered": [
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "data_days": 139,
+        "hurst": 0.771,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 50.94,
+        "mdd": 12.39,
+        "sharpe": 18.32,
+        "leader_usd": 11174.09
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "data_days": 142,
+        "hurst": 0.766,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 6.11,
+        "mdd": 7.17,
+        "sharpe": 13.85,
+        "leader_usd": 101877.29
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "data_days": 140,
+        "hurst": 0.713,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 88.88,
+        "mdd": 1.42,
+        "sharpe": 13.17,
+        "leader_usd": 156583.25
+      },
+      {
+        "name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "data_days": 139,
+        "hurst": 0.695,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 8.82,
+        "mdd": 4.6,
+        "sharpe": 12.24,
+        "leader_usd": 1383.81
+      }
+    ],
+    "top_mean_reverting_discovered": [
+      {
+        "name": "YEELON",
+        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
+        "data_days": 140,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 0.0,
+        "mdd": 27.17,
+        "sharpe": 5.32,
+        "leader_usd": 9337.07
+      },
+      {
+        "name": "HARP: Core BTC",
+        "address": "0x2fd6a0abf55cfee3a7a171ee96933b624ab9f1d6",
+        "data_days": 39,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 179.42,
+        "mdd": 175.55,
+        "sharpe": 1.1,
+        "leader_usd": 11269.94
+      },
+      {
+        "name": "Long BTC -  Short Shitcoins",
+        "address": "0x5cd23b904cfede8497872848c2792c5f1599a496",
+        "data_days": 140,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 0.0,
+        "mdd": 40.64,
+        "sharpe": -5.24,
+        "leader_usd": 14223.74
+      },
+      {
+        "name": "Prism Strategies Red",
+        "address": "0x3596268eb789798f6f5db851c8551a0eb24dedb4",
+        "data_days": 133,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 0.75,
+        "mdd": 44.24,
+        "sharpe": -5.65,
+        "leader_usd": 26096.31
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 10:47:33",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_trending_discovered": [
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "data_days": 139,
+        "hurst": 0.771,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 50.94,
+        "mdd": 12.39,
+        "sharpe": 18.32,
+        "leader_usd": 11174.09
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "data_days": 142,
+        "hurst": 0.766,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 6.11,
+        "mdd": 7.17,
+        "sharpe": 13.85,
+        "leader_usd": 101877.29
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "data_days": 140,
+        "hurst": 0.713,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 88.88,
+        "mdd": 1.42,
+        "sharpe": 13.17,
+        "leader_usd": 156583.25
+      },
+      {
+        "name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "data_days": 139,
+        "hurst": 0.695,
+        "regime": "강한 추세 지속(Momentum)",
+        "apr_30d": 8.82,
+        "mdd": 4.6,
+        "sharpe": 12.24,
+        "leader_usd": 1383.81
+      }
+    ],
+    "top_mean_reverting_discovered": [
+      {
+        "name": "YEELON",
+        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
+        "data_days": 140,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 0.0,
+        "mdd": 27.17,
+        "sharpe": 5.32,
+        "leader_usd": 9337.07
+      },
+      {
+        "name": "HARP: Core BTC",
+        "address": "0x2fd6a0abf55cfee3a7a171ee96933b624ab9f1d6",
+        "data_days": 39,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 179.42,
+        "mdd": 175.55,
+        "sharpe": 1.1,
+        "leader_usd": 11269.94
+      },
+      {
+        "name": "Long BTC -  Short Shitcoins",
+        "address": "0x5cd23b904cfede8497872848c2792c5f1599a496",
+        "data_days": 140,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 0.0,
+        "mdd": 40.64,
+        "sharpe": -5.24,
+        "leader_usd": 14223.74
+      },
+      {
+        "name": "Prism Strategies Red",
+        "address": "0x3596268eb789798f6f5db851c8551a0eb24dedb4",
+        "data_days": 133,
+        "hurst": 0.1,
+        "regime": "평균 회귀형(Mean-Reverting)",
+        "apr_30d": 0.75,
+        "mdd": 44.24,
+        "sharpe": -5.65,
+        "leader_usd": 26096.31
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 10:47:55",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 10:52:56",
+    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
+    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
+    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
+    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
+    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 10:57:57",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:02:58",
+    "topic_id": "TOPIC_HRP_HIERARCHICAL",
+    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
+    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
+    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
+    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:07:59",
+    "topic_id": "TOPIC_GARCH_VOLATILITY",
+    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
+    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
+    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
+    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:13:00",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Super Moon",
+        "address": "0xbe421ec5af0be9ea2b2a53b38a089ee352c9f325",
+        "data_days": 140,
+        "hurst": 0.9,
+        "sortino": 8.44,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 11.75,
+        "sharpe": 6.68,
+        "leader_usd": 1236.58
+      },
+      {
+        "name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "data_days": 130,
+        "hurst": 0.9,
+        "sortino": 2.93,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 25.66,
+        "sharpe": 5.53,
+        "leader_usd": 25127.35
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "data_days": 106,
+        "hurst": 0.9,
+        "sortino": 15.34,
+        "kelly_f": 11.9,
+        "apr_30d": 0.0,
+        "mdd": 67.53,
+        "sharpe": 3.6,
+        "leader_usd": 10057.11
+      },
+      {
+        "name": "137S IF Long I",
+        "address": "0xa8008d93b7eb95e48cf7123b9cb7f5419cfc02f9",
+        "data_days": 93,
+        "hurst": 0.9,
+        "sortino": -54.53,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 0.0,
+        "sharpe": 0.0,
+        "leader_usd": 5030.0
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:18:01",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Dragon Portfolio",
+        "address": "0xe733381ee18ffd7172656504a39b7dca5bc51ab6",
+        "data_days": 74,
+        "hurst": 0.569,
+        "sortino": 13620020.52,
+        "kelly_f": 0.4,
+        "apr_30d": 62.45,
+        "mdd": 0.74,
+        "sharpe": 4.6,
+        "leader_usd": 45173.08
+      },
+      {
+        "name": "YEELON",
+        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 343581.39,
+        "kelly_f": 3.5,
+        "apr_30d": 0.0,
+        "mdd": 27.17,
+        "sharpe": 5.32,
+        "leader_usd": 9337.07
+      },
+      {
+        "name": "AJ Pro",
+        "address": "0x8f78da3fdb3b1dd3eb02529a802a02855d950746",
+        "data_days": 135,
+        "hurst": 0.9,
+        "sortino": 253191.57,
+        "kelly_f": 1.3,
+        "apr_30d": 0.0,
+        "mdd": 184.27,
+        "sharpe": 0.81,
+        "leader_usd": 13064.72
+      },
+      {
+        "name": "ML-Trader Vault 1",
+        "address": "0xb48526e72b11614df47f38be22c7a466adc19efd",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 176933.59,
+        "kelly_f": 0.6,
+        "apr_30d": 0.0,
+        "mdd": 24354.23,
+        "sharpe": -1.04,
+        "leader_usd": 19902.29
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:23:02",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 10.75,
+        "kelly_f": 19.3,
+        "apr_30d": 36.87,
+        "mdd": 29.63,
+        "sharpe": 4.5,
+        "leader_usd": 9124.38
+      },
+      {
+        "name": "HYPErQuantum4",
+        "address": "0xc16e0bf84ea8c2b85457010602cb6fa030bc1fd4",
+        "data_days": 31,
+        "hurst": 0.433,
+        "sortino": 12.64,
+        "kelly_f": 15.9,
+        "apr_30d": 29.46,
+        "mdd": 30.76,
+        "sharpe": 8.82,
+        "leader_usd": 1245.64
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 22.01,
+        "kelly_f": 15.2,
+        "apr_30d": 234.12,
+        "mdd": 38.81,
+        "sharpe": 7.23,
+        "leader_usd": 9652.95
+      },
+      {
+        "name": "AceVault Hyper01",
+        "address": "0x9e02aca9865e1859bb7865f6f64801e804a173df",
+        "data_days": 140,
+        "hurst": 0.535,
+        "sortino": 16.0,
+        "kelly_f": 14.0,
+        "apr_30d": 162.78,
+        "mdd": 47.2,
+        "sharpe": 1.17,
+        "leader_usd": 60532.21
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:28:03",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:33:04",
+    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
+    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
+    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
+    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
+    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:38:05",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:43:06",
+    "topic_id": "TOPIC_HRP_HIERARCHICAL",
+    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
+    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
+    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
+    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:48:07",
+    "topic_id": "TOPIC_GARCH_VOLATILITY",
+    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
+    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
+    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
+    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:53:07",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Super Moon",
+        "address": "0xbe421ec5af0be9ea2b2a53b38a089ee352c9f325",
+        "data_days": 140,
+        "hurst": 0.9,
+        "sortino": 8.44,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 11.75,
+        "sharpe": 6.68,
+        "leader_usd": 1236.58
+      },
+      {
+        "name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "data_days": 130,
+        "hurst": 0.9,
+        "sortino": 2.93,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 25.66,
+        "sharpe": 5.53,
+        "leader_usd": 25127.35
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "data_days": 106,
+        "hurst": 0.9,
+        "sortino": 15.34,
+        "kelly_f": 11.9,
+        "apr_30d": 0.0,
+        "mdd": 67.53,
+        "sharpe": 3.6,
+        "leader_usd": 10057.11
+      },
+      {
+        "name": "137S IF Long I",
+        "address": "0xa8008d93b7eb95e48cf7123b9cb7f5419cfc02f9",
+        "data_days": 93,
+        "hurst": 0.9,
+        "sortino": -54.53,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 0.0,
+        "sharpe": 0.0,
+        "leader_usd": 5030.0
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 11:58:08",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Dragon Portfolio",
+        "address": "0xe733381ee18ffd7172656504a39b7dca5bc51ab6",
+        "data_days": 74,
+        "hurst": 0.569,
+        "sortino": 13620020.52,
+        "kelly_f": 0.4,
+        "apr_30d": 62.45,
+        "mdd": 0.74,
+        "sharpe": 4.6,
+        "leader_usd": 45173.08
+      },
+      {
+        "name": "YEELON",
+        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 343581.39,
+        "kelly_f": 3.5,
+        "apr_30d": 0.0,
+        "mdd": 27.17,
+        "sharpe": 5.32,
+        "leader_usd": 9337.07
+      },
+      {
+        "name": "AJ Pro",
+        "address": "0x8f78da3fdb3b1dd3eb02529a802a02855d950746",
+        "data_days": 135,
+        "hurst": 0.9,
+        "sortino": 253191.57,
+        "kelly_f": 1.3,
+        "apr_30d": 0.0,
+        "mdd": 184.27,
+        "sharpe": 0.81,
+        "leader_usd": 13064.72
+      },
+      {
+        "name": "ML-Trader Vault 1",
+        "address": "0xb48526e72b11614df47f38be22c7a466adc19efd",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 176933.59,
+        "kelly_f": 0.6,
+        "apr_30d": 0.0,
+        "mdd": 24354.23,
+        "sharpe": -1.04,
+        "leader_usd": 19902.29
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:03:09",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 10.75,
+        "kelly_f": 19.3,
+        "apr_30d": 36.87,
+        "mdd": 29.63,
+        "sharpe": 4.5,
+        "leader_usd": 9124.38
+      },
+      {
+        "name": "HYPErQuantum4",
+        "address": "0xc16e0bf84ea8c2b85457010602cb6fa030bc1fd4",
+        "data_days": 31,
+        "hurst": 0.433,
+        "sortino": 12.64,
+        "kelly_f": 15.9,
+        "apr_30d": 29.46,
+        "mdd": 30.76,
+        "sharpe": 8.82,
+        "leader_usd": 1245.64
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 22.01,
+        "kelly_f": 15.2,
+        "apr_30d": 234.12,
+        "mdd": 38.81,
+        "sharpe": 7.23,
+        "leader_usd": 9652.95
+      },
+      {
+        "name": "AceVault Hyper01",
+        "address": "0x9e02aca9865e1859bb7865f6f64801e804a173df",
+        "data_days": 140,
+        "hurst": 0.535,
+        "sortino": 16.0,
+        "kelly_f": 14.0,
+        "apr_30d": 162.78,
+        "mdd": 47.2,
+        "sharpe": 1.17,
+        "leader_usd": 60532.21
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:08:09",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:13:10",
+    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
+    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
+    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
+    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
+    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:18:11",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:23:12",
+    "topic_id": "TOPIC_HRP_HIERARCHICAL",
+    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
+    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
+    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
+    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:28:12",
+    "topic_id": "TOPIC_GARCH_VOLATILITY",
+    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
+    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
+    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
+    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:33:13",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Super Moon",
+        "address": "0xbe421ec5af0be9ea2b2a53b38a089ee352c9f325",
+        "data_days": 140,
+        "hurst": 0.9,
+        "sortino": 8.44,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 11.75,
+        "sharpe": 6.68,
+        "leader_usd": 1236.58
+      },
+      {
+        "name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "data_days": 130,
+        "hurst": 0.9,
+        "sortino": 2.93,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 25.66,
+        "sharpe": 5.53,
+        "leader_usd": 25127.35
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "data_days": 106,
+        "hurst": 0.9,
+        "sortino": 15.34,
+        "kelly_f": 11.9,
+        "apr_30d": 0.0,
+        "mdd": 67.53,
+        "sharpe": 3.6,
+        "leader_usd": 10057.11
+      },
+      {
+        "name": "137S IF Long I",
+        "address": "0xa8008d93b7eb95e48cf7123b9cb7f5419cfc02f9",
+        "data_days": 93,
+        "hurst": 0.9,
+        "sortino": -54.53,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 0.0,
+        "sharpe": 0.0,
+        "leader_usd": 5030.0
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:38:14",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Dragon Portfolio",
+        "address": "0xe733381ee18ffd7172656504a39b7dca5bc51ab6",
+        "data_days": 74,
+        "hurst": 0.569,
+        "sortino": 13620020.52,
+        "kelly_f": 0.4,
+        "apr_30d": 62.45,
+        "mdd": 0.74,
+        "sharpe": 4.6,
+        "leader_usd": 45173.08
+      },
+      {
+        "name": "YEELON",
+        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 343581.39,
+        "kelly_f": 3.5,
+        "apr_30d": 0.0,
+        "mdd": 27.17,
+        "sharpe": 5.32,
+        "leader_usd": 9337.07
+      },
+      {
+        "name": "AJ Pro",
+        "address": "0x8f78da3fdb3b1dd3eb02529a802a02855d950746",
+        "data_days": 135,
+        "hurst": 0.9,
+        "sortino": 253191.57,
+        "kelly_f": 1.3,
+        "apr_30d": 0.0,
+        "mdd": 184.27,
+        "sharpe": 0.81,
+        "leader_usd": 13064.72
+      },
+      {
+        "name": "ML-Trader Vault 1",
+        "address": "0xb48526e72b11614df47f38be22c7a466adc19efd",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 176933.59,
+        "kelly_f": 0.6,
+        "apr_30d": 0.0,
+        "mdd": 24354.23,
+        "sharpe": -1.04,
+        "leader_usd": 19902.29
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:43:14",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 10.75,
+        "kelly_f": 19.3,
+        "apr_30d": 36.87,
+        "mdd": 29.63,
+        "sharpe": 4.5,
+        "leader_usd": 9124.38
+      },
+      {
+        "name": "HYPErQuantum4",
+        "address": "0xc16e0bf84ea8c2b85457010602cb6fa030bc1fd4",
+        "data_days": 31,
+        "hurst": 0.433,
+        "sortino": 12.64,
+        "kelly_f": 15.9,
+        "apr_30d": 29.46,
+        "mdd": 30.76,
+        "sharpe": 8.82,
+        "leader_usd": 1245.64
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 22.01,
+        "kelly_f": 15.2,
+        "apr_30d": 234.12,
+        "mdd": 38.81,
+        "sharpe": 7.23,
+        "leader_usd": 9652.95
+      },
+      {
+        "name": "AceVault Hyper01",
+        "address": "0x9e02aca9865e1859bb7865f6f64801e804a173df",
+        "data_days": 140,
+        "hurst": 0.535,
+        "sortino": 16.0,
+        "kelly_f": 14.0,
+        "apr_30d": 162.78,
+        "mdd": 47.2,
+        "sharpe": 1.17,
+        "leader_usd": 60532.21
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:48:16",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:53:17",
+    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
+    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
+    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
+    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
+    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 12:58:17",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:03:18",
+    "topic_id": "TOPIC_HRP_HIERARCHICAL",
+    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
+    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
+    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
+    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:08:19",
+    "topic_id": "TOPIC_GARCH_VOLATILITY",
+    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
+    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
+    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
+    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:13:19",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Super Moon",
+        "address": "0xbe421ec5af0be9ea2b2a53b38a089ee352c9f325",
+        "data_days": 140,
+        "hurst": 0.9,
+        "sortino": 8.44,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 11.75,
+        "sharpe": 6.68,
+        "leader_usd": 1236.58
+      },
+      {
+        "name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "data_days": 130,
+        "hurst": 0.9,
+        "sortino": 2.93,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 25.66,
+        "sharpe": 5.53,
+        "leader_usd": 25127.35
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "data_days": 106,
+        "hurst": 0.9,
+        "sortino": 15.34,
+        "kelly_f": 11.9,
+        "apr_30d": 0.0,
+        "mdd": 67.53,
+        "sharpe": 3.6,
+        "leader_usd": 10057.11
+      },
+      {
+        "name": "137S IF Long I",
+        "address": "0xa8008d93b7eb95e48cf7123b9cb7f5419cfc02f9",
+        "data_days": 93,
+        "hurst": 0.9,
+        "sortino": -54.53,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 0.0,
+        "sharpe": 0.0,
+        "leader_usd": 5030.0
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:18:20",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Dragon Portfolio",
+        "address": "0xe733381ee18ffd7172656504a39b7dca5bc51ab6",
+        "data_days": 74,
+        "hurst": 0.569,
+        "sortino": 13620020.52,
+        "kelly_f": 0.4,
+        "apr_30d": 62.45,
+        "mdd": 0.74,
+        "sharpe": 4.6,
+        "leader_usd": 45173.08
+      },
+      {
+        "name": "YEELON",
+        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 343581.39,
+        "kelly_f": 3.5,
+        "apr_30d": 0.0,
+        "mdd": 27.17,
+        "sharpe": 5.32,
+        "leader_usd": 9337.07
+      },
+      {
+        "name": "AJ Pro",
+        "address": "0x8f78da3fdb3b1dd3eb02529a802a02855d950746",
+        "data_days": 135,
+        "hurst": 0.9,
+        "sortino": 253191.57,
+        "kelly_f": 1.3,
+        "apr_30d": 0.0,
+        "mdd": 184.27,
+        "sharpe": 0.81,
+        "leader_usd": 13064.72
+      },
+      {
+        "name": "ML-Trader Vault 1",
+        "address": "0xb48526e72b11614df47f38be22c7a466adc19efd",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 176933.59,
+        "kelly_f": 0.6,
+        "apr_30d": 0.0,
+        "mdd": 24354.23,
+        "sharpe": -1.04,
+        "leader_usd": 19902.29
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:23:20",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 10.75,
+        "kelly_f": 19.3,
+        "apr_30d": 36.87,
+        "mdd": 29.63,
+        "sharpe": 4.5,
+        "leader_usd": 9124.38
+      },
+      {
+        "name": "HYPErQuantum4",
+        "address": "0xc16e0bf84ea8c2b85457010602cb6fa030bc1fd4",
+        "data_days": 31,
+        "hurst": 0.433,
+        "sortino": 12.64,
+        "kelly_f": 15.9,
+        "apr_30d": 29.46,
+        "mdd": 30.76,
+        "sharpe": 8.82,
+        "leader_usd": 1245.64
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 22.01,
+        "kelly_f": 15.2,
+        "apr_30d": 234.12,
+        "mdd": 38.81,
+        "sharpe": 7.23,
+        "leader_usd": 9652.95
+      },
+      {
+        "name": "AceVault Hyper01",
+        "address": "0x9e02aca9865e1859bb7865f6f64801e804a173df",
+        "data_days": 140,
+        "hurst": 0.535,
+        "sortino": 16.0,
+        "kelly_f": 14.0,
+        "apr_30d": 162.78,
+        "mdd": 47.2,
+        "sharpe": 1.17,
+        "leader_usd": 60532.21
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:28:21",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:33:22",
+    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
+    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
+    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
+    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
+    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:38:23",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:43:23",
+    "topic_id": "TOPIC_HRP_HIERARCHICAL",
+    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
+    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
+    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
+    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:48:24",
+    "topic_id": "TOPIC_GARCH_VOLATILITY",
+    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
+    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
+    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
+    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:53:25",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Super Moon",
+        "address": "0xbe421ec5af0be9ea2b2a53b38a089ee352c9f325",
+        "data_days": 140,
+        "hurst": 0.9,
+        "sortino": 8.44,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 11.75,
+        "sharpe": 6.68,
+        "leader_usd": 1236.58
+      },
+      {
+        "name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "data_days": 130,
+        "hurst": 0.9,
+        "sortino": 2.93,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 25.66,
+        "sharpe": 5.53,
+        "leader_usd": 25127.35
+      },
+      {
+        "name": "Titan Vault",
+        "address": "0x4b0eab9444a75a03f1ef340c8beac737afa5ab09",
+        "data_days": 106,
+        "hurst": 0.9,
+        "sortino": 15.34,
+        "kelly_f": 11.9,
+        "apr_30d": 0.0,
+        "mdd": 67.53,
+        "sharpe": 3.6,
+        "leader_usd": 10057.11
+      },
+      {
+        "name": "137S IF Long I",
+        "address": "0xa8008d93b7eb95e48cf7123b9cb7f5419cfc02f9",
+        "data_days": 93,
+        "hurst": 0.9,
+        "sortino": -54.53,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 0.0,
+        "sharpe": 0.0,
+        "leader_usd": 5030.0
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 13:58:26",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Dragon Portfolio",
+        "address": "0xe733381ee18ffd7172656504a39b7dca5bc51ab6",
+        "data_days": 74,
+        "hurst": 0.569,
+        "sortino": 13620020.52,
+        "kelly_f": 0.4,
+        "apr_30d": 62.45,
+        "mdd": 0.74,
+        "sharpe": 4.6,
+        "leader_usd": 45173.08
+      },
+      {
+        "name": "YEELON",
+        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 343581.39,
+        "kelly_f": 3.5,
+        "apr_30d": 0.0,
+        "mdd": 27.17,
+        "sharpe": 5.32,
+        "leader_usd": 9337.07
+      },
+      {
+        "name": "AJ Pro",
+        "address": "0x8f78da3fdb3b1dd3eb02529a802a02855d950746",
+        "data_days": 135,
+        "hurst": 0.9,
+        "sortino": 253191.57,
+        "kelly_f": 1.3,
+        "apr_30d": 0.0,
+        "mdd": 184.27,
+        "sharpe": 0.81,
+        "leader_usd": 13064.72
+      },
+      {
+        "name": "ML-Trader Vault 1",
+        "address": "0xb48526e72b11614df47f38be22c7a466adc19efd",
+        "data_days": 140,
+        "hurst": 0.1,
+        "sortino": 176933.59,
+        "kelly_f": 0.6,
+        "apr_30d": 0.0,
+        "mdd": 24354.23,
+        "sharpe": -1.04,
+        "leader_usd": 19902.29
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 14:03:27",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 10.75,
+        "kelly_f": 19.3,
+        "apr_30d": 36.87,
+        "mdd": 29.63,
+        "sharpe": 4.5,
+        "leader_usd": 9124.38
+      },
+      {
+        "name": "HYPErQuantum4",
+        "address": "0xc16e0bf84ea8c2b85457010602cb6fa030bc1fd4",
+        "data_days": 31,
+        "hurst": 0.433,
+        "sortino": 12.64,
+        "kelly_f": 15.9,
+        "apr_30d": 29.46,
+        "mdd": 30.76,
+        "sharpe": 8.82,
+        "leader_usd": 1245.64
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 22.01,
+        "kelly_f": 15.2,
+        "apr_30d": 234.12,
+        "mdd": 38.81,
+        "sharpe": 7.23,
+        "leader_usd": 9652.95
+      },
+      {
+        "name": "AceVault Hyper01",
+        "address": "0x9e02aca9865e1859bb7865f6f64801e804a173df",
+        "data_days": 140,
+        "hurst": 0.535,
+        "sortino": 16.0,
+        "kelly_f": 14.0,
+        "apr_30d": 162.78,
+        "mdd": 47.2,
+        "sharpe": 1.17,
+        "leader_usd": 60532.21
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 14:08:28",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 14:13:29",
+    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
+    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
+    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
+    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
+    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-24 14:18:30",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-08-27 17:32:02",
+    "topic_id": "TOPIC_HRP_HIERARCHICAL",
+    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
+    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
+    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
+    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "winning fortunes",
+        "address": "0x00ae7dc3e9796260506afe8fdb0598c281f10776",
+        "data_days": 89,
+        "hurst": 0.682,
+        "sortino": 1.42,
+        "kelly_f": 1.4,
+        "apr_30d": 626.26,
+        "mdd": 138.31,
+        "sharpe": 3.29,
+        "leader_usd": 4708.3
+      },
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 641.8,
+        "mdd": 686.98,
+        "sharpe": -2.35,
+        "leader_usd": 1242965.69
+      },
+      {
+        "name": "drkmttr",
+        "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "data_days": 140,
+        "hurst": 0.532,
+        "sortino": 2.18,
+        "kelly_f": 2.9,
+        "apr_30d": 467.25,
+        "mdd": 43.55,
+        "sharpe": 5.02,
+        "leader_usd": 4569773.35
+      },
+      {
+        "name": "Nabucodonsor",
+        "address": "0xd255864064236933409a087e2d55ab585de8bea7",
+        "data_days": 19,
+        "hurst": 0.693,
+        "sortino": -8.55,
+        "kelly_f": 0.0,
+        "apr_30d": 475.06,
+        "mdd": 306.22,
+        "sharpe": -6.29,
+        "leader_usd": 8405.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-09-01 10:49:20",
+    "topic_id": "TOPIC_GARCH_VOLATILITY",
+    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
+    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
+    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
+    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-27)",
+    "top_discovered_vaults": [
+      {
+        "name": "Long LINK Short XRP",
+        "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
+        "data_days": 140,
+        "hurst": 0.608,
+        "sortino": -0.37,
+        "kelly_f": 0.0,
+        "apr_30d": 926.75,
+        "mdd": 686.98,
+        "sharpe": -1.1,
+        "leader_usd": 1307283.59
+      },
+      {
+        "name": "wijuwiju's",
+        "address": "0x1c1e37a41133a1cf9921fcd4f8970c6bbe8e3320",
+        "data_days": 11,
+        "hurst": 0.5,
+        "sortino": 12.08,
+        "kelly_f": 10.9,
+        "apr_30d": 851.9,
+        "mdd": 56.45,
+        "sharpe": 5.62,
+        "leader_usd": 7570.95
+      },
+      {
+        "name": "Sequoia HyperStable Yield Optimizer",
+        "address": "0xebc9865942ab666a57976a7768594b29133cbf53",
+        "data_days": 21,
+        "hurst": 0.555,
+        "sortino": 5.06,
+        "kelly_f": 5.1,
+        "apr_30d": 851.67,
+        "mdd": 77.49,
+        "sharpe": 4.94,
+        "leader_usd": 7437.66
+      },
+      {
+        "name": "Trader Sarah's 💁‍♀️ - Fear vs Greed Inde",
+        "address": "0x12b26fe3aa9e923ea9da2425f3ceabfbafdcd12d",
+        "data_days": 17,
+        "hurst": 0.255,
+        "sortino": -0.88,
+        "kelly_f": 0.0,
+        "apr_30d": 819.62,
+        "mdd": 62.04,
+        "sharpe": 3.46,
+        "leader_usd": 17529.6
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  }
+]

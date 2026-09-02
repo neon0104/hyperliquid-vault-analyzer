@@ -1,0 +1,38 @@
+{
+  "final_value": 94851.43,
+  "total_return": -5.15,
+  "cagr": -14.63,
+  "mdd": -7.0,
+  "sharpe": -1.29,
+  "rotation_count": 4,
+  "rotation_events": [
+    {
+      "date": "2026-04-13",
+      "source_vault": "Realist Capital",
+      "target_vault": "Retarded Mode",
+      "harvested_amount": 4244.1,
+      "reason": "와치리스트 우량 볼트 (Retarded Mode) 역사적 Max MDD(-16.6%) 극점 바닥(현재 DD -16.5%) 진입으로 20% 이익 정산 후 순환 매수"
+    },
+    {
+      "date": "2026-04-18",
+      "source_vault": "Retarded Mode",
+      "target_vault": "Prudentia Asset Management",
+      "harvested_amount": 1131.78,
+      "reason": "와치리스트 우량 볼트 (Prudentia Asset Management) 역사적 Max MDD(-87.9%) 극점 바닥(현재 DD -87.9%) 진입으로 20% 이익 정산 후 순환 매수"
+    },
+    {
+      "date": "2026-04-20",
+      "source_vault": "Retarded Mode",
+      "target_vault": "OnlyShorts",
+      "harvested_amount": 959.78,
+      "reason": "와치리스트 우량 볼트 (OnlyShorts) 역사적 Max MDD(-72.4%) 극점 바닥(현재 DD -65.5%) 진입으로 20% 이익 정산 후 순환 매수"
+    },
+    {
+      "date": "2026-04-29",
+      "source_vault": "pmalt",
+      "target_vault": "3xBTC脉冲",
+      "harvested_amount": 4240.5,
+      "reason": "와치리스트 우량 볼트 (3xBTC脉冲) 역사적 Max MDD(-14.1%) 극점 바닥(현재 DD -10.2%) 진입으로 20% 이익 정산 후 순환 매수"
+    }
+  ]
+}
