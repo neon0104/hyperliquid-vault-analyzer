@@ -2914,5 +2914,65 @@
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-09-02 19:39:30",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-09-02)",
+    "top_discovered_vaults": [
+      {
+        "name": "Liquidator",
+        "address": "0x63c621a33714ec48660e32f2374895c8026a3a00",
+        "data_days": 142,
+        "hurst": 0.9,
+        "sortino": -0.7,
+        "kelly_f": 0.0,
+        "apr_30d": 0.0,
+        "mdd": 2321.43,
+        "sharpe": -0.95,
+        "leader_usd": 1962.13
+      },
+      {
+        "name": "Trading Strategy - IchiV3 LS",
+        "address": "0x3df9769bbbb335340872f01d8157c779d73c6ed0",
+        "data_days": 141,
+        "hurst": 0.9,
+        "sortino": -1.82,
+        "kelly_f": 0.0,
+        "apr_30d": -1.66,
+        "mdd": 1692.64,
+        "sharpe": -4.56,
+        "leader_usd": 925.83
+      },
+      {
+        "name": "OnlyShortsTestingVault",
+        "address": "0x24b00d3a8cd8b7d0a123a01d75453d058af41120",
+        "data_days": 70,
+        "hurst": 0.804,
+        "sortino": -0.42,
+        "kelly_f": 0.0,
+        "apr_30d": -500.0,
+        "mdd": 122.26,
+        "sharpe": 0.22,
+        "leader_usd": 82815.04
+      },
+      {
+        "name": "JizzJazz",
+        "address": "0x82eba5dc675279cb5967952f0c4b5184505eb17c",
+        "data_days": 142,
+        "hurst": 0.776,
+        "sortino": 1.19,
+        "kelly_f": 1.8,
+        "apr_30d": 199.01,
+        "mdd": 153.39,
+        "sharpe": 1.98,
+        "leader_usd": 135763.4
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
   }
 ]

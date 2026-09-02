@@ -1,38 +1,38 @@
 {
-  "updated_at": "2026-08-24T09:27:04.777381",
+  "updated_at": "2026-09-02T19:39:29.272823",
   "champion_strategy": {
     "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
     "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-    "total_return_pct": 18.32,
-    "cagr_pct": 53.62,
-    "sharpe_ratio": 1.77,
-    "sortino_ratio": 2.62,
+    "total_return_pct": 21.98,
+    "cagr_pct": 59.17,
+    "sharpe_ratio": 1.97,
+    "sortino_ratio": 2.82,
     "max_drawdown_pct": 10.92,
-    "calmar_ratio": 4.91,
-    "final_capital": 118315.98
+    "calmar_ratio": 5.42,
+    "final_capital": 121975.74
   },
   "tournament_rankings": [
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-      "total_return_pct": 18.32,
-      "cagr_pct": 53.62,
-      "sharpe_ratio": 1.77,
-      "sortino_ratio": 2.62,
+      "total_return_pct": 21.98,
+      "cagr_pct": 59.17,
+      "sharpe_ratio": 1.97,
+      "sortino_ratio": 2.82,
       "max_drawdown_pct": 10.92,
-      "calmar_ratio": 4.91,
-      "final_capital": 118315.98
+      "calmar_ratio": 5.42,
+      "final_capital": 121975.74
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
-      "total_return_pct": 4.49,
-      "cagr_pct": 11.88,
-      "sharpe_ratio": 1.11,
-      "sortino_ratio": 1.19,
+      "total_return_pct": 1.16,
+      "cagr_pct": 2.74,
+      "sharpe_ratio": 0.31,
+      "sortino_ratio": 0.33,
       "max_drawdown_pct": 3.97,
-      "calmar_ratio": 2.99,
-      "final_capital": 104494.58
+      "calmar_ratio": 0.69,
+      "final_capital": 101163.52
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
@@ -48,13 +48,13 @@
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": -1.26,
-      "cagr_pct": -3.19,
-      "sharpe_ratio": -0.08,
-      "sortino_ratio": -0.07,
+      "total_return_pct": -0.47,
+      "cagr_pct": -1.1,
+      "sharpe_ratio": 0.04,
+      "sortino_ratio": 0.04,
       "max_drawdown_pct": 12.64,
-      "calmar_ratio": -0.25,
-      "final_capital": 98738.2
+      "calmar_ratio": -0.09,
+      "final_capital": 99526.33
     }
   ]
 }
