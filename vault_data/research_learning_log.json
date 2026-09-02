@@ -1,17 +1,5 @@
 [
   {
-    "timestamp": "2026-08-24 10:41:42",
-    "topic_id": "TOPIC_HURST_EXPONENT",
-    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
-    "reference_source": "GitHub: pyquant / Mandelbrot Fractal Market Hypothesis",
-    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
-    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
-    "validation_dataset": "143 days (2026-02-27 ~ 2026-08-20)",
-    "top_trending_discovered": [],
-    "top_mean_reverting_discovered": [],
-    "decision": "⚠️ 추가 검증 대기"
-  },
-  {
     "timestamp": "2026-08-24 10:42:01",
     "topic_id": "TOPIC_DOWN_RISK_SORTINO",
     "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
@@ -3031,6 +3019,66 @@
         "mdd": 184.27,
         "sharpe": 0.81,
         "leader_usd": 13064.72
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-09-03 03:41:43",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-09-03)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 320408461.71,
+        "kelly_f": 23.7,
+        "apr_30d": 147.09,
+        "mdd": 15.93,
+        "sharpe": 6.55,
+        "leader_usd": 10095.29
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 31.26,
+        "kelly_f": 18.2,
+        "apr_30d": 397.66,
+        "mdd": 22.87,
+        "sharpe": 7.36,
+        "leader_usd": 12615.68
+      },
+      {
+        "name": "HYPErQuantum4",
+        "address": "0xc16e0bf84ea8c2b85457010602cb6fa030bc1fd4",
+        "data_days": 33,
+        "hurst": 0.443,
+        "sortino": 14.88,
+        "kelly_f": 17.3,
+        "apr_30d": 30.66,
+        "mdd": 36.55,
+        "sharpe": 6.68,
+        "leader_usd": 1281.58
+      },
+      {
+        "name": "Lalo Capital",
+        "address": "0x13bb283f2856483fc0e54279469e1a26c3eeb1d9",
+        "data_days": 11,
+        "hurst": 0.5,
+        "sortino": 22.38,
+        "kelly_f": 15.3,
+        "apr_30d": 554.46,
+        "mdd": 24.29,
+        "sharpe": 7.51,
+        "leader_usd": 8386.26
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
