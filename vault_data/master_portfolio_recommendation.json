@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-09-03",
-  "updated_at": "2026-09-03T07:39:20.787456",
+  "updated_at": "2026-09-03T11:39:25.327387",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 174.09,
@@ -34,7 +34,7 @@
       "apr_30d": 11.57,
       "mdd": 15.0,
       "sharpe": 3.45,
-      "sortino": 1960101.87,
+      "sortino": 1939469.22,
       "hurst": 0.569,
       "leader_usd": 5078.98,
       "action_guide": "✅ 정상 보유 및 복리 운용",
@@ -49,8 +49,8 @@
       "apr_30d": 12.05,
       "mdd": 15.81,
       "sharpe": 10.82,
-      "sortino": 35.08,
-      "hurst": 0.603,
+      "sortino": 35.01,
+      "hurst": 0.562,
       "leader_usd": 102734.97,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
@@ -80,7 +80,7 @@
       "mdd": 0.1,
       "sharpe": 13.24,
       "sortino": 20.05,
-      "hurst": 0.701,
+      "hurst": 0.698,
       "leader_usd": 157532.67,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
