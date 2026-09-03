@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-09-03 15:39:25
+### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
+* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
+* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
+* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
+* **검증 데이터**: `143 days (2026-02-27 ~ 2026-09-03)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Algo1**: Hurst `0.5` | Sortino `320408461.71` | Kelly `23.7%` | 30일 APR `147.09%` | Sharpe `6.55`
+  - **Hindenburg Short Alpha**: Hurst `0.5` | Sortino `31.26` | Kelly `18.2%` | 30일 APR `397.66%` | Sharpe `7.36`
+  - **HYPErQuantum4**: Hurst `0.408` | Sortino `14.47` | Kelly `17.5%` | 30일 APR `30.66%` | Sharpe `6.68`
+  - **Lalo Capital**: Hurst `0.5` | Sortino `22.38` | Kelly `15.3%` | 30일 APR `554.46%` | Sharpe `7.51`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-09-03 11:39:24
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
@@ -230,23 +247,6 @@
 * **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
 * **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
 * **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-08-20)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **winning fortunes**: Hurst `0.682` | Sortino `1.42` | Kelly `1.4%` | 30일 APR `626.26%` | Sharpe `3.29`
-  - **Long LINK Short XRP**: Hurst `0.608` | Sortino `-0.37` | Kelly `0.0%` | 30일 APR `641.8%` | Sharpe `-2.35`
-  - **drkmttr**: Hurst `0.532` | Sortino `2.18` | Kelly `2.9%` | 30일 APR `467.25%` | Sharpe `5.02`
-  - **Nabucodonsor**: Hurst `0.693` | Sortino `-8.55` | Kelly `0.0%` | 30일 APR `475.06%` | Sharpe `-6.29`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-08-24 13:43:23
-### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
-* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
-* **수학적 모델**: $w_i = w_i \times \frac{V_i^{-1}}{\sum V_j^{-1}}$
-* **핵심 가설**: 전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.
 * **검증 데이터**: `143 days (2026-02-27 ~ 2026-08-20)`
 
 #### 🧪 실증 발견 및 온체인 볼트 분석 결과:
