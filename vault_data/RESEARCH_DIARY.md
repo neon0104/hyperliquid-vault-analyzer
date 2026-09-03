@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-09-03 19:39:37
+### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
+* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
+* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
+* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
+* **검증 데이터**: `143 days (2026-02-27 ~ 2026-09-03)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Algo1**: Hurst `0.5` | Sortino `320408461.71` | Kelly `23.7%` | 30일 APR `147.09%` | Sharpe `6.55`
+  - **Hindenburg Short Alpha**: Hurst `0.5` | Sortino `31.26` | Kelly `18.2%` | 30일 APR `397.66%` | Sharpe `7.36`
+  - **HYPErQuantum4**: Hurst `0.408` | Sortino `14.47` | Kelly `17.5%` | 30일 APR `30.66%` | Sharpe `6.68`
+  - **Lalo Capital**: Hurst `0.5` | Sortino `22.38` | Kelly `15.3%` | 30일 APR `554.46%` | Sharpe `7.51`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-09-03 15:39:25
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
@@ -237,23 +254,6 @@
   - **Solus Capital**: Hurst `0.9` | Sortino `2.93` | Kelly `0.0%` | 30일 APR `0.0%` | Sharpe `5.53`
   - **Titan Vault**: Hurst `0.9` | Sortino `15.34` | Kelly `11.9%` | 30일 APR `0.0%` | Sharpe `3.6`
   - **137S IF Long I**: Hurst `0.9` | Sortino `-54.53` | Kelly `0.0%` | 30일 APR `0.0%` | Sharpe `0.0`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-08-24 13:48:24
-### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
-* **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
-* **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
-* **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-08-20)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **winning fortunes**: Hurst `0.682` | Sortino `1.42` | Kelly `1.4%` | 30일 APR `626.26%` | Sharpe `3.29`
-  - **Long LINK Short XRP**: Hurst `0.608` | Sortino `-0.37` | Kelly `0.0%` | 30일 APR `641.8%` | Sharpe `-2.35`
-  - **drkmttr**: Hurst `0.532` | Sortino `2.18` | Kelly `2.9%` | 30일 APR `467.25%` | Sharpe `5.02`
-  - **Nabucodonsor**: Hurst `0.693` | Sortino `-8.55` | Kelly `0.0%` | 30일 APR `475.06%` | Sharpe `-6.29`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
