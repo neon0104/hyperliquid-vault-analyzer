@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-09-05 03:41:50
+### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
+* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
+* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
+* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
+* **검증 데이터**: `143 days (2026-02-27 ~ 2026-09-05)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[Bee] Line**: Hurst `0.5` | Sortino `245548233.53` | Kelly `27.1%` | 30일 APR `140.79%` | Sharpe `12.35`
+  - **Algo1**: Hurst `0.5` | Sortino `321159324.94` | Kelly `23.7%` | 30일 APR `147.62%` | Sharpe `6.73`
+  - **Hindenburg Short Alpha**: Hurst `0.5` | Sortino `30.45` | Kelly `18.1%` | 30일 APR `420.4%` | Sharpe `7.41`
+  - **HYPErQuantum4**: Hurst `0.636` | Sortino `14.11` | Kelly `17.7%` | 30일 APR `31.46%` | Sharpe `6.7`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-09-04 23:39:26
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
@@ -237,23 +254,6 @@
   - **Trading Strategy - IchiV3 LS**: Hurst `0.9` | Sortino `-1.82` | Kelly `0.0%` | 30일 APR `-1.66%` | Sharpe `-4.56`
   - **OnlyShortsTestingVault**: Hurst `0.804` | Sortino `-0.42` | Kelly `0.0%` | 30일 APR `-500.0%` | Sharpe `0.22`
   - **JizzJazz**: Hurst `0.776` | Sortino `1.19` | Kelly `1.8%` | 30일 APR `199.01%` | Sharpe `1.98`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-09-01 10:49:20
-### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
-* **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
-* **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
-* **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-08-27)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Long LINK Short XRP**: Hurst `0.608` | Sortino `-0.37` | Kelly `0.0%` | 30일 APR `926.75%` | Sharpe `-1.1`
-  - **wijuwiju's**: Hurst `0.5` | Sortino `12.08` | Kelly `10.9%` | 30일 APR `851.9%` | Sharpe `5.62`
-  - **Sequoia HyperStable Yield Optimizer**: Hurst `0.555` | Sortino `5.06` | Kelly `5.1%` | 30일 APR `851.67%` | Sharpe `4.94`
-  - **Trader Sarah's 💁‍♀️ - Fear vs Greed Inde**: Hurst `0.255` | Sortino `-0.88` | Kelly `0.0%` | 30일 APR `819.62%` | Sharpe `3.46`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
