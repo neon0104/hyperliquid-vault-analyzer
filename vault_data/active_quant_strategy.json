@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-05T15:39:26.477888",
+  "updated_at": "2026-09-05T19:46:12.840072",
   "champion_strategy": {
     "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
     "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
