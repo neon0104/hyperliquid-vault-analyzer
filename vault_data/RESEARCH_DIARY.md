@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-09-05 11:39:24
+### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
+* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
+* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
+* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
+* **검증 데이터**: `143 days (2026-02-27 ~ 2026-09-05)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[Bee] Line**: Hurst `0.5` | Sortino `245548233.53` | Kelly `27.1%` | 30일 APR `140.79%` | Sharpe `12.35`
+  - **Algo1**: Hurst `0.5` | Sortino `321159324.94` | Kelly `23.7%` | 30일 APR `147.62%` | Sharpe `6.73`
+  - **Hindenburg Short Alpha**: Hurst `0.5` | Sortino `30.45` | Kelly `18.1%` | 30일 APR `420.4%` | Sharpe `7.41`
+  - **Momentum Edge**: Hurst `0.5` | Sortino `68.4` | Kelly `17.6%` | 30일 APR `14.62%` | Sharpe `8.5`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-09-05 07:39:20
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
@@ -237,23 +254,6 @@
   - **Hindenburg Short Alpha**: Hurst `0.5` | Sortino `31.26` | Kelly `18.2%` | 30일 APR `397.66%` | Sharpe `7.36`
   - **HYPErQuantum4**: Hurst `0.443` | Sortino `14.88` | Kelly `17.3%` | 30일 APR `30.66%` | Sharpe `6.68`
   - **Lalo Capital**: Hurst `0.5` | Sortino `22.38` | Kelly `15.3%` | 30일 APR `554.46%` | Sharpe `7.51`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-09-02 23:39:31
-### 🔬 주제: **하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화**
-* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Frank Sortino (1994)`
-* **수학적 모델**: $Sortino = \frac{R_p - R_f}{\sqrt{\frac{1}{N}\sum_{t=1}^N \min(0, R_t - MAR)^2}}$
-* **핵심 가설**: 상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-09-02)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Algo1**: Hurst `0.5` | Sortino `320298787.09` | Kelly `23.7%` | 30일 APR `147.0%` | Sharpe `5.97`
-  - **137S IF Long I**: Hurst `0.569` | Sortino `1960101.87` | Kelly `0.3%` | 30일 APR `11.57%` | Sharpe `3.45`
-  - **YEELON**: Hurst `0.1` | Sortino `338707.89` | Kelly `3.4%` | 30일 APR `0.0%` | Sharpe `5.32`
-  - **AJ Pro**: Hurst `0.1` | Sortino `249468.16` | Kelly `1.3%` | 30일 APR `0.0%` | Sharpe `0.81`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
