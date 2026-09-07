@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-09-07",
-  "updated_at": "2026-09-07T07:39:16.624446",
+  "updated_at": "2026-09-07T11:39:21.226245",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 240.51,
@@ -49,7 +49,7 @@
       "apr_30d": 11.57,
       "mdd": 15.0,
       "sharpe": 3.45,
-      "sortino": 1880097.71,
+      "sortino": 1861106.83,
       "hurst": 0.9,
       "leader_usd": 5078.98,
       "action_guide": "✅ 정상 보유 및 복리 운용",
