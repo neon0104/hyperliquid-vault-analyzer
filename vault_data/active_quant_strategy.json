@@ -1,49 +1,49 @@
 {
-  "updated_at": "2026-09-07T23:39:19.977059",
+  "updated_at": "2026-09-08T03:41:40.331511",
   "champion_strategy": {
     "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
     "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-    "total_return_pct": 26.46,
-    "cagr_pct": 70.25,
-    "sharpe_ratio": 2.24,
-    "sortino_ratio": 3.22,
+    "total_return_pct": 26.15,
+    "cagr_pct": 68.78,
+    "sharpe_ratio": 2.21,
+    "sortino_ratio": 3.18,
     "max_drawdown_pct": 10.92,
-    "calmar_ratio": 6.44,
-    "final_capital": 126455.08
+    "calmar_ratio": 6.3,
+    "final_capital": 126152.71
   },
   "tournament_rankings": [
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-      "total_return_pct": 26.46,
-      "cagr_pct": 70.25,
-      "sharpe_ratio": 2.24,
-      "sortino_ratio": 3.22,
+      "total_return_pct": 26.15,
+      "cagr_pct": 68.78,
+      "sharpe_ratio": 2.21,
+      "sortino_ratio": 3.18,
       "max_drawdown_pct": 10.92,
-      "calmar_ratio": 6.44,
-      "final_capital": 126455.08
+      "calmar_ratio": 6.3,
+      "final_capital": 126152.71
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
-      "total_return_pct": 1.31,
-      "cagr_pct": 2.99,
+      "total_return_pct": 1.29,
+      "cagr_pct": 2.92,
       "sharpe_ratio": 0.33,
       "sortino_ratio": 0.35,
       "max_drawdown_pct": 3.97,
-      "calmar_ratio": 0.75,
-      "final_capital": 101308.96
+      "calmar_ratio": 0.74,
+      "final_capital": 101286.88
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": 2.94,
-      "cagr_pct": 6.79,
-      "sharpe_ratio": 0.46,
-      "sortino_ratio": 0.44,
+      "total_return_pct": 1.92,
+      "cagr_pct": 4.39,
+      "sharpe_ratio": 0.33,
+      "sortino_ratio": 0.32,
       "max_drawdown_pct": 12.64,
-      "calmar_ratio": 0.54,
-      "final_capital": 102941.72
+      "calmar_ratio": 0.35,
+      "final_capital": 101923.81
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",

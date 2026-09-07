@@ -10881,5 +10881,63 @@
         "leader_eq": 0.5625258586151619
       }
     ]
+  },
+  "2026-09-07": {
+    "portfolio_value": 167318.72,
+    "daily_pnl": 403.83,
+    "daily_return_pct": 0.2419,
+    "cumulative_pnl": 67318.72,
+    "cumulative_pct": 67.3187,
+    "max_equity_ever": 167318.72,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1518,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 35.95,
+        "apr_30d": 15.49,
+        "robustness": 0.9897,
+        "undervalue": 1.014,
+        "leader_eq": 0.18694662769188494
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 35.95,
+        "apr_30d": 78.87,
+        "robustness": 0.9406,
+        "undervalue": 0.952,
+        "leader_eq": 0.19764597602514783
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 17.93,
+        "apr_30d": 72.26,
+        "robustness": 0.7156,
+        "undervalue": 1.064,
+        "leader_eq": 0.05303707951365668
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 3.18,
+        "apr_30d": 325.7,
+        "robustness": 0.6347,
+        "undervalue": 1.318,
+        "leader_eq": 0.9893232399186757
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 6.99,
+        "apr_30d": 444.51,
+        "robustness": 0.582,
+        "undervalue": 1.578,
+        "leader_eq": 0.7707889678472658
+      }
+    ]
   }
 }
