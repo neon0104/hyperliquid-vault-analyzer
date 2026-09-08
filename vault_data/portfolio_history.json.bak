@@ -10939,5 +10939,72 @@
         "leader_eq": 0.7707889678472658
       }
     ]
+  },
+  "2026-09-08": {
+    "portfolio_value": 167763.2,
+    "daily_pnl": 444.48,
+    "daily_return_pct": 0.2656,
+    "cumulative_pnl": 67763.2,
+    "cumulative_pct": 67.7632,
+    "max_equity_ever": 167763.2,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2738,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 32.9,
+        "apr_30d": 79.05,
+        "robustness": 0.9406,
+        "undervalue": 0.949,
+        "leader_eq": 0.19809177964869537
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 4.65,
+        "apr_30d": 16.19,
+        "robustness": 0.8169,
+        "undervalue": 1.014,
+        "leader_eq": 0.18541978019893982
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.89,
+        "apr_30d": 344.16,
+        "robustness": 0.6343,
+        "undervalue": 1.345,
+        "leader_eq": 0.9893232399186757
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 3.73,
+        "apr_30d": 65.07,
+        "robustness": 0.6093,
+        "undervalue": 1.051,
+        "leader_eq": 0.41654470161416085
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 5.83,
+        "apr_30d": 412.92,
+        "robustness": 0.5921,
+        "undervalue": 1.517,
+        "leader_eq": 0.7701213278415837
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 50.0,
+        "apr_30d": 67.51,
+        "robustness": 0.5501,
+        "undervalue": 1.059,
+        "leader_eq": 0.051689702488842304
+      }
+    ]
   }
 }
