@@ -11006,5 +11006,81 @@
         "leader_eq": 0.051689702488842304
       }
     ]
+  },
+  "2026-09-09": {
+    "portfolio_value": 168335.6,
+    "daily_pnl": 572.4,
+    "daily_return_pct": 0.3412,
+    "cumulative_pnl": 68335.6,
+    "cumulative_pct": 68.3356,
+    "max_equity_ever": 168335.6,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3146,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 30.51,
+        "apr_30d": 79.04,
+        "robustness": 0.9406,
+        "undervalue": 0.948,
+        "leader_eq": 0.19808256699830654
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 8.65,
+        "apr_30d": 16.87,
+        "robustness": 0.8693,
+        "undervalue": 0.723,
+        "leader_eq": 0.5637349464104359
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 4.64,
+        "apr_30d": 16.47,
+        "robustness": 0.818,
+        "undervalue": 1.016,
+        "leader_eq": 0.17503172017246924
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.67,
+        "apr_30d": 331.9,
+        "robustness": 0.6342,
+        "undervalue": 1.327,
+        "leader_eq": 0.9892171121133481
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 3.53,
+        "apr_30d": 65.38,
+        "robustness": 0.6099,
+        "undervalue": 1.051,
+        "leader_eq": 0.41654470161416085
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 32.94,
+        "apr_30d": 230.99,
+        "robustness": 0.4515,
+        "undervalue": 1.197,
+        "leader_eq": 0.9999999097916233
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 17.06,
+        "apr_30d": 64.12,
+        "robustness": 0.55,
+        "undervalue": 1.057,
+        "leader_eq": 0.050530518800727876
+      }
+    ]
   }
 }
