@@ -1,6 +1,6 @@
 {
-  "period": "2026-04-09 to 2026-09-01",
-  "days": 131,
+  "period": "2026-04-09 to 2026-09-09",
+  "days": 149,
   "dates": [
     "2026-04-09",
     "2026-04-10",
@@ -132,21 +132,39 @@
     "2026-08-18",
     "2026-08-19",
     "2026-08-20",
+    "2026-08-21",
+    "2026-08-22",
+    "2026-08-23",
+    "2026-08-24",
+    "2026-08-25",
+    "2026-08-26",
     "2026-08-27",
-    "2026-09-01"
+    "2026-08-28",
+    "2026-08-29",
+    "2026-08-30",
+    "2026-08-31",
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03",
+    "2026-09-04",
+    "2026-09-05",
+    "2026-09-06",
+    "2026-09-07",
+    "2026-09-08",
+    "2026-09-09"
   ],
   "initial_capital": 100000.0,
-  "final_value": 211774.3,
-  "total_return": 111.77,
-  "cagr": 709.04,
+  "final_value": 222161.32,
+  "total_return": 122.16,
+  "cagr": 606.68,
   "mdd": -4.45,
-  "sharpe": 7.51,
-  "sortino": 15.75,
-  "calmar": 159.24,
-  "win_rate": 59.5,
-  "fees": 6528.74,
+  "sharpe": 6.96,
+  "sortino": 13.88,
+  "calmar": 136.25,
+  "win_rate": 60.4,
+  "fees": 6537.56,
   "ejection_count": 4,
-  "rebalance_count": 31,
+  "rebalance_count": 33,
   "strategy": {
     "name": "🏆 SKIN_IN_GAME_HEAVY 60:40 (1,800개 백테스트 1위 챔피언)",
     "values": [
@@ -280,10 +298,28 @@
       216216.79,
       215687.92,
       213393.37,
-      211370.9,
-      211774.3
+      213502.7,
+      226816.34,
+      227104.4,
+      227393.59,
+      220694.44,
+      221973.88,
+      221271.7,
+      221215.43,
+      221679.57,
+      221571.38,
+      221677.17,
+      221693.38,
+      221795.18,
+      221898.84,
+      221828.17,
+      221803.17,
+      221869.09,
+      221742.64,
+      222004.21,
+      222161.32
     ],
-    "fees": 6528.74,
+    "fees": 6537.56,
     "rebalance_events": [
       {
         "date": "2026-04-09",
@@ -576,9 +612,25 @@
         }
       },
       {
+        "date": "2026-08-22",
+        "reason": "🔥 저점 추매 (Historical Max MDD 70%+ 바닥 진입)",
+        "details": "우량 볼트 (Infinite Vault Robot) MDD -2.3% 극점 바닥에서 $5,000 추매",
+        "allocations": {
+          "Infinite Vault Robot": "+$5,000"
+        }
+      },
+      {
+        "date": "2026-08-23",
+        "reason": "🔥 저점 추매 (Historical Max MDD 70%+ 바닥 진입)",
+        "details": "우량 볼트 (Brob) MDD -6.1% 극점 바닥에서 $5,000 추매",
+        "allocations": {
+          "Brob": "+$5,000"
+        }
+      },
+      {
         "date": "2026-08-27",
         "reason": "14일 격주 정기 SKIN_IN_GAME_HEAVY 리밸런싱 실행",
-        "details": "자산 재배분: Core 60% (3개), Satellite 40% (3개) | 수수료: $540.59",
+        "details": "자산 재배분: Core 60% (3개), Satellite 40% (3개) | 수수료: $544.41",
         "allocations": {
           "Mad Scientists": "20.0%",
           "Citadel": "20.0%",
@@ -8404,17 +8456,329 @@
           }
         ]
       },
+      "2026-08-21": {
+        "total_value": 213502.7,
+        "total_return": 113.5,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Infinite Vault Robot",
+            "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 47349.07,
+            "cost": 47543.14,
+            "profit": -194.07,
+            "return_pct": -0.41
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50387.01,
+            "cost": 47543.14,
+            "profit": 2843.87,
+            "return_pct": 5.98
+          },
+          {
+            "name": "Brob",
+            "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 47529.06,
+            "cost": 47543.14,
+            "profit": -14.08,
+            "return_pct": -0.03
+          },
+          {
+            "name": "BitRocket",
+            "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33430.99,
+            "cost": 33382.94,
+            "profit": 48.05,
+            "return_pct": 0.14
+          },
+          {
+            "name": "Danny Ocean",
+            "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 34806.57,
+            "cost": 33382.94,
+            "profit": 1423.63,
+            "return_pct": 4.26
+          }
+        ]
+      },
+      "2026-08-22": {
+        "total_value": 226816.34,
+        "total_return": 126.82,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Infinite Vault Robot",
+            "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 51271.31,
+            "cost": 52543.14,
+            "profit": -1271.82,
+            "return_pct": -2.42
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50368.99,
+            "cost": 47543.14,
+            "profit": 2825.85,
+            "return_pct": 5.94
+          },
+          {
+            "name": "Brob",
+            "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 57658.59,
+            "cost": 47543.14,
+            "profit": 10115.46,
+            "return_pct": 21.28
+          },
+          {
+            "name": "BitRocket",
+            "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33452.56,
+            "cost": 33382.94,
+            "profit": 69.62,
+            "return_pct": 0.21
+          },
+          {
+            "name": "Danny Ocean",
+            "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 34064.89,
+            "cost": 33382.94,
+            "profit": 681.95,
+            "return_pct": 2.04
+          }
+        ]
+      },
+      "2026-08-23": {
+        "total_value": 227104.4,
+        "total_return": 127.1,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Infinite Vault Robot",
+            "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50319.55,
+            "cost": 52543.14,
+            "profit": -2223.59,
+            "return_pct": -4.23
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50368.99,
+            "cost": 47543.14,
+            "profit": 2825.85,
+            "return_pct": 5.94
+          },
+          {
+            "name": "Brob",
+            "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 59156.73,
+            "cost": 52543.14,
+            "profit": 6613.59,
+            "return_pct": 12.59
+          },
+          {
+            "name": "BitRocket",
+            "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33456.13,
+            "cost": 33382.94,
+            "profit": 73.19,
+            "return_pct": 0.22
+          },
+          {
+            "name": "Danny Ocean",
+            "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33803.0,
+            "cost": 33382.94,
+            "profit": 420.06,
+            "return_pct": 1.26
+          }
+        ]
+      },
+      "2026-08-24": {
+        "total_value": 227393.59,
+        "total_return": 127.39,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Infinite Vault Robot",
+            "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50165.06,
+            "cost": 52543.14,
+            "profit": -2378.08,
+            "return_pct": -4.53
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50368.99,
+            "cost": 47543.14,
+            "profit": 2825.85,
+            "return_pct": 5.94
+          },
+          {
+            "name": "Brob",
+            "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 59547.82,
+            "cost": 52543.14,
+            "profit": 7004.69,
+            "return_pct": 13.33
+          },
+          {
+            "name": "BitRocket",
+            "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33466.42,
+            "cost": 33382.94,
+            "profit": 83.48,
+            "return_pct": 0.25
+          },
+          {
+            "name": "Danny Ocean",
+            "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33845.29,
+            "cost": 33382.94,
+            "profit": 462.35,
+            "return_pct": 1.38
+          }
+        ]
+      },
+      "2026-08-25": {
+        "total_value": 220694.44,
+        "total_return": 120.69,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Infinite Vault Robot",
+            "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50343.78,
+            "cost": 52543.14,
+            "profit": -2199.35,
+            "return_pct": -4.19
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50368.44,
+            "cost": 47543.14,
+            "profit": 2825.3,
+            "return_pct": 5.94
+          },
+          {
+            "name": "Brob",
+            "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 52625.91,
+            "cost": 52543.14,
+            "profit": 82.77,
+            "return_pct": 0.16
+          },
+          {
+            "name": "BitRocket",
+            "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33468.66,
+            "cost": 33382.94,
+            "profit": 85.72,
+            "return_pct": 0.26
+          },
+          {
+            "name": "Danny Ocean",
+            "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33887.64,
+            "cost": 33382.94,
+            "profit": 504.7,
+            "return_pct": 1.51
+          }
+        ]
+      },
+      "2026-08-26": {
+        "total_value": 221973.88,
+        "total_return": 121.97,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Infinite Vault Robot",
+            "address": "0xc2ca95ce3eb285d58a811b80f6937a127b4f52ba",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50841.07,
+            "cost": 52543.14,
+            "profit": -1702.07,
+            "return_pct": -3.24
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 50368.43,
+            "cost": 47543.14,
+            "profit": 2825.3,
+            "return_pct": 5.94
+          },
+          {
+            "name": "Brob",
+            "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 53382.16,
+            "cost": 52543.14,
+            "profit": 839.02,
+            "return_pct": 1.6
+          },
+          {
+            "name": "BitRocket",
+            "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33452.18,
+            "cost": 33382.94,
+            "profit": 69.23,
+            "return_pct": 0.21
+          },
+          {
+            "name": "Danny Ocean",
+            "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 33930.04,
+            "cost": 33382.94,
+            "profit": 547.1,
+            "return_pct": 1.64
+          }
+        ]
+      },
       "2026-08-27": {
-        "total_value": 211370.9,
-        "total_return": 111.37,
+        "total_value": 221271.7,
+        "total_return": 121.27,
         "cash": 0.0,
         "holdings": [
           {
             "name": "Mad Scientists",
             "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
             "type": "CORE_SKIN_HEAVY",
-            "amount": 42274.18,
-            "cost": 42274.18,
+            "amount": 44254.34,
+            "cost": 44254.34,
             "profit": 0.0,
             "return_pct": 0.0
           },
@@ -8422,8 +8786,8 @@
             "name": "Citadel",
             "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
             "type": "CORE_SKIN_HEAVY",
-            "amount": 42274.18,
-            "cost": 42274.18,
+            "amount": 44254.34,
+            "cost": 44254.34,
             "profit": 0.0,
             "return_pct": 0.0
           },
@@ -8431,8 +8795,8 @@
             "name": "FuturAI Labs - High Sharpe, Low Volatili",
             "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
             "type": "CORE_SKIN_HEAVY",
-            "amount": 42274.18,
-            "cost": 42274.18,
+            "amount": 44254.34,
+            "cost": 44254.34,
             "profit": 0.0,
             "return_pct": 0.0
           },
@@ -8440,8 +8804,8 @@
             "name": "Hyper4",
             "address": "0xafe52e764a7997670deccffe056312781dd5925f",
             "type": "SATELLITE_SKIN_HEAVY",
-            "amount": 28182.79,
-            "cost": 28182.79,
+            "amount": 29502.89,
+            "cost": 29502.89,
             "profit": 0.0,
             "return_pct": 0.0
           },
@@ -8449,8 +8813,8 @@
             "name": "FuturAI Labs - High Sharpe, Medium Volat",
             "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
             "type": "SATELLITE_SKIN_HEAVY",
-            "amount": 28182.79,
-            "cost": 28182.79,
+            "amount": 29502.89,
+            "cost": 29502.89,
             "profit": 0.0,
             "return_pct": 0.0
           },
@@ -8458,71 +8822,803 @@
             "name": "Stratwise Multi-Asset Public",
             "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
             "type": "SATELLITE_SKIN_HEAVY",
-            "amount": 28182.79,
-            "cost": 28182.79,
+            "amount": 29502.89,
+            "cost": 29502.89,
             "profit": 0.0,
             "return_pct": 0.0
           }
         ]
       },
-      "2026-09-01": {
-        "total_value": 211774.3,
-        "total_return": 111.77,
+      "2026-08-28": {
+        "total_value": 221215.43,
+        "total_return": 121.22,
         "cash": 0.0,
         "holdings": [
           {
             "name": "Mad Scientists",
             "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
             "type": "CORE_SKIN_HEAVY",
-            "amount": 42189.15,
-            "cost": 42274.18,
-            "profit": -85.03,
-            "return_pct": -0.2
+            "amount": 44193.39,
+            "cost": 44254.34,
+            "profit": -60.95,
+            "return_pct": -0.14
           },
           {
             "name": "Citadel",
             "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
             "type": "CORE_SKIN_HEAVY",
-            "amount": 42512.41,
-            "cost": 42274.18,
-            "profit": 238.23,
+            "amount": 44249.86,
+            "cost": 44254.34,
+            "profit": -4.48,
+            "return_pct": -0.01
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44252.74,
+            "cost": 44254.34,
+            "profit": -1.6,
+            "return_pct": -0.0
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29503.23,
+            "cost": 29502.89,
+            "profit": 0.34,
+            "return_pct": 0.0
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29502.47,
+            "cost": 29502.89,
+            "profit": -0.43,
+            "return_pct": -0.0
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29513.74,
+            "cost": 29502.89,
+            "profit": 10.85,
+            "return_pct": 0.04
+          }
+        ]
+      },
+      "2026-08-29": {
+        "total_value": 221679.57,
+        "total_return": 121.68,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44361.13,
+            "cost": 44254.34,
+            "profit": 106.79,
+            "return_pct": 0.24
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44503.24,
+            "cost": 44254.34,
+            "profit": 248.9,
             "return_pct": 0.56
           },
           {
             "name": "FuturAI Labs - High Sharpe, Low Volatili",
             "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
             "type": "CORE_SKIN_HEAVY",
-            "amount": 42349.04,
-            "cost": 42274.18,
-            "profit": 74.86,
+            "amount": 44270.87,
+            "cost": 44254.34,
+            "profit": 16.53,
+            "return_pct": 0.04
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29525.5,
+            "cost": 29502.89,
+            "profit": 22.6,
+            "return_pct": 0.08
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29509.71,
+            "cost": 29502.89,
+            "profit": 6.82,
+            "return_pct": 0.02
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29509.12,
+            "cost": 29502.89,
+            "profit": 6.23,
+            "return_pct": 0.02
+          }
+        ]
+      },
+      "2026-08-30": {
+        "total_value": 221571.38,
+        "total_return": 121.57,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44191.71,
+            "cost": 44254.34,
+            "profit": -62.63,
+            "return_pct": -0.14
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44503.2,
+            "cost": 44254.34,
+            "profit": 248.86,
+            "return_pct": 0.56
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44280.08,
+            "cost": 44254.34,
+            "profit": 25.74,
+            "return_pct": 0.06
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29536.81,
+            "cost": 29502.89,
+            "profit": 33.91,
+            "return_pct": 0.11
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29513.58,
+            "cost": 29502.89,
+            "profit": 10.68,
+            "return_pct": 0.04
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29546.01,
+            "cost": 29502.89,
+            "profit": 43.11,
+            "return_pct": 0.15
+          }
+        ]
+      },
+      "2026-08-31": {
+        "total_value": 221677.17,
+        "total_return": 121.68,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44310.66,
+            "cost": 44254.34,
+            "profit": 56.33,
+            "return_pct": 0.13
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44503.18,
+            "cost": 44254.34,
+            "profit": 248.84,
+            "return_pct": 0.56
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44286.06,
+            "cost": 44254.34,
+            "profit": 31.72,
+            "return_pct": 0.07
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29548.12,
+            "cost": 29502.89,
+            "profit": 45.23,
+            "return_pct": 0.15
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29514.82,
+            "cost": 29502.89,
+            "profit": 11.93,
+            "return_pct": 0.04
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29514.33,
+            "cost": 29502.89,
+            "profit": 11.44,
+            "return_pct": 0.04
+          }
+        ]
+      },
+      "2026-09-01": {
+        "total_value": 221693.38,
+        "total_return": 121.69,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44167.51,
+            "cost": 44254.34,
+            "profit": -86.83,
+            "return_pct": -0.2
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44503.14,
+            "cost": 44254.34,
+            "profit": 248.8,
+            "return_pct": 0.56
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44331.92,
+            "cost": 44254.34,
+            "profit": 77.59,
             "return_pct": 0.18
           },
           {
             "name": "Hyper4",
             "address": "0xafe52e764a7997670deccffe056312781dd5925f",
             "type": "SATELLITE_SKIN_HEAVY",
-            "amount": 28236.8,
-            "cost": 28182.79,
-            "profit": 54.01,
+            "amount": 29559.44,
+            "cost": 29502.89,
+            "profit": 56.54,
             "return_pct": 0.19
           },
           {
             "name": "FuturAI Labs - High Sharpe, Medium Volat",
             "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
             "type": "SATELLITE_SKIN_HEAVY",
-            "amount": 28207.93,
-            "cost": 28182.79,
-            "profit": 25.14,
+            "amount": 29528.51,
+            "cost": 29502.89,
+            "profit": 25.62,
             "return_pct": 0.09
           },
           {
             "name": "Stratwise Multi-Asset Public",
             "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
             "type": "SATELLITE_SKIN_HEAVY",
-            "amount": 28278.98,
-            "cost": 28182.79,
-            "profit": 96.19,
+            "amount": 29602.86,
+            "cost": 29502.89,
+            "profit": 99.97,
             "return_pct": 0.34
+          }
+        ]
+      },
+      "2026-09-02": {
+        "total_value": 221795.18,
+        "total_return": 121.8,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44216.64,
+            "cost": 44254.34,
+            "profit": -37.7,
+            "return_pct": -0.09
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44503.14,
+            "cost": 44254.34,
+            "profit": 248.8,
+            "return_pct": 0.56
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44348.8,
+            "cost": 44254.34,
+            "profit": 94.46,
+            "return_pct": 0.21
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29570.76,
+            "cost": 29502.89,
+            "profit": 67.87,
+            "return_pct": 0.23
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29532.93,
+            "cost": 29502.89,
+            "profit": 30.04,
+            "return_pct": 0.1
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29622.91,
+            "cost": 29502.89,
+            "profit": 120.02,
+            "return_pct": 0.41
+          }
+        ]
+      },
+      "2026-09-03": {
+        "total_value": 221898.84,
+        "total_return": 121.9,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44281.68,
+            "cost": 44254.34,
+            "profit": 27.34,
+            "return_pct": 0.06
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44502.33,
+            "cost": 44254.34,
+            "profit": 247.99,
+            "return_pct": 0.56
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44369.7,
+            "cost": 44254.34,
+            "profit": 115.36,
+            "return_pct": 0.26
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29582.08,
+            "cost": 29502.89,
+            "profit": 79.19,
+            "return_pct": 0.27
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29538.36,
+            "cost": 29502.89,
+            "profit": 35.46,
+            "return_pct": 0.12
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29624.68,
+            "cost": 29502.89,
+            "profit": 121.79,
+            "return_pct": 0.41
+          }
+        ]
+      },
+      "2026-09-04": {
+        "total_value": 221828.17,
+        "total_return": 121.83,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44163.13,
+            "cost": 44254.34,
+            "profit": -91.21,
+            "return_pct": -0.21
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44502.31,
+            "cost": 44254.34,
+            "profit": 247.97,
+            "return_pct": 0.56
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44374.67,
+            "cost": 44254.34,
+            "profit": 120.33,
+            "return_pct": 0.27
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29593.41,
+            "cost": 29502.89,
+            "profit": 90.52,
+            "return_pct": 0.31
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29539.72,
+            "cost": 29502.89,
+            "profit": 36.83,
+            "return_pct": 0.12
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29654.93,
+            "cost": 29502.89,
+            "profit": 152.04,
+            "return_pct": 0.52
+          }
+        ]
+      },
+      "2026-09-05": {
+        "total_value": 221803.17,
+        "total_return": 121.8,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44131.45,
+            "cost": 44254.34,
+            "profit": -122.88,
+            "return_pct": -0.28
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44498.55,
+            "cost": 44254.34,
+            "profit": 244.22,
+            "return_pct": 0.55
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44377.48,
+            "cost": 44254.34,
+            "profit": 123.14,
+            "return_pct": 0.28
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29604.75,
+            "cost": 29502.89,
+            "profit": 101.86,
+            "return_pct": 0.35
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29539.96,
+            "cost": 29502.89,
+            "profit": 37.06,
+            "return_pct": 0.13
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29650.98,
+            "cost": 29502.89,
+            "profit": 148.09,
+            "return_pct": 0.5
+          }
+        ]
+      },
+      "2026-09-06": {
+        "total_value": 221869.09,
+        "total_return": 121.87,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44105.9,
+            "cost": 44254.34,
+            "profit": -148.44,
+            "return_pct": -0.34
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44498.22,
+            "cost": 44254.34,
+            "profit": 243.88,
+            "return_pct": 0.55
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44389.46,
+            "cost": 44254.34,
+            "profit": 135.12,
+            "return_pct": 0.31
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29616.09,
+            "cost": 29502.89,
+            "profit": 113.2,
+            "return_pct": 0.38
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29544.0,
+            "cost": 29502.89,
+            "profit": 41.11,
+            "return_pct": 0.14
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29715.42,
+            "cost": 29502.89,
+            "profit": 212.53,
+            "return_pct": 0.72
+          }
+        ]
+      },
+      "2026-09-07": {
+        "total_value": 221742.64,
+        "total_return": 121.74,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 43943.77,
+            "cost": 44254.34,
+            "profit": -310.57,
+            "return_pct": -0.7
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44498.22,
+            "cost": 44254.34,
+            "profit": 243.88,
+            "return_pct": 0.55
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44394.09,
+            "cost": 44254.34,
+            "profit": 139.75,
+            "return_pct": 0.32
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29627.43,
+            "cost": 29502.89,
+            "profit": 124.54,
+            "return_pct": 0.42
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29546.02,
+            "cost": 29502.89,
+            "profit": 43.13,
+            "return_pct": 0.15
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29733.11,
+            "cost": 29502.89,
+            "profit": 230.22,
+            "return_pct": 0.78
+          }
+        ]
+      },
+      "2026-09-08": {
+        "total_value": 222004.21,
+        "total_return": 122.0,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44149.3,
+            "cost": 44254.34,
+            "profit": -105.04,
+            "return_pct": -0.24
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44498.16,
+            "cost": 44254.34,
+            "profit": 243.82,
+            "return_pct": 0.55
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44403.9,
+            "cost": 44254.34,
+            "profit": 149.56,
+            "return_pct": 0.34
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29638.78,
+            "cost": 29502.89,
+            "profit": 135.89,
+            "return_pct": 0.46
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29549.17,
+            "cost": 29502.89,
+            "profit": 46.28,
+            "return_pct": 0.16
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29764.89,
+            "cost": 29502.89,
+            "profit": 262.0,
+            "return_pct": 0.89
+          }
+        ]
+      },
+      "2026-09-09": {
+        "total_value": 222161.32,
+        "total_return": 122.16,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44206.42,
+            "cost": 44254.34,
+            "profit": -47.92,
+            "return_pct": -0.11
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44498.16,
+            "cost": 44254.34,
+            "profit": 243.82,
+            "return_pct": 0.55
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44423.39,
+            "cost": 44254.34,
+            "profit": 169.05,
+            "return_pct": 0.38
+          },
+          {
+            "name": "Hyper4",
+            "address": "0xafe52e764a7997670deccffe056312781dd5925f",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29650.13,
+            "cost": 29502.89,
+            "profit": 147.24,
+            "return_pct": 0.5
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29558.96,
+            "cost": 29502.89,
+            "profit": 56.06,
+            "return_pct": 0.19
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29824.26,
+            "cost": 29502.89,
+            "profit": 321.36,
+            "return_pct": 1.09
           }
         ]
       }
@@ -8530,11 +9626,11 @@
   },
   "benchmark": {
     "name": "Equal-Weight Baseline Benchmark",
-    "final_value": 111756.33,
-    "total_return": 11.76,
-    "cagr": 36.3,
+    "final_value": 115213.19,
+    "total_return": 15.21,
+    "cagr": 41.47,
     "mdd": -3.6,
-    "sharpe": 2.69,
+    "sharpe": 2.96,
     "values": [
       100000.0,
       100013.69,
@@ -8666,15 +9762,33 @@
       109090.6,
       109744.66,
       110197.74,
+      110726.78,
+      110947.9,
+      111029.76,
+      111028.19,
+      111186.88,
+      111675.28,
       111802.78,
-      111756.33
+      112144.32,
+      111558.85,
+      111624.43,
+      111295.18,
+      111756.33,
+      112146.9,
+      111570.2,
+      112689.21,
+      112117.27,
+      113855.84,
+      116300.32,
+      114993.47,
+      115213.19
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 59.5,
-    "cumulative_fees_paid": "$6,528.74",
+    "accuracy_rate": 60.4,
+    "cumulative_fees_paid": "$6,537.56",
     "volatility_drag_reduction": "8.0% p.p. MDD 방어 효과",
-    "alpha_over_benchmark": "+100.02% p.p.",
+    "alpha_over_benchmark": "+106.95% p.p.",
     "status": "VALIDATED — 1,800개 전수 백테스트 1위 챔피언 전략으로 122일간 수수료 차감 후 순수익률 +109.22% (CAGR 810.34%), Sharpe 8.05, MDD -4.56% 달성"
   }
 }
