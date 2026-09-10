@@ -11082,5 +11082,72 @@
         "leader_eq": 0.050530518800727876
       }
     ]
+  },
+  "2026-09-10": {
+    "portfolio_value": 168703.96,
+    "daily_pnl": 368.36,
+    "daily_return_pct": 0.2188,
+    "cumulative_pnl": 68703.96,
+    "cumulative_pct": 68.704,
+    "max_equity_ever": 168703.96,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3014,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 28.81,
+        "apr_30d": 79.03,
+        "robustness": 0.9406,
+        "undervalue": 0.949,
+        "leader_eq": 0.19804023410333912
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 5.81,
+        "apr_30d": 14.52,
+        "robustness": 0.8895,
+        "undervalue": 1.012,
+        "leader_eq": 0.1745725042484806
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 8.17,
+        "apr_30d": 21.3,
+        "robustness": 0.8693,
+        "undervalue": 0.728,
+        "leader_eq": 0.5639423006335426
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 4.7,
+        "apr_30d": 374.76,
+        "robustness": 0.6359,
+        "undervalue": 1.454,
+        "leader_eq": 0.7512708105261844
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.51,
+        "apr_30d": 344.2,
+        "robustness": 0.6341,
+        "undervalue": 1.345,
+        "leader_eq": 0.9892171121133481
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 50.0,
+        "apr_30d": 56.53,
+        "robustness": 0.5015,
+        "undervalue": 1.05,
+        "leader_eq": 0.07054078098468862
+      }
+    ]
   }
 }
