@@ -1,6 +1,6 @@
 {
-  "period": "2026-04-09 to 2026-09-09",
-  "days": 149,
+  "period": "2026-04-09 to 2026-09-10",
+  "days": 150,
   "dates": [
     "2026-04-09",
     "2026-04-10",
@@ -151,20 +151,21 @@
     "2026-09-06",
     "2026-09-07",
     "2026-09-08",
-    "2026-09-09"
+    "2026-09-09",
+    "2026-09-10"
   ],
   "initial_capital": 100000.0,
-  "final_value": 222161.32,
-  "total_return": 122.16,
-  "cagr": 606.68,
+  "final_value": 221944.39,
+  "total_return": 121.94,
+  "cagr": 595.87,
   "mdd": -4.45,
-  "sharpe": 6.96,
-  "sortino": 13.88,
-  "calmar": 136.25,
-  "win_rate": 60.4,
-  "fees": 6537.56,
+  "sharpe": 6.92,
+  "sortino": 13.86,
+  "calmar": 133.82,
+  "win_rate": 60.0,
+  "fees": 6735.72,
   "ejection_count": 4,
-  "rebalance_count": 33,
+  "rebalance_count": 34,
   "strategy": {
     "name": "🏆 SKIN_IN_GAME_HEAVY 60:40 (1,800개 백테스트 1위 챔피언)",
     "values": [
@@ -317,9 +318,10 @@
       221869.09,
       221742.64,
       222004.21,
-      222161.32
+      222161.32,
+      221944.39
     ],
-    "fees": 6537.56,
+    "fees": 6735.72,
     "rebalance_events": [
       {
         "date": "2026-04-09",
@@ -638,6 +640,19 @@
           "Hyper4": "13.3%",
           "FuturAI Labs - High Sharpe, Medium Volat": "13.3%",
           "Stratwise Multi-Asset Public": "13.3%"
+        }
+      },
+      {
+        "date": "2026-09-10",
+        "reason": "14일 격주 정기 SKIN_IN_GAME_HEAVY 리밸런싱 실행",
+        "details": "자산 재배분: Core 60% (3개), Satellite 40% (3개) | 수수료: $198.16",
+        "allocations": {
+          "PF1": "20.0%",
+          "FuturAI Labs - High Sharpe, Low Volatili": "20.0%",
+          "Citadel": "20.0%",
+          "22Cap": "13.3%",
+          "BitRocket": "13.3%",
+          "FuturAI Labs - High Sharpe, Medium Volat": "13.3%"
         }
       }
     ],
@@ -9621,16 +9636,77 @@
             "return_pct": 1.09
           }
         ]
+      },
+      "2026-09-10": {
+        "total_value": 221944.39,
+        "total_return": 121.94,
+        "cash": 0.0,
+        "holdings": [
+          {
+            "name": "PF1",
+            "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44388.88,
+            "cost": 44388.88,
+            "profit": 0.0,
+            "return_pct": 0.0
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Low Volatili",
+            "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44388.88,
+            "cost": 44388.88,
+            "profit": 0.0,
+            "return_pct": 0.0
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SKIN_HEAVY",
+            "amount": 44388.88,
+            "cost": 44388.88,
+            "profit": 0.0,
+            "return_pct": 0.0
+          },
+          {
+            "name": "22Cap",
+            "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29592.59,
+            "cost": 29592.59,
+            "profit": 0.0,
+            "return_pct": 0.0
+          },
+          {
+            "name": "BitRocket",
+            "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29592.59,
+            "cost": 29592.59,
+            "profit": 0.0,
+            "return_pct": 0.0
+          },
+          {
+            "name": "FuturAI Labs - High Sharpe, Medium Volat",
+            "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+            "type": "SATELLITE_SKIN_HEAVY",
+            "amount": 29592.59,
+            "cost": 29592.59,
+            "profit": 0.0,
+            "return_pct": 0.0
+          }
+        ]
       }
     }
   },
   "benchmark": {
     "name": "Equal-Weight Baseline Benchmark",
-    "final_value": 115213.19,
-    "total_return": 15.21,
-    "cagr": 41.47,
+    "final_value": 113902.76,
+    "total_return": 13.9,
+    "cagr": 37.27,
     "mdd": -3.6,
-    "sharpe": 2.96,
+    "sharpe": 2.69,
     "values": [
       100000.0,
       100013.69,
@@ -9781,14 +9857,15 @@
       113855.84,
       116300.32,
       114993.47,
-      115213.19
+      115213.19,
+      113902.76
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 60.4,
-    "cumulative_fees_paid": "$6,537.56",
+    "accuracy_rate": 60.0,
+    "cumulative_fees_paid": "$6,735.72",
     "volatility_drag_reduction": "8.0% p.p. MDD 방어 효과",
-    "alpha_over_benchmark": "+106.95% p.p.",
+    "alpha_over_benchmark": "+108.04% p.p.",
     "status": "VALIDATED — 1,800개 전수 백테스트 1위 챔피언 전략으로 122일간 수수료 차감 후 순수익률 +109.22% (CAGR 810.34%), Sharpe 8.05, MDD -4.56% 달성"
   }
 }

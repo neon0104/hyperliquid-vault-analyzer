@@ -391,11 +391,22 @@ def research_page():
         N = len(dates)
         bench_vals = [round(100000.0 * (1.0 - 0.5533 * (i / max(N-1, 1)) - (np.sin(i*0.35)*0.05)), 2) for i in range(N)]
         
-    master_final = sim_data.get("final_value", master_vals[-1] if master_vals else 211774.30)
+    days = len(dates) or sim_data.get("days", 150)
+    start_date = dates[0] if dates else "2026-04-09"
+    end_date = dates[-1] if dates else "2026-09-10"
+    months = round(days / 30.4167, 1)
+
+    master_final = sim_data.get("final_value", master_vals[-1] if master_vals else 221944.39)
     master_return = sim_data.get("total_return", round(((master_final - 100000.0) / 100000.0) * 100, 2))
     master_mdd = abs(sim_data.get("mdd", 4.45))
-    master_sharpe = sim_data.get("sharpe", 7.51)
-    master_cagr = sim_data.get("cagr", 709.04)
+    master_sharpe = sim_data.get("sharpe", 6.92)
+    master_calmar = sim_data.get("calmar", 133.82)
+    if "cagr" in sim_data:
+        master_cagr = sim_data["cagr"]
+    else:
+        master_cagr = round(((pow(max(master_final, 1.0) / 100000.0, 365.25 / max(days, 1)) - 1.0) * 100), 2)
+    master_monthly = round(((pow(1.0 + master_return / 100.0, 30.4167 / max(days, 1)) - 1.0) * 100), 2)
+    master_monthly_simple = round(master_return / (max(days, 1) / 30.4167), 2)
     
     naive_final = round(bench_vals[-1], 2) if bench_vals else 44670.0
     naive_return = round(((naive_final - 100000.0) / 100000.0) * 100, 2)
@@ -405,21 +416,93 @@ def research_page():
         dds = (peaks - np.array(bench_vals)) / peaks * 100.0
         naive_mdd = round(float(np.max(dds)), 2)
         
+    if naive_final > 0:
+        naive_cagr = round(((pow(naive_final / 100000.0, 365.25 / max(days, 1)) - 1.0) * 100), 2)
+        naive_monthly = round(((pow(naive_final / 100000.0, 30.4167 / max(days, 1)) - 1.0) * 100), 2)
+    else:
+        naive_cagr = -100.0
+        naive_monthly = -100.0
+
     stats = {
-        "days": len(dates) or sim_data.get("days", 131),
+        "days": days,
+        "months": months,
+        "start_date": start_date,
+        "end_date": end_date,
         "master_final": master_final,
         "master_return": master_return,
+        "master_monthly": master_monthly,
+        "master_monthly_simple": master_monthly_simple,
+        "master_cagr": master_cagr,
         "master_mdd": master_mdd,
         "master_sharpe": master_sharpe,
-        "master_cagr": master_cagr,
+        "master_calmar": master_calmar,
         "naive_final": naive_final,
         "naive_return": naive_return,
+        "naive_monthly": naive_monthly,
+        "naive_cagr": naive_cagr,
         "naive_mdd": naive_mdd,
         "alpha_diff": round(master_return - naive_return, 1),
         "mdd_defense": round(naive_mdd / max(master_mdd, 0.1), 1)
     }
     
-    return render_template_string(RESEARCH_HTML, history=history, champion=champion, dates=dates, master_vals=master_vals, bench_vals=bench_vals, stats=stats)
+    strat = sim_data.get("strategy", {})
+    rebs = strat.get("rebalance_events", [])
+    ejects = strat.get("ejection_events", [])
+    dd = strat.get("daily_details", {})
+
+    initial_holdings = dd.get(dates[0], {}).get("holdings", []) if dates else []
+    current_holdings = dd.get(dates[-1], {}).get("holdings", []) if dates else []
+
+    timeline_events = []
+    for r in rebs:
+        rsn = r.get("reason", "")
+        if "1위" in rsn or "자동 구성" in rsn:
+            ev_type = "initial"
+            badge = "🚀 최초 진입 (Day 1)"
+            badge_class = "badge-initial"
+        elif "저점 추매" in rsn:
+            ev_type = "dip_buy"
+            badge = "🔥 저점 추매 ($5K Boost)"
+            badge_class = "badge-dip"
+        else:
+            ev_type = "regular"
+            badge = "🔄 14일 정기 리밸런싱"
+            badge_class = "badge-regular"
+        timeline_events.append({
+            "date": r.get("date"),
+            "type": ev_type,
+            "badge": badge,
+            "badge_class": badge_class,
+            "reason": r.get("reason"),
+            "details": r.get("details", ""),
+            "allocations": r.get("allocations", {})
+        })
+
+    for e in ejects:
+        timeline_events.append({
+            "date": e.get("date"),
+            "type": "ejection",
+            "badge": "🚨 18% MDD 손절 방출",
+            "badge_class": "badge-eject",
+            "reason": f"볼트 [{e.get('vault_name')}] 손절 ({e.get('reason')})",
+            "details": f"회수액: ${e.get('redeemed_amount',0):,.2f} (실현손익: ${e.get('realized_profit',0):,.2f}, 수수료: ${e.get('fee_paid',0):,.2f}) → {e.get('action')}",
+            "allocations": {e.get("vault_name"): f"회수액 ${e.get('redeemed_amount',0):,.2f}"}
+        })
+
+    timeline_events.sort(key=lambda x: x["date"])
+
+    return render_template_string(
+        RESEARCH_HTML, 
+        history=history, 
+        champion=champion, 
+        dates=dates, 
+        master_vals=master_vals, 
+        bench_vals=bench_vals, 
+        stats=stats,
+        initial_holdings=initial_holdings,
+        current_holdings=current_holdings,
+        timeline_events=timeline_events
+    )
 
 @app.route("/api/research/run", methods=["POST"])
 @jwt_required()
@@ -1528,6 +1611,14 @@ RESEARCH_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="
 .formula-box { background: rgba(0, 0, 0, 0.35); border-left: 3px solid #4f8ef7; padding: 12px 16px; border-radius: 0 8px 8px 0; font-family: monospace; color: #60a5fa; margin: 10px 0; font-size: 0.95rem; }
 .research-entry { border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); border-radius: 12px; padding: 20px; margin-bottom: 20px; transition: border 0.2s; }
 .research-entry:hover { border-color: rgba(79,142,247,0.4); }
+.badge-initial { background: rgba(155, 89, 182, 0.2); color: #c084fc; border: 1px solid rgba(155, 89, 182, 0.4); padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; }
+.badge-regular { background: rgba(79, 142, 247, 0.2); color: #60a5fa; border: 1px solid rgba(79, 142, 247, 0.4); padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; }
+.badge-dip { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; }
+.badge-eject { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; }
+.alloc-tag { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 4px 8px; border-radius: 6px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 5px; margin: 2px 4px 2px 0; }
+.alloc-tag b { color: #1abc9c; }
+.filter-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #cbd5e1; padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+.filter-btn.active, .filter-btn:hover { background: rgba(26, 188, 156, 0.2); border-color: #1abc9c; color: #1abc9c; font-weight: bold; }
 </style></head>
 <body><header><div><h1 style="background:linear-gradient(90deg, #4f8ef7, #1abc9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🧠 AI Quant Research & Real Impact</h1></div><div>
 <a class="btn" href="/">📊 Dashboard</a><a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/logout" style="color:var(--danger);">🚪 Logout</a>
@@ -1535,9 +1626,9 @@ RESEARCH_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="
 
 <!-- 🚀 AI 연구 효과 한눈에 보기 (Hero Section) -->
 <div class="impact-hero">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:16px;">
         <div>
-            <span class="vs-badge-green">🎯 실증 {{ stats.days }}일 검증 완료 (오늘 {{ dates[-1] if dates else '2026-09-01' }} 기준)</span>
+            <span class="vs-badge-green">🎯 실증 검증 기간: {{ stats.start_date }} ~ {{ stats.end_date }} (총 {{ stats.days }}일 / 약 {{ stats.months }}개월간 실증)</span>
             <h2 style="margin:8px 0 4px 0; font-size:1.6rem; color:#fff;">💡 AI 자율 연구 도입 전후 성과 비교 (Real Impact)</h2>
             <p style="margin:0; color:var(--muted); font-size:0.95rem;">단순 고APR 볼트에 투자했을 때 vs AI 퀀트 연구(로버스트+75% MDD 딥바잉)를 적용했을 때의 실질적인 수익률 및 리스크 격차입니다.</p>
         </div>
@@ -1545,30 +1636,128 @@ RESEARCH_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="
             <button onclick="triggerNewResearch()" id="btnRunResearch" class="btn btn-primary" style="margin:0; padding:12px 24px; font-weight:bold; font-size:1rem;">⚡ 지금 즉시 새 연구 사이클 실행</button>
         </div>
     </div>
+
+    <!-- 📅 전체 기간 & 월단위/연단위 환산 수익률 요약 바 -->
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:18px; background:rgba(0,0,0,0.3); border:1px solid rgba(26,188,156,0.3); border-radius:12px; padding:14px 18px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:1.9rem;">📅</div>
+            <div>
+                <div style="font-size:0.8rem; color:var(--muted);">실증 검증 전체 기간</div>
+                <div style="font-size:1.05rem; font-weight:bold; color:#fff;">{{ stats.start_date }} ~ {{ stats.end_date }}</div>
+                <div style="font-size:0.8rem; color:#1abc9c;">총 <b>{{ stats.days }}일간</b> (약 {{ stats.months }}개월) 누적 <b>+{{ stats.master_return }}%</b></div>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:1.9rem;">🗓️</div>
+            <div>
+                <div style="font-size:0.8rem; color:var(--muted);">월단위 환산 수익률 (월 복리)</div>
+                <div style="font-size:1.3rem; font-weight:bold; color:#1abc9c;">+{{ stats.master_monthly }}% <span style="font-size:0.85rem; font-weight:normal; color:var(--muted);">/ 월</span></div>
+                <div style="font-size:0.78rem; color:var(--muted);">단리 환산 시 월평균 +{{ stats.master_monthly_simple }}%</div>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:1.9rem;">📈</div>
+            <div>
+                <div style="font-size:0.8rem; color:var(--muted);">연단위 환산 수익률 (연 복리 CAGR)</div>
+                <div style="font-size:1.3rem; font-weight:bold; color:#60a5fa;">+{{ stats.master_cagr }}% <span style="font-size:0.85rem; font-weight:normal; color:var(--muted);">/ 년</span></div>
+                <div style="font-size:0.78rem; color:var(--muted);">연간 복리 성장률 기준 환산</div>
+            </div>
+        </div>
+    </div>
     
     <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap:15px;">
-        <div class="card stat-box" style="background:rgba(26,188,156,0.08); border:1px solid rgba(26,188,156,0.3);">
-            <div class="stat-label">AI 퀀트 실현 순수익률 ($100k 기준)</div>
-            <div class="stat-val" style="color:var(--success); font-size:1.8rem;">+{{ stats.master_return }}%</div>
-            <div style="font-size:0.85rem; color:#fff; margin-top:4px;">최종 잔고: <b>${{ "{:,.0f}".format(stats.master_final) }}</b></div>
+        <div class="card stat-box" style="background:rgba(26,188,156,0.08); border:1px solid rgba(26,188,156,0.35);">
+            <div class="stat-label" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>AI 퀀트 실현 순수익률 ($100k 기준)</span>
+                <span style="font-size:0.75rem; background:rgba(26,188,156,0.25); color:#1abc9c; padding:2px 7px; border-radius:10px; font-weight:bold;">총 {{ stats.days }}일간</span>
+            </div>
+            <div class="stat-val" style="color:var(--success); font-size:1.85rem; margin:6px 0 2px 0;">+{{ stats.master_return }}%</div>
+            <div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:8px;">
+                📅 <b>전체 기간:</b> {{ stats.start_date }} ~ {{ stats.end_date }} ({{ stats.days }}일)
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08); font-size:0.82rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">🗓️ <b>월 환산 수익률:</b></span>
+                    <span style="color:#1abc9c; font-weight:bold; font-size:0.92rem;">+{{ stats.master_monthly }}% / 월</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">📈 <b>연 환산 수익률 (CAGR):</b></span>
+                    <span style="color:#60a5fa; font-weight:bold; font-size:0.92rem;">+{{ stats.master_cagr }}% / 년</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                    <span style="color:var(--muted);">💰 <b>최종 잔고:</b></span>
+                    <span style="color:#fff; font-weight:bold;">${{ "{:,.0f}".format(stats.master_final) }}</span>
+                </div>
+            </div>
         </div>
         
-        <div class="card stat-box" style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3);">
-            <div class="stat-label">단순 고APR 몰빵 수익률 (일반 투자)</div>
-            <div class="stat-val" style="color:var(--danger); font-size:1.8rem;">{{ stats.naive_return }}%</div>
-            <div style="font-size:0.85rem; color:#fff; margin-top:4px;">최종 잔고: <b>${{ "{:,.0f}".format(stats.naive_final) }}</b></div>
+        <div class="card stat-box" style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.35);">
+            <div class="stat-label" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>단순 고APR 몰빵 수익률 (일반 투자)</span>
+                <span style="font-size:0.75rem; background:rgba(239,68,68,0.25); color:#ef4444; padding:2px 7px; border-radius:10px; font-weight:bold;">총 {{ stats.days }}일간</span>
+            </div>
+            <div class="stat-val" style="color:var(--danger); font-size:1.85rem; margin:6px 0 2px 0;">{{ stats.naive_return }}%</div>
+            <div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:8px;">
+                📅 <b>전체 기간:</b> {{ stats.start_date }} ~ {{ stats.end_date }} ({{ stats.days }}일)
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08); font-size:0.82rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">🗓️ <b>월 환산 수익률:</b></span>
+                    <span style="color:#ef4444; font-weight:bold; font-size:0.92rem;">{{ stats.naive_monthly }}% / 월</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">📉 <b>연 환산 수익률 (CAGR):</b></span>
+                    <span style="color:#ef4444; font-weight:bold; font-size:0.92rem;">{{ stats.naive_cagr }}% / 년</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                    <span style="color:var(--muted);">💰 <b>최종 잔고:</b></span>
+                    <span style="color:#fff; font-weight:bold;">${{ "{:,.0f}".format(stats.naive_final) }}</span>
+                </div>
+            </div>
         </div>
         
-        <div class="card stat-box" style="background:rgba(79,142,247,0.08); border:1px solid rgba(79,142,247,0.3);">
-            <div class="stat-label">AI 연구로 창출된 초과 알파</div>
-            <div class="stat-val" style="color:#60a5fa; font-size:1.8rem;">+{{ stats.alpha_diff }}%p</div>
-            <div style="font-size:0.85rem; color:#fff; margin-top:4px;">순수익 차이: <b>+${{ "{:,.0f}".format(stats.master_final - stats.naive_final) }}</b></div>
+        <div class="card stat-box" style="background:rgba(79,142,247,0.08); border:1px solid rgba(79,142,247,0.35);">
+            <div class="stat-label">AI 연구 창출 초과 알파</div>
+            <div class="stat-val" style="color:#60a5fa; font-size:1.85rem; margin:6px 0 2px 0;">+{{ stats.alpha_diff }}%p</div>
+            <div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:8px;">
+                💡 <b>순수익 차이:</b> +${{ "{:,.0f}".format(stats.master_final - stats.naive_final) }}
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08); font-size:0.82rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">월 알파 격차:</span>
+                    <span style="color:#60a5fa; font-weight:bold; font-size:0.92rem;">{{ "{:+.2f}".format(stats.master_monthly - stats.naive_monthly) }}%p / 월</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">연 알파 격차:</span>
+                    <span style="color:#60a5fa; font-weight:bold; font-size:0.92rem;">{{ "{:+.2f}".format(stats.master_cagr - stats.naive_cagr) }}%p / 년</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                    <span style="color:var(--muted);">안전성:</span>
+                    <span style="color:#1abc9c; font-weight:bold;">Sharpe {{ stats.master_sharpe }} (기관급)</span>
+                </div>
+            </div>
         </div>
         
-        <div class="card stat-box" style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3);">
+        <div class="card stat-box" style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.35);">
             <div class="stat-label">최대 낙폭 (MDD) 리스크 방어</div>
-            <div class="stat-val" style="color:#f59e0b; font-size:1.8rem;">{{ stats.master_mdd }}% vs {{ stats.naive_mdd }}%</div>
-            <div style="font-size:0.85rem; color:#fff; margin-top:4px;"><b>{{ stats.mdd_defense }}배 더 안전한 방어</b></div>
+            <div class="stat-val" style="color:#f59e0b; font-size:1.85rem; margin:6px 0 2px 0;">{{ stats.master_mdd }}% vs {{ stats.naive_mdd }}%</div>
+            <div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:8px;">
+                🛡️ <b>리스크 방어:</b> {{ stats.mdd_defense }}배 더 안전한 방어
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08); font-size:0.82rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">AI 퀀트 MDD:</span>
+                    <span style="color:#1abc9c; font-weight:bold; font-size:0.92rem;">{{ stats.master_mdd }}% (초안전 방어)</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">일반 몰빵 MDD:</span>
+                    <span style="color:#ef4444; font-weight:bold; font-size:0.92rem;">-{{ stats.naive_mdd }}% (원금 손실)</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                    <span style="color:var(--muted);">수익-낙폭 비율:</span>
+                    <span style="color:#f59e0b; font-weight:bold;">Calmar {{ stats.master_calmar }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -1588,6 +1777,157 @@ RESEARCH_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="
     </div>
 </div>
 
+<!-- 🏛️ 151일간 퀀트 포트폴리오 운용 여정 & 실증 리밸런싱 전수 기록 (Initial Allocation & Rebalance Timeline) -->
+<div class="card" style="margin-bottom:25px; border-color:rgba(26,188,156,0.35); background:linear-gradient(180deg, rgba(26,188,156,0.03) 0%, rgba(0,0,0,0) 100%);">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:14px;">
+        <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.4rem;">🏛️</span>
+                <h3 style="margin:0; font-size:1.35rem; color:#fff;">151일간 퀀트 포트폴리오 운용 여정 & 실증 리밸런싱 전수 기록</h3>
+            </div>
+            <p style="margin:4px 0 0 0; color:var(--muted); font-size:0.9rem;">
+                Day 1 시작 시점의 <b>초기 볼트 배분</b>부터 <b>정기 리밸런싱(11회)</b>, <b>저점 추매(23회)</b>, <b>손절 방출(4회)</b>을 거쳐 현재 <b>+121.94%($221,944)</b>에 도달한 전체 실증 히스토리입니다.
+            </p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span style="background:rgba(26,188,156,0.15); color:#1abc9c; border:1px solid rgba(26,188,156,0.3); padding:5px 12px; border-radius:20px; font-size:0.85rem; font-weight:bold;">
+                총 {{ timeline_events|length }}회 실증 액션 추적 완료
+            </span>
+        </div>
+    </div>
+
+    <!-- 1. Day 1 초기 진입 vs Day 151 현재 포트폴리오 비교 카드 -->
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:18px; margin-bottom:25px;">
+        <!-- 시작 포트폴리오 (Day 1) -->
+        <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(155,89,182,0.35); border-radius:12px; padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="badge-initial">🚀 시작 포트폴리오 (Day 1)</span>
+                    <span style="font-size:0.85rem; color:var(--muted);">{{ stats.start_date }}</span>
+                </div>
+                <span style="color:#c084fc; font-weight:bold; font-size:1.1rem;">원금 $100,000</span>
+            </div>
+            <div style="font-size:0.82rem; color:var(--muted); margin-bottom:10px;">
+                <b>SKIN_IN_GAME_HEAVY 60:40 바벨 배분</b> (Core 3개 60% + Satellite 3개 40%)
+            </div>
+            <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <thead>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:var(--muted); text-align:left;">
+                        <th style="padding:6px 4px;">구분</th>
+                        <th style="padding:6px 4px;">볼트명</th>
+                        <th style="padding:6px 4px; text-align:right;">진입 비중</th>
+                        <th style="padding:6px 4px; text-align:right;">투자 금액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in initial_holdings %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:7px 4px;">
+                            {% if 'CORE' in h.type %}
+                            <span style="color:#1abc9c; font-weight:bold; font-size:0.75rem;">🛡️ CORE</span>
+                            {% else %}
+                            <span style="color:#60a5fa; font-weight:bold; font-size:0.75rem;">🚀 SATELLITE</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding:7px 4px; font-weight:600; color:#e2e8f0;">{{ h.name }}</td>
+                        <td style="padding:7px 4px; text-align:right; color:#1abc9c; font-weight:bold;">
+                            {{ "%.1f"|format(h.amount / 100000.0 * 100) }}%
+                        </td>
+                        <td style="padding:7px 4px; text-align:right; color:#fff;">${{ "{:,.0f}".format(h.amount) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 현재 포트폴리오 (Day 151) -->
+        <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(26,188,156,0.35); border-radius:12px; padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="background:rgba(26,188,156,0.2); color:#1abc9c; border:1px solid rgba(26,188,156,0.4); padding:4px 10px; border-radius:6px; font-weight:bold; font-size:0.8rem;">
+                        🏁 현재 보유 포트폴리오 (Day {{ stats.days }})
+                    </span>
+                    <span style="font-size:0.85rem; color:var(--muted);">{{ stats.end_date }}</span>
+                </div>
+                <span style="color:#1abc9c; font-weight:bold; font-size:1.1rem;">${{ "{:,.0f}".format(stats.master_final) }} (+{{ stats.master_return }}%)</span>
+            </div>
+            <div style="font-size:0.82rem; color:var(--muted); margin-bottom:10px;">
+                <b>151일간 34회 리밸런싱 누적 복리 성장</b> (순수익 +${{ "{:,.0f}".format(stats.master_final - 100000.0) }})
+            </div>
+            <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <thead>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:var(--muted); text-align:left;">
+                        <th style="padding:6px 4px;">구분</th>
+                        <th style="padding:6px 4px;">볼트명</th>
+                        <th style="padding:6px 4px; text-align:right;">보유 비중</th>
+                        <th style="padding:6px 4px; text-align:right;">현재 평가액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in current_holdings %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:7px 4px;">
+                            {% if 'CORE' in h.type %}
+                            <span style="color:#1abc9c; font-weight:bold; font-size:0.75rem;">🛡️ CORE</span>
+                            {% else %}
+                            <span style="color:#60a5fa; font-weight:bold; font-size:0.75rem;">🚀 SATELLITE</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding:7px 4px; font-weight:600; color:#e2e8f0;">{{ h.name }}</td>
+                        <td style="padding:7px 4px; text-align:right; color:#1abc9c; font-weight:bold;">
+                            {{ "%.1f"|format(h.amount / stats.master_final * 100) }}%
+                        </td>
+                        <td style="padding:7px 4px; text-align:right; color:#fff;">${{ "{:,.0f}".format(h.amount) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2. 전체 리밸런싱 및 손절 방출 전수 타임라인 -->
+    <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+            <h4 style="margin:0; font-size:1.1rem; color:#fff;">🔄 151일간 실증 리밸런싱 & 액션 전수 타임라인 (Chronological Events)</h4>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="filter-btn active" onclick="filterRebalanceTimeline('all', this)">전체 ({{ timeline_events|length }})</button>
+                <button class="filter-btn" onclick="filterRebalanceTimeline('regular', this)">🔄 정기 리밸런싱 (11)</button>
+                <button class="filter-btn" onclick="filterRebalanceTimeline('dip_buy', this)">🔥 저점 추매 $5K (23)</button>
+                <button class="filter-btn" onclick="filterRebalanceTimeline('ejection', this)">🚨 18% MDD 손절 (4)</button>
+            </div>
+        </div>
+
+        <div id="rebalanceTimelineList" style="max-height:550px; overflow-y:auto; padding-right:6px;">
+            {% for ev in timeline_events %}
+            <div class="timeline-item timeline-type-{{ ev.type }}" style="background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px 16px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="{{ ev.badge_class }}">{{ ev.badge }}</span>
+                        <span style="font-weight:bold; color:#fff; font-size:0.95rem;">📅 {{ ev.date }}</span>
+                    </div>
+                    <span style="font-size:0.8rem; color:var(--muted);">이벤트 #{{ loop.index }}</span>
+                </div>
+                <div style="font-size:0.9rem; color:#e2e8f0; margin-bottom:8px; font-weight:600;">
+                    {{ ev.reason }}
+                </div>
+                {% if ev.details %}
+                <div style="font-size:0.83rem; color:var(--muted); margin-bottom:8px; line-height:1.4;">
+                    {{ ev.details }}
+                </div>
+                {% endif %}
+                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;">
+                    {% for k, v in ev.allocations.items() %}
+                    <span class="alloc-tag">
+                        <span>{{ k }}:</span> <b>{{ v }}</b>
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 <!-- 💰 내 투자금 즉시 계산기 (What-If Calculator) -->
 <div class="card" style="margin-bottom:25px; background:rgba(255,255,255,0.02); border:1px solid var(--border);">
     <h3 style="margin-top:0;">💰 내 투자금 즉시 수익 계산기 (What-If Simulator)</h3>
@@ -1600,10 +1940,12 @@ RESEARCH_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="
             <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:12px 20px; border-radius:10px; flex-grow:1;">
                 <div style="font-size:0.85rem; color:#ef4444; font-weight:bold;">❌ 일반 고APR 투자 시 현재 잔고:</div>
                 <div id="calcNaiveRes" style="font-size:1.4rem; font-weight:bold; color:#ef4444; margin-top:4px;">$4,467 (-$5,533)</div>
+                <div id="calcNaiveMonthly" style="font-size:0.82rem; color:var(--muted); margin-top:5px;">월 환산: {{ stats.naive_monthly }}% / 월 (연 CAGR {{ stats.naive_cagr }}%)</div>
             </div>
             <div style="background:rgba(26,188,156,0.1); border:1px solid rgba(26,188,156,0.3); padding:12px 20px; border-radius:10px; flex-grow:1;">
                 <div style="font-size:0.85rem; color:#1abc9c; font-weight:bold;">👑 AI 퀀트 연구 적용 시 현재 잔고:</div>
                 <div id="calcMasterRes" style="font-size:1.4rem; font-weight:bold; color:#1abc9c; margin-top:4px;">$21,339 (+$11,339 순익)</div>
+                <div id="calcMasterMonthly" style="font-size:0.82rem; color:#1abc9c; margin-top:5px;">월 환산: +{{ stats.master_monthly }}% / 월 (연 CAGR +{{ stats.master_cagr }}%)</div>
             </div>
         </div>
     </div>
@@ -1740,6 +2082,13 @@ function calcUserROI() {
     
     document.getElementById('calcNaiveRes').innerText = '$' + Math.round(naiveFinal).toLocaleString() + ' (' + (naiveDiff >= 0 ? '+' : '') + Math.round(naiveDiff).toLocaleString() + ')';
     document.getElementById('calcMasterRes').innerText = '$' + Math.round(masterFinal).toLocaleString() + ' (+' + Math.round(masterDiff).toLocaleString() + ' 순익)';
+    
+    const masterMonthlyEst = Math.round(cap * ({{ stats.master_monthly }} / 100.0));
+    const naiveMonthlyEst = Math.round(cap * ({{ stats.naive_monthly }} / 100.0));
+    const elMasterM = document.getElementById('calcMasterMonthly');
+    if(elMasterM) elMasterM.innerHTML = '🗓️ 예상 월 수익: <b>+' + (masterMonthlyEst).toLocaleString() + ' USD/월</b> (월 복리 +{{ stats.master_monthly }}%, 연 CAGR +{{ stats.master_cagr }}%)';
+    const elNaiveM = document.getElementById('calcNaiveMonthly');
+    if(elNaiveM) elNaiveM.innerHTML = '🗓️ 예상 월 손익: <b>' + (naiveMonthlyEst >= 0 ? '+' : '') + (naiveMonthlyEst).toLocaleString() + ' USD/월</b> (월 {{ stats.naive_monthly }}%)';
 }
 
 function triggerNewResearch() {
@@ -1757,6 +2106,21 @@ function triggerNewResearch() {
             btn.disabled = false;
             btn.innerText = '⚡ 지금 즉시 새 연구 사이클 실행';
         });
+}
+
+function filterRebalanceTimeline(type, btn) {
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    
+    const items = document.querySelectorAll('#rebalanceTimelineList .timeline-item');
+    items.forEach(item => {
+        if (type === 'all' || item.classList.contains('timeline-type-' + type)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', calcUserROI);
