@@ -548,5 +548,55 @@
         "actual_24h_return_pct": -0.1216
       }
     ]
+  },
+  {
+    "evaluated_date": "2026-09-12",
+    "referenced_date": "2026-09-11",
+    "portfolio_24h_profit_usd": 157.44,
+    "portfolio_24h_return_pct": 0.1574,
+    "evaluated_holdings": [
+      {
+        "vault_name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 90.47,
+        "actual_24h_return_pct": 0.4523
+      },
+      {
+        "vault_name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 0.0,
+        "actual_24h_return_pct": 0.0
+      },
+      {
+        "vault_name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 18.7,
+        "actual_24h_return_pct": 0.0935
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
+        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 41.4,
+        "actual_24h_return_pct": 0.3105
+      },
+      {
+        "vault_name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -0.45,
+        "actual_24h_return_pct": -0.0034
+      },
+      {
+        "vault_name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 7.32,
+        "actual_24h_return_pct": 0.0549
+      }
+    ]
   }
 ]
