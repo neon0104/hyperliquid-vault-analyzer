@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-09-02 23:39:31",
-    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
-    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
-    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
-    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
-    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
-    "validation_dataset": "143 days (2026-02-27 ~ 2026-09-02)",
-    "top_discovered_vaults": [
-      {
-        "name": "Algo1",
-        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
-        "data_days": 13,
-        "hurst": 0.5,
-        "sortino": 320298787.09,
-        "kelly_f": 23.7,
-        "apr_30d": 147.0,
-        "mdd": 15.94,
-        "sharpe": 5.97,
-        "leader_usd": 10094.42
-      },
-      {
-        "name": "137S IF Long I",
-        "address": "0xa8008d93b7eb95e48cf7123b9cb7f5419cfc02f9",
-        "data_days": 95,
-        "hurst": 0.569,
-        "sortino": 1960101.87,
-        "kelly_f": 0.3,
-        "apr_30d": 11.57,
-        "mdd": 0.0,
-        "sharpe": 3.45,
-        "leader_usd": 5078.98
-      },
-      {
-        "name": "YEELON",
-        "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
-        "data_days": 142,
-        "hurst": 0.1,
-        "sortino": 338707.89,
-        "kelly_f": 3.4,
-        "apr_30d": 0.0,
-        "mdd": 27.17,
-        "sharpe": 5.32,
-        "leader_usd": 9337.07
-      },
-      {
-        "name": "AJ Pro",
-        "address": "0x8f78da3fdb3b1dd3eb02529a802a02855d950746",
-        "data_days": 137,
-        "hurst": 0.1,
-        "sortino": 249468.16,
-        "kelly_f": 1.3,
-        "apr_30d": 0.0,
-        "mdd": 184.27,
-        "sharpe": 0.81,
-        "leader_usd": 13064.72
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-09-03 03:41:43",
     "topic_id": "TOPIC_FRACTIONAL_KELLY",
     "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
@@ -2941,6 +2881,66 @@
   },
   {
     "timestamp": "2026-09-11 15:39:18",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-09-11)",
+    "top_discovered_vaults": [
+      {
+        "name": "[Bee] Line",
+        "address": "0xc360c0e450ea1347efe35b01c4c6d500e05aeb30",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 215496067.83,
+        "kelly_f": 30.0,
+        "apr_30d": 131.24,
+        "mdd": 2.64,
+        "sharpe": 10.2,
+        "leader_usd": 1020.35
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 14,
+        "hurst": 0.5,
+        "sortino": 296127980.31,
+        "kelly_f": 23.9,
+        "apr_30d": 147.43,
+        "mdd": 15.86,
+        "sharpe": 6.18,
+        "leader_usd": 10104.67
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 62.56,
+        "kelly_f": 19.3,
+        "apr_30d": 22.27,
+        "mdd": 7.21,
+        "sharpe": 8.47,
+        "leader_usd": 7728.14
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 16,
+        "hurst": 0.701,
+        "sortino": 44.8,
+        "kelly_f": 18.8,
+        "apr_30d": 402.72,
+        "mdd": 19.78,
+        "sharpe": 7.1,
+        "leader_usd": 13741.31
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-09-11 19:39:20",
     "topic_id": "TOPIC_FRACTIONAL_KELLY",
     "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
     "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
