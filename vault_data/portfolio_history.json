@@ -11274,5 +11274,81 @@
         "leader_eq": 0.821421580885699
       }
     ]
+  },
+  "2026-09-13": {
+    "portfolio_value": 171194.3,
+    "daily_pnl": 1350.67,
+    "daily_return_pct": 0.7952,
+    "cumulative_pnl": 71194.3,
+    "cumulative_pct": 71.1943,
+    "max_equity_ever": 171194.3,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4442,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 25.44,
+        "apr_30d": 79.37,
+        "robustness": 0.9406,
+        "undervalue": 0.947,
+        "leader_eq": 0.19886506197605786
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 11.31,
+        "apr_30d": 20.61,
+        "robustness": 0.9218,
+        "undervalue": 1.016,
+        "leader_eq": 0.1744460833882201
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 7.02,
+        "apr_30d": 22.23,
+        "robustness": 0.7813,
+        "undervalue": 1.02,
+        "leader_eq": 0.9895530225208403
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 2.7,
+        "apr_30d": 467.26,
+        "robustness": 0.6692,
+        "undervalue": 1.209,
+        "leader_eq": 0.7543544279492439
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 3.53,
+        "apr_30d": 51.66,
+        "robustness": 0.6422,
+        "undervalue": 1.044,
+        "leader_eq": 0.06419721592368184
+      },
+      {
+        "name": "BredoStrategy",
+        "address": "0x654016a8c9fcf0c4cb7ed6078aba21f7f399f7b7",
+        "alloc_pct": 28.11,
+        "apr_30d": 693.47,
+        "robustness": 0.3809,
+        "undervalue": 1.508,
+        "leader_eq": 0.1284104350808776
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 21.89,
+        "apr_30d": 259.51,
+        "robustness": 0.5953,
+        "undervalue": 1.276,
+        "leader_eq": 0.821421580885699
+      }
+    ]
   }
 }
