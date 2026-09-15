@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-15T23:39:21.625009",
+  "updated_at": "2026-09-16T03:41:45.081891",
   "champion_strategy": {
     "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
     "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
     "total_return_pct": 24.26,
-    "cagr_pct": 59.85,
+    "cagr_pct": 59.41,
     "sharpe_ratio": 2.01,
     "sortino_ratio": 2.93,
     "max_drawdown_pct": 10.92,
-    "calmar_ratio": 5.48,
+    "calmar_ratio": 5.44,
     "final_capital": 124258.03
   },
   "tournament_rankings": [
@@ -16,29 +16,29 @@
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
       "total_return_pct": 24.26,
-      "cagr_pct": 59.85,
+      "cagr_pct": 59.41,
       "sharpe_ratio": 2.01,
       "sortino_ratio": 2.93,
       "max_drawdown_pct": 10.92,
-      "calmar_ratio": 5.48,
+      "calmar_ratio": 5.44,
       "final_capital": 124258.03
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": 5.33,
-      "cagr_pct": 11.87,
+      "total_return_pct": 5.38,
+      "cagr_pct": 11.92,
       "sharpe_ratio": 0.72,
       "sortino_ratio": 0.69,
       "max_drawdown_pct": 12.64,
       "calmar_ratio": 0.94,
-      "final_capital": 105328.62
+      "final_capital": 105384.86
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
       "total_return_pct": 1.45,
-      "cagr_pct": 3.16,
+      "cagr_pct": 3.14,
       "sharpe_ratio": 0.35,
       "sortino_ratio": 0.37,
       "max_drawdown_pct": 3.97,
