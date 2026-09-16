@@ -798,5 +798,55 @@
         "actual_24h_return_pct": -0.0051
       }
     ]
+  },
+  {
+    "evaluated_date": "2026-09-17",
+    "referenced_date": "2026-09-16",
+    "portfolio_24h_profit_usd": -194.67,
+    "portfolio_24h_return_pct": -0.1947,
+    "evaluated_holdings": [
+      {
+        "vault_name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -125.3,
+        "actual_24h_return_pct": -0.6265
+      },
+      {
+        "vault_name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -0.0,
+        "actual_24h_return_pct": -0.0
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
+        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 1.53,
+        "actual_24h_return_pct": 0.0076
+      },
+      {
+        "vault_name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -79.63,
+        "actual_24h_return_pct": -0.5972
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Medium Volat",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -5.41,
+        "actual_24h_return_pct": -0.0406
+      },
+      {
+        "vault_name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 14.16,
+        "actual_24h_return_pct": 0.1062
+      }
+    ]
   }
 ]

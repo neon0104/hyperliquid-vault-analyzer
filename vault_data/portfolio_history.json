@@ -11578,5 +11578,99 @@
         "leader_eq": 0.4144930347400911
       }
     ]
+  },
+  "2026-09-17": {
+    "portfolio_value": 174169.16,
+    "daily_pnl": 1027.16,
+    "daily_return_pct": 0.5932,
+    "cumulative_pnl": 74169.16,
+    "cumulative_pct": 74.1692,
+    "max_equity_ever": 174169.16,
+    "mdd_pct": 0.0,
+    "risk_score": 0.44,
+    "n_vaults": 9,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 31.26,
+        "apr_30d": 51.84,
+        "robustness": 0.9406,
+        "undervalue": 0.933,
+        "leader_eq": 0.19729742961212265
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 8.68,
+        "apr_30d": 22.67,
+        "robustness": 0.7934,
+        "undervalue": 1.019,
+        "leader_eq": 0.9895530225208403
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 3.66,
+        "apr_30d": 28.19,
+        "robustness": 0.7228,
+        "undervalue": 0.608,
+        "leader_eq": 0.29032414440628757
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 3.69,
+        "apr_30d": 443.88,
+        "robustness": 0.6916,
+        "undervalue": 1.173,
+        "leader_eq": 0.7531779193750743
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.72,
+        "apr_30d": 286.99,
+        "robustness": 0.603,
+        "undervalue": 1.264,
+        "leader_eq": 0.9887869383012668
+      },
+      {
+        "name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "alloc_pct": 27.2,
+        "apr_30d": 486.39,
+        "robustness": 0.4492,
+        "undervalue": 1.489,
+        "leader_eq": 0.7972212024732622
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 11.42,
+        "apr_30d": 244.08,
+        "robustness": 0.6012,
+        "undervalue": 1.255,
+        "leader_eq": 0.8165282172727331
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 8.52,
+        "apr_30d": 130.59,
+        "robustness": 0.4635,
+        "undervalue": 1.088,
+        "leader_eq": 0.9999999097916233
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 2.85,
+        "apr_30d": 64.77,
+        "robustness": 0.5611,
+        "undervalue": 1.055,
+        "leader_eq": 0.4144930347400911
+      }
+    ]
   }
 }
