@@ -11672,5 +11672,63 @@
         "leader_eq": 0.4144930347400911
       }
     ]
+  },
+  "2026-09-18": {
+    "portfolio_value": 174407.68,
+    "daily_pnl": 238.52,
+    "daily_return_pct": 0.1369,
+    "cumulative_pnl": 74407.68,
+    "cumulative_pct": 74.4077,
+    "max_equity_ever": 174407.68,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1623,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 40.12,
+        "apr_30d": 6.38,
+        "robustness": 0.9406,
+        "undervalue": 0.816,
+        "leader_eq": 0.2185188790024734
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 40.13,
+        "apr_30d": 45.91,
+        "robustness": 0.9074,
+        "undervalue": 0.617,
+        "leader_eq": 0.2902778627464743
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 11.15,
+        "apr_30d": 22.72,
+        "robustness": 0.7934,
+        "undervalue": 1.021,
+        "leader_eq": 0.9895530225208403
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 5.35,
+        "apr_30d": 461.66,
+        "robustness": 0.6744,
+        "undervalue": 1.212,
+        "leader_eq": 0.7531779193750743
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 3.25,
+        "apr_30d": 54.46,
+        "robustness": 0.6422,
+        "undervalue": 1.047,
+        "leader_eq": 0.06065969214434065
+      }
+    ]
   }
 }

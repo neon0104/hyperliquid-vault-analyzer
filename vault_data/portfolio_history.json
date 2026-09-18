@@ -11730,5 +11730,72 @@
         "leader_eq": 0.06065969214434065
       }
     ]
+  },
+  "2026-09-19": {
+    "portfolio_value": 174586.83,
+    "daily_pnl": 179.15,
+    "daily_return_pct": 0.1027,
+    "cumulative_pnl": 74586.83,
+    "cumulative_pct": 74.5868,
+    "max_equity_ever": 174586.83,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3737,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 22.14,
+        "apr_30d": 6.39,
+        "robustness": 0.9406,
+        "undervalue": 0.816,
+        "leader_eq": 0.21877529006229873
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 16.78,
+        "apr_30d": 47.0,
+        "robustness": 0.919,
+        "undervalue": 0.603,
+        "leader_eq": 0.2972649217157928
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 6.15,
+        "apr_30d": 22.62,
+        "robustness": 0.792,
+        "undervalue": 1.022,
+        "leader_eq": 0.9895530225208403
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 2.95,
+        "apr_30d": 506.72,
+        "robustness": 0.6906,
+        "undervalue": 1.31,
+        "leader_eq": 0.7442305502397635
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.98,
+        "apr_30d": 307.14,
+        "robustness": 0.6351,
+        "undervalue": 1.344,
+        "leader_eq": 0.9884394218728829
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 50.0,
+        "apr_30d": 11.54,
+        "robustness": 0.4434,
+        "undervalue": 0.984,
+        "leader_eq": 0.9999999097916233
+      }
+    ]
   }
 }
