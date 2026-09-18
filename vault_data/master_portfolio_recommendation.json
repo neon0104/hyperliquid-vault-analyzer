@@ -1,30 +1,15 @@
 {
   "analysis_date": "2026-09-18",
-  "updated_at": "2026-09-18T07:39:18.456807",
+  "updated_at": "2026-09-18T11:39:18.537334",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 111.23,
-    "portfolio_mdd_estimate": 3.51,
-    "estimated_monthly_profit_usd": 9269.17,
-    "estimated_annual_profit_usd": 111229.98,
+    "expected_apr": 113.05,
+    "portfolio_mdd_estimate": 5.27,
+    "estimated_monthly_profit_usd": 9420.94,
+    "estimated_annual_profit_usd": 113051.31,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
-    {
-      "role": "🛡️ CORE (초안정 복리)",
-      "name": "[Bee] Line",
-      "address": "0xc360c0e450ea1347efe35b01c4c6d500e05aeb30",
-      "allocation_pct": 20.0,
-      "allocated_usd": 20000.0,
-      "apr_30d": 112.32,
-      "mdd": 4.86,
-      "sharpe": 14.83,
-      "sortino": 181866450.47,
-      "hurst": 0.5,
-      "leader_usd": 2055.73,
-      "action_guide": "✅ 정상 보유 및 복리 운용",
-      "is_dip": false
-    },
     {
       "role": "🛡️ CORE (초안정 복리)",
       "name": "Slow Stable",
@@ -56,18 +41,18 @@
       "is_dip": false
     },
     {
-      "role": "⚡ SATELLITE (초과 알파)",
+      "role": "🛡️ CORE (초안정 복리)",
       "name": "V3 momentum",
       "address": "0xd21fdb5f5e167c5a05aa6a544fa9afc313bb2454",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
+      "allocation_pct": 20.0,
+      "allocated_usd": 20000.0,
       "apr_30d": 69.64,
       "mdd": 13.96,
       "sharpe": 7.97,
       "sortino": 43.46,
       "hurst": 0.5,
       "leader_usd": 5992.02,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
     },
     {
@@ -94,9 +79,24 @@
       "apr_30d": 31.68,
       "mdd": 0.11,
       "sharpe": 28.17,
-      "sortino": 4.93,
-      "hurst": 0.603,
+      "sortino": 4.92,
+      "hurst": 0.624,
       "leader_usd": 34607.59,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "wmm.club | scalp-hype-long-2x",
+      "address": "0x8029743e299591f2cd890a0332199fe6ced6d6ea",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 147.32,
+      "mdd": 33.31,
+      "sharpe": 6.85,
+      "sortino": 30.47,
+      "hurst": 0.5,
+      "leader_usd": 10624.59,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
