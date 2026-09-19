@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-09-19",
-  "updated_at": "2026-09-19T07:39:17.159332",
+  "updated_at": "2026-09-19T11:39:18.387820",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 116.14,
-    "portfolio_mdd_estimate": 5.22,
-    "estimated_monthly_profit_usd": 9678.16,
-    "estimated_annual_profit_usd": 116137.98,
+    "expected_apr": 114.86,
+    "portfolio_mdd_estimate": 4.35,
+    "estimated_monthly_profit_usd": 9571.66,
+    "estimated_annual_profit_usd": 114859.98,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -27,6 +27,21 @@
     },
     {
       "role": "🛡️ CORE (초안정 복리)",
+      "name": "long long long",
+      "address": "0xc2d221a27eb58f5879d0400ccec8956a01634fab",
+      "allocation_pct": 20.0,
+      "allocated_usd": 20000.0,
+      "apr_30d": 4.64,
+      "mdd": 2.89,
+      "sharpe": 2.54,
+      "sortino": 23470632.66,
+      "hurst": 0.582,
+      "leader_usd": 100388.57,
+      "action_guide": "✅ 정상 보유 및 복리 운용",
+      "is_dip": false
+    },
+    {
+      "role": "🛡️ CORE (초안정 복리)",
       "name": "Slow Stable",
       "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
       "allocation_pct": 20.0,
@@ -37,21 +52,6 @@
       "sortino": 102.77,
       "hurst": 0.5,
       "leader_usd": 7731.51,
-      "action_guide": "✅ 정상 보유 및 복리 운용",
-      "is_dip": false
-    },
-    {
-      "role": "🛡️ CORE (초안정 복리)",
-      "name": "Momentum Edge",
-      "address": "0xc1703054b55bfa1ac6dbaf25cb1c783ca133181f",
-      "allocation_pct": 20.0,
-      "allocated_usd": 20000.0,
-      "apr_30d": 11.03,
-      "mdd": 13.85,
-      "sharpe": 8.3,
-      "sortino": 61.01,
-      "hurst": 0.5,
-      "leader_usd": 6123.2,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
     },
@@ -79,8 +79,8 @@
       "apr_30d": 31.6,
       "mdd": 0.36,
       "sharpe": 28.62,
-      "sortino": 4.92,
-      "hurst": 0.624,
+      "sortino": 4.94,
+      "hurst": 0.702,
       "leader_usd": 34694.07,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
