@@ -11797,5 +11797,72 @@
         "leader_eq": 0.9999999097916233
       }
     ]
+  },
+  "2026-09-20": {
+    "portfolio_value": 174929.65,
+    "daily_pnl": 342.82,
+    "daily_return_pct": 0.1964,
+    "cumulative_pnl": 74929.65,
+    "cumulative_pct": 74.9296,
+    "max_equity_ever": 174929.65,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3994,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 30.1,
+        "apr_30d": 6.42,
+        "robustness": 0.9406,
+        "undervalue": 0.801,
+        "leader_eq": 0.21982912189589013
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 5.74,
+        "apr_30d": 46.51,
+        "robustness": 0.8184,
+        "undervalue": 0.614,
+        "leader_eq": 0.29178260468751777
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 5.36,
+        "apr_30d": 458.59,
+        "robustness": 0.732,
+        "undervalue": 1.225,
+        "leader_eq": 0.7532202976970773
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 6.11,
+        "apr_30d": 100.83,
+        "robustness": 0.6836,
+        "undervalue": 1.092,
+        "leader_eq": 0.07550204697812866
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.69,
+        "apr_30d": 157.73,
+        "robustness": 0.6352,
+        "undervalue": 1.152,
+        "leader_eq": 0.9882850364457241
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 50.0,
+        "apr_30d": 64.17,
+        "robustness": 0.445,
+        "undervalue": 1.042,
+        "leader_eq": 0.9999999097916233
+      }
+    ]
   }
 }
