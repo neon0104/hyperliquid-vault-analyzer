@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-09-20",
-  "updated_at": "2026-09-20T07:39:18.451022",
+  "updated_at": "2026-09-20T11:39:24.735581",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 222.13,
@@ -72,21 +72,6 @@
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "PF1",
-      "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 31.25,
-      "mdd": 0.15,
-      "sharpe": 28.57,
-      "sortino": 4.94,
-      "hurst": 0.702,
-      "leader_usd": 34681.02,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
       "name": "wmm.club | scalp-hype-long-2x",
       "address": "0x8029743e299591f2cd890a0332199fe6ced6d6ea",
       "allocation_pct": 13.3,
@@ -97,6 +82,21 @@
       "sortino": 31.57,
       "hurst": 0.5,
       "leader_usd": 10733.56,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "PF1",
+      "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 31.25,
+      "mdd": 0.15,
+      "sharpe": 28.57,
+      "sortino": 4.85,
+      "hurst": 0.582,
+      "leader_usd": 34681.02,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
