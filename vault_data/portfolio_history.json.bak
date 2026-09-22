@@ -11940,5 +11940,63 @@
         "leader_eq": 0.9999999097916233
       }
     ]
+  },
+  "2026-09-22": {
+    "portfolio_value": 175893.26,
+    "daily_pnl": 224.7,
+    "daily_return_pct": 0.1279,
+    "cumulative_pnl": 75893.26,
+    "cumulative_pct": 75.8933,
+    "max_equity_ever": 175893.26,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1313,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 24.18,
+        "apr_30d": 7.85,
+        "robustness": 0.9406,
+        "undervalue": 0.791,
+        "leader_eq": 0.22614157123399561
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 22.59,
+        "apr_30d": 27.41,
+        "robustness": 0.934,
+        "undervalue": 0.501,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "DOUBLETOP Vault",
+        "address": "0x53f8f390fd4f70941c5d160a964f6893c8dbceff",
+        "alloc_pct": 24.17,
+        "apr_30d": 133.67,
+        "robustness": 0.8687,
+        "undervalue": 1.121,
+        "leader_eq": 0.07177563277654399
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 4.89,
+        "apr_30d": 47.31,
+        "robustness": 0.8247,
+        "undervalue": 0.61,
+        "leader_eq": 0.2815159446368033
+      },
+      {
+        "name": "Compounder Lab",
+        "address": "0xca7ccc77b32a91f76a00542a223d98aebc21eebb",
+        "alloc_pct": 24.17,
+        "apr_30d": 16.45,
+        "robustness": 0.74,
+        "undervalue": 1.015,
+        "leader_eq": 0.5614051385768849
+      }
+    ]
   }
 }
