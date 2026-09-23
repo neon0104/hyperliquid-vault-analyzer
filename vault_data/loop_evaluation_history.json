@@ -1148,5 +1148,55 @@
         "actual_24h_return_pct": 0.6146
       }
     ]
+  },
+  {
+    "evaluated_date": "2026-09-24",
+    "referenced_date": "2026-09-23",
+    "portfolio_24h_profit_usd": -510.15,
+    "portfolio_24h_return_pct": -0.5102,
+    "evaluated_holdings": [
+      {
+        "vault_name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -82.43,
+        "actual_24h_return_pct": -0.4122
+      },
+      {
+        "vault_name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -79.47,
+        "actual_24h_return_pct": -0.3973
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
+        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -55.93,
+        "actual_24h_return_pct": -0.2796
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Medium Volat",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -30.27,
+        "actual_24h_return_pct": -0.227
+      },
+      {
+        "vault_name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -0.0,
+        "actual_24h_return_pct": -0.0
+      },
+      {
+        "vault_name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -262.06,
+        "actual_24h_return_pct": -1.9654
+      }
+    ]
   }
 ]
