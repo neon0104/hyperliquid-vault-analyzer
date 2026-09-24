@@ -12123,5 +12123,72 @@
         "leader_eq": 0.6203244365433759
       }
     ]
+  },
+  "2026-09-25": {
+    "portfolio_value": 177438.17,
+    "daily_pnl": 547.58,
+    "daily_return_pct": 0.3096,
+    "cumulative_pnl": 77438.17,
+    "cumulative_pct": 77.4382,
+    "max_equity_ever": 177438.17,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2728,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 19.39,
+        "apr_30d": 24.07,
+        "robustness": 0.9818,
+        "undervalue": 0.505,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 19.39,
+        "apr_30d": 7.82,
+        "robustness": 0.9407,
+        "undervalue": 0.783,
+        "leader_eq": 0.227743652244678
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 5.42,
+        "apr_30d": 42.47,
+        "robustness": 0.8231,
+        "undervalue": 1.036,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 4.06,
+        "apr_30d": 45.17,
+        "robustness": 0.8184,
+        "undervalue": 0.598,
+        "leader_eq": 0.28691980395287814
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.74,
+        "apr_30d": 68.68,
+        "robustness": 0.6354,
+        "undervalue": 1.055,
+        "leader_eq": 0.9928235070872756
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 50.0,
+        "apr_30d": 202.95,
+        "robustness": 0.5861,
+        "undervalue": 1.202,
+        "leader_eq": 0.6207626650162844
+      }
+    ]
   }
 }

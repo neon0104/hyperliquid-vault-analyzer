@@ -12065,5 +12065,63 @@
         "leader_eq": 0.9339252395791968
       }
     ]
+  },
+  "2026-09-24": {
+    "portfolio_value": 176890.59,
+    "daily_pnl": 147.29,
+    "daily_return_pct": 0.0833,
+    "cumulative_pnl": 76890.59,
+    "cumulative_pct": 76.8906,
+    "max_equity_ever": 176890.59,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1609,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 39.24,
+        "apr_30d": 7.86,
+        "robustness": 0.9406,
+        "undervalue": 0.779,
+        "leader_eq": 0.2267344733584982
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 39.25,
+        "apr_30d": 20.87,
+        "robustness": 0.934,
+        "undervalue": 0.504,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 10.41,
+        "apr_30d": 40.01,
+        "robustness": 0.9087,
+        "undervalue": 0.596,
+        "leader_eq": 0.28691980395287814
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 3.52,
+        "apr_30d": 12.18,
+        "robustness": 0.6353,
+        "undervalue": 1.004,
+        "leader_eq": 0.987955543506225
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 7.58,
+        "apr_30d": 191.93,
+        "robustness": 0.5861,
+        "undervalue": 1.191,
+        "leader_eq": 0.6203244365433759
+      }
+    ]
   }
 }
