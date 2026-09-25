@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-09-17 19:39:26",
-    "topic_id": "TOPIC_FRACTIONAL_KELLY",
-    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
-    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
-    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
-    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
-    "validation_dataset": "143 days (2026-02-27 ~ 2026-09-17)",
-    "top_discovered_vaults": [
-      {
-        "name": "Algo1",
-        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
-        "data_days": 14,
-        "hurst": 0.5,
-        "sortino": 297855416.56,
-        "kelly_f": 23.9,
-        "apr_30d": 148.81,
-        "mdd": 15.75,
-        "sharpe": 5.77,
-        "leader_usd": 10119.56
-      },
-      {
-        "name": "Slow Stable",
-        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
-        "data_days": 12,
-        "hurst": 0.5,
-        "sortino": 51.16,
-        "kelly_f": 22.8,
-        "apr_30d": 22.67,
-        "mdd": 7.2,
-        "sharpe": 8.68,
-        "leader_usd": 7731.31
-      },
-      {
-        "name": "Aaroh",
-        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
-        "data_days": 11,
-        "hurst": 0.5,
-        "sortino": 27.05,
-        "kelly_f": 17.0,
-        "apr_30d": 443.88,
-        "mdd": 16.93,
-        "sharpe": 9.65,
-        "leader_usd": 5918.46
-      },
-      {
-        "name": "Gentile Geopolitics | Iran War",
-        "address": "0x0310b823ccc977846c5dadb363bfd88df9da6813",
-        "data_days": 11,
-        "hurst": 0.5,
-        "sortino": 50.92,
-        "kelly_f": 16.8,
-        "apr_30d": 593.23,
-        "mdd": 12.97,
-        "sharpe": 8.41,
-        "leader_usd": 1575.51
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-09-17 23:39:24",
     "topic_id": "TOPIC_FRACTIONAL_KELLY",
     "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
@@ -2995,6 +2935,66 @@
         "mdd": 76.62,
         "sharpe": 4.44,
         "leader_usd": 7310.65
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-09-26 03:42:06",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-09-26)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 14,
+        "hurst": 0.5,
+        "sortino": 19.37,
+        "kelly_f": 22.0,
+        "apr_30d": 11.48,
+        "mdd": 15.27,
+        "sharpe": 5.92,
+        "leader_usd": 10183.43
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "data_days": 11,
+        "hurst": 0.5,
+        "sortino": 31.1,
+        "kelly_f": 21.0,
+        "apr_30d": 153.58,
+        "mdd": 13.41,
+        "sharpe": 11.79,
+        "leader_usd": 6914.02
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "data_days": 12,
+        "hurst": 0.5,
+        "sortino": 35.34,
+        "kelly_f": 19.8,
+        "apr_30d": 36.63,
+        "mdd": 16.99,
+        "sharpe": 7.83,
+        "leader_usd": 7739.18
+      },
+      {
+        "name": "⚛️ Quantum Capital OFFICIAL Algo Vault ⚛",
+        "address": "0x3d0862d30e3b36d23663eeb62adc335655e65383",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 152026820.94,
+        "kelly_f": 15.6,
+        "apr_30d": 38.26,
+        "mdd": 76.29,
+        "sharpe": 4.46,
+        "leader_usd": 7313.63
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
