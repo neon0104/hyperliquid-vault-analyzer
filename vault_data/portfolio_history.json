@@ -12266,5 +12266,72 @@
         "leader_eq": 0.9999999097916233
       }
     ]
+  },
+  "2026-09-27": {
+    "portfolio_value": 178660.48,
+    "daily_pnl": 795.94,
+    "daily_return_pct": 0.4475,
+    "cumulative_pnl": 78660.48,
+    "cumulative_pct": 78.6605,
+    "max_equity_ever": 178660.48,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4599,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 14.44,
+        "apr_30d": 19.7,
+        "robustness": 0.9811,
+        "undervalue": 0.506,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 14.43,
+        "apr_30d": 7.81,
+        "robustness": 0.9407,
+        "undervalue": 0.781,
+        "leader_eq": 0.22791910801493953
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 12.94,
+        "apr_30d": 48.91,
+        "robustness": 0.9167,
+        "undervalue": 0.602,
+        "leader_eq": 0.2859363831434484
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 4.03,
+        "apr_30d": 40.9,
+        "robustness": 0.7917,
+        "undervalue": 1.035,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 4.16,
+        "apr_30d": 198.61,
+        "robustness": 0.6439,
+        "undervalue": 1.198,
+        "leader_eq": 0.6190807383737847
+      },
+      {
+        "name": "Helix",
+        "address": "0xfbf69b8f75594e30e604c5ba81bd3ad568ba7622",
+        "alloc_pct": 50.0,
+        "apr_30d": 286.25,
+        "robustness": 0.4196,
+        "undervalue": 1.286,
+        "leader_eq": 0.9298083502934527
+      }
+    ]
   }
 }

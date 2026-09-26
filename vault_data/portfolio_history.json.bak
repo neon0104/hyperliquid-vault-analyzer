@@ -12190,5 +12190,81 @@
         "leader_eq": 0.6207626650162844
       }
     ]
+  },
+  "2026-09-26": {
+    "portfolio_value": 177864.54,
+    "daily_pnl": 426.37,
+    "daily_return_pct": 0.2403,
+    "cumulative_pnl": 77864.54,
+    "cumulative_pct": 77.8645,
+    "max_equity_ever": 177864.54,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2921,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 20.49,
+        "apr_30d": 22.26,
+        "robustness": 0.9809,
+        "undervalue": 0.507,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 20.49,
+        "apr_30d": 7.81,
+        "robustness": 0.9407,
+        "undervalue": 0.781,
+        "leader_eq": 0.22792471398065708
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 4.78,
+        "apr_30d": 49.84,
+        "robustness": 0.7957,
+        "undervalue": 0.603,
+        "leader_eq": 0.2859673136792333
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 2.41,
+        "apr_30d": 36.63,
+        "robustness": 0.7633,
+        "undervalue": 1.033,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.83,
+        "apr_30d": 41.62,
+        "robustness": 0.6352,
+        "undervalue": 1.029,
+        "leader_eq": 0.9927717236528937
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 33.48,
+        "apr_30d": 202.84,
+        "robustness": 0.5543,
+        "undervalue": 1.204,
+        "leader_eq": 0.6200452555574226
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 16.52,
+        "apr_30d": 58.16,
+        "robustness": 0.4561,
+        "undervalue": 1.036,
+        "leader_eq": 0.9999999097916233
+      }
+    ]
   }
 }
