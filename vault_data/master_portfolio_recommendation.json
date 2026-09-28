@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-09-28",
-  "updated_at": "2026-09-28T07:39:19.045171",
+  "updated_at": "2026-09-28T11:39:24.002367",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 119.26,
-    "portfolio_mdd_estimate": 7.0,
-    "estimated_monthly_profit_usd": 9938.39,
-    "estimated_annual_profit_usd": 119260.64,
+    "expected_apr": 115.83,
+    "portfolio_mdd_estimate": 6.95,
+    "estimated_monthly_profit_usd": 9652.61,
+    "estimated_annual_profit_usd": 115831.31,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -87,16 +87,16 @@
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "ElevenX",
-      "address": "0xaa0898c80cc005f5a2ec5d9c920dd7088c16ebac",
+      "name": "wmm.club | scalp-hype-long-2x",
+      "address": "0x8029743e299591f2cd890a0332199fe6ced6d6ea",
       "allocation_pct": 13.3,
       "allocated_usd": 13333.33,
-      "apr_30d": 65.18,
-      "mdd": 32.71,
-      "sharpe": 4.27,
-      "sortino": 37.29,
+      "apr_30d": 39.46,
+      "mdd": 31.71,
+      "sharpe": 7.02,
+      "sortino": 32.01,
       "hurst": 0.5,
-      "leader_usd": 1096.07,
+      "leader_usd": 10776.56,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
