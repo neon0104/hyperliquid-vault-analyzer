@@ -12333,5 +12333,63 @@
         "leader_eq": 0.9298083502934527
       }
     ]
+  },
+  "2026-09-28": {
+    "portfolio_value": 178868.66,
+    "daily_pnl": 208.18,
+    "daily_return_pct": 0.1165,
+    "cumulative_pnl": 78868.66,
+    "cumulative_pct": 78.8687,
+    "max_equity_ever": 178868.66,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1161,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 27.98,
+        "apr_30d": 20.1,
+        "robustness": 0.9811,
+        "undervalue": 0.506,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 27.99,
+        "apr_30d": 48.52,
+        "robustness": 0.955,
+        "undervalue": 0.612,
+        "leader_eq": 0.28167660499120867
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 27.99,
+        "apr_30d": 7.95,
+        "robustness": 0.9407,
+        "undervalue": 0.784,
+        "leader_eq": 0.2279194377703249
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 7.82,
+        "apr_30d": 56.42,
+        "robustness": 0.7662,
+        "undervalue": 1.05,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 8.22,
+        "apr_30d": 203.03,
+        "robustness": 0.6434,
+        "undervalue": 1.142,
+        "leader_eq": 0.6377550661810466
+      }
+    ]
   }
 }
