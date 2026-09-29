@@ -12391,5 +12391,81 @@
         "leader_eq": 0.6377550661810466
       }
     ]
+  },
+  "2026-09-29": {
+    "portfolio_value": 179680.75,
+    "daily_pnl": 812.09,
+    "daily_return_pct": 0.454,
+    "cumulative_pnl": 79680.75,
+    "cumulative_pct": 79.6807,
+    "max_equity_ever": 179680.75,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3417,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 14.84,
+        "apr_30d": 19.72,
+        "robustness": 0.9821,
+        "undervalue": 0.506,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 14.85,
+        "apr_30d": 11.28,
+        "robustness": 0.9675,
+        "undervalue": 0.998,
+        "leader_eq": 0.9970398025801634
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 14.85,
+        "apr_30d": 47.23,
+        "robustness": 0.9544,
+        "undervalue": 0.615,
+        "leader_eq": 0.2797292023427838
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 4.15,
+        "apr_30d": 24.79,
+        "robustness": 0.794,
+        "undervalue": 1.019,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.31,
+        "apr_30d": 20.17,
+        "robustness": 0.6347,
+        "undervalue": 1.012,
+        "leader_eq": 0.9923836455133983
+      },
+      {
+        "name": "gogogo",
+        "address": "0x0eb634dca429f9f947e9d69d5d791c66d42aa82c",
+        "alloc_pct": 25.01,
+        "apr_30d": 439.76,
+        "robustness": 0.3841,
+        "undervalue": 1.566,
+        "leader_eq": 0.9899400038070324
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 24.99,
+        "apr_30d": 171.36,
+        "robustness": 0.5978,
+        "undervalue": 1.1,
+        "leader_eq": 0.6410388974213744
+      }
+    ]
   }
 }
