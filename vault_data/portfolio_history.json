@@ -12534,5 +12534,72 @@
         "leader_eq": 0.6410388974213744
       }
     ]
+  },
+  "2026-10-01": {
+    "portfolio_value": 181112.49,
+    "daily_pnl": 942.87,
+    "daily_return_pct": 0.5233,
+    "cumulative_pnl": 81112.49,
+    "cumulative_pct": 81.1125,
+    "max_equity_ever": 181112.49,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3653,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 27.68,
+        "apr_30d": 20.27,
+        "robustness": 0.9821,
+        "undervalue": 0.505,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 7.02,
+        "apr_30d": 53.67,
+        "robustness": 0.8311,
+        "undervalue": 0.606,
+        "leader_eq": 0.2855368693102506
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 7.73,
+        "apr_30d": 32.86,
+        "robustness": 0.7938,
+        "undervalue": 1.027,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.45,
+        "apr_30d": 24.94,
+        "robustness": 0.6348,
+        "undervalue": 1.015,
+        "leader_eq": 0.9923836455133983
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 5.12,
+        "apr_30d": 158.07,
+        "robustness": 0.6271,
+        "undervalue": 1.103,
+        "leader_eq": 0.6400209190253483
+      },
+      {
+        "name": "Apex Strategy",
+        "address": "0x817db4e64c444520c87e82484469a42cd47be38a",
+        "alloc_pct": 50.0,
+        "apr_30d": 340.78,
+        "robustness": 0.5883,
+        "undervalue": 0.991,
+        "leader_eq": 0.7273014554959834
+      }
+    ]
   }
 }
