@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-01",
-  "updated_at": "2026-10-01T07:39:20.116525",
+  "updated_at": "2026-10-01T11:39:26.953953",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 105.14,
-    "portfolio_mdd_estimate": 5.53,
-    "estimated_monthly_profit_usd": 8762.0,
-    "estimated_annual_profit_usd": 105143.98,
+    "expected_apr": 64.32,
+    "portfolio_mdd_estimate": 4.86,
+    "estimated_monthly_profit_usd": 5360.0,
+    "estimated_annual_profit_usd": 64319.99,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -57,21 +57,6 @@
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Apex Strategy",
-      "address": "0x817db4e64c444520c87e82484469a42cd47be38a",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 340.78,
-      "mdd": 17.84,
-      "sharpe": 7.94,
-      "sortino": 34.29,
-      "hurst": 0.5,
-      "leader_usd": 9526.52,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
       "name": "wmm.club | scalp-hype-long-2x",
       "address": "0x8029743e299591f2cd890a0332199fe6ced6d6ea",
       "allocation_pct": 13.3,
@@ -87,16 +72,31 @@
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Aaroh",
-      "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+      "name": "PF1",
+      "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
       "allocation_pct": 13.3,
       "allocated_usd": 13333.33,
-      "apr_30d": 146.93,
-      "mdd": 14.52,
-      "sharpe": 11.38,
-      "sortino": 29.26,
+      "apr_30d": 36.99,
+      "mdd": 0.31,
+      "sharpe": 26.63,
+      "sortino": 5.13,
+      "hurst": 0.374,
+      "leader_usd": 35331.73,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Lalo Capital",
+      "address": "0x13bb283f2856483fc0e54279469e1a26c3eeb1d9",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 144.54,
+      "mdd": 19.48,
+      "sharpe": 7.35,
+      "sortino": 25.37,
       "hurst": 0.5,
-      "leader_usd": 6738.64,
+      "leader_usd": 8169.5,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
