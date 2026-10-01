@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-10-02 07:39:18
+### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
+* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
+* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
+* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
+* **검증 데이터**: `143 days (2026-02-27 ~ 2026-10-02)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Algo1**: Hurst `0.5` | Sortino `397133949.37` | Kelly `27.0%` | 30일 APR `11.02%` | Sharpe `9.61`
+  - **Slow Stable**: Hurst `0.5` | Sortino `312.87` | Kelly `21.7%` | 30일 APR `40.4%` | Sharpe `7.95`
+  - **⚛️ Quantum Capital OFFICIAL Algo Vault ⚛**: Hurst `0.5` | Sortino `157469282.38` | Kelly `15.9%` | 30일 APR `34.46%` | Sharpe `4.61`
+  - **Queen [Bee]**: Hurst `0.5` | Sortino `73.5` | Kelly `15.9%` | 30일 APR `18.67%` | Sharpe `4.75`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-10-02 03:41:58
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
@@ -226,23 +243,6 @@
 ---
 
 ## 📅 연구 기록: 2026-09-29 23:39:28
-### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
-* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
-* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
-* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-09-29)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Algo1**: Hurst `0.5` | Sortino `396739385.92` | Kelly `30.0%` | 30일 APR `11.28%` | Sharpe `9.59`
-  - **Slow Stable**: Hurst `0.5` | Sortino `154.76` | Kelly `22.3%` | 30일 APR `24.79%` | Sharpe `8.08`
-  - **Aaroh**: Hurst `0.5` | Sortino `29.37` | Kelly `20.8%` | 30일 APR `148.35%` | Sharpe `11.68`
-  - **Mahamor**: Hurst `0.255` | Sortino `29.02` | Kelly `14.8%` | 30일 APR `505.8%` | Sharpe `4.22`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-09-29 19:39:28
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
 * **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
