@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-10-03",
-  "updated_at": "2026-10-03T07:39:18.558802",
+  "updated_at": "2026-10-03T11:39:27.118844",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 73.0,
@@ -64,24 +64,9 @@
       "apr_30d": 33.56,
       "mdd": 0.31,
       "sharpe": 25.85,
-      "sortino": 5.09,
-      "hurst": 0.268,
+      "sortino": 5.11,
+      "hurst": 0.298,
       "leader_usd": 35267.07,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Aaroh",
-      "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 171.92,
-      "mdd": 13.52,
-      "sharpe": 11.56,
-      "sortino": 22.13,
-      "hurst": 0.681,
-      "leader_usd": 6894.15,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
@@ -97,6 +82,21 @@
       "sortino": 21.02,
       "hurst": 0.5,
       "leader_usd": 10744.55,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Aaroh",
+      "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 171.92,
+      "mdd": 13.52,
+      "sharpe": 11.56,
+      "sortino": 20.38,
+      "hurst": 0.648,
+      "leader_usd": 6894.15,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
