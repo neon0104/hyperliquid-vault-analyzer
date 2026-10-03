@@ -12668,5 +12668,72 @@
         "leader_eq": 0.6395009874289354
       }
     ]
+  },
+  "2026-10-03": {
+    "portfolio_value": 182567.45,
+    "daily_pnl": 1020.15,
+    "daily_return_pct": 0.5619,
+    "cumulative_pnl": 82567.45,
+    "cumulative_pct": 82.5674,
+    "max_equity_ever": 182567.45,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4094,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 32.04,
+        "apr_30d": 17.94,
+        "robustness": 0.9805,
+        "undervalue": 0.503,
+        "leader_eq": 0.47083765561826285
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 7.83,
+        "apr_30d": 18.69,
+        "robustness": 0.7929,
+        "undervalue": 1.014,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 4.52,
+        "apr_30d": 48.12,
+        "robustness": 0.7157,
+        "undervalue": 0.604,
+        "leader_eq": 0.28543786819055067
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 2.78,
+        "apr_30d": 135.56,
+        "robustness": 0.6072,
+        "undervalue": 1.105,
+        "leader_eq": 0.6267759369106379
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.83,
+        "apr_30d": 17.32,
+        "robustness": 0.6043,
+        "undervalue": 1.012,
+        "leader_eq": 0.9922785806429525
+      },
+      {
+        "name": "Apex Strategy",
+        "address": "0x817db4e64c444520c87e82484469a42cd47be38a",
+        "alloc_pct": 50.0,
+        "apr_30d": 382.91,
+        "robustness": 0.55,
+        "undervalue": 0.788,
+        "leader_eq": 0.8630038716661431
+      }
+    ]
   }
 }
