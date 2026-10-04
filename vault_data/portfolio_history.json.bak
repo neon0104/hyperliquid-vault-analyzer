@@ -12735,5 +12735,72 @@
         "leader_eq": 0.8630038716661431
       }
     ]
+  },
+  "2026-10-04": {
+    "portfolio_value": 182980.4,
+    "daily_pnl": 412.95,
+    "daily_return_pct": 0.2262,
+    "cumulative_pnl": 82980.4,
+    "cumulative_pct": 82.9804,
+    "max_equity_ever": 182980.4,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2909,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 19.91,
+        "apr_30d": 21.88,
+        "robustness": 0.981,
+        "undervalue": 0.5,
+        "leader_eq": 0.6038345674642142
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 19.91,
+        "apr_30d": 10.95,
+        "robustness": 0.9217,
+        "undervalue": 1.004,
+        "leader_eq": 0.9970398025801634
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 5.56,
+        "apr_30d": 18.22,
+        "robustness": 0.823,
+        "undervalue": 1.014,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 2.86,
+        "apr_30d": 47.92,
+        "robustness": 0.715,
+        "undervalue": 0.616,
+        "leader_eq": 0.28028608816909434
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.76,
+        "apr_30d": 25.81,
+        "robustness": 0.6348,
+        "undervalue": 1.022,
+        "leader_eq": 0.9838156752978322
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 50.0,
+        "apr_30d": 146.37,
+        "robustness": 0.61,
+        "undervalue": 1.115,
+        "leader_eq": 0.6278959045525281
+      }
+    ]
   }
 }
