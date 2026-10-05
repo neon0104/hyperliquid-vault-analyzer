@@ -1,49 +1,49 @@
 {
-  "updated_at": "2026-10-05T23:39:26.499035",
+  "updated_at": "2026-10-06T03:42:03.907718",
   "champion_strategy": {
     "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
     "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-    "total_return_pct": 51.84,
-    "cagr_pct": 124.01,
+    "total_return_pct": 52.22,
+    "cagr_pct": 124.14,
     "sharpe_ratio": 2.95,
     "sortino_ratio": 4.53,
     "max_drawdown_pct": 10.92,
-    "calmar_ratio": 11.36,
-    "final_capital": 151835.2
+    "calmar_ratio": 11.37,
+    "final_capital": 152216.59
   },
   "tournament_rankings": [
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-      "total_return_pct": 51.84,
-      "cagr_pct": 124.01,
+      "total_return_pct": 52.22,
+      "cagr_pct": 124.14,
       "sharpe_ratio": 2.95,
       "sortino_ratio": 4.53,
       "max_drawdown_pct": 10.92,
-      "calmar_ratio": 11.36,
-      "final_capital": 151835.2
+      "calmar_ratio": 11.37,
+      "final_capital": 152216.59
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": 12.73,
-      "cagr_pct": 26.04,
+      "total_return_pct": 12.76,
+      "cagr_pct": 25.95,
       "sharpe_ratio": 1.37,
       "sortino_ratio": 1.35,
       "max_drawdown_pct": 12.64,
-      "calmar_ratio": 2.06,
-      "final_capital": 112731.29
+      "calmar_ratio": 2.05,
+      "final_capital": 112760.48
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
       "total_return_pct": 2.33,
-      "cagr_pct": 4.54,
+      "cagr_pct": 4.52,
       "sharpe_ratio": 0.5,
       "sortino_ratio": 0.51,
       "max_drawdown_pct": 3.97,
       "calmar_ratio": 1.14,
-      "final_capital": 102327.52
+      "final_capital": 102326.43
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
