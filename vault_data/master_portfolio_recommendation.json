@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-10-06",
-  "updated_at": "2026-10-06T07:39:19.681428",
+  "updated_at": "2026-10-06T11:39:24.645285",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 41.91,
@@ -94,8 +94,8 @@
       "apr_30d": 35.3,
       "mdd": 0.47,
       "sharpe": 26.62,
-      "sortino": 5.12,
-      "hurst": 0.394,
+      "sortino": 5.1,
+      "hurst": 0.432,
       "leader_usd": 35369.22,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
