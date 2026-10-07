@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-07",
-  "updated_at": "2026-10-07T07:39:21.565694",
+  "updated_at": "2026-10-07T11:39:22.132314",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 69.54,
-    "portfolio_mdd_estimate": 5.05,
-    "estimated_monthly_profit_usd": 5795.11,
-    "estimated_annual_profit_usd": 69541.32,
+    "expected_apr": 68.1,
+    "portfolio_mdd_estimate": 4.76,
+    "estimated_monthly_profit_usd": 5675.22,
+    "estimated_annual_profit_usd": 68102.65,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -64,8 +64,8 @@
       "apr_30d": 36.62,
       "mdd": 0.4,
       "sharpe": 27.45,
-      "sortino": 5.1,
-      "hurst": 0.432,
+      "sortino": 5.04,
+      "hurst": 0.323,
       "leader_usd": 35445.86,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
@@ -87,16 +87,16 @@
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Fadorador",
-      "address": "0xb8f43ee0513e53309b9d6d6a42dce8fdb694b04d",
+      "name": "Aaroh",
+      "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
       "allocation_pct": 13.3,
       "allocated_usd": 13333.33,
-      "apr_30d": 191.39,
-      "mdd": 17.44,
-      "sharpe": 6.98,
-      "sortino": 23.14,
-      "hurst": 0.5,
-      "leader_usd": 9319.32,
+      "apr_30d": 180.6,
+      "mdd": 12.12,
+      "sharpe": 12.08,
+      "sortino": 22.03,
+      "hurst": 0.9,
+      "leader_usd": 7144.33,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
