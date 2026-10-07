@@ -12945,5 +12945,72 @@
         "leader_eq": 0.6558576549789615
       }
     ]
+  },
+  "2026-10-07": {
+    "portfolio_value": 184171.72,
+    "daily_pnl": 283.73,
+    "daily_return_pct": 0.1543,
+    "cumulative_pnl": 84171.72,
+    "cumulative_pct": 84.1717,
+    "max_equity_ever": 184171.72,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2731,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 14.68,
+        "apr_30d": 49.54,
+        "robustness": 0.9863,
+        "undervalue": 0.606,
+        "leader_eq": 0.28544437965440556
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 14.69,
+        "apr_30d": 21.07,
+        "robustness": 0.9731,
+        "undervalue": 0.5,
+        "leader_eq": 0.6038345674642142
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 14.69,
+        "apr_30d": 10.19,
+        "robustness": 0.9287,
+        "undervalue": 1.008,
+        "leader_eq": 0.9825205111777503
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 4.11,
+        "apr_30d": 38.42,
+        "robustness": 0.823,
+        "undervalue": 1.034,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Apex Strategy",
+        "address": "0x817db4e64c444520c87e82484469a42cd47be38a",
+        "alloc_pct": 1.83,
+        "apr_30d": 251.36,
+        "robustness": 0.6362,
+        "undervalue": 1.012,
+        "leader_eq": 0.8630038716661431
+      },
+      {
+        "name": "GeorgV Copytrading",
+        "address": "0xa1222c3590709cd9bce80ae04c2fd07e89e8ab2a",
+        "alloc_pct": 50.0,
+        "apr_30d": 76.55,
+        "robustness": 0.5702,
+        "undervalue": 1.0,
+        "leader_eq": 0.6554622580693138
+      }
+    ]
   }
 }
