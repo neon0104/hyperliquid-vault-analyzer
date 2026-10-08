@@ -1898,5 +1898,55 @@
         "actual_24h_return_pct": -0.4621
       }
     ]
+  },
+  {
+    "evaluated_date": "2026-10-09",
+    "referenced_date": "2026-10-08",
+    "portfolio_24h_profit_usd": -1870.59,
+    "portfolio_24h_return_pct": -1.8706,
+    "evaluated_holdings": [
+      {
+        "vault_name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -711.38,
+        "actual_24h_return_pct": -3.5569
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
+        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -638.94,
+        "actual_24h_return_pct": -3.1947
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Medium Volat",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -620.15,
+        "actual_24h_return_pct": -3.1007
+      },
+      {
+        "vault_name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -519.78,
+        "actual_24h_return_pct": -3.8983
+      },
+      {
+        "vault_name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 716.31,
+        "actual_24h_return_pct": 5.3723
+      },
+      {
+        "vault_name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -96.65,
+        "actual_24h_return_pct": -0.7249
+      }
+    ]
   }
 ]

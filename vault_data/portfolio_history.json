@@ -13070,5 +13070,63 @@
         "leader_eq": 0.9962915644215964
       }
     ]
+  },
+  "2026-10-09": {
+    "portfolio_value": 184366.28,
+    "daily_pnl": 47.99,
+    "daily_return_pct": 0.026,
+    "cumulative_pnl": 84366.28,
+    "cumulative_pct": 84.3663,
+    "max_equity_ever": 184366.28,
+    "mdd_pct": 0.0,
+    "risk_score": 0.4915,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 32.95,
+        "apr_30d": 6.22,
+        "robustness": 0.9222,
+        "undervalue": 0.987,
+        "leader_eq": 0.9970397768735134
+      },
+      {
+        "name": "Slow Stable",
+        "address": "0x960cebcba55d6d282d9000e355e6ddbad6734cff",
+        "alloc_pct": 9.22,
+        "apr_30d": 24.79,
+        "robustness": 0.7667,
+        "undervalue": 1.019,
+        "leader_eq": 0.9832530634006231
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 4.5,
+        "apr_30d": 26.27,
+        "robustness": 0.5703,
+        "undervalue": 1.017,
+        "leader_eq": 0.4144930347285298
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 3.33,
+        "apr_30d": 12.05,
+        "robustness": 0.5439,
+        "undervalue": 1.014,
+        "leader_eq": 0.050313097193669144
+      },
+      {
+        "name": "Fadorador",
+        "address": "0xb8f43ee0513e53309b9d6d6a42dce8fdb694b04d",
+        "alloc_pct": 50.0,
+        "apr_30d": 7.17,
+        "robustness": 0.2837,
+        "undervalue": 1.001,
+        "leader_eq": 0.65970272563872
+      }
+    ]
   }
 }
