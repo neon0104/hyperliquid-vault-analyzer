@@ -1948,5 +1948,55 @@
         "actual_24h_return_pct": -0.7249
       }
     ]
+  },
+  {
+    "evaluated_date": "2026-10-10",
+    "referenced_date": "2026-10-09",
+    "portfolio_24h_profit_usd": 251.44,
+    "portfolio_24h_return_pct": 0.2514,
+    "evaluated_holdings": [
+      {
+        "vault_name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -51.51,
+        "actual_24h_return_pct": -0.2575
+      },
+      {
+        "vault_name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 84.6,
+        "actual_24h_return_pct": 0.423
+      },
+      {
+        "vault_name": "Brob",
+        "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": -0.12,
+        "actual_24h_return_pct": -0.0006
+      },
+      {
+        "vault_name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 12.07,
+        "actual_24h_return_pct": 0.0905
+      },
+      {
+        "vault_name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 148.27,
+        "actual_24h_return_pct": 1.112
+      },
+      {
+        "vault_name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 58.13,
+        "actual_24h_return_pct": 0.436
+      }
+    ]
   }
 ]
