@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-10-11",
-  "updated_at": "2026-10-11T07:39:28.428760",
+  "updated_at": "2026-10-11T11:39:31.101684",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 47.41,
@@ -57,6 +57,21 @@
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Guardian Alpha",
+      "address": "0xf3694dacecd8cd846b0da9d4e0f823ff0db4e6cf",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 187.85,
+      "mdd": 15.79,
+      "sharpe": 5.2,
+      "sortino": 39.27,
+      "hurst": 0.617,
+      "leader_usd": 13031.8,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
       "name": "Lalo Capital",
       "address": "0x13bb283f2856483fc0e54279469e1a26c3eeb1d9",
       "allocation_pct": 13.3,
@@ -72,21 +87,6 @@
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Guardian Alpha",
-      "address": "0xf3694dacecd8cd846b0da9d4e0f823ff0db4e6cf",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 187.85,
-      "mdd": 15.79,
-      "sharpe": 5.2,
-      "sortino": 30.07,
-      "hurst": 0.457,
-      "leader_usd": 13031.8,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
       "name": "PF1",
       "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
       "allocation_pct": 13.3,
@@ -94,8 +94,8 @@
       "apr_30d": 29.49,
       "mdd": 2.14,
       "sharpe": 21.78,
-      "sortino": 4.65,
-      "hurst": 0.606,
+      "sortino": 4.7,
+      "hurst": 0.574,
       "leader_usd": 35247.98,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
