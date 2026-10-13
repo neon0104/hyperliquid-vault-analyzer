@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-13",
-  "updated_at": "2026-10-13T07:39:22.057758",
+  "updated_at": "2026-10-13T11:39:28.811159",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 18.32,
-    "portfolio_mdd_estimate": 2.5,
-    "estimated_monthly_profit_usd": 1526.89,
-    "estimated_annual_profit_usd": 18322.66,
+    "expected_apr": 10.84,
+    "portfolio_mdd_estimate": 3.1,
+    "estimated_monthly_profit_usd": 903.11,
+    "estimated_annual_profit_usd": 10837.33,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -64,8 +64,8 @@
       "apr_30d": 23.75,
       "mdd": 4.04,
       "sharpe": 20.29,
-      "sortino": 4.87,
-      "hurst": 0.576,
+      "sortino": 4.18,
+      "hurst": 0.38,
       "leader_usd": 35141.62,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
@@ -79,24 +79,24 @@
       "apr_30d": 13.57,
       "mdd": 0.58,
       "sharpe": 18.39,
-      "sortino": 1.57,
-      "hurst": 0.572,
+      "sortino": 1.64,
+      "hurst": 0.569,
       "leader_usd": 21335.69,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Aaroh",
-      "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+      "name": "Loop Fund",
+      "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
       "allocation_pct": 13.3,
       "allocated_usd": 13333.33,
-      "apr_30d": 68.0,
-      "mdd": 11.63,
-      "sharpe": 10.33,
-      "sortino": 18.37,
-      "hurst": 0.59,
-      "leader_usd": 7256.54,
+      "apr_30d": 11.86,
+      "mdd": 22.95,
+      "sharpe": 9.41,
+      "sortino": 12.81,
+      "hurst": 0.655,
+      "leader_usd": 91864.99,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
