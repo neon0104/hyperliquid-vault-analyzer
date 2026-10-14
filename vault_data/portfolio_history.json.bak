@@ -13369,5 +13369,63 @@
         "leader_eq": 0.9305601745478287
       }
     ]
+  },
+  "2026-10-14": {
+    "portfolio_value": 185003.78,
+    "daily_pnl": 65.13,
+    "daily_return_pct": 0.0352,
+    "cumulative_pnl": 85003.78,
+    "cumulative_pct": 85.0038,
+    "max_equity_ever": 185003.78,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1222,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 31.16,
+        "apr_30d": 21.42,
+        "robustness": 0.9838,
+        "undervalue": 0.5,
+        "leader_eq": 0.6038345674642142
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 31.17,
+        "apr_30d": 10.88,
+        "robustness": 0.9294,
+        "undervalue": 0.96,
+        "leader_eq": 0.9970398064807311
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "alloc_pct": 31.17,
+        "apr_30d": 2.8,
+        "robustness": 0.9137,
+        "undervalue": 1.018,
+        "leader_eq": 0.9965832022887611
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 3.78,
+        "apr_30d": 48.54,
+        "robustness": 0.7941,
+        "undervalue": 0.583,
+        "leader_eq": 0.28090406317459704
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.72,
+        "apr_30d": 2.95,
+        "robustness": 0.6034,
+        "undervalue": 0.987,
+        "leader_eq": 0.9314516688084095
+      }
+    ]
   }
 }
