@@ -13503,5 +13503,81 @@
         "leader_eq": 0.43190330625125917
       }
     ]
+  },
+  "2026-10-16": {
+    "portfolio_value": 185159.54,
+    "daily_pnl": 77.46,
+    "daily_return_pct": 0.0419,
+    "cumulative_pnl": 85159.54,
+    "cumulative_pct": 85.1595,
+    "max_equity_ever": 185159.54,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3219,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 14.36,
+        "apr_30d": 20.76,
+        "robustness": 0.9493,
+        "undervalue": 0.5,
+        "leader_eq": 0.6038345674642142
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 14.35,
+        "apr_30d": 10.41,
+        "robustness": 0.9292,
+        "undervalue": 0.966,
+        "leader_eq": 0.9906643637823022
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "alloc_pct": 14.35,
+        "apr_30d": 3.03,
+        "robustness": 0.9139,
+        "undervalue": 1.013,
+        "leader_eq": 0.9965832022887611
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 5.69,
+        "apr_30d": 38.35,
+        "robustness": 0.8269,
+        "undervalue": 1.012,
+        "leader_eq": 0.25746099992626914
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.25,
+        "apr_30d": 13.23,
+        "robustness": 0.6034,
+        "undervalue": 1.012,
+        "leader_eq": 0.9313563609807759
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 43.23,
+        "apr_30d": 17.58,
+        "robustness": 0.5645,
+        "undervalue": 1.008,
+        "leader_eq": 0.9996309202001895
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 6.77,
+        "apr_30d": 6.19,
+        "robustness": 0.4835,
+        "undervalue": 0.997,
+        "leader_eq": 0.43940397077859583
+      }
+    ]
   }
 }

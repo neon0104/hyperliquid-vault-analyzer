@@ -1,142 +1,142 @@
 {
-  "timestamp": "2026-10-16T23:39:23.880923",
-  "latest_data_date": "2026-10-16",
+  "timestamp": "2026-10-17T03:41:47.711390",
+  "latest_data_date": "2026-10-17",
   "self_evaluation_24h": {
-    "evaluated_date": "2026-10-16",
-    "referenced_date": "2026-10-15",
-    "portfolio_24h_profit_usd": 466.02,
-    "portfolio_24h_return_pct": 0.466,
+    "evaluated_date": "2026-10-17",
+    "referenced_date": "2026-10-16",
+    "portfolio_24h_profit_usd": -119.54,
+    "portfolio_24h_return_pct": -0.1195,
     "evaluated_holdings": [
       {
         "vault_name": "PF1",
         "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
         "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 263.81,
-        "actual_24h_return_pct": 1.3191
+        "actual_24h_gain_usd": -64.5,
+        "actual_24h_return_pct": -0.3225
       },
       {
         "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
         "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
         "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 30.11,
-        "actual_24h_return_pct": 0.1505
+        "actual_24h_gain_usd": -4.94,
+        "actual_24h_return_pct": -0.0247
       },
       {
         "vault_name": "FuturAI Labs - High Sharpe, Medium Volat",
         "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
         "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 33.79,
-        "actual_24h_return_pct": 0.169
-      },
-      {
-        "vault_name": "BitRocket",
-        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 20.31,
-        "actual_24h_return_pct": 0.1524
+        "actual_24h_gain_usd": -3.81,
+        "actual_24h_return_pct": -0.0191
       },
       {
         "vault_name": "Stratwise Multi-Asset Public",
         "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
         "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 132.36,
-        "actual_24h_return_pct": 0.9927
+        "actual_24h_gain_usd": -64.24,
+        "actual_24h_return_pct": -0.4818
+      },
+      {
+        "vault_name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 0.03,
+        "actual_24h_return_pct": 0.0002
       },
       {
         "vault_name": "Jade Lotus Capital",
         "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
         "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": -14.36,
-        "actual_24h_return_pct": -0.1077
+        "actual_24h_gain_usd": 17.93,
+        "actual_24h_return_pct": 0.1344
       }
     ]
   },
   "champion_model": {
     "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
     "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-    "total_return_pct": 35.41,
-    "cagr_pct": 73.88,
-    "sharpe_ratio": 1.87,
-    "sortino_ratio": 2.26,
-    "max_drawdown_pct": 15.36,
-    "calmar_ratio": 4.81,
-    "final_capital": 135407.75
+    "total_return_pct": 32.58,
+    "cagr_pct": 66.88,
+    "sharpe_ratio": 1.74,
+    "sortino_ratio": 2.11,
+    "max_drawdown_pct": 15.46,
+    "calmar_ratio": 4.33,
+    "final_capital": 132577.06
   },
   "recommended_portfolio": [
     {
-      "name": "pakhom",
-      "address": "0x2837c128734ade71c55085cbe556699f064ea4a4",
-      "allocation_pct": 25.04,
-      "allocation_usd": 25039.19,
-      "apr_30d": 248.77,
-      "mdd": 17.76,
-      "sharpe_ratio": 7.21,
-      "leader_equity_usd": 17831.31
+      "name": "Hype $1 Club",
+      "address": "0x7833b1d61c016fefaa52a1da509b6daa2fbfd71b",
+      "allocation_pct": 32.17,
+      "allocation_usd": 32173.22,
+      "apr_30d": 83.59,
+      "mdd": 12.03,
+      "sharpe_ratio": 9.8,
+      "leader_equity_usd": 2103.62
     },
     {
       "name": "Buyback Spread Engine",
       "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
-      "allocation_pct": 18.92,
-      "allocation_usd": 18923.23,
-      "apr_30d": 409.19,
-      "mdd": 23.5,
-      "sharpe_ratio": 7.6,
-      "leader_equity_usd": 19241.59
+      "allocation_pct": 16.1,
+      "allocation_usd": 16099.99,
+      "apr_30d": 530.59,
+      "mdd": 24.04,
+      "sharpe_ratio": 6.99,
+      "leader_equity_usd": 18463.56
     },
     {
-      "name": "Loop Fund",
-      "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
-      "allocation_pct": 19.38,
-      "allocation_usd": 19376.73,
-      "apr_30d": 13.23,
-      "mdd": 22.95,
-      "sharpe_ratio": 9.37,
-      "leader_equity_usd": 91347.21
+      "name": "pakhom",
+      "address": "0x2837c128734ade71c55085cbe556699f064ea4a4",
+      "allocation_pct": 21.79,
+      "allocation_usd": 21793.01,
+      "apr_30d": 198.69,
+      "mdd": 17.76,
+      "sharpe_ratio": 6.79,
+      "leader_equity_usd": 16996.99
     },
     {
       "name": "The Black-White 15 IQ gap is genetic",
       "address": "0xd02ca067292ffc53a17024387f991b849d8cdbe2",
-      "allocation_pct": 36.66,
-      "allocation_usd": 36660.84,
-      "apr_30d": 288.67,
-      "mdd": 12.13,
-      "sharpe_ratio": 6.45,
-      "leader_equity_usd": 73128.36
+      "allocation_pct": 29.93,
+      "allocation_usd": 29933.78,
+      "apr_30d": 383.29,
+      "mdd": 12.93,
+      "sharpe_ratio": 6.74,
+      "leader_equity_usd": 74066.18
     }
   ],
   "all_tournament_results": [
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-      "total_return_pct": 35.41,
-      "cagr_pct": 73.88,
-      "sharpe_ratio": 1.87,
-      "sortino_ratio": 2.26,
-      "max_drawdown_pct": 15.36,
-      "calmar_ratio": 4.81,
-      "final_capital": 135407.75
+      "total_return_pct": 32.58,
+      "cagr_pct": 66.88,
+      "sharpe_ratio": 1.74,
+      "sortino_ratio": 2.11,
+      "max_drawdown_pct": 15.46,
+      "calmar_ratio": 4.33,
+      "final_capital": 132577.06
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": 12.7,
-      "cagr_pct": 24.38,
-      "sharpe_ratio": 1.3,
-      "sortino_ratio": 1.29,
+      "total_return_pct": 12.57,
+      "cagr_pct": 23.98,
+      "sharpe_ratio": 1.28,
+      "sortino_ratio": 1.28,
       "max_drawdown_pct": 12.64,
-      "calmar_ratio": 1.93,
-      "final_capital": 112699.36
+      "calmar_ratio": 1.9,
+      "final_capital": 112565.01
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
-      "total_return_pct": 2.27,
-      "cagr_pct": 4.19,
-      "sharpe_ratio": 0.43,
-      "sortino_ratio": 0.44,
+      "total_return_pct": 2.2,
+      "cagr_pct": 4.03,
+      "sharpe_ratio": 0.42,
+      "sortino_ratio": 0.43,
       "max_drawdown_pct": 5.34,
-      "calmar_ratio": 0.78,
-      "final_capital": 102272.69
+      "calmar_ratio": 0.76,
+      "final_capital": 102200.12
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",

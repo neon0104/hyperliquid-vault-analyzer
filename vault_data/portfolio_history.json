@@ -13579,5 +13579,90 @@
         "leader_eq": 0.43940397077859583
       }
     ]
+  },
+  "2026-10-17": {
+    "portfolio_value": 185255.32,
+    "daily_pnl": 95.78,
+    "daily_return_pct": 0.0517,
+    "cumulative_pnl": 85255.32,
+    "cumulative_pct": 85.2553,
+    "max_equity_ever": 185255.32,
+    "mdd_pct": 0.0,
+    "risk_score": 0.3094,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 14.5,
+        "apr_30d": 20.54,
+        "robustness": 0.9482,
+        "undervalue": 0.5,
+        "leader_eq": 0.6038345674642142
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 14.48,
+        "apr_30d": 10.67,
+        "robustness": 0.9292,
+        "undervalue": 0.963,
+        "leader_eq": 0.9970397935502949
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "alloc_pct": 14.48,
+        "apr_30d": 3.17,
+        "robustness": 0.9142,
+        "undervalue": 1.019,
+        "leader_eq": 0.9965832022887611
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 5.29,
+        "apr_30d": 35.57,
+        "robustness": 0.8189,
+        "undervalue": 1.032,
+        "leader_eq": 0.22510922385414364
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 1.26,
+        "apr_30d": 5.32,
+        "robustness": 0.6031,
+        "undervalue": 1.009,
+        "leader_eq": 0.9313563609807759
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 35.68,
+        "apr_30d": 23.15,
+        "robustness": 0.5264,
+        "undervalue": 1.016,
+        "leader_eq": 0.9996309202001895
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 5.04,
+        "apr_30d": 13.16,
+        "robustness": 0.4864,
+        "undervalue": 1.008,
+        "leader_eq": 0.43940397077859583
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 9.27,
+        "apr_30d": 32.64,
+        "robustness": 0.5639,
+        "undervalue": 0.981,
+        "leader_eq": 0.43190330625125917
+      }
+    ]
   }
 }
