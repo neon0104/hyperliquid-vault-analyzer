@@ -13664,5 +13664,63 @@
         "leader_eq": 0.43190330625125917
       }
     ]
+  },
+  "2026-10-18": {
+    "portfolio_value": 185347.37,
+    "daily_pnl": 92.05,
+    "daily_return_pct": 0.0497,
+    "cumulative_pnl": 85347.37,
+    "cumulative_pct": 85.3474,
+    "max_equity_ever": 185347.37,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2953,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 21.46,
+        "apr_30d": 17.89,
+        "robustness": 0.986,
+        "undervalue": 0.5,
+        "leader_eq": 0.6038345674642142
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 21.46,
+        "apr_30d": 10.14,
+        "robustness": 0.9658,
+        "undervalue": 1.003,
+        "leader_eq": 0.9522891350052344
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 2.48,
+        "apr_30d": 24.84,
+        "robustness": 0.7001,
+        "undervalue": 1.021,
+        "leader_eq": 0.2091630617637789
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 4.6,
+        "apr_30d": 45.34,
+        "robustness": 0.5307,
+        "undervalue": 1.035,
+        "leader_eq": 0.9996309202001895
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 50.0,
+        "apr_30d": 18.84,
+        "robustness": 0.4882,
+        "undervalue": 1.016,
+        "leader_eq": 0.43951359867949047
+      }
+    ]
   }
 }
