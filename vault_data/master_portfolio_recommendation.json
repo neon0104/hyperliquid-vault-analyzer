@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-17",
-  "updated_at": "2026-10-17T07:39:21.244572",
+  "updated_at": "2026-10-17T11:39:26.737420",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 11.45,
-    "portfolio_mdd_estimate": 0.9,
-    "estimated_monthly_profit_usd": 954.44,
-    "estimated_annual_profit_usd": 11453.33,
+    "expected_apr": 13.29,
+    "portfolio_mdd_estimate": 2.91,
+    "estimated_monthly_profit_usd": 1107.61,
+    "estimated_annual_profit_usd": 13291.33,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -42,16 +42,16 @@
     },
     {
       "role": "🛡️ CORE (초안정 복리)",
-      "name": "Morph",
-      "address": "0x8a6594bfeff2573e09d7a73ded98b688a819b300",
+      "name": "wmm.club | scalp-hype-long-2x",
+      "address": "0x8029743e299591f2cd890a0332199fe6ced6d6ea",
       "allocation_pct": 20.0,
       "allocated_usd": 20000.0,
-      "apr_30d": 0.22,
-      "mdd": 6.57,
-      "sharpe": 4.02,
-      "sortino": 52.84,
+      "apr_30d": 9.41,
+      "mdd": 31.77,
+      "sharpe": 6.01,
+      "sortino": 26.83,
       "hurst": 0.5,
-      "leader_usd": 50109.86,
+      "leader_usd": 10515.32,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
     },
@@ -64,8 +64,8 @@
       "apr_30d": 26.13,
       "mdd": 3.1,
       "sharpe": 24.55,
-      "sortino": 4.33,
-      "hurst": 0.578,
+      "sortino": 4.26,
+      "hurst": 0.308,
       "leader_usd": 35510.41,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
@@ -79,8 +79,8 @@
       "apr_30d": 18.14,
       "mdd": 0.4,
       "sharpe": 17.52,
-      "sortino": 1.7,
-      "hurst": 0.637,
+      "sortino": 1.71,
+      "hurst": 0.754,
       "leader_usd": 21462.78,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
