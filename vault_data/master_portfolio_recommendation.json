@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-10-18",
-  "updated_at": "2026-10-18T07:39:19.744062",
+  "updated_at": "2026-10-18T11:40:41.962384",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 57.65,
@@ -34,8 +34,8 @@
       "apr_30d": 22.44,
       "mdd": 3.27,
       "sharpe": 23.73,
-      "sortino": 4.26,
-      "hurst": 0.308,
+      "sortino": 4.25,
+      "hurst": 0.288,
       "leader_usd": 35455.95,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
@@ -64,24 +64,9 @@
       "apr_30d": 17.33,
       "mdd": 0.49,
       "sharpe": 17.42,
-      "sortino": 1.71,
-      "hurst": 0.754,
+      "sortino": 1.72,
+      "hurst": 0.643,
       "leader_usd": 21462.46,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Hindenburg Short Alpha",
-      "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 66.02,
-      "mdd": 25.79,
-      "sharpe": 6.8,
-      "sortino": 14.58,
-      "hurst": 0.542,
-      "leader_usd": 14165.69,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
@@ -94,9 +79,24 @@
       "apr_30d": 273.29,
       "mdd": 18.72,
       "sharpe": 9.39,
-      "sortino": 4.86,
-      "hurst": 0.869,
+      "sortino": 4.8,
+      "hurst": 0.773,
       "leader_usd": 839214.58,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Hindenburg Short Alpha",
+      "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 66.02,
+      "mdd": 25.79,
+      "sharpe": 6.8,
+      "sortino": 14.15,
+      "hurst": 0.496,
+      "leader_usd": 14165.69,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
