@@ -13789,5 +13789,54 @@
         "leader_eq": 0.43190330625125917
       }
     ]
+  },
+  "2026-10-20": {
+    "portfolio_value": 185476.84,
+    "daily_pnl": 61.01,
+    "daily_return_pct": 0.0329,
+    "cumulative_pnl": 85476.84,
+    "cumulative_pct": 85.4768,
+    "max_equity_ever": 185476.84,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1812,
+    "n_vaults": 4,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 74.78,
+        "apr_30d": 11.69,
+        "robustness": 0.9659,
+        "undervalue": 1.014,
+        "leader_eq": 0.9518452844844908
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 8.63,
+        "apr_30d": 16.83,
+        "robustness": 0.7296,
+        "undervalue": 1.016,
+        "leader_eq": 0.1917495663895287
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 10.31,
+        "apr_30d": 5.71,
+        "robustness": 0.5627,
+        "undervalue": 0.951,
+        "leader_eq": 0.43190330625125917
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 6.28,
+        "apr_30d": 19.53,
+        "robustness": 0.5541,
+        "undervalue": 1.011,
+        "leader_eq": 0.9996309202001895
+      }
+    ]
   }
 }

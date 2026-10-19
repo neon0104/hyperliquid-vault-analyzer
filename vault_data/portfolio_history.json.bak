@@ -13722,5 +13722,72 @@
         "leader_eq": 0.43951359867949047
       }
     ]
+  },
+  "2026-10-19": {
+    "portfolio_value": 185415.83,
+    "daily_pnl": 68.46,
+    "daily_return_pct": 0.0369,
+    "cumulative_pnl": 85415.83,
+    "cumulative_pct": 85.4158,
+    "max_equity_ever": 185415.83,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2654,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 23.08,
+        "apr_30d": 10.2,
+        "robustness": 0.9659,
+        "undervalue": 1.009,
+        "leader_eq": 0.9518452844844908
+      },
+      {
+        "name": "FuturAI Labs - High Sharpe, Me",
+        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
+        "alloc_pct": 19.65,
+        "apr_30d": 18.32,
+        "robustness": 0.9338,
+        "undervalue": 0.5,
+        "leader_eq": 0.610728846220357
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 2.25,
+        "apr_30d": 11.6,
+        "robustness": 0.682,
+        "undervalue": 1.006,
+        "leader_eq": 0.1928246910956914
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 2.91,
+        "apr_30d": 3.52,
+        "robustness": 0.5567,
+        "undervalue": 1.014,
+        "leader_eq": 0.45499825106208747
+      },
+      {
+        "name": "Marvin",
+        "address": "0x872944d65f6a12bdd147f122d1744ca165377bef",
+        "alloc_pct": 2.11,
+        "apr_30d": 30.77,
+        "robustness": 0.5567,
+        "undervalue": 1.024,
+        "leader_eq": 0.9996309202001895
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 50.0,
+        "apr_30d": 13.03,
+        "robustness": 0.5269,
+        "undervalue": 0.962,
+        "leader_eq": 0.43190330625125917
+      }
+    ]
   }
 }
