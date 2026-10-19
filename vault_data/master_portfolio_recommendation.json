@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-10-19",
-  "updated_at": "2026-10-19T07:39:20.970258",
+  "updated_at": "2026-10-19T11:39:25.393817",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 48.25,
@@ -34,8 +34,8 @@
       "apr_30d": 3.52,
       "mdd": 15.87,
       "sharpe": 9.92,
-      "sortino": 23.5,
-      "hurst": 0.593,
+      "sortino": 23.38,
+      "hurst": 0.468,
       "leader_usd": 102251.62,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
@@ -49,8 +49,8 @@
       "apr_30d": 16.11,
       "mdd": 3.07,
       "sharpe": 21.77,
-      "sortino": 4.25,
-      "hurst": 0.288,
+      "sortino": 4.33,
+      "hurst": 0.226,
       "leader_usd": 35304.74,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
@@ -65,23 +65,8 @@
       "mdd": 0.2,
       "sharpe": 17.19,
       "sortino": 1.72,
-      "hurst": 0.643,
+      "hurst": 0.613,
       "leader_usd": 21479.62,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Hindenburg Short Alpha",
-      "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 78.0,
-      "mdd": 25.5,
-      "sharpe": 6.75,
-      "sortino": 14.15,
-      "hurst": 0.496,
-      "leader_usd": 14238.74,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
@@ -95,8 +80,23 @@
       "mdd": 18.89,
       "sharpe": 9.13,
       "sortino": 4.8,
-      "hurst": 0.773,
+      "hurst": 0.768,
       "leader_usd": 834452.06,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Hindenburg Short Alpha",
+      "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 78.0,
+      "mdd": 25.5,
+      "sharpe": 6.75,
+      "sortino": 13.82,
+      "hurst": 0.417,
+      "leader_usd": 14238.74,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
