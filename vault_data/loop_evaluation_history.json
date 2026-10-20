@@ -2491,5 +2491,55 @@
         "actual_24h_return_pct": -2.0603
       }
     ]
+  },
+  {
+    "evaluated_date": "2026-10-21",
+    "referenced_date": "2026-10-20",
+    "portfolio_24h_profit_usd": 246.14,
+    "portfolio_24h_return_pct": 0.2461,
+    "evaluated_holdings": [
+      {
+        "vault_name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 132.36,
+        "actual_24h_return_pct": 0.6618
+      },
+      {
+        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
+        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 8.23,
+        "actual_24h_return_pct": 0.0411
+      },
+      {
+        "vault_name": "BitRocket",
+        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "allocated_usd": 20000.0,
+        "actual_24h_gain_usd": 3.24,
+        "actual_24h_return_pct": 0.0162
+      },
+      {
+        "vault_name": "V4 Alpha Quantum",
+        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": -106.05,
+        "actual_24h_return_pct": -0.7954
+      },
+      {
+        "vault_name": "Jade Lotus Capital",
+        "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 188.84,
+        "actual_24h_return_pct": 1.4163
+      },
+      {
+        "vault_name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "allocated_usd": 13333.33,
+        "actual_24h_gain_usd": 19.53,
+        "actual_24h_return_pct": 0.1465
+      }
+    ]
   }
 ]
