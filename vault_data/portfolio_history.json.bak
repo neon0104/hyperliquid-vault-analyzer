@@ -13838,5 +13838,63 @@
         "leader_eq": 0.9996309202001895
       }
     ]
+  },
+  "2026-10-21": {
+    "portfolio_value": 185513.99,
+    "daily_pnl": 37.15,
+    "daily_return_pct": 0.02,
+    "cumulative_pnl": 85513.99,
+    "cumulative_pct": 85.514,
+    "max_equity_ever": 185513.99,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2943,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 15.09,
+        "apr_30d": 11.68,
+        "robustness": 0.966,
+        "undervalue": 1.013,
+        "leader_eq": 0.9522891350008685
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 15.08,
+        "apr_30d": 1.8,
+        "robustness": 0.9406,
+        "undervalue": 1.0,
+        "leader_eq": 0.21587663083636754
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "alloc_pct": 15.08,
+        "apr_30d": 2.98,
+        "robustness": 0.9144,
+        "undervalue": 0.993,
+        "leader_eq": 0.9999998909110462
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 4.75,
+        "apr_30d": 22.28,
+        "robustness": 0.8324,
+        "undervalue": 1.017,
+        "leader_eq": 0.18805921353817692
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 50.0,
+        "apr_30d": 7.54,
+        "robustness": 0.4859,
+        "undervalue": 1.004,
+        "leader_eq": 0.32171472569226217
+      }
+    ]
   }
 }
