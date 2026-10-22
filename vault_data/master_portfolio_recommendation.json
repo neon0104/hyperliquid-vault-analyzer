@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-22",
-  "updated_at": "2026-10-22T07:39:21.975361",
+  "updated_at": "2026-10-22T11:39:27.548543",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 31.69,
-    "portfolio_mdd_estimate": 1.91,
-    "estimated_monthly_profit_usd": 2640.67,
-    "estimated_annual_profit_usd": 31687.99,
+    "expected_apr": 69.01,
+    "portfolio_mdd_estimate": 2.03,
+    "estimated_monthly_profit_usd": 5750.89,
+    "estimated_annual_profit_usd": 69010.65,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -49,25 +49,10 @@
       "apr_30d": 25.94,
       "mdd": 1.12,
       "sharpe": 26.55,
-      "sortino": 4.42,
-      "hurst": 0.37,
+      "sortino": 4.39,
+      "hurst": 0.331,
       "leader_usd": 56268.99,
       "action_guide": "✅ 정상 보유 및 복리 운용",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "22Cap",
-      "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 6.99,
-      "mdd": 15.83,
-      "sharpe": 10.09,
-      "sortino": 23.22,
-      "hurst": 0.677,
-      "leader_usd": 102773.94,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
     {
@@ -80,10 +65,25 @@
       "mdd": 2.37,
       "sharpe": 13.12,
       "sortino": 1.72,
-      "hurst": 0.659,
+      "hurst": 0.625,
       "leader_usd": 25504.51,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Jade Lotus Capital",
+      "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 286.91,
+      "mdd": 18.18,
+      "sharpe": 9.3,
+      "sortino": 4.63,
+      "hurst": 0.763,
+      "leader_usd": 859655.56,
+      "action_guide": "🔥 극점 딥바잉 진입",
+      "is_dip": true
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
@@ -94,12 +94,28 @@
       "apr_30d": 159.99,
       "mdd": 15.18,
       "sharpe": 13.22,
-      "sortino": 5.17,
-      "hurst": 0.438,
+      "sortino": 5.28,
+      "hurst": 0.334,
       "leader_usd": 26558.66,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
   ],
-  "dip_buying_alerts": []
+  "dip_buying_alerts": [
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Jade Lotus Capital",
+      "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 286.91,
+      "mdd": 18.18,
+      "sharpe": 9.3,
+      "sortino": 4.63,
+      "hurst": 0.763,
+      "leader_usd": 859655.56,
+      "action_guide": "🔥 극점 딥바잉 진입",
+      "is_dip": true
+    }
+  ]
 }
