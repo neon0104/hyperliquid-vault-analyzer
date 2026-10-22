@@ -13963,5 +13963,72 @@
         "leader_eq": 0.36444954063536716
       }
     ]
+  },
+  "2026-10-23": {
+    "portfolio_value": 185632.89,
+    "daily_pnl": 66.49,
+    "daily_return_pct": 0.0358,
+    "cumulative_pnl": 85632.89,
+    "cumulative_pct": 85.6329,
+    "max_equity_ever": 185632.89,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2886,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 15.45,
+        "apr_30d": 17.38,
+        "robustness": 0.9946,
+        "undervalue": 1.013,
+        "leader_eq": 0.07774410119075656
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 15.43,
+        "apr_30d": 16.38,
+        "robustness": 0.9661,
+        "undervalue": 0.971,
+        "leader_eq": 0.9970398064310505
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "alloc_pct": 15.43,
+        "apr_30d": 2.54,
+        "robustness": 0.9142,
+        "undervalue": 1.004,
+        "leader_eq": 0.9999998909110462
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 2.03,
+        "apr_30d": 131.46,
+        "robustness": 0.6856,
+        "undervalue": 1.122,
+        "leader_eq": 0.590837956302101
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 1.66,
+        "apr_30d": 7.52,
+        "robustness": 0.6614,
+        "undervalue": 1.001,
+        "leader_eq": 0.16040233279755234
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 50.0,
+        "apr_30d": 9.36,
+        "robustness": 0.4855,
+        "undervalue": 0.761,
+        "leader_eq": 0.42553736817134846
+      }
+    ]
   }
 }
