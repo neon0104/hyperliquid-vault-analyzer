@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-10-14 23:39:26",
-    "topic_id": "TOPIC_FRACTIONAL_KELLY",
-    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
-    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
-    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
-    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
-    "validation_dataset": "143 days (2026-02-27 ~ 2026-10-14)",
-    "top_discovered_vaults": [
-      {
-        "name": "Hyper2",
-        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
-        "data_days": 13,
-        "hurst": 0.5,
-        "sortino": 289759026.4,
-        "kelly_f": 27.4,
-        "apr_30d": 2.8,
-        "mdd": 0.43,
-        "sharpe": 8.44,
-        "leader_usd": 7143.15
-      },
-      {
-        "name": "Algo1",
-        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
-        "data_days": 12,
-        "hurst": 0.5,
-        "sortino": 363392998.07,
-        "kelly_f": 27.3,
-        "apr_30d": 10.88,
-        "mdd": 0.31,
-        "sharpe": 8.96,
-        "leader_usd": 10204.76
-      },
-      {
-        "name": "Mahamor",
-        "address": "0xc75d9370c9f769b05baae78204a89854db920c1f",
-        "data_days": 23,
-        "hurst": 0.255,
-        "sortino": 29.02,
-        "kelly_f": 14.8,
-        "apr_30d": 414.34,
-        "mdd": 65.1,
-        "sharpe": 3.51,
-        "leader_usd": 7507.01
-      },
-      {
-        "name": "HighFDV",
-        "address": "0x78ab93343554d9b9fc7260f44844fad8f36d3d79",
-        "data_days": 12,
-        "hurst": 0.5,
-        "sortino": 8.73,
-        "kelly_f": 13.3,
-        "apr_30d": 209.84,
-        "mdd": 51.76,
-        "sharpe": 6.97,
-        "leader_usd": 12368.1
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-10-15 03:42:04",
     "topic_id": "TOPIC_FRACTIONAL_KELLY",
     "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
@@ -2941,6 +2881,66 @@
   },
   {
     "timestamp": "2026-10-23 15:39:25",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "143 days (2026-02-27 ~ 2026-10-23)",
+    "top_discovered_vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 11,
+        "hurst": 0.5,
+        "sortino": 401040434.34,
+        "kelly_f": 30.0,
+        "apr_30d": 16.38,
+        "mdd": 0.02,
+        "sharpe": 9.56,
+        "leader_usd": 10213.55
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "data_days": 13,
+        "hurst": 0.5,
+        "sortino": 291200499.85,
+        "kelly_f": 27.4,
+        "apr_30d": 2.54,
+        "mdd": 0.43,
+        "sharpe": 8.46,
+        "leader_usd": 7145.64
+      },
+      {
+        "name": "Mahamor",
+        "address": "0xc75d9370c9f769b05baae78204a89854db920c1f",
+        "data_days": 23,
+        "hurst": 0.255,
+        "sortino": 29.02,
+        "kelly_f": 14.8,
+        "apr_30d": -159.41,
+        "mdd": 65.1,
+        "sharpe": 3.47,
+        "leader_usd": 7423.22
+      },
+      {
+        "name": "Gucky_4coin_2dot5x",
+        "address": "0x73f6553d3a6b570ab37957b32a75c7fc0ebff6e9",
+        "data_days": 41,
+        "hurst": 0.352,
+        "sortino": 74.0,
+        "kelly_f": 14.0,
+        "apr_30d": 30.7,
+        "mdd": 282.16,
+        "sharpe": 0.96,
+        "leader_usd": 732.94
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-10-23 19:39:29",
     "topic_id": "TOPIC_FRACTIONAL_KELLY",
     "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
     "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
