@@ -1,6 +1,6 @@
 {
   "analysis_date": "2026-10-23",
-  "updated_at": "2026-10-23T07:39:21.136146",
+  "updated_at": "2026-10-23T11:39:27.494144",
   "total_capital": 100000.0,
   "portfolio_summary": {
     "expected_apr": 55.72,
@@ -49,8 +49,8 @@
       "apr_30d": 1.34,
       "mdd": 21.1,
       "sharpe": 6.66,
-      "sortino": 28.4,
-      "hurst": 0.432,
+      "sortino": 28.28,
+      "hurst": 0.363,
       "leader_usd": 161086.57,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
@@ -65,7 +65,7 @@
       "mdd": 3.28,
       "sharpe": 11.9,
       "sortino": 1.72,
-      "hurst": 0.625,
+      "hurst": 0.573,
       "leader_usd": 25461.0,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
@@ -79,8 +79,8 @@
       "apr_30d": 131.46,
       "mdd": 15.18,
       "sharpe": 13.13,
-      "sortino": 5.28,
-      "hurst": 0.334,
+      "sortino": 5.25,
+      "hurst": 0.285,
       "leader_usd": 26558.66,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
@@ -94,12 +94,28 @@
       "apr_30d": 246.68,
       "mdd": 19.93,
       "sharpe": 8.95,
-      "sortino": 4.63,
-      "hurst": 0.763,
+      "sortino": 4.55,
+      "hurst": 0.67,
       "leader_usd": 804035.77,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
+      "action_guide": "🔥 극점 딥바잉 진입",
+      "is_dip": true
     }
   ],
-  "dip_buying_alerts": []
+  "dip_buying_alerts": [
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Jade Lotus Capital",
+      "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 246.68,
+      "mdd": 19.93,
+      "sharpe": 8.95,
+      "sortino": 4.55,
+      "hurst": 0.67,
+      "leader_usd": 804035.77,
+      "action_guide": "🔥 극점 딥바잉 진입",
+      "is_dip": true
+    }
+  ]
 }
