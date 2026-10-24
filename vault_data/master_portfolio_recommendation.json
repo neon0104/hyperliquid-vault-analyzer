@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-24",
-  "updated_at": "2026-10-24T07:39:25.356121",
+  "updated_at": "2026-10-24T11:39:30.061424",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 55.08,
-    "portfolio_mdd_estimate": 1.99,
-    "estimated_monthly_profit_usd": 4590.33,
-    "estimated_annual_profit_usd": 55083.99,
+    "expected_apr": 22.81,
+    "portfolio_mdd_estimate": 3.39,
+    "estimated_monthly_profit_usd": 1901.06,
+    "estimated_annual_profit_usd": 22812.66,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -42,17 +42,32 @@
     },
     {
       "role": "🛡️ CORE (초안정 복리)",
-      "name": "PF1",
-      "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+      "name": "Jay Pennies to Jay Dollars",
+      "address": "0x3b4f22366857da94f9346f88eac84718c8a8d48d",
       "allocation_pct": 20.0,
       "allocated_usd": 20000.0,
-      "apr_30d": 18.94,
-      "mdd": 1.19,
-      "sharpe": 28.54,
-      "sortino": 4.38,
-      "hurst": 0.202,
-      "leader_usd": 56249.23,
+      "apr_30d": 1.11,
+      "mdd": 21.1,
+      "sharpe": 6.63,
+      "sortino": 28.31,
+      "hurst": 0.582,
+      "leader_usd": 160967.62,
       "action_guide": "✅ 정상 보유 및 복리 운용",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "22Cap",
+      "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 3.77,
+      "mdd": 15.89,
+      "sharpe": 10.05,
+      "sortino": 23.19,
+      "hurst": 0.566,
+      "leader_usd": 102638.33,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
     {
@@ -64,8 +79,8 @@
       "apr_30d": 11.07,
       "mdd": 0.3,
       "sharpe": 15.78,
-      "sortino": 1.72,
-      "hurst": 0.573,
+      "sortino": 1.73,
+      "hurst": 0.555,
       "leader_usd": 25512.52,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
@@ -79,43 +94,12 @@
       "apr_30d": 130.32,
       "mdd": 15.07,
       "sharpe": 13.24,
-      "sortino": 5.25,
-      "hurst": 0.285,
+      "sortino": 5.1,
+      "hurst": 0.308,
       "leader_usd": 26650.52,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Jade Lotus Capital",
-      "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 219.06,
-      "mdd": 19.51,
-      "sharpe": 9.05,
-      "sortino": 4.55,
-      "hurst": 0.67,
-      "leader_usd": 816732.15,
-      "action_guide": "🔥 극점 딥바잉 진입",
-      "is_dip": true
     }
   ],
-  "dip_buying_alerts": [
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Jade Lotus Capital",
-      "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 219.06,
-      "mdd": 19.51,
-      "sharpe": 9.05,
-      "sortino": 4.55,
-      "hurst": 0.67,
-      "leader_usd": 816732.15,
-      "action_guide": "🔥 극점 딥바잉 진입",
-      "is_dip": true
-    }
-  ]
+  "dip_buying_alerts": []
 }
