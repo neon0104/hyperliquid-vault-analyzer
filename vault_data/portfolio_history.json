@@ -14097,5 +14097,63 @@
         "leader_eq": 0.4395135986716257
       }
     ]
+  },
+  "2026-10-25": {
+    "portfolio_value": 185768.18,
+    "daily_pnl": 74.47,
+    "daily_return_pct": 0.0401,
+    "cumulative_pnl": 85768.18,
+    "cumulative_pct": 85.7682,
+    "max_equity_ever": 185768.18,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2912,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 22.2,
+        "apr_30d": 10.42,
+        "robustness": 0.994,
+        "undervalue": 1.007,
+        "leader_eq": 0.0761082903384628
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "alloc_pct": 22.19,
+        "apr_30d": 2.08,
+        "robustness": 0.9141,
+        "undervalue": 1.02,
+        "leader_eq": 0.9999998909110462
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 2.82,
+        "apr_30d": 86.0,
+        "robustness": 0.6857,
+        "undervalue": 1.077,
+        "leader_eq": 0.5477081638884311
+      },
+      {
+        "name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+        "alloc_pct": 2.79,
+        "apr_30d": 4.92,
+        "robustness": 0.5875,
+        "undervalue": 0.98,
+        "leader_eq": 0.45449389899215903
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 50.0,
+        "apr_30d": 18.6,
+        "robustness": 0.4883,
+        "undervalue": 0.746,
+        "leader_eq": 0.43728971963497554
+      }
+    ]
   }
 }
