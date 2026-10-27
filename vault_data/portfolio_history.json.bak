@@ -14231,5 +14231,63 @@
         "leader_eq": 0.43728971963497554
       }
     ]
+  },
+  "2026-10-27": {
+    "portfolio_value": 185891.31,
+    "daily_pnl": 69.34,
+    "daily_return_pct": 0.0373,
+    "cumulative_pnl": 85891.31,
+    "cumulative_pct": 85.8913,
+    "max_equity_ever": 185891.31,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2939,
+    "n_vaults": 5,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 16.27,
+        "apr_30d": 6.18,
+        "robustness": 0.9942,
+        "undervalue": 1.007,
+        "leader_eq": 0.0764813958192901
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 16.27,
+        "apr_30d": 3.92,
+        "robustness": 0.9663,
+        "undervalue": 0.992,
+        "leader_eq": 0.9522246680542417
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 15.28,
+        "apr_30d": 4.52,
+        "robustness": 0.9404,
+        "undervalue": 0.956,
+        "leader_eq": 0.21427287649985602
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 2.18,
+        "apr_30d": 112.0,
+        "robustness": 0.6855,
+        "undervalue": 1.103,
+        "leader_eq": 0.5365272834101953
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "alloc_pct": 50.0,
+        "apr_30d": 17.69,
+        "robustness": 0.478,
+        "undervalue": 0.747,
+        "leader_eq": 0.43728971963497554
+      }
+    ]
   }
 }
