@@ -14289,5 +14289,72 @@
         "leader_eq": 0.43728971963497554
       }
     ]
+  },
+  "2026-10-28": {
+    "portfolio_value": 185916.93,
+    "daily_pnl": 25.62,
+    "daily_return_pct": 0.0138,
+    "cumulative_pnl": 85916.93,
+    "cumulative_pct": 85.9169,
+    "max_equity_ever": 185916.93,
+    "mdd_pct": 0.0,
+    "risk_score": 0.2423,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 12.1,
+        "apr_30d": 6.78,
+        "robustness": 0.9944,
+        "undervalue": 0.997,
+        "leader_eq": 0.07409423693237188
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 12.09,
+        "apr_30d": 4.04,
+        "robustness": 0.9663,
+        "undervalue": 0.993,
+        "leader_eq": 0.9522246680542417
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 12.09,
+        "apr_30d": 7.9,
+        "robustness": 0.9511,
+        "undervalue": 0.967,
+        "leader_eq": 0.05542563854366587
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 12.09,
+        "apr_30d": 3.03,
+        "robustness": 0.9405,
+        "undervalue": 0.987,
+        "leader_eq": 0.21112786010679227
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 1.63,
+        "apr_30d": 118.09,
+        "robustness": 0.6854,
+        "undervalue": 1.109,
+        "leader_eq": 0.5254411583518851
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 50.0,
+        "apr_30d": 0.95,
+        "robustness": 0.614,
+        "undervalue": 0.775,
+        "leader_eq": 0.14117707791302742
+      }
+    ]
   }
 }
