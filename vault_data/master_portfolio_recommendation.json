@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-28",
-  "updated_at": "2026-10-28T07:39:21.620978",
+  "updated_at": "2026-10-28T11:39:28.917627",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 20.58,
-    "portfolio_mdd_estimate": 2.69,
-    "estimated_monthly_profit_usd": 1715.11,
-    "estimated_annual_profit_usd": 20581.33,
+    "expected_apr": 5.23,
+    "portfolio_mdd_estimate": 2.74,
+    "estimated_monthly_profit_usd": 436.11,
+    "estimated_annual_profit_usd": 5233.33,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -34,8 +34,8 @@
       "apr_30d": 6.78,
       "mdd": 1.11,
       "sharpe": 27.94,
-      "sortino": 4.16,
-      "hurst": 0.359,
+      "sortino": 4.24,
+      "hurst": 0.208,
       "leader_usd": 55867.77,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
@@ -49,10 +49,25 @@
       "apr_30d": 3.84,
       "mdd": 21.1,
       "sharpe": 6.71,
-      "sortino": 28.08,
-      "hurst": 0.409,
+      "sortino": 27.98,
+      "hurst": 0.393,
       "leader_usd": 161235.95,
       "action_guide": "✅ 정상 보유 및 복리 운용",
+      "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "22Cap",
+      "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 2.98,
+      "mdd": 15.84,
+      "sharpe": 10.09,
+      "sortino": 23.04,
+      "hurst": 0.564,
+      "leader_usd": 102756.7,
+      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
     {
@@ -64,8 +79,8 @@
       "apr_30d": 3.03,
       "mdd": 1.85,
       "sharpe": 13.38,
-      "sortino": 16.83,
-      "hurst": 0.554,
+      "sortino": 16.82,
+      "hurst": 0.553,
       "leader_usd": 157980.52,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
@@ -80,23 +95,8 @@
       "mdd": 0.27,
       "sharpe": 16.88,
       "sortino": 1.82,
-      "hurst": 0.635,
+      "hurst": 0.594,
       "leader_usd": 25569.95,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "Danny Ocean",
-      "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 118.09,
-      "mdd": 14.83,
-      "sharpe": 13.43,
-      "sortino": 5.27,
-      "hurst": 0.47,
-      "leader_usd": 26800.2,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     }
