@@ -1,12 +1,12 @@
 {
   "analysis_date": "2026-10-29",
-  "updated_at": "2026-10-29T07:39:25.480124",
+  "updated_at": "2026-10-29T11:39:28.941081",
   "total_capital": 100000.0,
   "portfolio_summary": {
-    "expected_apr": 5.42,
-    "portfolio_mdd_estimate": 2.75,
-    "estimated_monthly_profit_usd": 452.06,
-    "estimated_annual_profit_usd": 5424.67,
+    "expected_apr": 26.21,
+    "portfolio_mdd_estimate": 4.11,
+    "estimated_monthly_profit_usd": 2183.83,
+    "estimated_annual_profit_usd": 26205.99,
     "strategy_framework": "SKIN_IN_GAME_HEAVY 60:40 + Historical Max MDD 75% Extreme Dip-Buying + 18% Ejection"
   },
   "master_portfolio": [
@@ -34,8 +34,8 @@
       "apr_30d": 6.63,
       "mdd": 1.18,
       "sharpe": 28.14,
-      "sortino": 4.24,
-      "hurst": 0.208,
+      "sortino": 4.06,
+      "hurst": 0.246,
       "leader_usd": 55871.43,
       "action_guide": "✅ 정상 보유 및 복리 운용",
       "is_dip": false
@@ -49,25 +49,10 @@
       "apr_30d": 3.94,
       "mdd": 21.1,
       "sharpe": 6.71,
-      "sortino": 27.98,
-      "hurst": 0.393,
+      "sortino": 27.99,
+      "hurst": 0.435,
       "leader_usd": 161234.04,
       "action_guide": "✅ 정상 보유 및 복리 운용",
-      "is_dip": false
-    },
-    {
-      "role": "⚡ SATELLITE (초과 알파)",
-      "name": "22Cap",
-      "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
-      "allocation_pct": 13.3,
-      "allocated_usd": 13333.33,
-      "apr_30d": 3.18,
-      "mdd": 15.84,
-      "sharpe": 10.09,
-      "sortino": 23.04,
-      "hurst": 0.564,
-      "leader_usd": 102756.7,
-      "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
     {
@@ -79,27 +64,58 @@
       "apr_30d": 3.05,
       "mdd": 2.07,
       "sharpe": 13.38,
-      "sortino": 16.82,
-      "hurst": 0.553,
+      "sortino": 16.81,
+      "hurst": 0.582,
       "leader_usd": 157980.52,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
     },
     {
       "role": "⚡ SATELLITE (초과 알파)",
-      "name": "FuturAI Labs - High Sharpe, Low Volatili",
-      "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+      "name": "Danny Ocean",
+      "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
       "allocation_pct": 13.3,
       "allocated_usd": 13333.33,
-      "apr_30d": 12.06,
-      "mdd": 0.09,
-      "sharpe": 17.54,
-      "sortino": 1.82,
-      "hurst": 0.594,
-      "leader_usd": 25571.44,
+      "apr_30d": 102.72,
+      "mdd": 14.67,
+      "sharpe": 13.55,
+      "sortino": 5.31,
+      "hurst": 0.382,
+      "leader_usd": 26919.71,
       "action_guide": "🚨 18% MDD 도달 시 즉시 방출 (Zero Idle Cash)",
       "is_dip": false
+    },
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Jade Lotus Capital",
+      "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 68.38,
+      "mdd": 26.69,
+      "sharpe": 8.35,
+      "sortino": 3.42,
+      "hurst": 0.601,
+      "leader_usd": 719783.86,
+      "action_guide": "🔥 극점 딥바잉 진입",
+      "is_dip": true
     }
   ],
-  "dip_buying_alerts": []
+  "dip_buying_alerts": [
+    {
+      "role": "⚡ SATELLITE (초과 알파)",
+      "name": "Jade Lotus Capital",
+      "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
+      "allocation_pct": 13.3,
+      "allocated_usd": 13333.33,
+      "apr_30d": 68.38,
+      "mdd": 26.69,
+      "sharpe": 8.35,
+      "sortino": 3.42,
+      "hurst": 0.601,
+      "leader_usd": 719783.86,
+      "action_guide": "🔥 극점 딥바잉 진입",
+      "is_dip": true
+    }
+  ]
 }
