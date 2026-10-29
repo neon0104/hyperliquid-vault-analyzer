@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-10-30 07:39:22
+### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
+* **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
+* **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
+* **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
+* **검증 데이터**: `214 days (2026-02-27 ~ 2026-10-30)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.633` | Sortino `6.28` | Kelly `11.7%` | 30일 APR `251.46%` | Sharpe `8.71`
+  - **Buyback Spread Engine**: Hurst `0.647` | Sortino `2.95` | Kelly `6.9%` | 30일 APR `316.76%` | Sharpe `8.47`
+  - **Danny Ocean**: Hurst `0.366` | Sortino `5.96` | Kelly `9.0%` | 30일 APR `119.31%` | Sharpe `13.88`
+  - **V4 Alpha Quantum**: Hurst `0.552` | Sortino `6.97` | Kelly `6.8%` | 30일 APR `139.03%` | Sharpe `7.86`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-10-30 03:41:58
 ### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
 * **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
@@ -226,23 +243,6 @@
 ---
 
 ## 📅 연구 기록: 2026-10-29 07:39:25
-### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
-* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
-* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
-* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-10-29)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Algo1**: Hurst `0.5` | Sortino `384285930.15` | Kelly `30.0%` | 30일 APR `4.36%` | Sharpe `9.59`
-  - **Mahamor**: Hurst `0.255` | Sortino `29.02` | Kelly `14.8%` | 30일 APR `-363.27%` | Sharpe `3.33`
-  - **wmm.club | scalp-hype-long-2x**: Hurst `0.5` | Sortino `22.92` | Kelly `13.0%` | 30일 APR `-15.66%` | Sharpe `6.29`
-  - **Gucky_4coin_2dot5x**: Hurst `0.59` | Sortino `67.83` | Kelly `12.9%` | 30일 APR `23.76%` | Sharpe `0.97`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-10-29 03:42:04
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
 * **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
