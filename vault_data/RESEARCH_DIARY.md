@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-10-30 03:41:58
+### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
+* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
+* **수학적 모델**: $w_i = w_i \times \frac{V_i^{-1}}{\sum V_j^{-1}}$
+* **핵심 가설**: 전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.
+* **검증 데이터**: `214 days (2026-02-27 ~ 2026-10-30)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.633` | Sortino `6.28` | Kelly `11.7%` | 30일 APR `251.46%` | Sharpe `8.71`
+  - **Buyback Spread Engine**: Hurst `0.647` | Sortino `2.95` | Kelly `6.9%` | 30일 APR `316.76%` | Sharpe `8.47`
+  - **Danny Ocean**: Hurst `0.366` | Sortino `5.96` | Kelly `9.0%` | 30일 APR `119.31%` | Sharpe `13.88`
+  - **V4 Alpha Quantum**: Hurst `0.552` | Sortino `6.97` | Kelly `6.8%` | 30일 APR `139.03%` | Sharpe `7.86`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-10-29 23:39:34
 ### 🔬 주제: **알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍**
 * **레퍼런스 출처**: `GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)`
@@ -236,23 +253,6 @@
   - **Algo1**: Hurst `0.5` | Sortino `384285930.15` | Kelly `30.0%` | 30일 APR `4.36%` | Sharpe `9.59`
   - **Mahamor**: Hurst `0.255` | Sortino `29.02` | Kelly `14.8%` | 30일 APR `-363.27%` | Sharpe `3.33`
   - **wmm.club | scalp-hype-long-2x**: Hurst `0.5` | Sortino `22.92` | Kelly `13.0%` | 30일 APR `-15.66%` | Sharpe `6.29`
-  - **Gucky_4coin_2dot5x**: Hurst `0.59` | Sortino `67.83` | Kelly `12.9%` | 30일 APR `23.76%` | Sharpe `0.97`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-10-28 23:39:47
-### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
-* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
-* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
-* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-10-28)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Algo1**: Hurst `0.5` | Sortino `383862839.05` | Kelly `30.0%` | 30일 APR `4.04%` | Sharpe `9.57`
-  - **Mahamor**: Hurst `0.255` | Sortino `29.02` | Kelly `14.8%` | 30일 APR `-280.09%` | Sharpe `3.4`
-  - **wmm.club | scalp-hype-long-2x**: Hurst `0.5` | Sortino `23.16` | Kelly `13.0%` | 30일 APR `-12.88%` | Sharpe `6.35`
   - **Gucky_4coin_2dot5x**: Hurst `0.59` | Sortino `67.83` | Kelly `12.9%` | 30일 APR `23.76%` | Sharpe `0.97`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**

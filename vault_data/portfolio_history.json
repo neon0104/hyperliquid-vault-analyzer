@@ -14405,5 +14405,72 @@
         "leader_eq": 0.212864711602618
       }
     ]
+  },
+  "2026-10-30": {
+    "portfolio_value": 185987.3,
+    "daily_pnl": 45.59,
+    "daily_return_pct": 0.0245,
+    "cumulative_pnl": 85987.3,
+    "cumulative_pct": 85.9873,
+    "max_equity_ever": 185987.3,
+    "mdd_pct": 0.0,
+    "risk_score": 0.264,
+    "n_vaults": 6,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 11.84,
+        "apr_30d": 6.38,
+        "robustness": 0.9944,
+        "undervalue": 0.981,
+        "leader_eq": 0.07685909590407645
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 11.84,
+        "apr_30d": 4.39,
+        "robustness": 0.9664,
+        "undervalue": 0.991,
+        "leader_eq": 0.9522246680542417
+      },
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 11.84,
+        "apr_30d": 3.47,
+        "robustness": 0.9512,
+        "undervalue": 0.966,
+        "leader_eq": 0.054587986956586
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 11.84,
+        "apr_30d": 3.05,
+        "robustness": 0.9405,
+        "undervalue": 0.987,
+        "leader_eq": 0.21330810797308153
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 2.64,
+        "apr_30d": 80.22,
+        "robustness": 0.7814,
+        "undervalue": 1.07,
+        "leader_eq": 0.9313493243294835
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 50.0,
+        "apr_30d": 9.57,
+        "robustness": 0.567,
+        "undervalue": 0.981,
+        "leader_eq": 0.13273154311855953
+      }
+    ]
   }
 }
