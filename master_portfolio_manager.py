@@ -94,12 +94,14 @@ def compute_hurst(ts):
 
 def compute_sortino(ts, tvl):
     diffs = np.diff(np.array(ts, dtype=float))
-    if len(diffs) < 5: return 0.0
-    rets = diffs / (tvl + 1e-9)
+    if len(diffs) < 5 or tvl <= 0:
+        return 0.0
+    rets = np.clip(diffs / (tvl + 1e-9), -0.5, 0.5)
     mu = float(rets.mean())
-    neg = rets[rets < 0]
-    down_std = float(neg.std()) + 1e-9 if len(neg) > 0 else 1e-9
-    return float((mu / down_std) * np.sqrt(365))
+    tdd = float(np.sqrt(np.mean(np.minimum(0.0, rets) ** 2)))
+    vol_floor = max(float(rets.std()) * 0.25, 5e-4)
+    down_dev = max(tdd, vol_floor)
+    return float(np.clip((mu / down_dev) * np.sqrt(365), -20.0, 50.0))
 
 def run_comprehensive_portfolio_management(total_capital=100000.0):
     snapshot, date_str = load_latest_snapshot()
@@ -141,18 +143,21 @@ def run_comprehensive_portfolio_management(total_capital=100000.0):
         # 1) Robustness (40%) + 2) Leader Skin-In-Game (25%) + 3) Sharpe/Sortino (20%) + 4) Hurst Momentum (15%)
         skin_factor = np.log1p(l_usd) * 15.0
         robust_factor = rob * 45.0
-        quality_factor = max(sharpe, sortino_val) * 15.0
+        sharpe_capped = float(np.clip(sharpe, -20.0, 50.0))
+        quality_factor = max(sharpe_capped, sortino_val) * 15.0
         hurst_factor = (hurst_val - 0.5) * 40.0
         
         master_score = skin_factor + robust_factor + quality_factor + hurst_factor
         
-        # Dip buying readiness: current drawdown vs historical max MDD
+        # Dip buying readiness: current drawdown vs historical max MDD (TVL 기반 분모 안정화)
         if len(pnl_arr) > 5:
-            peak = np.maximum.accumulate(pnl_arr)
-            dd_arr = (peak - pnl_arr) / (np.abs(peak) + 1e-9)
-            curr_dd = float(dd_arr[-1]) * 100.0
+            pnl_np = np.array(pnl_arr, dtype=float)
+            peak = np.maximum.accumulate(pnl_np)
+            denom = np.maximum(tvl_val, np.abs(peak)) + 1e-9
+            dd_arr = (peak - pnl_np) / denom
+            curr_dd = float(np.clip(max(float(dd_arr[-1]) * 100.0, float(v.get("drawdown_now", 0.0) or 0.0)), 0.0, 100.0))
         else:
-            curr_dd = 0.0
+            curr_dd = float(v.get("drawdown_now", 0.0) or 0.0)
             
         # Is this vault near its historical max MDD (70%+ dip opportunity)?
         dip_opportunity = (mdd > 5.0 and curr_dd >= (mdd * 0.70))
@@ -175,10 +180,18 @@ def run_comprehensive_portfolio_management(total_capital=100000.0):
         
     scored_vaults.sort(key=lambda x: x["master_score"], reverse=True)
     
-    # Select Top 3 Core (Hyper-Safe Compounders) & Top 3 Satellite (High Alpha Momentum)
-    core_vaults = scored_vaults[:3]
-    sat_candidates = [v for v in scored_vaults[3:] if v["apr_30d"] >= 20.0 or v["hurst"] >= 0.55]
-    satellite_vaults = sat_candidates[:3] if len(sat_candidates) >= 3 else scored_vaults[3:6]
+    # Select Top 3 Core (Hyper-Safe Compounders: MDD <= 10% & Leader Equity >= $10k) & Top 3 Satellite (High Alpha Momentum: MDD < 18%)
+    core_pool = [v for v in scored_vaults if v["mdd"] <= 10.0 and v["leader_usd"] >= 10000.0]
+    if len(core_pool) < 3:
+        core_pool = [v for v in scored_vaults if v["mdd"] <= 15.0]
+    core_vaults = core_pool[:3] if len(core_pool) >= 3 else scored_vaults[:3]
+    core_addrs = {v["address"] for v in core_vaults}
+
+    rem_vaults = [v for v in scored_vaults if v["address"] not in core_addrs]
+    sat_safe = [v for v in rem_vaults if v["mdd"] < 18.0]
+    sat_pool = sat_safe if len(sat_safe) >= 3 else rem_vaults
+    sat_candidates = [v for v in sat_pool if v["apr_30d"] >= 15.0 or v["hurst"] >= 0.55]
+    satellite_vaults = sat_candidates[:3] if len(sat_candidates) >= 3 else sat_pool[:3]
     
     # 60:40 Barbell Allocation
     core_budget = total_capital * 0.60

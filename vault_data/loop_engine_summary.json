@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-10-29T11:39:27.215303",
+  "timestamp": "2026-10-29T15:39:26.788406",
   "latest_data_date": "2026-10-29",
   "self_evaluation_24h": {
     "evaluated_date": "2026-10-29",
     "referenced_date": "2026-10-28",
-    "portfolio_24h_profit_usd": 60.59,
-    "portfolio_24h_return_pct": 0.0606,
+    "portfolio_24h_profit_usd": 65.73,
+    "portfolio_24h_return_pct": 0.0657,
     "evaluated_holdings": [
       {
         "vault_name": "PF1",
@@ -43,131 +43,111 @@
         "actual_24h_return_pct": 0.4315
       },
       {
-        "vault_name": "BitRocket",
-        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "vault_name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
         "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": -5.24,
-        "actual_24h_return_pct": -0.0393
+        "actual_24h_gain_usd": -0.09,
+        "actual_24h_return_pct": -0.0007
       }
     ]
   },
   "champion_model": {
-    "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
-    "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-    "total_return_pct": 10.43,
-    "cagr_pct": 18.54,
-    "sharpe_ratio": 1.05,
-    "sortino_ratio": 1.05,
-    "max_drawdown_pct": 12.64,
-    "calmar_ratio": 1.47,
-    "final_capital": 110433.75
+    "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
+    "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
+    "total_return_pct": 41.84,
+    "cagr_pct": 82.02,
+    "sharpe_ratio": 1.94,
+    "sortino_ratio": 3.0,
+    "max_drawdown_pct": 14.51,
+    "calmar_ratio": 5.65,
+    "final_capital": 141839.18
   },
   "recommended_portfolio": [
     {
       "name": "PF1",
       "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
-      "allocation_pct": 20.0,
-      "allocation_usd": 20000.0,
+      "allocation_pct": 29.28,
+      "allocation_usd": 29282.04,
       "apr_30d": 6.63,
       "mdd": 1.18,
       "sharpe_ratio": 28.14,
       "leader_equity_usd": 55871.43
     },
     {
-      "name": "FuturAI Labs - High Sharpe, Low Volatili",
-      "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
-      "allocation_pct": 20.0,
-      "allocation_usd": 20000.0,
-      "apr_30d": 12.06,
-      "mdd": 0.09,
-      "sharpe_ratio": 17.54,
-      "leader_equity_usd": 25571.44
+      "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
+      "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+      "allocation_pct": 1.61,
+      "allocation_usd": 1612.36,
+      "apr_30d": 107.92,
+      "mdd": 21.43,
+      "sharpe_ratio": 8.05,
+      "leader_equity_usd": 690814.34
     },
     {
       "name": "FuturAI Labs - High Sharpe, Medium Volat",
       "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
-      "allocation_pct": 20.0,
-      "allocation_usd": 20000.0,
+      "allocation_pct": 34.55,
+      "allocation_usd": 34552.8,
       "apr_30d": 19.25,
       "mdd": 0.32,
       "sharpe_ratio": 19.58,
       "leader_equity_usd": 1467.27
     },
     {
-      "name": "Growi HF",
-      "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
-      "allocation_pct": 13.33,
-      "allocation_usd": 13333.33,
-      "apr_30d": 5.36,
-      "mdd": 1.69,
-      "sharpe_ratio": 14.35,
-      "leader_equity_usd": 738621.21
-    },
-    {
-      "name": "Citadel",
-      "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
-      "allocation_pct": 13.33,
-      "allocation_usd": 13333.33,
-      "apr_30d": 3.05,
-      "mdd": 2.07,
-      "sharpe_ratio": 13.38,
-      "leader_equity_usd": 157980.52
-    },
-    {
-      "name": "Danny Ocean",
-      "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-      "allocation_pct": 13.33,
-      "allocation_usd": 13333.33,
-      "apr_30d": 102.72,
-      "mdd": 14.67,
-      "sharpe_ratio": 13.55,
-      "leader_equity_usd": 26919.71
+      "name": "FuturAI Labs - High Sharpe, Low Volatili",
+      "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
+      "allocation_pct": 34.55,
+      "allocation_usd": 34552.8,
+      "apr_30d": 12.06,
+      "mdd": 0.09,
+      "sharpe_ratio": 17.54,
+      "leader_equity_usd": 25571.44
     }
   ],
   "all_tournament_results": [
     {
-      "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
-      "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": 10.43,
-      "cagr_pct": 18.54,
-      "sharpe_ratio": 1.05,
-      "sortino_ratio": 1.05,
-      "max_drawdown_pct": 12.64,
-      "calmar_ratio": 1.47,
-      "final_capital": 110433.75
-    },
-    {
-      "strategy_name": "Fractional Kelly 0.3x Optimizer",
-      "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
-      "total_return_pct": 2.32,
-      "cagr_pct": 4.01,
-      "sharpe_ratio": 0.42,
-      "sortino_ratio": 0.43,
-      "max_drawdown_pct": 5.34,
-      "calmar_ratio": 0.75,
-      "final_capital": 102323.07
-    },
-    {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-      "total_return_pct": 9.08,
-      "cagr_pct": 16.06,
-      "sharpe_ratio": 0.59,
-      "sortino_ratio": 0.56,
-      "max_drawdown_pct": 33.26,
-      "calmar_ratio": 0.48,
-      "final_capital": 109078.1
+      "total_return_pct": 41.84,
+      "cagr_pct": 82.02,
+      "sharpe_ratio": 1.94,
+      "sortino_ratio": 3.0,
+      "max_drawdown_pct": 14.51,
+      "calmar_ratio": 5.65,
+      "final_capital": 141839.18
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
       "description": "역대 A+ 등급 볼트의 일시적 -10%~-20% 낙폭 시 저점 집중 매수",
-      "total_return_pct": 0.0,
-      "cagr_pct": 0.0,
-      "sharpe_ratio": 0.0,
-      "sortino_ratio": 0.0,
-      "max_drawdown_pct": 0.0,
-      "calmar_ratio": 0.0,
-      "final_capital": 100000.0
+      "total_return_pct": -2.73,
+      "cagr_pct": -4.63,
+      "sharpe_ratio": 0.01,
+      "sortino_ratio": 0.01,
+      "max_drawdown_pct": 25.27,
+      "calmar_ratio": -0.18,
+      "final_capital": 97269.64
+    },
+    {
+      "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
+      "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
+      "total_return_pct": -3.68,
+      "cagr_pct": -6.22,
+      "sharpe_ratio": -0.21,
+      "sortino_ratio": -0.27,
+      "max_drawdown_pct": 14.0,
+      "calmar_ratio": -0.44,
+      "final_capital": 96319.07
+    },
+    {
+      "strategy_name": "Fractional Kelly 0.3x Optimizer",
+      "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
+      "total_return_pct": -8.93,
+      "cagr_pct": -14.82,
+      "sharpe_ratio": -1.15,
+      "sortino_ratio": -1.38,
+      "max_drawdown_pct": 11.9,
+      "calmar_ratio": -1.25,
+      "final_capital": 91065.15
     }
   ]
 }

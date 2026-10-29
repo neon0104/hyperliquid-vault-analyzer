@@ -78,6 +78,12 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
             "total_value": 0.0,
             "total_pnl": 0.0,
             "total_pnl_pct": 0.0,
+            "net_total_pnl": 0.0,
+            "net_total_pnl_pct": 0.0,
+            "net_total_value": 0.0,
+            "avg_monthly_gross_pct": 0.0,
+            "avg_monthly_net_pct": 0.0,
+            "monthly_returns": [],
             "monthly_est": 0.0,
             "annual_est": 0.0,
             "holdings": [],
@@ -87,6 +93,7 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
             "days_held": 0,
             "history_dates": [],
             "history_values": [],
+            "net_history_values": [],
             "mdd": 0.0
         }
 
@@ -200,35 +207,86 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
     net_total_val = total_inv + net_total_pnl
     net_total_pct = net_total_pnl / total_inv * 100 if total_inv > 0 else 0
 
-    # Build history series
+    # Build history series (chronological carry-forward per holding, avoiding future leakage on missing days)
     hist_dates = [d for d in dates if not invest_date or d >= invest_date]
     hist_values = []
-    
+    net_hist_values = []
+    last_gross_by_addr = {h["address"]: float(h["invested_usd"]) for h in holdings}
+
     for d in hist_dates:
-        daily_total = 0
+        daily_total = 0.0
+        daily_net_total = 0.0
         for h in holdings:
             addr = h["address"]
-            amt = h["invested_usd"]
+            amt = float(h["invested_usd"])
             if not h["_first_pnl"]:
                 try:
                     start_dt = datetime.strptime(invest_date, "%Y-%m-%d") if invest_date else datetime.now()
                     d_dt = datetime.strptime(d, "%Y-%m-%d")
                     days_gap = max(0, (d_dt - start_dt).days)
-                except: days_gap = 0
+                except Exception:
+                    days_gap = 0
                 daily_r = h["apr_30d"] / 100 / 365
-                daily_total += amt * ((1 + daily_r) ** days_gap)
-                continue
-                
-            _, start_pnl_val, start_tvl = h["_first_pnl"]
-            v_snap_d = snapshots[d].get(addr, {})
-            if v_snap_d and v_snap_d.get("alltime_pnl"):
-                d_pnl_val = v_snap_d["alltime_pnl"][-1]
-                pnl_diff = d_pnl_val - start_pnl_val
-                my_share = amt / max(start_tvl, 1)
-                daily_total += amt + (pnl_diff * my_share)
+                vg = amt * ((1 + daily_r) ** days_gap)
+                last_gross_by_addr[addr] = vg
             else:
-                daily_total += h["est_value"]
+                first_d, start_pnl_val, start_tvl = h["_first_pnl"]
+                if d >= first_d:
+                    v_snap_d = snapshots[d].get(addr, {})
+                    if v_snap_d and v_snap_d.get("alltime_pnl"):
+                        d_pnl_val = v_snap_d["alltime_pnl"][-1]
+                        pnl_diff = d_pnl_val - start_pnl_val
+                        my_share = amt / max(start_tvl, 1)
+                        last_gross_by_addr[addr] = amt + (pnl_diff * my_share)
+                vg = last_gross_by_addr[addr]
+            gp = vg - amt
+            vn = amt + (gp * 0.9 if gp > 0 else gp)
+            daily_total += vg
+            daily_net_total += vn
         hist_values.append(round(daily_total, 2))
+        net_hist_values.append(round(daily_net_total, 2))
+
+    # Calendar month-by-month return breakdown (Gross & Net after 10% profit share)
+    monthly_returns = []
+    if hist_dates and hist_values:
+        ym_buckets = {}
+        for d, vg, vn in zip(hist_dates, hist_values, net_hist_values):
+            ym_buckets.setdefault(d[:7], []).append((d, vg, vn))
+        prev_g = float(total_inv)
+        prev_n = float(total_inv)
+        for ym in sorted(ym_buckets.keys()):
+            items = ym_buckets[ym]
+            start_d = items[0][0]
+            end_d, end_g, end_n = items[-1]
+            r_g = ((end_g / prev_g) - 1.0) * 100.0 if prev_g > 0 else 0.0
+            r_n = ((end_n / prev_n) - 1.0) * 100.0 if prev_n > 0 else 0.0
+            monthly_returns.append({
+                "month": ym,
+                "short_label": f"{ym[2:4]}.{ym[5:7]}",
+                "month_num": f"{int(ym[5:7])}월",
+                "start_date": start_d,
+                "end_date": end_d,
+                "days": len(items),
+                "start_net": round(prev_n, 2),
+                "end_net": round(end_n, 2),
+                "net_pnl": round(end_n - prev_n, 2),
+                "net_pct": round(r_n, 2),
+                "gross_pnl": round(end_g - prev_g, 2),
+                "gross_pct": round(r_g, 2),
+            })
+            prev_g = end_g
+            prev_n = end_n
+
+    days_held_val = holdings[0]["days_held"] if holdings else 0
+    avg_monthly_gross_pct = 0.0
+    avg_monthly_net_pct = 0.0
+    if days_held_val > 0:
+        if days_held_val < 7:
+            avg_monthly_gross_pct = (total_pct / days_held_val) * 30.4375
+            avg_monthly_net_pct = (net_total_pct / days_held_val) * 30.4375
+        else:
+            avg_monthly_gross_pct = ((1.0 + max(total_pct, -99.9999) / 100.0) ** (30.4375 / days_held_val) - 1.0) * 100.0
+            avg_monthly_net_pct = ((1.0 + max(net_total_pct, -99.9999) / 100.0) ** (30.4375 / days_held_val) - 1.0) * 100.0
 
     # Calculate portfolio MDD
     mdd_val = 0.0
@@ -248,15 +306,19 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
         "net_total_pnl":  round(net_total_pnl, 2),
         "net_total_pnl_pct": round(net_total_pct, 2),
         "net_total_value": round(net_total_val, 2),
+        "avg_monthly_gross_pct": round(avg_monthly_gross_pct, 2),
+        "avg_monthly_net_pct":   round(avg_monthly_net_pct, 2),
+        "monthly_returns":       monthly_returns,
         "monthly_est":    round(sum(h["monthly_est"] for h in holdings), 2),
         "annual_est":     round(sum(h["monthly_est"] for h in holdings) * 12, 2),
         "holdings":       holdings,
         "n_vaults":       len(holdings),
         "invest_date":    invest_date,
         "analysis_date":  latest_dt,
-        "days_held":      holdings[0]["days_held"] if holdings else 0,
+        "days_held":      days_held_val,
         "history_dates":  hist_dates,
         "history_values": hist_values,
+        "net_history_values": net_hist_values,
         "mdd":            mdd_val
     }
 

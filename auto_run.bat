@@ -32,6 +32,9 @@ python analyze_top_vaults.py >> %LOG_FILE% 2>&1
 echo Running daily_pnl_collector.py... >> %LOG_FILE%
 python daily_pnl_collector.py >> %LOG_FILE% 2>&1
 
+echo Running hl_auto_vault_bot.py (SGRA+ Auto Signal ^& Rebalancer)... >> %LOG_FILE%
+python hl_auto_vault_bot.py >> %LOG_FILE% 2>&1
+
 echo Running autonomous_loop_engine.py (Self-Improving Loop)... >> %LOG_FILE%
 python autonomous_loop_engine.py >> %LOG_FILE% 2>&1
 
@@ -40,6 +43,9 @@ python autonomous_researcher.py >> %LOG_FILE% 2>&1
 
 echo Running master_portfolio_manager.py (Master Ensemble Optimizer)... >> %LOG_FILE%
 python master_portfolio_manager.py >> %LOG_FILE% 2>&1
+
+echo Running export_dashboard_data.py (GitHub Pages Static Data)... >> %LOG_FILE%
+python export_dashboard_data.py >> %LOG_FILE% 2>&1
 
 :: Push to GitHub
 echo Pushing updated data to GitHub... >> %LOG_FILE%

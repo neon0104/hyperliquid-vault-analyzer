@@ -10,7 +10,7 @@ autonomous_loop_engine.py — 🔄 자율 진화 루프 엔지니어링 퀀트 �
   5. [통합 리포팅] 결과 요약 및 대시보드/알림용 JSON 자동 갱신
 """
 
-import os, sys, json, glob
+import os, sys, json, glob, sqlite3, bisect
 import numpy as np
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -42,17 +42,50 @@ def save_json(filepath: Path, data: dict):
     temp_path.replace(filepath)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 1. 스냅샷 데이터 로드 및 헬퍼
+# 1. 스냅샷 데이터 로드 및 헬퍼 (SQLite 일별 시계열 Point-in-Time 연동)
 # ─────────────────────────────────────────────────────────────────────────────
+def load_pit_db_series():
+    """pnl_history.db에서 볼트별 (정렬된 날짜 리스트, 누적 PnL 리스트) 로드"""
+    db_path = DATA_DIR / "pnl_history.db"
+    series = {}
+    if not db_path.exists():
+        return series
+    try:
+        conn = sqlite3.connect(str(db_path))
+        cur = conn.cursor()
+        cur.execute("SELECT vault_address, collected_at, alltime_pnl FROM daily_pnl ORDER BY collected_at ASC")
+        for addr, dt, pnl in cur.fetchall():
+            if addr not in series:
+                series[addr] = ([], [])
+            series[addr][0].append(dt)
+            series[addr][1].append(float(pnl or 0.0))
+        conn.close()
+    except Exception:
+        pass
+    return series
+
 def load_all_snapshots():
+    pit_series = load_pit_db_series()
     files = sorted(SNAPSHOTS_DIR.glob("*.json"))
     cache = {}
     for f in files:
         if f.name.endswith(".bak"):
             continue
         try:
+            date_str = f.stem
             with open(f, "r", encoding="utf-8") as fd:
-                cache[f.stem] = json.load(fd)
+                snap_list = json.load(fd)
+            if not isinstance(snap_list, list):
+                continue
+            # 미래 참조 편향(Lookahead Bias) 없이 date_str 이하 시점까지의 DB 시계열만 주입
+            for v in snap_list:
+                addr = v.get("address", "")
+                if addr in pit_series:
+                    d_list, p_list = pit_series[addr]
+                    idx = bisect.bisect_right(d_list, date_str)
+                    if idx >= 8:
+                        v["_pit_pnl"] = p_list[:idx]
+            cache[date_str] = snap_list
         except Exception:
             pass
     return cache
@@ -81,17 +114,26 @@ class StrategyBarbellSkinHeavy:
         _, _, apr_30d, sharpe, robustness, l_usd, mdd, _ = get_vault_metrics(v)
         if apr_30d <= 0 or mdd > 35.0:
             return -999.0
-        return (np.log1p(l_usd) * 15.0) + (sharpe * 20.0) + (robustness * 40.0)
+        return (np.log1p(l_usd) * 15.0) + (min(sharpe, 50.0) * 20.0) + (robustness * 40.0)
 
     @staticmethod
     def allocate(vaults: list, total_capital=100000.0) -> dict:
-        scored = [(v, StrategyBarbellSkinHeavy.score_vault(v)) for v in vaults if bool(v.get("allow_deposits", True))]
+        has_leader_data = any(float(v.get("leader_equity_usd", 0.0) or 0.0) >= 10000.0 for v in vaults)
+        scored = [
+            (v, StrategyBarbellSkinHeavy.score_vault(v))
+            for v in vaults
+            if bool(v.get("allow_deposits", True))
+            and (not has_leader_data or float(v.get("leader_equity_usd", 0.0) or 0.0) >= 10000.0)
+        ]
         scored = [s for s in scored if s[1] > 0]
         scored.sort(key=lambda x: x[1], reverse=True)
         if not scored:
             return {}
-        core = scored[:3]
-        sat = scored[3:6] if len(scored) > 3 else scored[:3]
+        core_cands = [s for s in scored if float(s[0].get("max_drawdown", 15.0) or 15.0) <= 10.0]
+        core = core_cands[:3] if len(core_cands) >= 3 else scored[:3]
+        core_addrs = {v["address"] for v, _ in core}
+        rem = [s for s in scored if s[0]["address"] not in core_addrs]
+        sat = rem[:3] if len(rem) > 0 else core
         
         alloc = {}
         core_cap = total_capital * 0.60
@@ -108,21 +150,24 @@ class StrategyFractionalKelly:
 
     @staticmethod
     def score_vault(v: dict) -> float:
-        pnl_arr = v.get("alltime_pnl", [])
+        pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 10 else v.get("alltime_pnl", [])
         _, _, apr_30d, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
         if len(pnl_arr) < 10 or apr_30d <= 0 or mdd > 30.0:
             return -999.0
         diffs = np.diff(np.array(pnl_arr, dtype=float))
-        wins = diffs[diffs > 0]
-        losses = np.abs(diffs[diffs < 0])
-        win_rate = len(wins) / (len(diffs) + 1e-9)
+        window = diffs[-30:] if len(diffs) >= 30 else diffs
+        if float(np.sum(window)) <= 0:
+            return -999.0
+        wins = window[window > 0]
+        losses = np.abs(window[window < 0])
+        win_rate = len(wins) / (len(window) + 1e-9)
         avg_win = float(np.mean(wins)) if len(wins) > 0 else 1.0
-        avg_loss = float(np.mean(losses)) if len(losses) > 0 else 1.0
-        payout_ratio = max(avg_win / (avg_loss + 1e-9), 0.1)
+        avg_loss = float(np.mean(losses)) if len(losses) > 0 else max(avg_win * 0.5, 1e-6)
+        payout_ratio = float(np.clip(avg_win / (avg_loss + 1e-9), 0.1, 10.0))
         
         # Kelly Criterion: f* = (p*b - (1-p)) / b
         kelly_f = (win_rate * payout_ratio - (1.0 - win_rate)) / payout_ratio
-        fractional_kelly = max(kelly_f * 0.3, 0.0) # 0.3x fractional
+        fractional_kelly = float(np.clip(kelly_f * 0.3, 0.0, 0.30)) # 0.3x fractional
         return fractional_kelly * (1.0 + np.log1p(l_usd) * 0.1) * (rob + 0.5)
 
     @staticmethod
@@ -146,13 +191,13 @@ class StrategyDynamicRegimeMomentum:
     @staticmethod
     def score_vault(v: dict) -> float:
         _, _, apr_30d, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
-        pnl_arr = v.get("alltime_pnl", [])
+        pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 8 else v.get("alltime_pnl", [])
         if len(pnl_arr) < 8 or apr_30d <= 0 or mdd > 25.0:
             return -999.0
         recent_7d_pnl = pnl_arr[-1] - pnl_arr[-8]
         tvl = max(float(v.get("tvl", 1.0) or 1.0), 1.0)
         mom_7d_pct = (recent_7d_pnl / tvl) * 52 * 100 # 연환산
-        score = (apr_30d * 0.4) + (mom_7d_pct * 0.4) + (sharpe * 10.0) - (mdd * 2.0)
+        score = (apr_30d * 0.4) + (mom_7d_pct * 0.4) + (min(sharpe, 50.0) * 10.0) - (mdd * 2.0)
         return float(score)
 
     @staticmethod
@@ -176,23 +221,41 @@ class StrategyMeanReversionDipBuyer:
     desc = "역대 A+ 등급 볼트의 일시적 -10%~-20% 낙폭 시 저점 집중 매수"
 
     @staticmethod
-    def score_vault(v: dict) -> float:
-        pnl_arr = v.get("alltime_pnl", [])
-        _, _, apr_30d, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
-        if len(pnl_arr) < 20 or rob < 0.20:
+    def score_vault(v: dict, require_dip: bool = True) -> float:
+        pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 8 else v.get("alltime_pnl", [])
+        pnl_val, tvl_val, apr_30d, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
+        if len(pnl_arr) < 8 or rob < 0.25 or mdd > 30.0 or pnl_val <= 0 or tvl_val < 10000.0:
             return -999.0
-        # Drawdown from peak
-        peak = np.maximum.accumulate(pnl_arr)
-        dd = (peak - pnl_arr) / (np.abs(peak) + 1e-9)
-        current_dd_pct = float(dd[-1]) * 100.0 if len(dd) > 0 else 0.0
+        # Drawdown from peak (TVL 기반 분모 안정화 + 스냅샷 drawdown_now 병합)
+        pnl_np = np.array(pnl_arr, dtype=float)
+        peak = np.maximum.accumulate(pnl_np)
+        denom = np.maximum(tvl_val, np.abs(peak)) + 1e-9
+        dd = (peak - pnl_np) / denom
+        pit_dd_pct = float(dd[-1]) * 100.0 if len(dd) > 0 else 0.0
+        current_dd_pct = float(np.clip(max(pit_dd_pct, float(v.get("drawdown_now", 0.0) or 0.0)), 0.0, 100.0))
+        if require_dip and not (1.0 <= current_dd_pct <= 22.0):
+            return -999.0
+        if not require_dip and apr_30d <= 0:
+            return -999.0
         # Under-valued opportunity score
         undervalue = max(0.0, min(1.0, current_dd_pct / 20.0))
-        return (rob * 35.0) + (sharpe * 15.0) + (undervalue * 40.0) + (np.log1p(l_usd) * 10.0)
+        return (rob * 35.0) + (min(sharpe, 50.0) * 15.0) + (undervalue * 55.0) + (np.log1p(l_usd) * 10.0)
 
     @staticmethod
     def allocate(vaults: list, total_capital=100000.0) -> dict:
-        scored = [(v, StrategyMeanReversionDipBuyer.score_vault(v)) for v in vaults if bool(v.get("allow_deposits", True))]
+        elig = [v for v in vaults if bool(v.get("allow_deposits", True))]
+        scored = [(v, StrategyMeanReversionDipBuyer.score_vault(v, require_dip=True)) for v in elig]
         scored = [s for s in scored if s[1] > 0]
+        # 눌림목 종목이 2개 미만인 구간에서는 초고로버스트니스 우량 볼트에 대기 배분 (유휴 현금 손실 방지)
+        if len(scored) < 2:
+            fallback = [(v, StrategyMeanReversionDipBuyer.score_vault(v, require_dip=False)) for v in elig]
+            fallback = [s for s in fallback if s[1] > 0]
+            used_addrs = {v["address"] for v, _ in scored}
+            for fv, fs in sorted(fallback, key=lambda x: x[1], reverse=True):
+                if fv["address"] not in used_addrs:
+                    scored.append((fv, fs * 0.8))
+                if len(scored) >= 4:
+                    break
         scored.sort(key=lambda x: x[1], reverse=True)
         top = scored[:4]
         if not top:
@@ -258,15 +321,18 @@ def run_strategy_backtest(strat_cls, snapshots_cache: dict, initial_cap=100000.0
     days = max(len(dates), 1)
     cagr = ((current_cap / initial_cap) ** (365.0 / days) - 1.0) * 100.0 if current_cap > 0 else -100.0
     
-    # Calculate Sharpe, Sortino, MDD
+    # Calculate Sharpe, Sortino, MDD (빈 슬라이스 RuntimeWarning 및 1e-9 분모 폭주 방지)
     arr = np.array(daily_returns, dtype=float)
-    mu = float(arr.mean()) if len(arr) > 0 else 0.0
-    std = float(arr.std()) + 1e-9
-    sharpe = float((mu / std) * np.sqrt(365)) if std > 0 else 0.0
-    
-    neg = arr[arr < 0]
-    down_std = float(neg.std()) + 1e-9 if len(neg) > 0 else 1e-9
-    sortino = float((mu / down_std) * np.sqrt(365)) if down_std > 0 else 0.0
+    if len(arr) >= 2:
+        mu = float(arr.mean())
+        std = float(arr.std())
+        sharpe = float((mu / (std + 1e-9)) * np.sqrt(365)) if std > 1e-12 else 0.0
+        tdd = float(np.sqrt(np.mean(np.minimum(0.0, arr) ** 2)))
+        down_dev = max(tdd, std * 0.25, 1e-4)
+        sortino = float(np.clip((mu / down_dev) * np.sqrt(365), -20.0, 50.0))
+    else:
+        sharpe = 0.0
+        sortino = 0.0
     
     pv = np.array(portfolio_values, dtype=float)
     peak = np.maximum.accumulate(pv)

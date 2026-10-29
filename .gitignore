@@ -38,7 +38,7 @@ vault_data/reports/
 
 # 디버깅 / 임시 스크립트
 check_*.py
-!check_data_health.py   # CI(daily_update.yml)에서 필요하므로 무시하지 않음
+!check_data_health.py
 debug_*.py
 dump_*.py
 hunt_*.py
@@ -57,16 +57,20 @@ vault_data/portfolio_history.json
 vault_data/status.json
 debug.log
 *.log
+*.bak
 
 # ── 시크릿 / 개인정보 (공개 저장소에 절대 커밋 금지) ──
-config.json                        # 지갑주소·(넣었다면) 개인키
-my_portfolio.json                  # 루트의 실제 포트폴리오
-telegram_config.json               # 봇 토큰
-discord_config.json                # 웹훅 URL
-vault_data/domain_config.json      # DuckDNS 토큰
-.jwt_secret                        # 대시보드 JWT 서명키
-vault_data/auth.db                 # 대시보드 계정 DB
-*.db                               # pnl_history.db 등 바이너리 DB (git 병합 불가)
-vault_data/rebalance_plan.json     # 실제 포지션 포함
-vault_data/virtual_portfolios.json # 실제 포지션 포함
-app-release.apk                    # 빌드 산출물
+config.json
+my_portfolio.json
+telegram_config.json
+discord_config.json
+vault_data/domain_config.json
+.jwt_secret
+vault_data/auth.db
+*.db
+vault_data/rebalance_plan.json
+vault_data/virtual_portfolios.json
+vault_data/autobot_config.json
+vault_data/autobot_state.json
+vault_data/autobot_exec_log.json
+app-release.apk

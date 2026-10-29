@@ -2895,8 +2895,8 @@
   {
     "evaluated_date": "2026-10-29",
     "referenced_date": "2026-10-28",
-    "portfolio_24h_profit_usd": 60.59,
-    "portfolio_24h_return_pct": 0.0606,
+    "portfolio_24h_profit_usd": 65.73,
+    "portfolio_24h_return_pct": 0.0657,
     "evaluated_holdings": [
       {
         "vault_name": "PF1",
@@ -2934,11 +2934,11 @@
         "actual_24h_return_pct": 0.4315
       },
       {
-        "vault_name": "BitRocket",
-        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
+        "vault_name": "22Cap",
+        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
         "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": -5.24,
-        "actual_24h_return_pct": -0.0393
+        "actual_24h_gain_usd": -0.09,
+        "actual_24h_return_pct": -0.0007
       }
     ]
   }

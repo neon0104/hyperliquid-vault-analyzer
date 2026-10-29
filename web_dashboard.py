@@ -1006,6 +1006,61 @@ def my_portfolio_gui():
                                   available_vaults=available_vaults)
 
 
+# ── SGRA+ $20,000 자동운용 관제센터 (/autobot) ────────────────────────────────
+@app.route("/autobot")
+@jwt_required()
+def autobot_gui():
+    return render_template_string(AUTOBOT_HTML)
+
+
+@app.route("/api/autobot/status", methods=["GET"])
+@jwt_required()
+def api_autobot_status():
+    try:
+        import hl_auto_vault_bot
+        payload = hl_auto_vault_bot.get_autobot_dashboard_payload()
+        return jsonify(payload)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/autobot/config", methods=["POST"])
+@jwt_required()
+def api_autobot_config():
+    try:
+        import hl_auto_vault_bot
+        patch = request.get_json(force=True) or {}
+        hl_auto_vault_bot.save_autobot_config(patch)
+        payload = hl_auto_vault_bot.run_autobot_cycle(force_rebalance=False)
+        return jsonify(payload)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/autobot/run", methods=["POST"])
+@jwt_required()
+def api_autobot_run():
+    try:
+        import hl_auto_vault_bot
+        body = request.get_json(silent=True) or {}
+        force = bool(body.get("force", False))
+        payload = hl_auto_vault_bot.run_autobot_cycle(force_rebalance=force)
+        return jsonify(payload)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/autobot/reset-virtual", methods=["POST"])
+@jwt_required()
+def api_autobot_reset_virtual():
+    try:
+        import hl_auto_vault_bot
+        payload = hl_auto_vault_bot.reset_autobot_virtual_book()
+        return jsonify(payload)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ── HTML 템플릿 ───────────────────────────────────────────────────────────────
 
 LOGIN_HTML = """<!DOCTYPE html>
@@ -1170,7 +1225,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="view
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>""" + COMMON_STYLE + """</style></head>
 <body><header><div><h1 style="background:linear-gradient(90deg, #4f8ef7, #1abc9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">HL Vault Analyzer Pro v3.1</h1></div><div>
-<a class="btn" href="/research" style="background:rgba(79,142,247,0.15);border:1px solid #4f8ef7;color:#4f8ef7;font-weight:bold;">🧠 AI Research</a><a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/settings">⚙️ Settings</a><a class="btn" href="/logout" style="color:var(--danger);">🚪 Logout</a>
+<a class="btn" href="/autobot" style="background:rgba(26,188,156,0.18);border:1px solid #1abc9c;color:#1abc9c;font-weight:bold;">🤖 자동운용 관제</a><a class="btn" href="/research" style="background:rgba(79,142,247,0.15);border:1px solid #4f8ef7;color:#4f8ef7;font-weight:bold;">🧠 AI Research</a><a class="btn" href="/m">📱 My Portfolio</a><a class="btn" href="/portfolio">🔬 Analysis</a><a class="btn" href="/settings">⚙️ Settings</a><a class="btn" href="/logout" style="color:var(--danger);">🚪 Logout</a>
 </div></header><main>
 <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
 <div class="card stat-box"><div class="stat-label">Analysis Date</div><div class="stat-val" style="color:#fff">{{date}} <small style="font-size:0.8rem;color:var(--muted)">{% if stats.prev_date %}(vs {{stats.prev_date}}){% endif %}</small></div></div>
@@ -1580,6 +1635,7 @@ document.addEventListener('DOMContentLoaded', filterTable);
 </script>
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">
+    <a href="/autobot" id="tab-autobot" class="tab-item"><span class="icon">🤖</span><span>AutoBot</span></a>
     <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
     <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
@@ -3029,6 +3085,7 @@ function runBacktest() {
 </script>
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">
+    <a href="/autobot" id="tab-autobot" class="tab-item"><span class="icon">🤖</span><span>AutoBot</span></a>
     <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
     <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
@@ -3491,6 +3548,48 @@ MY_HTML = """<!DOCTYPE html>
             margin-top: 2px;
         }
 
+        .p-card-monthly-wrap {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .p-card-monthly-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .p-card-monthly-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .m-ret-chip {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 7px;
+            padding: 5px 6px;
+            text-align: center;
+        }
+
+        .m-ret-chip .m-lbl {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .m-ret-chip .m-val {
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
         /* ── Tables styling ── */
         .table-container {
             width: 100%;
@@ -3813,6 +3912,7 @@ MY_HTML = """<!DOCTYPE html>
 <header>
     <h1>💼 Virtual Portfolios Manager</h1>
     <div>
+        <a class="btn" href="/autobot" style="background:rgba(26,188,156,0.16);border:1px solid #1abc9c;color:#1abc9c;font-weight:700;">🤖 $20k 자동운용 관제</a>
         <button class="btn btn-primary" onclick="openCreateModal()">➕ 새 가상 포트폴리오</button>
         <a class="btn back-btn" href="/">← 메인 대시보드</a>
     </div>
@@ -3873,6 +3973,11 @@ MY_HTML = """<!DOCTYPE html>
                 <div class="p-card-stat-label" style="margin-top:5px; font-size:0.75rem;">수익 구간 10% 수수료 공제</div>
             </div>
             <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
+                <div class="p-card-stat-label">월평균 순수익률 (복리)</div>
+                <div class="stat-val" id="details-avg-monthly" style="font-size:1.8rem; font-weight:800; margin-top:5px;">+0.00%</div>
+                <div class="p-card-stat-label" id="details-avg-monthly-sub" style="margin-top:5px; font-size:0.75rem;">세전 월평균 +0.00%</div>
+            </div>
+            <div class="glass-card" style="margin-bottom:0; padding:18px; text-align:center;">
                 <div class="p-card-stat-label">예상 최대 낙폭 (MDD)</div>
                 <div class="stat-val" id="details-portfolio-mdd" style="font-size:1.8rem; font-weight:800; color:var(--danger); margin-top:5px;">0%</div>
                 <div class="p-card-stat-label" style="margin-top:5px; font-size:0.75rem;">역사적 시뮬레이션 기반</div>
@@ -3884,6 +3989,27 @@ MY_HTML = """<!DOCTYPE html>
             <h3>📈 포트폴리오 가치 누적 추이 (USD)</h3>
             <div class="chart-container">
                 <canvas id="equity-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Monthly Returns Table -->
+        <div class="glass-card">
+            <h3>📅 월별 수익률 상세 명세표 (세전 / 10% 성과수수료 공제 후)</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>연월 (집계 기간)</th>
+                            <th>기초 순자산 (USD)</th>
+                            <th>기말 순자산 (USD)</th>
+                            <th>월간 세전 수익률</th>
+                            <th>월간 공제 후 순수익률</th>
+                            <th>월간 순손익 (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details-monthly-table">
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -4033,6 +4159,7 @@ MY_HTML = """<!DOCTYPE html>
 
 <!-- Mobile Navigation Bar -->
 <div class="mobile-tab-bar">
+    <a href="/autobot" class="tab-item"><span class="icon">🤖</span><span>AutoBot</span></a>
     <a href="/m" class="tab-item active"><span class="icon">💼</span><span>Portfolios</span></a>
     <a href="/" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
     <a href="/settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
@@ -4265,7 +4392,32 @@ MY_HTML = """<!DOCTYPE html>
                         <div class="p-card-stat-label">투자기간대비 순수익률</div>
                         <div class="p-card-stat-val ${netPnlColor}">${apyText}</div>
                     </div>
+                    <div>
+                        <div class="p-card-stat-label">월평균 수익률 (세전 복리)</div>
+                        <div class="p-card-stat-val ${(perf.avg_monthly_gross_pct || 0) >= 0 ? 'pnl-green' : 'pnl-red'}">${(perf.avg_monthly_gross_pct || 0) >= 0 ? '+' : ''}${(perf.avg_monthly_gross_pct || 0).toFixed(2)}% / 월</div>
+                    </div>
+                    <div>
+                        <div class="p-card-stat-label">월평균 순수익률 (공제 후)</div>
+                        <div class="p-card-stat-val ${(perf.avg_monthly_net_pct || 0) >= 0 ? 'pnl-green' : 'pnl-red'}">${(perf.avg_monthly_net_pct || 0) >= 0 ? '+' : ''}${(perf.avg_monthly_net_pct || 0).toFixed(2)}% / 월</div>
+                    </div>
                 </div>
+                ${(perf.monthly_returns && perf.monthly_returns.length > 0) ? `
+                <div class="p-card-monthly-wrap">
+                    <div class="p-card-monthly-title">
+                        <span>📅 월별 순수익률 (수수료 공제 후)</span>
+                        <span>총 ${perf.monthly_returns.length}개월</span>
+                    </div>
+                    <div class="p-card-monthly-grid">
+                        ${perf.monthly_returns.map(m => {
+                            const mc = m.net_pct >= 0 ? "pnl-green" : "pnl-red";
+                            const ms = m.net_pct >= 0 ? "+" : "";
+                            return `<div class="m-ret-chip" title="${m.month} (${m.start_date} ~ ${m.end_date}) 세전: ${m.gross_pct >= 0 ? '+' : ''}${m.gross_pct.toFixed(2)}% / 공제후: ${ms}${m.net_pct.toFixed(2)}%">
+                                <div class="m-lbl">${m.short_label} (${m.month_num})</div>
+                                <div class="m-val ${mc}">${ms}${m.net_pct.toFixed(2)}%</div>
+                            </div>`;
+                        }).join("")}
+                    </div>
+                </div>` : ""}
             `;
             grid.appendChild(card);
         });
@@ -4300,6 +4452,49 @@ MY_HTML = """<!DOCTYPE html>
         document.getElementById('details-net-value').innerText = `$${Math.round(perf.net_total_value || p.total_capital).toLocaleString()}`;
         document.getElementById('details-net-pnl').innerText = netPnlText;
         document.getElementById('details-net-pnl').style.color = netPnlColor;
+
+        // Render Average Monthly KPI & Monthly Returns Breakdown Table
+        const avgNetM = perf.avg_monthly_net_pct || 0;
+        const avgGrossM = perf.avg_monthly_gross_pct || 0;
+        const avgNetEl = document.getElementById('details-avg-monthly');
+        if (avgNetEl) {
+            avgNetEl.innerText = `${avgNetM >= 0 ? '+' : ''}${avgNetM.toFixed(2)}% / 월`;
+            avgNetEl.style.color = avgNetM >= 0 ? 'var(--success)' : 'var(--danger)';
+        }
+        const avgSubEl = document.getElementById('details-avg-monthly-sub');
+        if (avgSubEl) {
+            avgSubEl.innerText = `세전 월평균 ${avgGrossM >= 0 ? '+' : ''}${avgGrossM.toFixed(2)}%`;
+        }
+
+        const mTbody = document.getElementById('details-monthly-table');
+        if (mTbody) {
+            mTbody.innerHTML = '';
+            const mList = perf.monthly_returns || [];
+            if (mList.length > 0) {
+                mList.forEach(m => {
+                    const gCls = m.gross_pct >= 0 ? 'pnl-green' : 'pnl-red';
+                    const gSgn = m.gross_pct >= 0 ? '+' : '';
+                    const nCls = m.net_pct >= 0 ? 'pnl-green' : 'pnl-red';
+                    const nSgn = m.net_pct >= 0 ? '+' : '';
+                    const usdSgn = m.net_pnl >= 0 ? '+' : '-';
+                    const usdFmt = Math.abs(m.net_pnl) < 100 ? Math.abs(m.net_pnl).toFixed(2) : Math.round(Math.abs(m.net_pnl)).toLocaleString();
+                    const sFmt = m.start_net < 100 ? m.start_net.toFixed(2) : Math.round(m.start_net).toLocaleString();
+                    const eFmt = m.end_net < 100 ? m.end_net.toFixed(2) : Math.round(m.end_net).toLocaleString();
+                    const mTr = document.createElement('tr');
+                    mTr.innerHTML = `
+                        <td style="font-weight:700; color:#fff;">${m.month} <small style="color:var(--text-muted); font-weight:400;">(${m.start_date.slice(5)} ~ ${m.end_date.slice(5)}, ${m.days}일)</small></td>
+                        <td>$${sFmt}</td>
+                        <td style="font-weight:600; color:var(--accent2);">$${eFmt}</td>
+                        <td class="${gCls}" style="font-weight:600;">${gSgn}${m.gross_pct.toFixed(2)}%</td>
+                        <td class="${nCls}" style="font-weight:700;">${nSgn}${m.net_pct.toFixed(2)}%</td>
+                        <td class="${nCls}" style="font-weight:600;">${usdSgn}$${usdFmt}</td>
+                    `;
+                    mTbody.appendChild(mTr);
+                });
+            } else {
+                mTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">월별 수익률 데이터가 없습니다.</td></tr>`;
+            }
+        }
 
         // Render Positions Table
         const tbody = document.getElementById('details-positions-table');
@@ -4780,6 +4975,709 @@ MY_HTML = """<!DOCTYPE html>
                   .replace(/"/g, "&quot;")
                   .replace(/'/g, "&#039;");
     }
+</script>
+</body>
+</html>"""
+
+
+AUTOBOT_HTML = r"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGRA+ 자동운용 관제센터 — HL Vault Analyzer Pro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        :root {
+            --bg: #0b0f1a;
+            --surface: #131928;
+            --surface2: #182136;
+            --border: #243050;
+            --text: #e8eaf0;
+            --muted: #8496b8;
+            --accent: #4f8ef7;
+            --teal: #1abc9c;
+            --green: #2ecc71;
+            --amber: #f39c12;
+            --red: #e74c3c;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; background: var(--bg); color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding-bottom: 80px;
+        }
+        header {
+            background: rgba(19, 25, 40, 0.92); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border); padding: 16px 28px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 50; flex-wrap: wrap; gap: 12px;
+        }
+        header h1 {
+            margin: 0; font-size: 1.25rem; font-weight: 800;
+            background: linear-gradient(90deg, #1abc9c, #4f8ef7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .nav-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 15px; border-radius: 9px; border: 1px solid var(--border);
+            background: var(--surface2); color: var(--text); font-size: 0.85rem;
+            font-weight: 600; text-decoration: none; cursor: pointer; transition: 0.18s;
+        }
+        .btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        .btn-primary { background: linear-gradient(135deg, #2563eb, #4f8ef7); border-color: #3b82f6; color: #fff; }
+        .btn-teal { background: rgba(26, 188, 156, 0.16); border-color: #1abc9c; color: #1abc9c; }
+        .btn-amber { background: rgba(243, 156, 18, 0.16); border-color: #f39c12; color: #f8b739; }
+        .btn-danger { background: rgba(231, 76, 60, 0.14); border-color: #e74c3c; color: #ff6b6b; }
+
+        main { max-width: 1420px; margin: 0 auto; padding: 24px 24px 40px; }
+
+        .banner {
+            background: linear-gradient(135deg, rgba(26,188,156,0.10), rgba(79,142,247,0.10));
+            border: 1px solid var(--border); border-radius: 16px;
+            padding: 20px 24px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+        }
+        .badge-dry { background: rgba(243,156,18,0.18); color: #fbbf24; border: 1px solid rgba(243,156,18,0.45); }
+        .badge-live { background: rgba(46,204,113,0.18); color: #2ecc71; border: 1px solid rgba(46,204,113,0.5); }
+        .badge-paused { background: rgba(231,76,60,0.18); color: #ff7675; border: 1px solid rgba(231,76,60,0.45); }
+        .badge-bull { background: rgba(46,204,113,0.16); color: #2ecc71; border: 1px solid rgba(46,204,113,0.4); }
+        .badge-neutral { background: rgba(132,150,184,0.18); color: #cbd5e1; border: 1px solid rgba(132,150,184,0.4); }
+        .badge-bear { background: rgba(231,76,60,0.16); color: #ff7675; border: 1px solid rgba(231,76,60,0.4); }
+
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px;
+        }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 15px; padding: 20px; margin-bottom: 20px;
+        }
+        .kpi-card { margin-bottom: 0; }
+        .kpi-label { font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .kpi-val { font-size: 1.55rem; font-weight: 800; color: #fff; margin: 8px 0 6px; }
+        .kpi-sub { font-size: 0.8rem; color: var(--muted); line-height: 1.45; }
+
+        .warn-box {
+            background: rgba(243, 156, 18, 0.12); border: 1px solid rgba(243, 156, 18, 0.45);
+            color: #fde68a; padding: 12px 16px; border-radius: 12px; margin-bottom: 18px; font-size: 0.86rem;
+            display: none;
+        }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+        th {
+            text-align: left; padding: 12px 12px; color: var(--muted); font-weight: 600;
+            border-bottom: 1px solid var(--border); font-size: 0.78rem; text-transform: uppercase;
+            white-space: nowrap;
+        }
+        td { padding: 13px 12px; border-bottom: 1px solid rgba(36,48,80,0.55); vertical-align: middle; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        a.vlink { color: #7cb3ff; text-decoration: none; font-weight: 700; }
+        a.vlink:hover { text-decoration: underline; }
+
+        .bar-bg { width: 100px; height: 6px; background: #0b0f1a; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, #1abc9c, #4f8ef7); border-radius: 4px; }
+
+        .settings-drawer {
+            display: none; background: #0f1524; border: 1px solid var(--border);
+            border-radius: 14px; padding: 20px; margin-bottom: 20px;
+        }
+        .form-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px;
+        }
+        .fg label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+        .fg input, .fg select {
+            width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--surface); color: #fff; font-size: 0.88rem;
+        }
+
+        pre.cmd-box {
+            background: #080b12; border: 1px solid var(--border); border-radius: 10px;
+            padding: 13px 15px; color: #a7f3d0; font-size: 0.8rem; overflow-x: auto; line-height: 1.55;
+        }
+
+        #toast {
+            visibility: hidden; min-width: 260px; background: #1e293b; color: #fff;
+            border: 1px solid var(--accent); text-align: center; border-radius: 10px;
+            padding: 12px 18px; position: fixed; z-index: 100; right: 24px; bottom: 28px;
+            font-size: 0.88rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+        }
+        #toast.show { visibility: visible; }
+
+        .mobile-tab-bar {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(19, 25, 40, 0.96); border-top: 1px solid var(--border);
+            padding: 8px 0; justify-content: space-around; z-index: 90;
+        }
+        .tab-item {
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            color: var(--muted); text-decoration: none; font-size: 0.7rem; font-weight: 600;
+        }
+        .tab-item.active { color: var(--teal); }
+        .tab-item .icon { font-size: 1.15rem; }
+
+        @media (max-width: 980px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 640px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+            header .nav-btns { display: none; }
+            .mobile-tab-bar { display: flex; }
+            main { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <h1>🤖 Hyperliquid $20,000 자동운용 관제센터</h1>
+        <div style="font-size:0.77rem; color:var(--muted); margin-top:3px;">
+            SGRA+ (Skin≥30% · HWM 10% 보존 · TVL≤30% 캡 · 14일 정기 & 4시간 비상가드)
+        </div>
+    </div>
+    <div class="nav-btns">
+        <a class="btn" href="/m">📱 내 포트폴리오</a>
+        <a class="btn" href="/">🔬 메인 대시보드</a>
+        <a class="btn" href="/research">🧠 AI Research</a>
+        <a class="btn" href="/settings">⚙️ 알림 설정</a>
+        <a class="btn" href="/logout" style="color:var(--red);">🚪 로그아웃</a>
+    </div>
+</header>
+
+<main>
+    <div id="fallback-warn" class="warn-box"></div>
+
+    <!-- 상단 컨트롤 배너 -->
+    <div class="banner">
+        <div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+                <span id="mode-badge" class="badge badge-dry">🧪 모의운용 (DRY-RUN)</span>
+                <span id="regime-badge" class="badge badge-neutral">국면 분석 중...</span>
+                <span id="key-badge" class="badge badge-neutral">🔑 서명키 확인 중</span>
+            </div>
+            <div id="signal-headline" style="font-size:0.95rem; font-weight:700; color:#fff;">시그널 상태를 불러오는 중입니다...</div>
+            <div id="check-timestamps" style="font-size:0.79rem; color:var(--muted); margin-top:4px;">마지막 점검: - | 다음 정기 리밸런싱: -</div>
+        </div>
+        <div style="display:flex; gap:9px; flex-wrap:wrap;">
+            <button id="btn-check" class="btn btn-teal" onclick="triggerCycle(false)">🔍 지금 시그널 점검</button>
+            <button id="btn-force" class="btn btn-primary" onclick="triggerCycle(true)">⚡ 즉시 리밸런싱 실행</button>
+            <button id="btn-pause" class="btn btn-amber" onclick="togglePause()">⏸️ 일시정지</button>
+            <button class="btn" onclick="toggleSettings()">⚙️ 운용 설정</button>
+        </div>
+    </div>
+
+    <!-- 접이식 운용 설정 패널 -->
+    <div id="settings-drawer" class="settings-drawer">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <h3 style="margin:0; font-size:1rem;">⚙️ SGRA+ 자동운용 파라미터 & 모드 전환</h3>
+            <button class="btn" style="padding:5px 10px; font-size:0.78rem;" onclick="toggleSettings()">닫기 ✕</button>
+        </div>
+        <div class="form-grid">
+            <div class="fg">
+                <label>실행 모드 (DRY_RUN / LIVE)</label>
+                <select id="cfg-mode">
+                    <option value="DRY_RUN">🧪 DRY_RUN — 안전한 모의운용 (실주문 없음)</option>
+                    <option value="LIVE">🟢 LIVE — Hyperliquid 실전 온체인 자동주문</option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>기준 운용 원금 (USD)</label>
+                <input type="number" id="cfg-capital" step="100" min="200" value="20000">
+            </div>
+            <div class="fg">
+                <label>정기 리밸런싱 주기 (일, 권장 14일)</label>
+                <input type="number" id="cfg-interval" step="1" min="1" max="60" value="14">
+            </div>
+            <div class="fg">
+                <label>HWM 보존 불감대 (%, 권장 10%)</label>
+                <input type="number" id="cfg-band" step="1" min="2" max="35" value="10">
+            </div>
+            <div class="fg">
+                <label>수익 복리 재투자</label>
+                <select id="cfg-compound">
+                    <option value="true">ON — 평가수익 포함 자동 복리 배분</option>
+                    <option value="false">OFF — 기준 원금 한도 내 고정 운용</option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>Spot → Perps USDC 자동 이체</label>
+                <select id="cfg-spot-bridge">
+                    <option value="true">ON — Spot 잔고 보유 시 Perps로 자동 이동</option>
+                    <option value="false">OFF — Perps 가용 USDC만 사용</option>
+                </select>
+            </div>
+            <div class="fg">
+                <label>4시간 비상 손절 가드 (14d &lt; -8% 탈출)</label>
+                <select id="cfg-emg">
+                    <option value="true">ON — 보유 볼트 급락 시 즉시 회수</option>
+                    <option value="false">OFF — 정기 주기에만 교체</option>
+                </select>
+            </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; flex-wrap:wrap; gap:10px;">
+            <button class="btn btn-danger" onclick="resetVirtualBook()">🔄 $20,000 모의원장 초기화 (DRY_RUN용)</button>
+            <button class="btn btn-primary" onclick="saveSettings()">💾 설정 저장 및 시그널 재계산</button>
+        </div>
+    </div>
+
+    <!-- 4대 핵심 요약 KPI -->
+    <div class="kpi-grid">
+        <div class="card kpi-card">
+            <div class="kpi-label">현재 운용 원장 총자산</div>
+            <div class="kpi-val" id="kpi-working-total">$0.00</div>
+            <div class="kpi-sub" id="kpi-working-sub">볼트 예치: $0 | 대기 현금: $0</div>
+        </div>
+        <div class="card kpi-card">
+            <div class="kpi-label">실시간 온체인 지갑 조회 (Mainnet)</div>
+            <div class="kpi-val" id="kpi-onchain-total">$0.00</div>
+            <div class="kpi-sub" id="kpi-onchain-sub">지갑 미연결</div>
+        </div>
+        <div class="card kpi-card">
+            <div class="kpi-label">시장 레짐 & 목표 투자비중</div>
+            <div class="kpi-val" id="kpi-deploy-pct">100.0%</div>
+            <div class="kpi-sub" id="kpi-regime-sub">14d 시장: - | 상승확산(Breadth): -</div>
+        </div>
+        <div class="card kpi-card">
+            <div class="kpi-label">다음 정기 리밸런싱 & 비상가드</div>
+            <div class="kpi-val" id="kpi-countdown">D-14.0일</div>
+            <div class="kpi-sub" id="kpi-guard-sub">4시간 주기 자동 점검 (Windows 스케줄러)</div>
+        </div>
+    </div>
+
+    <!-- SGRA+ 목표 포트폴리오 vs 현재 보유 & 리밸런싱 판정 테이블 -->
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+            <div>
+                <h3 style="margin:0; font-size:1.05rem;">📊 SGRA+ 목표 포트폴리오 & HWM 보존 델타 판정 현황</h3>
+                <div style="font-size:0.8rem; color:var(--muted); margin-top:4px;">
+                    단일 볼트 TVL의 30% 상한 및 포트폴리오 25% 상한이 자동 적용되며, 목표 대비 ±10% 이내 볼트는 10% 성과보수(HWM) 절감을 위해 매매를 생략합니다.
+                </div>
+            </div>
+            <div id="snap-date-tag" style="font-size:0.8rem; color:var(--teal); font-weight:700;">스냅샷 기준일: -</div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>볼트명 (Hyperliquid 공식 링크)</th>
+                        <th>전략 슬리브</th>
+                        <th>리더 지분 (Skin%)</th>
+                        <th>볼트 TVL</th>
+                        <th>쿠션 Sharpe / 14d 수익</th>
+                        <th>목표 배분 (비중 / USD)</th>
+                        <th>현재 보유 (운용원장)</th>
+                        <th>자동운용 판정 상태</th>
+                    </tr>
+                </thead>
+                <tbody id="alloc-tbody">
+                    <tr><td colspan="8" style="text-align:center; color:var(--muted); padding:28px;">데이터 로딩 중...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 자동 체결 및 시그널 감사 로그 -->
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="margin:0; font-size:1.05rem;">📜 자동 실행 & 리밸런싱 감사 로그 (최근 60건)</h3>
+            <span style="font-size:0.78rem; color:var(--muted);">vault_data/autobot_exec_log.json (.gitignore 보호됨)</span>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>실행 시각</th>
+                        <th>모드</th>
+                        <th>시그널 트리거</th>
+                        <th>액션</th>
+                        <th>대상 볼트</th>
+                        <th>금액 (USD)</th>
+                        <th>결과</th>
+                        <th>상세 사유 / L1 응답</th>
+                    </tr>
+                </thead>
+                <tbody id="logs-tbody">
+                    <tr><td colspan="8" style="text-align:center; color:var(--muted); padding:24px;">기록된 체결 내역이 없습니다.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 실전 $20,000 자동운용 전환 가이드 -->
+    <div class="card" style="border-color: rgba(26,188,156,0.35);">
+        <h3 style="margin:0 0 10px 0; font-size:1.05rem; color:var(--teal);">🛡️ $20,000 실전 자동운용(LIVE) 안전 연결 3단계 가이드</h3>
+        <div style="font-size:0.85rem; color:var(--text); line-height:1.65;">
+            <p style="margin:0 0 10px 0;">
+                <b>1단계 (전용 격리 지갑 생성 권장):</b> 메인 콜드월렛과 분리된 <b>$20,000 자동운용 전용 지갑(Metamask/Rabby 새 계정)</b>을 만든 뒤, Hyperliquid(Perps 또는 Spot)에 <b>$20,000 USDC</b>를 입금합니다.
+                <span style="color:var(--muted);">(※ Hyperliquid L1 프로토콜 규약상 일반 주문용 API 위임키는 볼트 입출금 <code>vaultTransfer</code> 서명이 차단되므로, 전용 운용 지갑의 직접 키를 격리 사용하는 것이 가장 안전합니다. 본 봇 코드에는 외부 지갑 송금 <code>withdraw3/usdSend</code> 기능이 아예 존재하지 않습니다.)</span>
+            </p>
+            <p style="margin:0 0 8px 0;">
+                <b>2단계 (비밀번호 숨김 입력으로 로컬 <code>.env</code> 저장 — 채팅창/화면 노출 제로):</b> PC에서 PowerShell을 열고 아래 명령어를 실행하면 개인키가 화면에 표시되지 않고 로컬 <code>.env</code>에만 안전하게 기록됩니다.
+            </p>
+            <pre class="cmd-box">cd "C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer"
+$addr = Read-Host "운용 지갑 주소 (0x...)"
+$sec  = Read-Host "운용 지갑 Private Key (화면에 숨김 처리됨)" -AsSecureString
+$pk   = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec))
+"HL_ACCOUNT_ADDRESS=$addr`r`nHL_BOT_PRIVATE_KEY=$pk" | Set-Content -Encoding UTF8 .env
+$pk = $null</pre>
+            <p style="margin:10px 0 0 0;">
+                <b>3단계 (LIVE 전환):</b> 위 상단 <b>[⚙️ 운용 설정]</b>에서 실행 모드를 <code>🟢 LIVE</code>로 바꾸고 저장하면, 즉시(또는 매 4시간 스케줄러마다 자동으로) 시그널 감지·24시간 락업 관리·14일 HWM 보존 리밸런싱이 무인 운영됩니다.
+            </p>
+        </div>
+    </div>
+</main>
+
+<div class="mobile-tab-bar">
+    <a href="/autobot" class="tab-item active"><span class="icon">🤖</span><span>AutoBot</span></a>
+    <a href="/m" class="tab-item"><span class="icon">📱</span><span>Portfolios</span></a>
+    <a href="/" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
+    <a href="/settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
+</div>
+
+<div id="toast"></div>
+
+<script>
+    let botData = null;
+
+    function fmtUsd(v) {
+        const n = Number(v || 0);
+        return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function showToast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.className = 'show';
+        setTimeout(() => { el.className = ''; }, 3400);
+    }
+
+    function esc(s) {
+        if (s === null || s === undefined) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function toggleSettings() {
+        const d = document.getElementById('settings-drawer');
+        d.style.display = (d.style.display === 'block') ? 'none' : 'block';
+    }
+
+    async function loadStatus() {
+        try {
+            const res = await fetch('/api/autobot/status');
+            if (res.redirected || res.status === 401) { window.location.href = '/login'; return; }
+            const data = await res.json();
+            if (data.error) { showToast('오류: ' + data.error); return; }
+            botData = data;
+            renderAll(data);
+        } catch (e) {
+            console.error(e);
+            showToast('상태 조회 중 통신 오류가 발생했습니다.');
+        }
+    }
+
+    function renderAll(d) {
+        const cfg = d.config || {};
+        const st = d.state || {};
+        const sig = d.signal || {};
+        const oc = d.onchain || {};
+        const cred = d.credentials || {};
+
+        // Warn box
+        const warnEl = document.getElementById('fallback-warn');
+        if (st.mode_fallback_reason) {
+            warnEl.style.display = 'block';
+            warnEl.innerHTML = '⚠️ <b>안전 모드 전환 알림:</b> ' + esc(st.mode_fallback_reason);
+        } else {
+            warnEl.style.display = 'none';
+        }
+
+        // Badges
+        const modeEl = document.getElementById('mode-badge');
+        if (!cfg.enabled) {
+            modeEl.className = 'badge badge-paused';
+            modeEl.textContent = '⏸️ 자동운용 일시정지됨 (PAUSED)';
+        } else if (st.effective_mode === 'LIVE') {
+            modeEl.className = 'badge badge-live';
+            modeEl.textContent = '🟢 실전 자동운용 중 (LIVE MAINNET)';
+        } else {
+            modeEl.className = 'badge badge-dry';
+            modeEl.textContent = '🧪 안전 모의운용 중 (DRY-RUN)';
+        }
+
+        const regEl = document.getElementById('regime-badge');
+        const reg = sig.regime || 'NEUTRAL';
+        if (reg === 'BULL') {
+            regEl.className = 'badge badge-bull';
+            regEl.textContent = '🚀 BULL 레짐 (유휴자금 모멘텀 가속)';
+        } else if (reg === 'BEAR') {
+            regEl.className = 'badge badge-bear';
+            regEl.textContent = '🛡️ BEAR 방어 레짐 (Core 우량볼트 집중)';
+        } else {
+            regEl.className = 'badge badge-neutral';
+            regEl.textContent = '⚖️ NEUTRAL 중립 레짐 (Core 복리 유지)';
+        }
+
+        const keyEl = document.getElementById('key-badge');
+        if (cred.key_configured && cred.is_direct_master_key) {
+            keyEl.className = 'badge badge-live';
+            keyEl.textContent = '🔑 .env 서명키 연결됨 (Direct EOA)';
+        } else if (cred.key_configured && cred.is_delegated_agent_key) {
+            keyEl.className = 'badge badge-paused';
+            keyEl.textContent = '⚠️ API 위임키 감지 (직접 운용키 필요)';
+        } else {
+            keyEl.className = 'badge badge-neutral';
+            keyEl.textContent = '🔒 .env 서명키 미설정 (조회/모의 전용)';
+        }
+
+        document.getElementById('signal-headline').textContent =
+            `[${st.last_signal_type || '-'}] ${st.last_trigger_reason || ''}`;
+        document.getElementById('check-timestamps').textContent =
+            `마지막 점검: ${(st.last_checked_at || '-').replace('T', ' ')}  |  마지막 리밸런싱: ${(st.last_rebalance_at || '-').replace('T', ' ')}  |  다음 정기 주기: ${st.next_rebalance_at || '-'}`;
+
+        const pauseBtn = document.getElementById('btn-pause');
+        pauseBtn.textContent = cfg.enabled ? '⏸️ 일시정지' : '▶️ 자동운용 재개';
+
+        // Populate settings form
+        document.getElementById('cfg-mode').value = cfg.mode || 'DRY_RUN';
+        document.getElementById('cfg-capital').value = cfg.target_capital_usd || 20000;
+        document.getElementById('cfg-interval').value = cfg.rebalance_interval_days || 14;
+        document.getElementById('cfg-band').value = Math.round((cfg.no_trade_band_rel || 0.10) * 100);
+        document.getElementById('cfg-compound').value = String(cfg.compound_profits !== false);
+        document.getElementById('cfg-spot-bridge').value = String(cfg.auto_spot_to_perp !== false);
+        document.getElementById('cfg-emg').value = String(cfg.emergency_guard_enabled !== false);
+
+        // KPI 1: Working Ledger
+        const wPos = st.working_positions_usd || {};
+        const wVaultSum = Object.values(wPos).reduce((a, b) => a + Number(b || 0), 0);
+        const wCash = Number(st.working_cash_usd || 0);
+        const wTotal = wVaultSum + wCash;
+        document.getElementById('kpi-working-total').textContent = fmtUsd(wTotal);
+        document.getElementById('kpi-working-sub').innerHTML =
+            (st.using_virtual_book ? '<span style="color:#fbbf24;">[모의원장]</span> ' : '<span style="color:#2ecc71;">[실전원장]</span> ') +
+            `볼트 ${Object.keys(wPos).length}개: ${fmtUsd(wVaultSum)} | 현금: ${fmtUsd(wCash)}`;
+
+        // KPI 2: Live On-Chain Telemetry
+        document.getElementById('kpi-onchain-total').textContent = fmtUsd(oc.total_equity_usd || 0);
+        const addrShort = oc.account_address ? (oc.account_address.slice(0, 8) + '...' + oc.account_address.slice(-6)) : '미설정';
+        document.getElementById('kpi-onchain-sub').innerHTML = oc.connected
+            ? `지갑 <code>${esc(addrShort)}</code><br>Perp가용 ${fmtUsd(oc.perp_withdrawable_usd)} · Spot ${fmtUsd(oc.spot_usdc_usd)} · 볼트 ${fmtUsd(oc.vault_total_equity_usd)}`
+            : `<span style="color:var(--red);">${esc(oc.error || '연결 안 됨')}</span>`;
+
+        // KPI 3: Regime
+        document.getElementById('kpi-deploy-pct').textContent =
+            `${Number(sig.deployed_weight_pct || 0).toFixed(1)}% 배분`;
+        document.getElementById('kpi-regime-sub').innerHTML =
+            `14d 시장: <b>${Number(sig.mkt_14d_pct || 0) >= 0 ? '+' : ''}${Number(sig.mkt_14d_pct || 0).toFixed(2)}%</b> · Breadth: <b>${Number(sig.breadth_14d_pct || 0).toFixed(1)}%</b><br>목표 현금비중: ${Number(sig.cash_reserve_pct || 0).toFixed(1)}% (${fmtUsd(sig.cash_reserve_usd || 0)})`;
+
+        // KPI 4: Countdown
+        document.getElementById('kpi-countdown').textContent =
+            st.last_rebalance_at ? `D-${Number(st.days_to_next_rebalance || 0).toFixed(1)}일` : '즉시 진입 대기';
+        const emgCnt = (sig.emergency_exits || []).length;
+        document.getElementById('kpi-guard-sub').innerHTML = emgCnt > 0
+            ? `<span style="color:var(--red);font-weight:700;">🚨 비상 탈출 대상 ${emgCnt}개 감지됨!</span>`
+            : `보유 볼트 비상징후 없음 (4시간 주기 자동점검 정상)`;
+
+        document.getElementById('snap-date-tag').textContent = `최신 분석 스냅샷: ${sig.snapshot_date || '-'}`;
+
+        // Render Allocation & Delta Table
+        const sellMap = {};
+        (d.planned_sells || []).forEach(x => { sellMap[x.address] = x; });
+        const buyMap = {};
+        (d.planned_buys || []).forEach(x => { buyMap[x.address] = x; });
+        const skipMap = {};
+        (d.skipped_band || []).forEach(x => { skipMap[x.address] = x; });
+        const ocLocks = (oc.vault_positions || {});
+
+        const allocs = sig.allocations || [];
+        const allocAddrs = new Set(allocs.map(a => a.address));
+        const rows = [];
+
+        allocs.forEach(a => {
+            const curUsd = Number(wPos[a.address] || 0);
+            const lk = ocLocks[a.address];
+            let statusHtml = '<span style="color:var(--teal);font-weight:600;">✅ 목표 비중 유지 중</span>';
+            if (buyMap[a.address]) {
+                statusHtml = `<span style="color:#2ecc71;font-weight:700;">🟢 추가 입금 대기 (+${fmtUsd(buyMap[a.address].delta_usd)})</span><br><small style="color:var(--muted);">${esc(buyMap[a.address].reason)}</small>`;
+            } else if (sellMap[a.address]) {
+                statusHtml = `<span style="color:#fbbf24;font-weight:700;">🟡 비중 축소 대기 (-${fmtUsd(sellMap[a.address].delta_usd)})</span><br><small style="color:var(--muted);">${esc(sellMap[a.address].reason)}</small>`;
+            } else if (skipMap[a.address]) {
+                statusHtml = `<span style="color:#93c5fd;font-weight:600;">🛡️ HWM 보존 유지</span><br><small style="color:var(--muted);">${esc(skipMap[a.address].reason)}</small>`;
+            }
+
+            const lockBadge = (lk && lk.is_locked)
+                ? `<br><span style="font-size:0.73rem;color:#fbbf24;">⏳ 24h 락업 (~${esc(lk.locked_until)})</span>`
+                : '';
+
+            const r14Color = a.ret_14d_pct >= 0 ? 'var(--green)' : 'var(--red)';
+            rows.push(`
+                <tr>
+                    <td>
+                        <a class="vlink" href="https://app.hyperliquid.xyz/vaults/${esc(a.address)}" target="_blank" rel="noopener">
+                            ${esc(a.name)} ↗
+                        </a>
+                        <div style="font-size:0.72rem;color:var(--muted);font-family:monospace;">${esc(a.address.slice(0,10))}...${esc(a.address.slice(-6))}</div>
+                    </td>
+                    <td><span class="badge ${a.sleeve.includes('BULL') ? 'badge-bull' : 'badge-neutral'}">${esc(a.sleeve)}</span></td>
+                    <td style="font-weight:700; color:#fff;">${a.leader_ratio_pct.toFixed(1)}%</td>
+                    <td>${fmtUsd(a.tvl_usd)}</td>
+                    <td>
+                        <b>Sharpe ${a.cushioned_sharpe.toFixed(2)}</b><br>
+                        <small style="color:${r14Color};">14d ${a.ret_14d_pct >= 0 ? '+' : ''}${a.ret_14d_pct.toFixed(2)}%</small>
+                        <small style="color:var(--muted);"> · DD ${a.drawdown_now_pct.toFixed(1)}%</small>
+                    </td>
+                    <td>
+                        <b>${a.target_weight_pct.toFixed(1)}%</b> (${fmtUsd(a.target_usd)})
+                        <div class="bar-bg"><div class="bar-fill" style="width:${Math.min(100, a.target_weight_pct * 4)}%;"></div></div>
+                    </td>
+                    <td><b>${fmtUsd(curUsd)}</b>${lockBadge}</td>
+                    <td>${statusHtml}</td>
+                </tr>
+            `);
+        });
+
+        // Also show any held vaults NOT in target allocations (scheduled for full exit)
+        Object.keys(wPos).forEach(addr => {
+            if (allocAddrs.has(addr)) return;
+            const curUsd = Number(wPos[addr] || 0);
+            if (curUsd <= 0.5) return;
+            const sInfo = sellMap[addr] || { name: addr.slice(0, 12), delta_usd: curUsd, reason: '목표 포트폴리오 제외' };
+            const lk = ocLocks[addr];
+            const lockBadge = (lk && lk.is_locked)
+                ? `<br><span style="font-size:0.73rem;color:#fbbf24;">⏳ 24h 락업 (~${esc(lk.locked_until)})</span>`
+                : '';
+            rows.push(`
+                <tr style="background:rgba(231,76,60,0.06);">
+                    <td>
+                        <a class="vlink" href="https://app.hyperliquid.xyz/vaults/${esc(addr)}" target="_blank" rel="noopener">
+                            ${esc(sInfo.name)} ↗
+                        </a>
+                        <div style="font-size:0.72rem;color:var(--muted);font-family:monospace;">${esc(addr.slice(0,10))}...</div>
+                    </td>
+                    <td><span class="badge badge-paused">편출 대상</span></td>
+                    <td>-</td><td>-</td><td>-</td>
+                    <td><b>0.0%</b> ($0.00)</td>
+                    <td><b>${fmtUsd(curUsd)}</b>${lockBadge}</td>
+                    <td><span style="color:var(--red);font-weight:700;">🔴 전액 회수 예정 (-${fmtUsd(curUsd)})</span><br><small style="color:var(--muted);">${esc(sInfo.reason)}</small></td>
+                </tr>
+            `);
+        });
+
+        document.getElementById('alloc-tbody').innerHTML = rows.length
+            ? rows.join('')
+            : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">조건을 충족하는 목표 볼트가 없습니다 (전액 현금 대기).</td></tr>';
+
+        // Logs table
+        const logs = d.logs || [];
+        document.getElementById('logs-tbody').innerHTML = logs.length
+            ? logs.map(l => {
+                const stColor = (l.status === 'OK' || l.status === 'SIMULATED_OK')
+                    ? 'var(--green)'
+                    : (l.status === 'PENDING_UNLOCK' ? '#fbbf24' : 'var(--red)');
+                return `
+                    <tr>
+                        <td style="white-space:nowrap;color:var(--muted);">${esc((l.ts || '').replace('T', ' '))}</td>
+                        <td><span class="badge ${l.mode === 'LIVE' ? 'badge-live' : 'badge-dry'}">${esc(l.mode)}</span></td>
+                        <td style="font-weight:600;">${esc(l.trigger)}</td>
+                        <td style="font-weight:700;">${esc(l.action)}</td>
+                        <td>${esc(l.vault)}</td>
+                        <td style="font-weight:700;">${fmtUsd(l.amount_usd)}</td>
+                        <td style="color:${stColor};font-weight:700;">${esc(l.status)}</td>
+                        <td style="color:var(--muted);font-size:0.8rem;">${esc(l.detail)}</td>
+                    </tr>
+                `;
+            }).join('')
+            : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">아직 실행된 내역이 없습니다.</td></tr>';
+    }
+
+    async function triggerCycle(force) {
+        if (force && botData && botData.state && botData.state.effective_mode === 'LIVE') {
+            if (!confirm('실전(LIVE) 모드에서 즉시 온체인 리밸런싱 주문을 실행하시겠습니까?')) return;
+        }
+        const btn = document.getElementById(force ? 'btn-force' : 'btn-check');
+        const orig = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⏳ 실행 중...';
+        try {
+            const res = await fetch('/api/autobot/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ force: force })
+            });
+            const data = await res.json();
+            if (data.error) { showToast('오류: ' + data.error); }
+            else {
+                botData = data;
+                renderAll(data);
+                showToast(force ? '⚡ 즉시 리밸런싱 실행이 완료되었습니다!' : '🔍 최신 시그널 점검이 완료되었습니다!');
+            }
+        } catch (e) {
+            showToast('실행 요청 중 오류가 발생했습니다.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = orig;
+        }
+    }
+
+    async function togglePause() {
+        if (!botData || !botData.config) return;
+        const nextEnabled = !botData.config.enabled;
+        const res = await fetch('/api/autobot/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: nextEnabled })
+        });
+        const data = await res.json();
+        botData = data;
+        renderAll(data);
+        showToast(nextEnabled ? '▶️ 자동운용 봇이 재개되었습니다.' : '⏸️ 자동운용 봇이 일시정지되었습니다.');
+    }
+
+    async function saveSettings() {
+        const mode = document.getElementById('cfg-mode').value;
+        if (mode === 'LIVE') {
+            if (!confirm('실행 모드를 LIVE(실전 자동주문)로 전환하시겠습니까? (.env에 전용 지갑 키가 설정되어 있어야 실제 주문이 실행됩니다.)')) {
+                return;
+            }
+        }
+        const payload = {
+            mode: mode,
+            target_capital_usd: Number(document.getElementById('cfg-capital').value || 20000),
+            rebalance_interval_days: Number(document.getElementById('cfg-interval').value || 14),
+            no_trade_band_rel: Number(document.getElementById('cfg-band').value || 10) / 100.0,
+            compound_profits: document.getElementById('cfg-compound').value === 'true',
+            auto_spot_to_perp: document.getElementById('cfg-spot-bridge').value === 'true',
+            emergency_guard_enabled: document.getElementById('cfg-emg').value === 'true',
+        };
+        const res = await fetch('/api/autobot/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        botData = data;
+        renderAll(data);
+        showToast('💾 운용 설정이 저장되고 시그널이 갱신되었습니다.');
+    }
+
+    async function resetVirtualBook() {
+        if (!confirm('DRY_RUN 모의원장을 기준 원금으로 초기화하고 최초 배분을 다시 시뮬레이션할까요?')) return;
+        const res = await fetch('/api/autobot/reset-virtual', { method: 'POST' });
+        const data = await res.json();
+        botData = data;
+        renderAll(data);
+        showToast('🔄 모의운용 원장이 초기화 및 재배분되었습니다.');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadStatus();
+        setInterval(loadStatus, 60000); // 1분마다 화면 자동 새로고침
+    });
 </script>
 </body>
 </html>"""

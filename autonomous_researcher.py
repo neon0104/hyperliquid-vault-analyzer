@@ -180,26 +180,34 @@ def compute_hurst(ts):
 
 def compute_sortino_ratio(ts, tvl):
     diffs = np.diff(np.array(ts, dtype=float))
-    if len(diffs) < 5:
+    if len(diffs) < 5 or tvl <= 0:
         return 0.0
-    daily_rets = diffs / (tvl + 1e-9)
+    daily_rets = np.clip(diffs / (tvl + 1e-9), -0.5, 0.5)
     mu = float(daily_rets.mean())
-    neg_rets = daily_rets[daily_rets < 0]
-    down_std = float(neg_rets.std()) + 1e-9 if len(neg_rets) > 0 else 1e-9
-    return float((mu / down_std) * np.sqrt(365))
+    # Sortino (1994) Target Downside Deviation (MAR = 0) + 최소 변동성 바닥 적용 (1e-9 폭주 방지)
+    tdd = float(np.sqrt(np.mean(np.minimum(0.0, daily_rets) ** 2)))
+    vol_floor = max(float(daily_rets.std()) * 0.25, 5e-4)
+    down_dev = max(tdd, vol_floor)
+    return float(np.clip((mu / down_dev) * np.sqrt(365), -20.0, 50.0))
 
 def compute_kelly_fraction(ts, tvl):
     diffs = np.diff(np.array(ts, dtype=float))
     if len(diffs) < 10:
         return 0.0
-    wins = diffs[diffs > 0]
-    losses = np.abs(diffs[diffs < 0])
-    win_rate = len(wins) / len(diffs)
-    avg_win = float(np.mean(wins)) if len(wins) > 0 else 1.0
-    avg_loss = float(np.mean(losses)) if len(losses) > 0 else 1.0
-    payout_ratio = max(avg_win / (avg_loss + 1e-9), 0.1)
+    # 최근 30일 윈도우 기준 승률 및 손익비 추정 (순손실 구간은 0% 배분)
+    window = diffs[-30:] if len(diffs) >= 30 else diffs
+    if float(np.sum(window)) <= 0:
+        return 0.0
+    wins = window[window > 0]
+    losses = np.abs(window[window < 0])
+    if len(wins) == 0:
+        return 0.0
+    win_rate = len(wins) / len(window)
+    avg_win = float(np.mean(wins))
+    avg_loss = float(np.mean(losses)) if len(losses) > 0 else max(avg_win * 0.5, 1e-6)
+    payout_ratio = float(np.clip(avg_win / (avg_loss + 1e-9), 0.1, 10.0))
     kelly_f = (win_rate * payout_ratio - (1.0 - win_rate)) / payout_ratio
-    return float(max(kelly_f * 0.30, 0.0))
+    return float(np.clip(kelly_f * 0.30, 0.0, 0.30))
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 4. 1회 연구 사이클 실행
@@ -219,8 +227,12 @@ def execute_research_cycle():
     # Load past research history
     history = load_json(RESEARCH_LOG_JSON, default=[])
     
-    # Pick next topic to deep-dive (Round-Robin)
-    topic_idx = len(history) % len(RESEARCH_TOPICS)
+    # Pick next topic to deep-dive (Round-Robin: 마지막 topic_id 기준으로 순환하여 50개 캡 고착 방지)
+    topic_ids = [t["id"] for t in RESEARCH_TOPICS]
+    if history and isinstance(history[-1], dict) and history[-1].get("topic_id") in topic_ids:
+        topic_idx = (topic_ids.index(history[-1]["topic_id"]) + 1) % len(RESEARCH_TOPICS)
+    else:
+        topic_idx = 0
     topic = RESEARCH_TOPICS[topic_idx]
     
     print(f"\n🔬 [금시간 집중 연구 주제 #{topic_idx + 1}] {topic['title']}")
@@ -232,6 +244,8 @@ def execute_research_cycle():
     evaluated_vaults = []
     
     for v in today_snap:
+        if not bool(v.get("allow_deposits", True)):
+            continue
         addr = v.get("address", "")
         if addr in vault_db_series and len(vault_db_series[addr]) >= 15:
             pnl_arr = [item[1] for item in vault_db_series[addr]]
@@ -240,7 +254,7 @@ def execute_research_cycle():
             pnl_arr = v.get("alltime_pnl", [])
             tvl_val = float(v.get("tvl", 1.0) or 1.0)
             
-        if not pnl_arr or len(pnl_arr) < 10:
+        if not pnl_arr or len(pnl_arr) < 10 or tvl_val < 10000.0:
             continue
             
         h_val = compute_hurst(pnl_arr)
@@ -265,15 +279,19 @@ def execute_research_cycle():
             "leader_usd": round(l_usd, 2)
         })
     
-    # Filter top discovered vaults according to topic metric
+    # Filter top discovered vaults according to topic metric (음수 APR 및 고위험 MDD 볼트 배제)
+    healthy_pool = [v for v in evaluated_vaults if v["apr_30d"] > 0.0 and v["mdd"] <= 35.0]
+    pool = healthy_pool if len(healthy_pool) >= 4 else evaluated_vaults
+
     if topic["metric_type"] == "sortino":
-        top_discovered = sorted(evaluated_vaults, key=lambda x: x["sortino"], reverse=True)[:4]
+        top_discovered = sorted(pool, key=lambda x: (x["sortino"], x["sharpe"]), reverse=True)[:4]
     elif topic["metric_type"] == "kelly":
-        top_discovered = sorted(evaluated_vaults, key=lambda x: x["kelly_f"], reverse=True)[:4]
+        top_discovered = sorted(pool, key=lambda x: (x["kelly_f"], x["sortino"]), reverse=True)[:4]
     elif topic["metric_type"] == "hurst":
-        top_discovered = sorted([v for v in evaluated_vaults if v["hurst"] >= 0.55], key=lambda x: x["hurst"], reverse=True)[:4]
+        hurst_pool = [v for v in pool if v["hurst"] >= 0.55]
+        top_discovered = sorted(hurst_pool if hurst_pool else pool, key=lambda x: (x["hurst"], x["sharpe"]), reverse=True)[:4]
     else:
-        top_discovered = sorted(evaluated_vaults, key=lambda x: (x["sharpe"] * 0.5 + x["apr_30d"] * 0.1), reverse=True)[:4]
+        top_discovered = sorted(pool, key=lambda x: (min(x["sharpe"], 50.0) * 0.5 + x["sortino"] * 0.3 + min(x["apr_30d"], 200.0) * 0.1), reverse=True)[:4]
         
     decision = "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)" if len(top_discovered) > 0 else "⚠️ 추가 검증 대기"
     
@@ -284,7 +302,7 @@ def execute_research_cycle():
         "reference_source": topic["source"],
         "mathematical_formula": topic["formula"],
         "hypothesis": topic["concept"],
-        "validation_dataset": f"143 days ({dates[0]} ~ {dates[-1]})",
+        "validation_dataset": f"{len(dates)} days ({dates[0]} ~ {dates[-1]})",
         "top_discovered_vaults": top_discovered,
         "decision": decision
     }

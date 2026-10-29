@@ -14,13 +14,14 @@ day/week/month/allTime PnL 데이터를 SQLite DB에 축적합니다.
 
 import json, os, sys, sqlite3, time, argparse
 import requests
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # ── 설정 ──────────────────────────────────────────────────────────────────────
+KST        = timezone(timedelta(hours=9))
 BASE_DIR   = Path(__file__).parent
 DB_PATH    = BASE_DIR / "vault_data" / "pnl_history.db"
 STATS_URL  = "https://stats-data.hyperliquid.xyz/Mainnet/vaults"
@@ -135,11 +136,11 @@ def collect_all_vaults():
     top_200 = valid[:200]
     print(f"  총 {len(all_vaults)}개 볼트 중 상위 {len(top_200)}개 선별")
 
-    # 3) DB 연결
+    # 3) DB 연결 (analyze_top_vaults.py와 동일하게 KST 날짜 기준 통일)
     conn = init_db()
     c = conn.cursor()
-    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
-    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    now_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
+    today_str = datetime.now(KST).strftime("%Y-%m-%d")
 
     saved = 0
     skipped = 0
@@ -174,7 +175,8 @@ def collect_all_vaults():
             VALUES (?, ?, ?, ?)
             ON CONFLICT(address) DO UPDATE SET
                 name=excluded.name,
-                last_seen=excluded.last_seen
+                first_seen=MIN(vaults.first_seen, excluded.first_seen),
+                last_seen=MAX(vaults.last_seen, excluded.last_seen)
         """, (addr, name, today_str, today_str))
 
         # 일별 PnL 저장 (중복 방지: 같은 날 같은 볼트는 스킵)

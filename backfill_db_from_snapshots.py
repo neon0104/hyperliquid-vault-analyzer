@@ -11,12 +11,13 @@ import sys
 import glob
 import json
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+KST = timezone(timedelta(hours=9))
 BASE_DIR = Path(__file__).parent
 DB_PATH = BASE_DIR / "vault_data" / "pnl_history.db"
 SNAPSHOTS_DIR = BASE_DIR / "vault_data" / "snapshots"
@@ -32,11 +33,16 @@ def backfill():
         print(f"[ERROR] DB file does not exist: {DB_PATH}")
         return
 
-    # 스냅샷 파일 검색
-    snapshot_files = sorted(glob.glob(str(SNAPSHOTS_DIR / "*.json")))
+    # 스냅샷 파일 검색 (.bak 제외)
+    snapshot_files = sorted(
+        f for f in glob.glob(str(SNAPSHOTS_DIR / "*.json"))
+        if not f.endswith(".bak")
+    )
     if not snapshot_files:
         print("[ERROR] No snapshot JSON files found.")
         return
+
+    today_kst = datetime.now(KST).strftime("%Y-%m-%d")
 
     print("=" * 60)
     print("  Starting backfill of historical snapshot data into SQLite DB")
@@ -45,12 +51,20 @@ def backfill():
     conn = sqlite3.connect(str(DB_PATH))
     c = conn.cursor()
 
+    # 오늘 날짜가 이미 라이브 수집되었는지 확인 (라이브 수집 전 백필이 빈 day/week 배열로 선점하는 것 방지)
+    c.execute("SELECT COUNT(*) FROM daily_pnl WHERE collected_at = ?", (today_kst,))
+    today_db_count = c.fetchone()[0]
+
     total_inserted = 0
     total_skipped = 0
 
     for file_path in snapshot_files:
         filename = os.path.basename(file_path)
         date_str = os.path.splitext(filename)[0] # YYYY-MM-DD
+
+        if date_str == today_kst and today_db_count == 0:
+            print(f"  [SKIP] {date_str} skipped so live daily_pnl_collector can record intraday arrays first.")
+            continue
         
         try:
             with open(file_path, "r", encoding="utf-8") as f:
@@ -72,13 +86,14 @@ def backfill():
             if not addr:
                 continue
 
-            # vaults 메타 테이블 업데이트
+            # vaults 메타 테이블 업데이트 (과거 백필 시 최신 last_seen 덮어쓰기 방지)
             c.execute("""
                 INSERT INTO vaults (address, name, first_seen, last_seen)
                 VALUES (?, ?, ?, ?)
                 ON CONFLICT(address) DO UPDATE SET
                     name=excluded.name,
-                    last_seen=excluded.last_seen
+                    first_seen=MIN(vaults.first_seen, excluded.first_seen),
+                    last_seen=MAX(vaults.last_seen, excluded.last_seen)
             """, (addr, name, date_str, date_str))
 
             # PnL 리스트 추출

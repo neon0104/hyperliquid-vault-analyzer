@@ -25,7 +25,10 @@ if sys.platform == "win32":
 # ── 스냅샷 로드 ────────────────────────────────────────────────────────
 def load_snapshots():
     """최신 + 이전 스냅샷 로드, 볼트 히스토리 수집"""
-    files = sorted(glob.glob(str(SNAPSHOTS_DIR / "*.json")), reverse=True)
+    files = sorted(
+        [f for f in glob.glob(str(SNAPSHOTS_DIR / "*.json")) if not f.endswith(".bak")],
+        reverse=True,
+    )
     if not files:
         return [], None, {}, None, {}
 
@@ -119,7 +122,7 @@ def run_portfolio_for_date(snapshot_date=None):
 
 def get_valid_snapshot_dates():
     """유효한 스냅샷 날짜 목록 반환 (손상 파일 제외)"""
-    files = sorted(glob.glob(str(SNAPSHOTS_DIR / "*.json")))
+    files = sorted(f for f in glob.glob(str(SNAPSHOTS_DIR / "*.json")) if not f.endswith(".bak"))
     valid = []
     for f in files:
         size = os.path.getsize(f)
@@ -324,14 +327,35 @@ def main():
         "prev_date": prev_date,
     }
 
-    # ── 포트폴리오 분석 (날짜별 사전 계산) ──
+    # ── 포트폴리오 분석 (날짜별 사전 계산 + 과거 날짜 캐시 재사용) ──
+    rebuild_all = "--rebuild-all" in sys.argv
+    existing_pbd = {}
+    if not rebuild_all and OUT_FILE.exists():
+        try:
+            with open(OUT_FILE, encoding="utf-8") as ef:
+                existing_pbd = json.load(ef).get("portfolio_by_date", {}) or {}
+        except Exception:
+            existing_pbd = {}
+
+    slim_keys = {
+        "date", "n_total", "n_valid", "n_filtered", "n_analyzed",
+        "n_selected", "analysis_days", "selected_vaults", "corr_selected", "portfolios",
+    }
+
     valid_dates = get_valid_snapshot_dates()
     portfolio_by_date = {}
     portfolio_export = None
+    reused_count = 0
 
-    print(f"  [Export] Valid snapshot dates: {valid_dates}")
+    print(f"  [Export] Valid snapshot dates: {len(valid_dates)} ({valid_dates[0]} ~ {valid_dates[-1]})")
     for snap_date in valid_dates:
         is_latest = (snap_date == date_str)
+        if not is_latest and snap_date in existing_pbd and isinstance(existing_pbd[snap_date], dict):
+            cached_item = existing_pbd[snap_date]
+            portfolio_by_date[snap_date] = {k: cached_item[k] for k in slim_keys if k in cached_item}
+            reused_count += 1
+            continue
+
         print(f"  [Export] Running portfolio analysis for {snap_date}{'  ★ latest' if is_latest else ''}...")
         pf_data = run_portfolio_for_date(snapshot_date=snap_date)
         pf_export_item = export_portfolio_result(pf_data, slim=not is_latest)
@@ -341,6 +365,9 @@ def main():
                   f"{pf_export_item.get('analysis_days', 0)} data points")
         else:
             print(f"  [Export] {snap_date}: skipped (analysis failed)")
+
+    if reused_count:
+        print(f"  [Export] Reused cached portfolio analysis for {reused_count} historical dates.")
 
     # 기본 포트폴리오 = 최신 날짜
     if portfolio_by_date:
