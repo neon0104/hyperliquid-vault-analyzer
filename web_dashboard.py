@@ -1024,6 +1024,28 @@ def api_autobot_status():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/autobot/resume", methods=["POST"])
+@jwt_required()
+def api_autobot_resume():
+    try:
+        import hl_auto_vault_bot
+        result = hl_auto_vault_bot.resume_autobot()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/autobot/pause", methods=["POST"])
+@jwt_required()
+def api_autobot_pause():
+    try:
+        import hl_auto_vault_bot
+        result = hl_auto_vault_bot.pause_autobot()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 @app.route("/api/autobot/config", methods=["POST"])
 @jwt_required()
 def api_autobot_config():
@@ -5026,10 +5048,16 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
             font-weight: 600; text-decoration: none; cursor: pointer; transition: 0.18s;
         }
         .btn:hover { border-color: var(--accent); transform: translateY(-1px); }
-        .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+        .btn-start {
+            background: linear-gradient(135deg, #059669, #10b981);
+            border-color: #34d399; color: #fff; font-weight: 800; font-size: 0.92rem;
+            padding: 11px 20px; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.32);
+        }
+        .btn-start:hover { border-color: #6ee7b7; filter: brightness(1.06); }
         .btn-primary { background: linear-gradient(135deg, #2563eb, #4f8ef7); border-color: #3b82f6; color: #fff; }
         .btn-teal { background: rgba(26, 188, 156, 0.16); border-color: #1abc9c; color: #1abc9c; }
-        .btn-amber { background: rgba(243, 156, 18, 0.16); border-color: #f39c12; color: #f8b739; }
+        .btn-amber { background: rgba(243, 156, 18, 0.18); border-color: #f39c12; color: #fbbf24; font-weight: 700; }
         .btn-danger { background: rgba(231, 76, 60, 0.14); border-color: #e74c3c; color: #ff6b6b; }
 
         main { max-width: 1420px; margin: 0 auto; padding: 24px 24px 40px; }
@@ -5044,8 +5072,9 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
             display: inline-flex; align-items: center; gap: 6px;
             padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
         }
-        .badge-dry { background: rgba(243,156,18,0.18); color: #fbbf24; border: 1px solid rgba(243,156,18,0.45); }
+        .badge-standby { background: rgba(243,156,18,0.18); color: #fbbf24; border: 1px solid rgba(243,156,18,0.45); }
         .badge-live { background: rgba(46,204,113,0.18); color: #2ecc71; border: 1px solid rgba(46,204,113,0.5); }
+        .badge-armed { background: rgba(56,189,248,0.18); color: #38bdf8; border: 1px solid rgba(56,189,248,0.45); }
         .badge-paused { background: rgba(231,76,60,0.18); color: #ff7675; border: 1px solid rgba(231,76,60,0.45); }
         .badge-bull { background: rgba(46,204,113,0.16); color: #2ecc71; border: 1px solid rgba(46,204,113,0.4); }
         .badge-neutral { background: rgba(132,150,184,0.18); color: #cbd5e1; border: 1px solid rgba(132,150,184,0.4); }
@@ -5097,16 +5126,25 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
             background: var(--surface); color: #fff; font-size: 0.88rem;
         }
 
+        .modal-bg {
+            display: none; position: fixed; inset: 0; background: rgba(5, 8, 16, 0.78);
+            backdrop-filter: blur(5px); z-index: 120; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-box {
+            background: var(--surface); border: 1px solid var(--teal); border-radius: 16px;
+            max-width: 580px; width: 100%; padding: 26px; box-shadow: 0 18px 48px rgba(0,0,0,0.6);
+        }
+
         pre.cmd-box {
             background: #080b12; border: 1px solid var(--border); border-radius: 10px;
-            padding: 13px 15px; color: #a7f3d0; font-size: 0.8rem; overflow-x: auto; line-height: 1.55;
+            padding: 12px 14px; color: #a7f3d0; font-size: 0.8rem; overflow-x: auto; line-height: 1.55;
         }
 
         #toast {
-            visibility: hidden; min-width: 260px; background: #1e293b; color: #fff;
+            visibility: hidden; min-width: 280px; max-width: 520px; background: #1e293b; color: #fff;
             border: 1px solid var(--accent); text-align: center; border-radius: 10px;
-            padding: 12px 18px; position: fixed; z-index: 100; right: 24px; bottom: 28px;
-            font-size: 0.88rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+            padding: 13px 18px; position: fixed; z-index: 150; right: 24px; bottom: 28px;
+            font-size: 0.88rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.45); line-height: 1.45;
         }
         #toast.show { visibility: visible; }
 
@@ -5136,9 +5174,9 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
 <body>
 <header>
     <div>
-        <h1>🤖 Hyperliquid $20,000 자동운용 관제센터</h1>
+        <h1>🤖 Hyperliquid 자동운용 관제센터</h1>
         <div style="font-size:0.77rem; color:var(--muted); margin-top:3px;">
-            SGRA+ (Skin≥30% · HWM 10% 보존 · TVL≤30% 캡 · 14일 정기 & 4시간 비상가드)
+            SGRA+ 엔진 — 입금 후 [▶️ 자동운용 재개 실행] 클릭 시 즉시 배분 & 24/7 무인 리밸런싱
         </div>
     </div>
     <div class="nav-btns">
@@ -5155,19 +5193,19 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
 
     <!-- 상단 컨트롤 배너 -->
     <div class="banner">
-        <div>
+        <div style="flex:1; min-width:280px;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-                <span id="mode-badge" class="badge badge-dry">🧪 모의운용 (DRY-RUN)</span>
+                <span id="mode-badge" class="badge badge-standby">⏸️ 입금 전 대기 중 (일시정지)</span>
                 <span id="regime-badge" class="badge badge-neutral">국면 분석 중...</span>
                 <span id="key-badge" class="badge badge-neutral">🔑 서명키 확인 중</span>
             </div>
-            <div id="signal-headline" style="font-size:0.95rem; font-weight:700; color:#fff;">시그널 상태를 불러오는 중입니다...</div>
-            <div id="check-timestamps" style="font-size:0.79rem; color:var(--muted); margin-top:4px;">마지막 점검: - | 다음 정기 리밸런싱: -</div>
+            <div id="signal-headline" style="font-size:0.94rem; font-weight:700; color:#fff; line-height:1.45;">상태를 불러오는 중입니다...</div>
+            <div id="check-timestamps" style="font-size:0.79rem; color:var(--muted); margin-top:5px;">마지막 점검: - | 다음 정기 리밸런싱: -</div>
         </div>
-        <div style="display:flex; gap:9px; flex-wrap:wrap;">
-            <button id="btn-check" class="btn btn-teal" onclick="triggerCycle(false)">🔍 지금 시그널 점검</button>
-            <button id="btn-force" class="btn btn-primary" onclick="triggerCycle(true)">⚡ 즉시 리밸런싱 실행</button>
-            <button id="btn-pause" class="btn btn-amber" onclick="togglePause()">⏸️ 일시정지</button>
+        <div style="display:flex; gap:9px; flex-wrap:wrap; align-items:center;">
+            <button id="btn-main-toggle" class="btn btn-start" onclick="handleMainToggle()">▶️ 자동운용 재개 실행</button>
+            <button id="btn-check" class="btn btn-teal" onclick="triggerCycle(false)">🔍 잔고·시그널 새로고침</button>
+            <button id="btn-force" class="btn btn-primary" onclick="triggerCycle(true)" disabled>⚡ 즉시 리밸런싱</button>
             <button class="btn" onclick="toggleSettings()">⚙️ 운용 설정</button>
         </div>
     </div>
@@ -5175,40 +5213,44 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
     <!-- 접이식 운용 설정 패널 -->
     <div id="settings-drawer" class="settings-drawer">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-            <h3 style="margin:0; font-size:1rem;">⚙️ SGRA+ 자동운용 파라미터 & 모드 전환</h3>
+            <h3 style="margin:0; font-size:1rem;">⚙️ SGRA+ 자동운용 세부 설정</h3>
             <button class="btn" style="padding:5px 10px; font-size:0.78rem;" onclick="toggleSettings()">닫기 ✕</button>
         </div>
         <div class="form-grid">
             <div class="fg">
-                <label>실행 모드 (DRY_RUN / LIVE)</label>
+                <label>운용 원장 모드</label>
                 <select id="cfg-mode">
-                    <option value="DRY_RUN">🧪 DRY_RUN — 안전한 모의운용 (실주문 없음)</option>
-                    <option value="LIVE">🟢 LIVE — Hyperliquid 실전 온체인 자동주문</option>
+                    <option value="LIVE">🟢 LIVE — 실제 내 Hyperliquid 지갑 직결 (권장)</option>
+                    <option value="DRY_RUN">🧪 DRY_RUN — 가상 모의원장 시뮬레이션</option>
                 </select>
             </div>
             <div class="fg">
-                <label>기준 운용 원금 (USD)</label>
+                <label>입금 전 예상 기준 원금 (USD)</label>
                 <input type="number" id="cfg-capital" step="100" min="200" value="20000">
             </div>
             <div class="fg">
-                <label>정기 리밸런싱 주기 (일, 권장 14일)</label>
+                <label>자동진입 최소 지갑자산 기준 (USD)</label>
+                <input type="number" id="cfg-min-eq" step="50" min="50" value="100">
+            </div>
+            <div class="fg">
+                <label>정기 리밸런싱 주기 (일, 최적 14일)</label>
                 <input type="number" id="cfg-interval" step="1" min="1" max="60" value="14">
             </div>
             <div class="fg">
-                <label>HWM 보존 불감대 (%, 권장 10%)</label>
+                <label>HWM 보존 불감대 (%, 최적 10%)</label>
                 <input type="number" id="cfg-band" step="1" min="2" max="35" value="10">
             </div>
             <div class="fg">
-                <label>수익 복리 재투자</label>
+                <label>입금액·수익금 전액 자동 복리운용</label>
                 <select id="cfg-compound">
-                    <option value="true">ON — 평가수익 포함 자동 복리 배분</option>
-                    <option value="false">OFF — 기준 원금 한도 내 고정 운용</option>
+                    <option value="true">ON — 지갑 총자산 전액 기준 자동 복리 배분</option>
+                    <option value="false">OFF — 기준 원금 한도까지만 배분</option>
                 </select>
             </div>
             <div class="fg">
                 <label>Spot → Perps USDC 자동 이체</label>
                 <select id="cfg-spot-bridge">
-                    <option value="true">ON — Spot 잔고 보유 시 Perps로 자동 이동</option>
+                    <option value="true">ON — Spot에 입금해도 자동으로 Perps로 이동</option>
                     <option value="false">OFF — Perps 가용 USDC만 사용</option>
                 </select>
             </div>
@@ -5220,33 +5262,32 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
                 </select>
             </div>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; flex-wrap:wrap; gap:10px;">
-            <button class="btn btn-danger" onclick="resetVirtualBook()">🔄 $20,000 모의원장 초기화 (DRY_RUN용)</button>
-            <button class="btn btn-primary" onclick="saveSettings()">💾 설정 저장 및 시그널 재계산</button>
+        <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:16px; gap:10px;">
+            <button class="btn btn-primary" onclick="saveSettings()">💾 설정 저장</button>
         </div>
     </div>
 
     <!-- 4대 핵심 요약 KPI -->
     <div class="kpi-grid">
         <div class="card kpi-card">
-            <div class="kpi-label">현재 운용 원장 총자산</div>
-            <div class="kpi-val" id="kpi-working-total">$0.00</div>
-            <div class="kpi-sub" id="kpi-working-sub">볼트 예치: $0 | 대기 현금: $0</div>
-        </div>
-        <div class="card kpi-card">
-            <div class="kpi-label">실시간 온체인 지갑 조회 (Mainnet)</div>
+            <div class="kpi-label">내 지갑 실시간 온체인 잔고 (Mainnet)</div>
             <div class="kpi-val" id="kpi-onchain-total">$0.00</div>
-            <div class="kpi-sub" id="kpi-onchain-sub">지갑 미연결</div>
+            <div class="kpi-sub" id="kpi-onchain-sub">지갑 조회 중...</div>
         </div>
         <div class="card kpi-card">
-            <div class="kpi-label">시장 레짐 & 목표 투자비중</div>
+            <div class="kpi-label">자동운용 엔진 상태 & 기준자본</div>
+            <div class="kpi-val" id="kpi-working-total">대기 중</div>
+            <div class="kpi-sub" id="kpi-working-sub">입금 후 [자동운용 재개 실행]을 눌러주세요</div>
+        </div>
+        <div class="card kpi-card">
+            <div class="kpi-label">현재 시장 레짐 & 목표 배분율</div>
             <div class="kpi-val" id="kpi-deploy-pct">100.0%</div>
             <div class="kpi-sub" id="kpi-regime-sub">14d 시장: - | 상승확산(Breadth): -</div>
         </div>
         <div class="card kpi-card">
-            <div class="kpi-label">다음 정기 리밸런싱 & 비상가드</div>
-            <div class="kpi-val" id="kpi-countdown">D-14.0일</div>
-            <div class="kpi-sub" id="kpi-guard-sub">4시간 주기 자동 점검 (Windows 스케줄러)</div>
+            <div class="kpi-label">리밸런싱 스케줄 & 4시간 비상가드</div>
+            <div class="kpi-val" id="kpi-countdown">재개 대기</div>
+            <div class="kpi-sub" id="kpi-guard-sub">재개 시 즉시 최초 진입 후 14일 주기 자동 운영</div>
         </div>
     </div>
 
@@ -5254,9 +5295,9 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
     <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
             <div>
-                <h3 style="margin:0; font-size:1.05rem;">📊 SGRA+ 목표 포트폴리오 & HWM 보존 델타 판정 현황</h3>
+                <h3 style="margin:0; font-size:1.05rem;">📊 SGRA+ 목표 포트폴리오 & 내 지갑 실시간 보유 현황</h3>
                 <div style="font-size:0.8rem; color:var(--muted); margin-top:4px;">
-                    단일 볼트 TVL의 30% 상한 및 포트폴리오 25% 상한이 자동 적용되며, 목표 대비 ±10% 이내 볼트는 10% 성과보수(HWM) 절감을 위해 매매를 생략합니다.
+                    자금을 입금하고 <b>[▶️ 자동운용 재개 실행]</b>을 누르면 아래 목표 비중(볼트 TVL 30% 상한 자동 반영)대로 즉시 분산 입금되며, 이후 ±10% 이내 변동은 10% 성과수수료(HWM) 절감을 위해 유지합니다.
                 </div>
             </div>
             <div id="snap-date-tag" style="font-size:0.8rem; color:var(--teal); font-weight:700;">스냅샷 기준일: -</div>
@@ -5270,8 +5311,8 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
                         <th>리더 지분 (Skin%)</th>
                         <th>볼트 TVL</th>
                         <th>쿠션 Sharpe / 14d 수익</th>
-                        <th>목표 배분 (비중 / USD)</th>
-                        <th>현재 보유 (운용원장)</th>
+                        <th id="th-target-col">예상 배분 ($20,000 입금 시)</th>
+                        <th>내 지갑 실제 보유액</th>
                         <th>자동운용 판정 상태</th>
                     </tr>
                 </thead>
@@ -5285,8 +5326,8 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
     <!-- 자동 체결 및 시그널 감사 로그 -->
     <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h3 style="margin:0; font-size:1.05rem;">📜 자동 실행 & 리밸런싱 감사 로그 (최근 60건)</h3>
-            <span style="font-size:0.78rem; color:var(--muted);">vault_data/autobot_exec_log.json (.gitignore 보호됨)</span>
+            <h3 style="margin:0; font-size:1.05rem;">📜 실전 자동 체결 & 리밸런싱 감사 로그</h3>
+            <span style="font-size:0.78rem; color:var(--muted);">실제 주문 실행 내역만 기록됩니다 (.gitignore 보호됨)</span>
         </div>
         <div class="table-wrap">
             <table>
@@ -5303,35 +5344,37 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
                     </tr>
                 </thead>
                 <tbody id="logs-tbody">
-                    <tr><td colspan="8" style="text-align:center; color:var(--muted); padding:24px;">기록된 체결 내역이 없습니다.</td></tr>
+                    <tr><td colspan="8" style="text-align:center; color:var(--muted); padding:24px;">아직 실행된 자동주문 내역이 없습니다. (입금 후 자동운용 재개 시 기록됩니다)</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- 실전 $20,000 자동운용 전환 가이드 -->
-    <div class="card" style="border-color: rgba(26,188,156,0.35);">
-        <h3 style="margin:0 0 10px 0; font-size:1.05rem; color:var(--teal);">🛡️ $20,000 실전 자동운용(LIVE) 안전 연결 3단계 가이드</h3>
-        <div style="font-size:0.85rem; color:var(--text); line-height:1.65;">
-            <p style="margin:0 0 10px 0;">
-                <b>1단계 (전용 격리 지갑 생성 권장):</b> 메인 콜드월렛과 분리된 <b>$20,000 자동운용 전용 지갑(Metamask/Rabby 새 계정)</b>을 만든 뒤, Hyperliquid(Perps 또는 Spot)에 <b>$20,000 USDC</b>를 입금합니다.
-                <span style="color:var(--muted);">(※ Hyperliquid L1 프로토콜 규약상 일반 주문용 API 위임키는 볼트 입출금 <code>vaultTransfer</code> 서명이 차단되므로, 전용 운용 지갑의 직접 키를 격리 사용하는 것이 가장 안전합니다. 본 봇 코드에는 외부 지갑 송금 <code>withdraw3/usdSend</code> 기능이 아예 존재하지 않습니다.)</span>
-            </p>
-            <p style="margin:0 0 8px 0;">
-                <b>2단계 (비밀번호 숨김 입력으로 로컬 <code>.env</code> 저장 — 채팅창/화면 노출 제로):</b> PC에서 PowerShell을 열고 아래 명령어를 실행하면 개인키가 화면에 표시되지 않고 로컬 <code>.env</code>에만 안전하게 기록됩니다.
-            </p>
-            <pre class="cmd-box">cd "C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer"
-$addr = Read-Host "운용 지갑 주소 (0x...)"
-$sec  = Read-Host "운용 지갑 Private Key (화면에 숨김 처리됨)" -AsSecureString
-$pk   = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec))
-"HL_ACCOUNT_ADDRESS=$addr`r`nHL_BOT_PRIVATE_KEY=$pk" | Set-Content -Encoding UTF8 .env
-$pk = $null</pre>
-            <p style="margin:10px 0 0 0;">
-                <b>3단계 (LIVE 전환):</b> 위 상단 <b>[⚙️ 운용 설정]</b>에서 실행 모드를 <code>🟢 LIVE</code>로 바꾸고 저장하면, 즉시(또는 매 4시간 스케줄러마다 자동으로) 시그널 감지·24시간 락업 관리·14일 HWM 보존 리밸런싱이 무인 운영됩니다.
-            </p>
+    <!-- 자금 입금 후 시작하는 초간단 2단계 안내 -->
+    <div class="card" style="border-color: rgba(26,188,156,0.38);">
+        <h3 style="margin:0 0 10px 0; font-size:1.03rem; color:var(--teal);">🚀 나중에 자금이 준비되었을 때 시작하는 방법 (딱 2단계)</h3>
+        <div style="font-size:0.86rem; color:var(--text); line-height:1.7;">
+            <div><b>1단계 (최초 1회 지갑 키 등록):</b> 프로젝트 폴더 안의 <code>setup_wallet_key.bat</code> 파일을 더블클릭하고 운용하실 지갑의 Private Key를 붙여넣으세요. (화면에 글자가 보이지 않게 로컬 <code>.env</code>에만 암호처럼 격리 저장되며, 지갑 주소도 자동으로 연결됩니다.)</div>
+            <div style="margin-top:6px;"><b>2단계 (USDC 입금 후 버튼 클릭):</b> Hyperliquid 거래소(Perps 또는 Spot 아무 곳이나)에 운용 자금(예: $20,000 USDC)을 입금한 뒤, 이 페이지 상단의 초록색 <b>[▶️ 자동운용 재개 실행]</b> 버튼만 누르면 <b>그 즉시 포트폴리오 매수가 실행되고 이후 4시간 비상감시 · 14일 자동 리밸런싱이 알아서 돌아갑니다.</b></div>
         </div>
     </div>
 </main>
+
+<!-- 서명키 미등록 안내 모달 -->
+<div id="key-modal" class="modal-bg" onclick="if(event.target===this) closeKeyModal()">
+    <div class="modal-box">
+        <h3 style="margin:0 0 10px 0; color:#fbbf24;">🔑 자동주문 서명키(.env) 1회 등록이 필요합니다</h3>
+        <p id="key-modal-msg" style="font-size:0.88rem; color:var(--text); line-height:1.6; white-space:pre-line;"></p>
+        <pre class="cmd-box">폴더 경로: C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer
+실행 파일: setup_wallet_key.bat (더블클릭 후 Private Key 붙여넣기 → Enter)</pre>
+        <p style="font-size:0.8rem; color:var(--muted); line-height:1.5; margin-bottom:18px;">
+            ※ 본 봇에는 외부 지갑 출금(withdraw3/usdSend) 코드가 아예 없으며, 내 지갑의 Perps 계정과 검증된 볼트 사이의 리밸런싱만 수행합니다.
+        </p>
+        <div style="display:flex; justify-content:flex-end;">
+            <button class="btn btn-primary" onclick="closeKeyModal()">확인</button>
+        </div>
+    </div>
+</div>
 
 <div class="mobile-tab-bar">
     <a href="/autobot" class="tab-item active"><span class="icon">🤖</span><span>AutoBot</span></a>
@@ -5354,7 +5397,7 @@ $pk = $null</pre>
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.className = 'show';
-        setTimeout(() => { el.className = ''; }, 3400);
+        setTimeout(() => { el.className = ''; }, 4500);
     }
 
     function esc(s) {
@@ -5365,6 +5408,10 @@ $pk = $null</pre>
     function toggleSettings() {
         const d = document.getElementById('settings-drawer');
         d.style.display = (d.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function closeKeyModal() {
+        document.getElementById('key-modal').style.display = 'none';
     }
 
     async function loadStatus() {
@@ -5387,29 +5434,50 @@ $pk = $null</pre>
         const sig = d.signal || {};
         const oc = d.onchain || {};
         const cred = d.credentials || {};
+        const isEnabled = Boolean(cfg.enabled);
+        const isPreview = Boolean(st.is_preview_capital);
 
         // Warn box
         const warnEl = document.getElementById('fallback-warn');
         if (st.mode_fallback_reason) {
             warnEl.style.display = 'block';
-            warnEl.innerHTML = '⚠️ <b>안전 모드 전환 알림:</b> ' + esc(st.mode_fallback_reason);
+            warnEl.innerHTML = '⚠️ <b>확인 필요:</b> ' + esc(st.mode_fallback_reason);
         } else {
             warnEl.style.display = 'none';
         }
 
-        // Badges
+        // Main Status Badge & Primary Toggle Button
         const modeEl = document.getElementById('mode-badge');
-        if (!cfg.enabled) {
-            modeEl.className = 'badge badge-paused';
-            modeEl.textContent = '⏸️ 자동운용 일시정지됨 (PAUSED)';
+        const mainBtn = document.getElementById('btn-main-toggle');
+        const forceBtn = document.getElementById('btn-force');
+
+        if (!isEnabled) {
+            modeEl.className = 'badge badge-standby';
+            modeEl.textContent = '⏸️ 입금 전 대기 중 (자동운용 일시정지)';
+            mainBtn.className = 'btn btn-start';
+            mainBtn.textContent = '▶️ 자동운용 재개 실행';
+            forceBtn.disabled = true;
+        } else if (st.last_signal_type === 'AWAITING_DEPOSIT') {
+            modeEl.className = 'badge badge-armed';
+            modeEl.textContent = '🟢 자동운용 켜짐 (입금 감지 대기 중)';
+            mainBtn.className = 'btn btn-amber';
+            mainBtn.textContent = '⏸️ 자동운용 일시정지';
+            forceBtn.disabled = true;
         } else if (st.effective_mode === 'LIVE') {
             modeEl.className = 'badge badge-live';
-            modeEl.textContent = '🟢 실전 자동운용 중 (LIVE MAINNET)';
+            modeEl.textContent = '🟢 실전 자동운용 가동 중 (LIVE)';
+            mainBtn.className = 'btn btn-amber';
+            mainBtn.textContent = '⏸️ 자동운용 일시정지';
+            forceBtn.disabled = false;
         } else {
-            modeEl.className = 'badge badge-dry';
-            modeEl.textContent = '🧪 안전 모의운용 중 (DRY-RUN)';
+            modeEl.className = 'badge badge-standby';
+            modeEl.textContent = '🧪 모의운용 가동 중 (DRY-RUN)';
+            mainBtn.className = 'btn btn-amber';
+            mainBtn.textContent = '⏸️ 모의운용 일시정지';
+            forceBtn.disabled = false;
         }
 
+        // Regime Badge
         const regEl = document.getElementById('regime-badge');
         const reg = sig.regime || 'NEUTRAL';
         if (reg === 'BULL') {
@@ -5423,67 +5491,77 @@ $pk = $null</pre>
             regEl.textContent = '⚖️ NEUTRAL 중립 레짐 (Core 복리 유지)';
         }
 
+        // Key Badge
         const keyEl = document.getElementById('key-badge');
         if (cred.key_configured && cred.is_direct_master_key) {
             keyEl.className = 'badge badge-live';
-            keyEl.textContent = '🔑 .env 서명키 연결됨 (Direct EOA)';
+            keyEl.textContent = '🔑 서명키 연결 완료 (.env)';
         } else if (cred.key_configured && cred.is_delegated_agent_key) {
             keyEl.className = 'badge badge-paused';
             keyEl.textContent = '⚠️ API 위임키 감지 (직접 운용키 필요)';
         } else {
             keyEl.className = 'badge badge-neutral';
-            keyEl.textContent = '🔒 .env 서명키 미설정 (조회/모의 전용)';
+            keyEl.textContent = '🔒 서명키 미등록 (setup_wallet_key.bat)';
         }
 
-        document.getElementById('signal-headline').textContent =
-            `[${st.last_signal_type || '-'}] ${st.last_trigger_reason || ''}`;
+        document.getElementById('signal-headline').textContent = st.last_trigger_reason || '';
         document.getElementById('check-timestamps').textContent =
-            `마지막 점검: ${(st.last_checked_at || '-').replace('T', ' ')}  |  마지막 리밸런싱: ${(st.last_rebalance_at || '-').replace('T', ' ')}  |  다음 정기 주기: ${st.next_rebalance_at || '-'}`;
-
-        const pauseBtn = document.getElementById('btn-pause');
-        pauseBtn.textContent = cfg.enabled ? '⏸️ 일시정지' : '▶️ 자동운용 재개';
+            `마지막 점검: ${(st.last_checked_at || '-').replace('T', ' ')}  |  마지막 리밸런싱: ${st.last_rebalance_at ? st.last_rebalance_at.replace('T', ' ') : '아직 실행 전'}  |  다음 정기 주기: ${st.next_rebalance_at || '-'}`;
 
         // Populate settings form
-        document.getElementById('cfg-mode').value = cfg.mode || 'DRY_RUN';
+        document.getElementById('cfg-mode').value = cfg.mode || 'LIVE';
         document.getElementById('cfg-capital').value = cfg.target_capital_usd || 20000;
+        document.getElementById('cfg-min-eq').value = cfg.min_deploy_equity_usd || 100;
         document.getElementById('cfg-interval').value = cfg.rebalance_interval_days || 14;
         document.getElementById('cfg-band').value = Math.round((cfg.no_trade_band_rel || 0.10) * 100);
         document.getElementById('cfg-compound').value = String(cfg.compound_profits !== false);
         document.getElementById('cfg-spot-bridge').value = String(cfg.auto_spot_to_perp !== false);
         document.getElementById('cfg-emg').value = String(cfg.emergency_guard_enabled !== false);
 
-        // KPI 1: Working Ledger
-        const wPos = st.working_positions_usd || {};
-        const wVaultSum = Object.values(wPos).reduce((a, b) => a + Number(b || 0), 0);
-        const wCash = Number(st.working_cash_usd || 0);
-        const wTotal = wVaultSum + wCash;
-        document.getElementById('kpi-working-total').textContent = fmtUsd(wTotal);
-        document.getElementById('kpi-working-sub').innerHTML =
-            (st.using_virtual_book ? '<span style="color:#fbbf24;">[모의원장]</span> ' : '<span style="color:#2ecc71;">[실전원장]</span> ') +
-            `볼트 ${Object.keys(wPos).length}개: ${fmtUsd(wVaultSum)} | 현금: ${fmtUsd(wCash)}`;
-
-        // KPI 2: Live On-Chain Telemetry
+        // KPI 1: Live On-Chain Telemetry
         document.getElementById('kpi-onchain-total').textContent = fmtUsd(oc.total_equity_usd || 0);
         const addrShort = oc.account_address ? (oc.account_address.slice(0, 8) + '...' + oc.account_address.slice(-6)) : '미설정';
         document.getElementById('kpi-onchain-sub').innerHTML = oc.connected
-            ? `지갑 <code>${esc(addrShort)}</code><br>Perp가용 ${fmtUsd(oc.perp_withdrawable_usd)} · Spot ${fmtUsd(oc.spot_usdc_usd)} · 볼트 ${fmtUsd(oc.vault_total_equity_usd)}`
+            ? `지갑 <code>${esc(addrShort)}</code><br>Perp가용 <b>${fmtUsd(oc.perp_withdrawable_usd)}</b> · Spot <b>${fmtUsd(oc.spot_usdc_usd)}</b> · 볼트 <b>${fmtUsd(oc.vault_total_equity_usd)}</b>`
             : `<span style="color:var(--red);">${esc(oc.error || '연결 안 됨')}</span>`;
+
+        // KPI 2: Engine Operational State
+        const wPos = st.working_positions_usd || {};
+        const wVaultSum = Object.values(wPos).reduce((a, b) => a + Number(b || 0), 0);
+        const wCash = Number(st.working_cash_usd || 0);
+        if (!isEnabled && !st.using_virtual_book) {
+            document.getElementById('kpi-working-total').textContent = '⏸️ 대기 중';
+            document.getElementById('kpi-working-sub').innerHTML =
+                `예상 배분 기준금: <b>${fmtUsd(cfg.target_capital_usd || 20000)}</b><br>입금 후 [자동운용 재개 실행] 시 실제 입금액 전액 자동 배분`;
+        } else if (st.last_signal_type === 'AWAITING_DEPOSIT') {
+            document.getElementById('kpi-working-total').textContent = '🟢 입금 대기';
+            document.getElementById('kpi-working-sub').innerHTML =
+                `최소 ${fmtUsd(cfg.min_deploy_equity_usd || 100)} 이상 USDC 입금 감지 시 즉시 자동 매수 시작`;
+        } else {
+            document.getElementById('kpi-working-total').textContent = fmtUsd(wVaultSum + wCash);
+            document.getElementById('kpi-working-sub').innerHTML =
+                (st.using_virtual_book ? '<span style="color:#fbbf24;">[모의원장]</span> ' : '<span style="color:#2ecc71;">[실전운용]</span> ') +
+                `볼트 ${Object.keys(wPos).length}개 예치: ${fmtUsd(wVaultSum)} | 가용현금: ${fmtUsd(wCash)}`;
+        }
 
         // KPI 3: Regime
         document.getElementById('kpi-deploy-pct').textContent =
             `${Number(sig.deployed_weight_pct || 0).toFixed(1)}% 배분`;
         document.getElementById('kpi-regime-sub').innerHTML =
-            `14d 시장: <b>${Number(sig.mkt_14d_pct || 0) >= 0 ? '+' : ''}${Number(sig.mkt_14d_pct || 0).toFixed(2)}%</b> · Breadth: <b>${Number(sig.breadth_14d_pct || 0).toFixed(1)}%</b><br>목표 현금비중: ${Number(sig.cash_reserve_pct || 0).toFixed(1)}% (${fmtUsd(sig.cash_reserve_usd || 0)})`;
+            `14d 시장: <b>${Number(sig.mkt_14d_pct || 0) >= 0 ? '+' : ''}${Number(sig.mkt_14d_pct || 0).toFixed(2)}%</b> · Breadth: <b>${Number(sig.breadth_14d_pct || 0).toFixed(1)}%</b><br>목표 현금비중: ${Number(sig.cash_reserve_pct || 0).toFixed(1)}%`;
 
         // KPI 4: Countdown
         document.getElementById('kpi-countdown').textContent =
-            st.last_rebalance_at ? `D-${Number(st.days_to_next_rebalance || 0).toFixed(1)}일` : '즉시 진입 대기';
+            st.last_rebalance_at ? `D-${Number(st.days_to_next_rebalance || 0).toFixed(1)}일` : '재개 시 즉시 진입';
         const emgCnt = (sig.emergency_exits || []).length;
         document.getElementById('kpi-guard-sub').innerHTML = emgCnt > 0
             ? `<span style="color:var(--red);font-weight:700;">🚨 비상 탈출 대상 ${emgCnt}개 감지됨!</span>`
-            : `보유 볼트 비상징후 없음 (4시간 주기 자동점검 정상)`;
+            : `재개 후 4시간마다 비상감시 & ${cfg.rebalance_interval_days || 14}일 주기 자동 리밸런싱`;
 
         document.getElementById('snap-date-tag').textContent = `최신 분석 스냅샷: ${sig.snapshot_date || '-'}`;
+        document.getElementById('th-target-col').textContent = isPreview
+            ? `예상 배분 (${fmtUsd(sig.deploy_capital_usd || 20000)} 입금 시)`
+            : `목표 배분 (${fmtUsd(sig.deploy_capital_usd || 0)} 기준)`;
 
         // Render Allocation & Delta Table
         const sellMap = {};
@@ -5501,13 +5579,20 @@ $pk = $null</pre>
         allocs.forEach(a => {
             const curUsd = Number(wPos[a.address] || 0);
             const lk = ocLocks[a.address];
-            let statusHtml = '<span style="color:var(--teal);font-weight:600;">✅ 목표 비중 유지 중</span>';
-            if (buyMap[a.address]) {
-                statusHtml = `<span style="color:#2ecc71;font-weight:700;">🟢 추가 입금 대기 (+${fmtUsd(buyMap[a.address].delta_usd)})</span><br><small style="color:var(--muted);">${esc(buyMap[a.address].reason)}</small>`;
+            let statusHtml = '';
+
+            if (!isEnabled) {
+                statusHtml = `<span style="color:#fbbf24;font-weight:600;">⏸️ 입금 및 [자동운용 재개] 대기</span><br><small style="color:var(--muted);">재개 실행 시 약 ${fmtUsd(a.target_usd)} 자동 배분</small>`;
+            } else if (st.last_signal_type === 'AWAITING_DEPOSIT') {
+                statusHtml = `<span style="color:#38bdf8;font-weight:600;">🟢 입금 감지 대기 중</span><br><small style="color:var(--muted);">USDC 입금 즉시 자동 매수</small>`;
+            } else if (buyMap[a.address]) {
+                statusHtml = `<span style="color:#2ecc71;font-weight:700;">🟢 입금 예정 (+${fmtUsd(buyMap[a.address].delta_usd)})</span><br><small style="color:var(--muted);">${esc(buyMap[a.address].reason)}</small>`;
             } else if (sellMap[a.address]) {
-                statusHtml = `<span style="color:#fbbf24;font-weight:700;">🟡 비중 축소 대기 (-${fmtUsd(sellMap[a.address].delta_usd)})</span><br><small style="color:var(--muted);">${esc(sellMap[a.address].reason)}</small>`;
+                statusHtml = `<span style="color:#fbbf24;font-weight:700;">🟡 비중 축소 예정 (-${fmtUsd(sellMap[a.address].delta_usd)})</span><br><small style="color:var(--muted);">${esc(sellMap[a.address].reason)}</small>`;
             } else if (skipMap[a.address]) {
                 statusHtml = `<span style="color:#93c5fd;font-weight:600;">🛡️ HWM 보존 유지</span><br><small style="color:var(--muted);">${esc(skipMap[a.address].reason)}</small>`;
+            } else {
+                statusHtml = `<span style="color:var(--teal);font-weight:600;">✅ 목표 비중 운용 중</span>`;
             }
 
             const lockBadge = (lk && lk.is_locked)
@@ -5541,36 +5626,39 @@ $pk = $null</pre>
             `);
         });
 
-        // Also show any held vaults NOT in target allocations (scheduled for full exit)
+        // Show any currently held on-chain vaults NOT in SGRA+ target allocations
         Object.keys(wPos).forEach(addr => {
             if (allocAddrs.has(addr)) return;
             const curUsd = Number(wPos[addr] || 0);
             if (curUsd <= 0.5) return;
-            const sInfo = sellMap[addr] || { name: addr.slice(0, 12), delta_usd: curUsd, reason: '목표 포트폴리오 제외' };
+            const sInfo = sellMap[addr] || { name: addr.slice(0, 12), delta_usd: curUsd, reason: 'SGRA+ 목표 포트폴리오 외 보유분' };
             const lk = ocLocks[addr];
             const lockBadge = (lk && lk.is_locked)
                 ? `<br><span style="font-size:0.73rem;color:#fbbf24;">⏳ 24h 락업 (~${esc(lk.locked_until)})</span>`
                 : '';
+            const holdStatus = !isEnabled
+                ? `<span style="color:var(--muted);font-weight:600;">⏸️ 현재 기존 지갑 보유분 (일시정지 중 미건드림)</span>`
+                : `<span style="color:var(--red);font-weight:700;">🔴 교체 회수 예정 (-${fmtUsd(curUsd)})</span><br><small style="color:var(--muted);">${esc(sInfo.reason)}</small>`;
             rows.push(`
-                <tr style="background:rgba(231,76,60,0.06);">
+                <tr style="background:rgba(255,255,255,0.015);">
                     <td>
                         <a class="vlink" href="https://app.hyperliquid.xyz/vaults/${esc(addr)}" target="_blank" rel="noopener">
                             ${esc(sInfo.name)} ↗
                         </a>
                         <div style="font-size:0.72rem;color:var(--muted);font-family:monospace;">${esc(addr.slice(0,10))}...</div>
                     </td>
-                    <td><span class="badge badge-paused">편출 대상</span></td>
+                    <td><span class="badge badge-neutral">기존 보유</span></td>
                     <td>-</td><td>-</td><td>-</td>
                     <td><b>0.0%</b> ($0.00)</td>
                     <td><b>${fmtUsd(curUsd)}</b>${lockBadge}</td>
-                    <td><span style="color:var(--red);font-weight:700;">🔴 전액 회수 예정 (-${fmtUsd(curUsd)})</span><br><small style="color:var(--muted);">${esc(sInfo.reason)}</small></td>
+                    <td>${holdStatus}</td>
                 </tr>
             `);
         });
 
         document.getElementById('alloc-tbody').innerHTML = rows.length
             ? rows.join('')
-            : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">조건을 충족하는 목표 볼트가 없습니다 (전액 현금 대기).</td></tr>';
+            : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">조건을 충족하는 목표 볼트가 없습니다.</td></tr>';
 
         // Logs table
         const logs = d.logs || [];
@@ -5582,7 +5670,7 @@ $pk = $null</pre>
                 return `
                     <tr>
                         <td style="white-space:nowrap;color:var(--muted);">${esc((l.ts || '').replace('T', ' '))}</td>
-                        <td><span class="badge ${l.mode === 'LIVE' ? 'badge-live' : 'badge-dry'}">${esc(l.mode)}</span></td>
+                        <td><span class="badge ${l.mode === 'LIVE' ? 'badge-live' : 'badge-standby'}">${esc(l.mode)}</span></td>
                         <td style="font-weight:600;">${esc(l.trigger)}</td>
                         <td style="font-weight:700;">${esc(l.action)}</td>
                         <td>${esc(l.vault)}</td>
@@ -5592,17 +5680,72 @@ $pk = $null</pre>
                     </tr>
                 `;
             }).join('')
-            : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">아직 실행된 내역이 없습니다.</td></tr>';
+            : '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">아직 실행된 자동주문 내역이 없습니다. (자금 입금 후 [▶️ 자동운용 재개 실행] 클릭 시 기록됩니다)</td></tr>';
+    }
+
+    async function handleMainToggle() {
+        if (!botData || !botData.config) return;
+        const isEnabled = Boolean(botData.config.enabled);
+        const btn = document.getElementById('btn-main-toggle');
+
+        if (!isEnabled) {
+            // Resuming / Starting Auto-Operation!
+            const ocEq = Number((botData.onchain || {}).total_equity_usd || 0);
+            const cred = botData.credentials || {};
+            if (botData.config.mode === 'LIVE' && cred.key_configured && ocEq >= Number(botData.config.min_deploy_equity_usd || 100)) {
+                if (!confirm(`현재 연결된 지갑의 온체인 총자산(${fmtUsd(ocEq)})으로 즉시 SGRA+ 포트폴리오를 구성하고 자동운용을 시작할까요?`)) {
+                    return;
+                }
+            }
+            btn.disabled = true;
+            btn.textContent = '⏳ 자동운용 개시 중...';
+            try {
+                const res = await fetch('/api/autobot/resume', { method: 'POST' });
+                const out = await res.json();
+                if (out.payload) {
+                    botData = out.payload;
+                    renderAll(out.payload);
+                }
+                if (!out.ok) {
+                    document.getElementById('key-modal-msg').textContent = out.message || out.error || '서명키 확인이 필요합니다.';
+                    document.getElementById('key-modal').style.display = 'flex';
+                } else {
+                    showToast(out.message || '🟢 자동운용이 시작되었습니다!');
+                }
+            } catch (e) {
+                showToast('자동운용 재개 요청 중 통신 오류가 발생했습니다.');
+            } finally {
+                btn.disabled = false;
+                if (botData) renderAll(botData);
+            }
+        } else {
+            // Pausing Auto-Operation
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/autobot/pause', { method: 'POST' });
+                const out = await res.json();
+                if (out.payload) {
+                    botData = out.payload;
+                    renderAll(out.payload);
+                }
+                showToast(out.message || '⏸️ 자동운용이 일시정지되었습니다.');
+            } catch (e) {
+                showToast('일시정지 요청 중 오류가 발생했습니다.');
+            } finally {
+                btn.disabled = false;
+                if (botData) renderAll(botData);
+            }
+        }
     }
 
     async function triggerCycle(force) {
         if (force && botData && botData.state && botData.state.effective_mode === 'LIVE') {
-            if (!confirm('실전(LIVE) 모드에서 즉시 온체인 리밸런싱 주문을 실행하시겠습니까?')) return;
+            if (!confirm('현재 온체인 잔고 기준으로 즉시 SGRA+ 리밸런싱 주문을 실행하시겠습니까?')) return;
         }
         const btn = document.getElementById(force ? 'btn-force' : 'btn-check');
         const orig = btn.textContent;
         btn.disabled = true;
-        btn.textContent = '⏳ 실행 중...';
+        btn.textContent = '⏳ 확인 중...';
         try {
             const res = await fetch('/api/autobot/run', {
                 method: 'POST',
@@ -5614,40 +5757,21 @@ $pk = $null</pre>
             else {
                 botData = data;
                 renderAll(data);
-                showToast(force ? '⚡ 즉시 리밸런싱 실행이 완료되었습니다!' : '🔍 최신 시그널 점검이 완료되었습니다!');
+                showToast(force ? '⚡ 즉시 리밸런싱 실행 완료!' : '🔍 최신 온체인 잔고 및 시그널 갱신 완료!');
             }
         } catch (e) {
-            showToast('실행 요청 중 오류가 발생했습니다.');
+            showToast('요청 처리 중 오류가 발생했습니다.');
         } finally {
-            btn.disabled = false;
             btn.textContent = orig;
+            if (botData) renderAll(botData);
         }
-    }
-
-    async function togglePause() {
-        if (!botData || !botData.config) return;
-        const nextEnabled = !botData.config.enabled;
-        const res = await fetch('/api/autobot/config', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ enabled: nextEnabled })
-        });
-        const data = await res.json();
-        botData = data;
-        renderAll(data);
-        showToast(nextEnabled ? '▶️ 자동운용 봇이 재개되었습니다.' : '⏸️ 자동운용 봇이 일시정지되었습니다.');
     }
 
     async function saveSettings() {
-        const mode = document.getElementById('cfg-mode').value;
-        if (mode === 'LIVE') {
-            if (!confirm('실행 모드를 LIVE(실전 자동주문)로 전환하시겠습니까? (.env에 전용 지갑 키가 설정되어 있어야 실제 주문이 실행됩니다.)')) {
-                return;
-            }
-        }
         const payload = {
-            mode: mode,
+            mode: document.getElementById('cfg-mode').value,
             target_capital_usd: Number(document.getElementById('cfg-capital').value || 20000),
+            min_deploy_equity_usd: Number(document.getElementById('cfg-min-eq').value || 100),
             rebalance_interval_days: Number(document.getElementById('cfg-interval').value || 14),
             no_trade_band_rel: Number(document.getElementById('cfg-band').value || 10) / 100.0,
             compound_profits: document.getElementById('cfg-compound').value === 'true',
@@ -5662,21 +5786,12 @@ $pk = $null</pre>
         const data = await res.json();
         botData = data;
         renderAll(data);
-        showToast('💾 운용 설정이 저장되고 시그널이 갱신되었습니다.');
-    }
-
-    async function resetVirtualBook() {
-        if (!confirm('DRY_RUN 모의원장을 기준 원금으로 초기화하고 최초 배분을 다시 시뮬레이션할까요?')) return;
-        const res = await fetch('/api/autobot/reset-virtual', { method: 'POST' });
-        const data = await res.json();
-        botData = data;
-        renderAll(data);
-        showToast('🔄 모의운용 원장이 초기화 및 재배분되었습니다.');
+        showToast('💾 운용 설정이 저장되었습니다.');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         loadStatus();
-        setInterval(loadStatus, 60000); // 1분마다 화면 자동 새로고침
+        setInterval(loadStatus, 60000);
     });
 </script>
 </body>

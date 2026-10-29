@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-10-29 19:39:33
+### 🔬 주제: **칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링**
+* **레퍼런스 출처**: `GitHub: pykalman / R.E. Kalman (1960)`
+* **수학적 모델**: $y_t = \alpha_t + \beta_t x_t + \epsilon_t, \quad \beta_t = \beta_{t-1} + \eta_t$
+* **핵심 가설**: 비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.
+* **검증 데이터**: `213 days (2026-02-27 ~ 2026-10-29)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **137S Long Guard I**: Hurst `0.403` | Sortino `3.81` | Kelly `2.1%` | 30일 APR `214.43%` | Sharpe `8.08`
+  - **137S MHF Long & Short I**: Hurst `0.666` | Sortino `3.92` | Kelly `0.0%` | 30일 APR `179.05%` | Sharpe `5.83`
+  - **Growi_test**: Hurst `0.613` | Sortino `2.2` | Kelly `6.5%` | 30일 APR `153.99%` | Sharpe `10.21`
+  - **137S IF Long I**: Hurst `0.649` | Sortino `3.74` | Kelly `0.0%` | 30일 APR `167.94%` | Sharpe `5.39`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-10-29 15:39:28
 ### 🔬 주제: **Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진**
 * **레퍼런스 출처**: `GitHub: skfolio / Shadwick & Keating (2002)`
@@ -226,23 +243,6 @@
 ---
 
 ## 📅 연구 기록: 2026-10-28 19:39:30
-### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
-* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
-* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
-* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-10-28)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Algo1**: Hurst `0.5` | Sortino `383862839.05` | Kelly `30.0%` | 30일 APR `4.04%` | Sharpe `9.57`
-  - **Mahamor**: Hurst `0.255` | Sortino `29.02` | Kelly `14.8%` | 30일 APR `-280.09%` | Sharpe `3.4`
-  - **wmm.club | scalp-hype-long-2x**: Hurst `0.5` | Sortino `23.16` | Kelly `13.0%` | 30일 APR `-12.88%` | Sharpe `6.35`
-  - **Gucky_4coin_2dot5x**: Hurst `0.59` | Sortino `67.83` | Kelly `12.9%` | 30일 APR `23.76%` | Sharpe `0.97`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-10-28 15:39:26
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
 * **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$

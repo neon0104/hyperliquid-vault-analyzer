@@ -60,10 +60,11 @@ EXCLUDED_ADDRESSES = frozenset({
 })
 
 DEFAULT_BOT_CONFIG: Dict[str, Any] = {
-    "enabled": True,
-    "mode": "DRY_RUN",                  # "DRY_RUN" (모의운용) or "LIVE" (실전 자동주문)
-    "target_capital_usd": 20000.0,      # 기준 운용 원금 ($20,000)
-    "compound_profits": True,           # 수익 발생 시 자동 복리 재투자 여부
+    "enabled": False,                   # 입금 전 기본 일시정지(대기) — 사용자가 입금 후 [자동운용 재개] 시 즉시 가동
+    "mode": "LIVE",                     # "LIVE" (실전 지갑 연동 기본) or "DRY_RUN" (모의 테스트용)
+    "target_capital_usd": 20000.0,      # 기준 운용 원금 ($20,000 — 입금 전 예상 배분 미리보기 기준)
+    "min_deploy_equity_usd": 100.0,     # 실전 자동진입 최소 지갑 총자산 기준 ($100 이상 입금 감지 시 운용)
+    "compound_profits": True,           # 입금액 및 수익금 전액 자동 복리 재투자 여부
     "rebalance_interval_days": 14,      # 최적 검증 주기: 14일
     "no_trade_band_rel": 0.10,          # 10% 상대 비중 불감대 (HWM 성과보수 크레딧 보존)
     "rank_buffer": 2,                   # 기존 보유 볼트가 Top (6 + 2 = 8) 이내면 교체 방지
@@ -668,7 +669,66 @@ def _build_delta_plan(
     return planned_sells, planned_buys, skipped_band
 
 
-def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
+def _sync_live_portfolio_files(
+    account_addr: str,
+    onchain: Dict[str, Any],
+    current_positions_usd: Dict[str, float],
+    now_iso: str,
+    is_fresh_deploy: bool,
+) -> None:
+    if not current_positions_usd:
+        return
+    old_pf: Dict[str, Any] = {}
+    if MY_PORTFOLIO_FILE.exists():
+        try:
+            old_pf = json.loads(MY_PORTFOLIO_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            old_pf = {}
+
+    old_cap = float(old_pf.get("total_capital", 0.0) or 0.0)
+    live_eq = round(float(onchain.get("total_equity_usd", sum(current_positions_usd.values()))), 2)
+    today_str = now_iso[:10]
+
+    # Reset invest_date & baseline total_capital when transitioning from pre-funding (<$200) to funded operation
+    if is_fresh_deploy or old_cap < 200.0 or old_pf.get("account_address", "").lower() != account_addr.lower():
+        base_cap = live_eq
+        inv_date = today_str
+    else:
+        base_cap = old_cap
+        inv_date = str(old_pf.get("invest_date") or today_str)
+
+    atomic_write_json(MY_PORTFOLIO_FILE, {
+        "_comment": "SGRA+ 자동운용 봇 실시간 동기화 포트폴리오",
+        "account_address": account_addr,
+        "fetched_at": now_iso,
+        "total_capital": base_cap,
+        "invest_date": inv_date,
+        "positions": current_positions_usd,
+    }, indent=2)
+
+    if VIRTUAL_PORTFOLIOS_FILE.exists():
+        try:
+            vp_list = json.loads(VIRTUAL_PORTFOLIOS_FILE.read_text(encoding="utf-8"))
+            if isinstance(vp_list, list):
+                changed = False
+                for p in vp_list:
+                    if p.get("id") == "default":
+                        p["positions"] = current_positions_usd
+                        p["total_capital"] = base_cap
+                        if is_fresh_deploy or float(p.get("total_capital", 0) or 0) < 200.0:
+                            p["invest_date"] = inv_date
+                        changed = True
+                        break
+                if changed:
+                    atomic_write_json(VIRTUAL_PORTFOLIOS_FILE, vp_list, indent=2)
+        except Exception:
+            pass
+
+
+def run_autobot_cycle(
+    force_rebalance: bool = False,
+    trigger_override: Optional[str] = None,
+) -> Dict[str, Any]:
     cfg = load_autobot_config()
     state = load_autobot_state()
     account_addr, priv_key, cred_meta = get_wallet_credentials_meta()
@@ -677,44 +737,55 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
     now = datetime.now()
     now_iso = now.isoformat(timespec="seconds")
 
-    # Determine effective mode: LIVE requires valid direct EOA key + connected on-chain state
-    requested_mode = str(cfg.get("mode", "DRY_RUN")).upper()
-    can_live = bool(
+    requested_mode = str(cfg.get("mode", "LIVE")).upper()
+    target_cap = float(cfg.get("target_capital_usd", 20000.0))
+    min_deploy_eq = float(cfg.get("min_deploy_equity_usd", 100.0))
+    live_total_eq = float(onchain.get("total_equity_usd", 0.0))
+
+    can_sign_live = bool(
         cred_meta["key_configured"]
         and cred_meta["is_direct_master_key"]
         and onchain["connected"]
     )
-    effective_mode = "LIVE" if (requested_mode == "LIVE" and can_live) else "DRY_RUN"
+
+    is_preview_capital = False
     mode_fallback_reason = None
-    if requested_mode == "LIVE" and effective_mode != "LIVE":
-        if cred_meta.get("is_delegated_agent_key"):
-            mode_fallback_reason = (
-                "Hyperliquid L1 규약상 API 위임키는 볼트 입출금(vaultTransfer) 서명이 불가합니다. "
-                "$20,000 운용 전용 지갑의 직접 개인키를 .env에 설정해주세요."
-            )
-        else:
-            mode_fallback_reason = ".env 내 HL_BOT_PRIVATE_KEY 미설정 또는 온체인 조회 실패로 인해 안전 모의운용(DRY_RUN)으로 전환됨"
 
-    target_cap = float(cfg.get("target_capital_usd", 20000.0))
-    live_total_eq = float(onchain.get("total_equity_usd", 0.0))
-
-    # Determine working positions & deployable capital
-    if effective_mode == "LIVE" or live_total_eq >= 200.0:
+    if requested_mode == "LIVE":
+        # Real wallet mode: NEVER fabricate fake virtual balances!
+        effective_mode = "LIVE"
+        using_virtual_book = False
         current_positions_usd = {
             a: float(p["equity_usd"]) for a, p in onchain.get("vault_positions", {}).items()
         }
         locked_map = {
             a: p for a, p in onchain.get("vault_positions", {}).items() if p.get("is_locked")
         }
-        if cfg.get("compound_profits", True):
-            deploy_capital = max(live_total_eq, 0.0) if live_total_eq >= 200.0 else target_cap
-        else:
-            deploy_capital = min(live_total_eq, target_cap) if live_total_eq >= 200.0 else target_cap
         avail_cash_usd = float(onchain.get("perp_withdrawable_usd", 0.0)) + (
             float(onchain.get("spot_usdc_usd", 0.0)) if cfg.get("auto_spot_to_perp", True) else 0.0
         )
-        using_virtual_book = False
+        if live_total_eq >= min_deploy_eq:
+            deploy_capital = live_total_eq if cfg.get("compound_profits", True) else min(live_total_eq, target_cap)
+        else:
+            # Wallet not funded yet: compute SGRA+ target table preview at target_cap ($20,000), keep actual $0/real holdings honest
+            is_preview_capital = True
+            deploy_capital = target_cap
+
+        if cfg.get("enabled", False) and not can_sign_live:
+            if cred_meta.get("is_delegated_agent_key"):
+                mode_fallback_reason = (
+                    "Hyperliquid L1 규약상 API 위임키는 볼트 입출금(vaultTransfer) 서명이 불가합니다. "
+                    "setup_wallet_key.bat을 실행해 운용 지갑의 직접 개인키를 등록해주세요."
+                )
+            elif not cred_meta.get("key_configured"):
+                mode_fallback_reason = (
+                    "자동운용이 켜져 있으나 아직 .env 서명키가 등록되지 않았습니다. "
+                    "폴더 내 setup_wallet_key.bat을 실행해 지갑 키를 등록해주세요."
+                )
     else:
+        # Explicit DRY_RUN paper simulation mode (only if user explicitly chooses DRY_RUN in settings)
+        effective_mode = "DRY_RUN"
+        using_virtual_book = True
         v_pos = state.get("virtual_positions") or {}
         v_cash = state.get("virtual_cash_usd")
         if v_cash is None and not v_pos:
@@ -726,7 +797,6 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
         if abs(deploy_capital - target_cap) > 1.0 and not current_positions_usd:
             deploy_capital = target_cap
             avail_cash_usd = target_cap
-        using_virtual_book = True
 
     signal = compute_sgra_signal(deploy_capital, set(current_positions_usd.keys()), cfg)
     if "error" in signal:
@@ -759,28 +829,62 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
         target_map[ea] = 0.0
     v_lookup = signal.get("vault_lookup", {})
 
-    # Pre-check full delta plan
     planned_sells, planned_buys, skipped_band = _build_delta_plan(
         current_positions_usd, target_map, locked_map, emergency_addrs, v_lookup, False, band, min_trade
     )
 
-    is_initial_uninvested = (len(current_positions_usd) == 0 and len(planned_buys) > 0 and avail_cash_usd >= 100.0)
+    is_initial_uninvested = (
+        sum(current_positions_usd.values()) < min_deploy_eq
+        and len(planned_buys) > 0
+        and avail_cash_usd >= min_deploy_eq
+    )
     excess_cash_usd = avail_cash_usd - float(signal.get("cash_reserve_usd", 0.0))
-    has_new_capital = (excess_cash_usd >= max(500.0, 0.15 * deploy_capital) and len(planned_buys) > 0)
+    has_new_capital = (excess_cash_usd >= max(300.0, 0.12 * deploy_capital) and len(planned_buys) > 0)
 
     trigger_type = "HOLD_NO_SIGNAL"
-    trigger_reason = f"정기 리밸런싱 주기({interval_days}일) 대기 중 — 경과 {days_since_reb:.1f}일, 보유 볼트 이상 없음 (10% HWM 보존)"
+    trigger_reason = (
+        f"정상 자동운용 감시 중 — 다음 정기 리밸런싱까지 {max(0.0, interval_days - days_since_reb):.1f}일 남음 "
+        f"(보유 볼트 이상 없음, 10% HWM 보존)"
+    )
     should_execute = False
 
-    if not cfg.get("enabled", True) and not force_rebalance:
-        trigger_type = "PAUSED"
-        trigger_reason = "사용자에 의해 자동운용 봇이 일시정지(PAUSED) 상태입니다."
-    elif effective_mode == "LIVE" and live_total_eq < 50.0 and not current_positions_usd:
+    if not cfg.get("enabled", False) and not force_rebalance:
+        trigger_type = "PAUSED_STANDBY"
+        if effective_mode == "LIVE":
+            if not cred_meta["key_configured"]:
+                trigger_reason = (
+                    "입금 전 대기 중 (일시정지) — ① setup_wallet_key.bat 서명키 등록 및 ② Hyperliquid USDC 입금 후 "
+                    "[▶️ 자동운용 재개 실행]을 누르면 즉시 자동 포트폴리오 운용이 시작됩니다."
+                )
+            elif is_preview_capital:
+                trigger_reason = (
+                    f"입금 전 대기 중 (일시정지) — 서명키 연결 완료! Hyperliquid 지갑에 자금 입금 후 "
+                    f"[▶️ 자동운용 재개 실행]을 누르면 즉시 매수가 시작됩니다. (현재 지갑 총자산 ${live_total_eq:,.2f})"
+                )
+            else:
+                trigger_reason = (
+                    f"자동운용 일시정지 중 — 지갑 내 온체인 자산(${live_total_eq:,.2f}) 확인됨. "
+                    f"[▶️ 자동운용 재개 실행] 클릭 시 즉시 자동 포트폴리오 배분을 시작합니다."
+                )
+        else:
+            trigger_reason = "모의운용(DRY_RUN) 일시정지 상태입니다."
+    elif effective_mode == "LIVE" and not can_sign_live:
+        trigger_type = "AWAITING_KEY"
+        trigger_reason = mode_fallback_reason or "운용 지갑 서명키(.env) 연결 대기 중입니다."
+    elif effective_mode == "LIVE" and is_preview_capital:
         trigger_type = "AWAITING_DEPOSIT"
-        trigger_reason = f"연결된 지갑({account_addr[:10]}...)의 USDC 입금 대기 중 (현재 총자산 ${live_total_eq:,.2f})"
+        addr_disp = (account_addr[:10] + "...") if account_addr else "미설정"
+        trigger_reason = (
+            f"자동운용 켜짐 (입금 감지 대기 중) — 지갑({addr_disp})에 ${min_deploy_eq:,.0f} 이상 USDC가 입금되면 "
+            f"자동으로 포트폴리오 매수가 실행됩니다. (현재 지갑 총자산 ${live_total_eq:,.2f})"
+        )
+    elif trigger_override == "RESUME_AUTO_START":
+        trigger_type = "RESUME_AUTO_START"
+        trigger_reason = f"▶️ 자동운용 재개 실행 — 지갑 자금(${deploy_capital:,.2f}) SGRA+ 최적 포트폴리오 즉시 구성 및 자동운용 개시"
+        should_execute = True
     elif force_rebalance:
         trigger_type = "MANUAL_FORCE"
-        trigger_reason = "웹 관제센터 수동 즉시 리밸런싱 요청 실행"
+        trigger_reason = f"⚡ 웹 관제센터 수동 즉시 리밸런싱 실행 (운용자산 ${deploy_capital:,.2f})"
         should_execute = True
     elif emergency_exits:
         trigger_type = "EMERGENCY_EXIT"
@@ -792,15 +896,15 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
         should_execute = True
     elif is_initial_uninvested:
         trigger_type = "INITIAL_DEPLOY"
-        trigger_reason = f"초기 미배치 자금(${deploy_capital:,.0f}) SGRA+ 최적 포트폴리오 최초 진입"
+        trigger_reason = f"💰 지갑 입금 자금(${deploy_capital:,.2f}) 감지 — SGRA+ 최적 포트폴리오 최초 자동 진입"
         should_execute = True
     elif has_new_capital:
         trigger_type = "NEW_CAPITAL_DEPLOY"
-        trigger_reason = f"신규 입금 가용 자금(${avail_cash_usd:,.0f}) 감지 — SGRA+ 목표 포트폴리오 자동 배분"
+        trigger_reason = f"💰 신규 입금 가용 자금(${avail_cash_usd:,.2f}) 감지 — SGRA+ 목표 포트폴리오 자동 배분"
         should_execute = True
     elif days_since_reb >= interval_days:
         trigger_type = "SCHEDULED_14D"
-        trigger_reason = f"정기 {interval_days}일 리밸런싱 시그널 도달 ({days_since_reb:.1f}일 경과)"
+        trigger_reason = f"🔄 정기 {interval_days}일 리밸런싱 시그널 도달 ({days_since_reb:.1f}일 경과)"
         should_execute = True
 
     if trigger_type == "EMERGENCY_EXIT":
@@ -878,7 +982,8 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
 
             # Refresh live Perps withdrawable USDC after withdrawals & optionally bridge Spot USDC -> Perps
             if effective_mode == "LIVE" and exchange is not None and info_live is not None:
-                time.sleep(2.5)
+                if planned_sells:
+                    time.sleep(2.5)
                 refreshed = fetch_onchain_account_state(account_addr)
                 perp_free = float(refreshed.get("perp_withdrawable_usd", 0.0))
                 spot_free = float(refreshed.get("spot_usdc_usd", 0.0))
@@ -959,7 +1064,7 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
             if using_virtual_book:
                 state["virtual_positions"] = current_positions_usd
                 state["virtual_cash_usd"] = round(avail_cash_usd, 2)
-            elif effective_mode == "LIVE":
+            elif effective_mode == "LIVE" and account_addr:
                 time.sleep(1.5)
                 onchain = fetch_onchain_account_state(account_addr)
                 current_positions_usd = {
@@ -969,15 +1074,13 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
                     a: p for a, p in onchain.get("vault_positions", {}).items() if p.get("is_locked")
                 }
                 avail_cash_usd = float(onchain.get("perp_withdrawable_usd", 0.0)) + float(onchain.get("spot_usdc_usd", 0.0))
-                if current_positions_usd:
-                    atomic_write_json(MY_PORTFOLIO_FILE, {
-                        "_comment": "SGRA+ 자동운용 봇 실시간 동기화 포트폴리오",
-                        "account_address": account_addr,
-                        "fetched_at": now_iso,
-                        "total_capital": round(onchain.get("total_equity_usd", target_cap), 2),
-                        "invest_date": now.strftime("%Y-%m-%d"),
-                        "positions": current_positions_usd,
-                    }, indent=2)
+                _sync_live_portfolio_files(
+                    account_addr=account_addr,
+                    onchain=onchain,
+                    current_positions_usd=current_positions_usd,
+                    now_iso=now_iso,
+                    is_fresh_deploy=(trigger_type in ("INITIAL_DEPLOY", "RESUME_AUTO_START") and not last_reb_str),
+                )
 
             if exec_events:
                 append_exec_logs(exec_events)
@@ -991,13 +1094,12 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
                         ] + [f"  - [{e['action']}] {e['vault']}: ${e['amount_usd']:,.0f} ({e['status']})" for e in exec_events[:8]],
                     )
 
-            # Refresh delta preview against post-execution positions so UI immediately reflects completed trades
             planned_sells, planned_buys, skipped_band = _build_delta_plan(
                 current_positions_usd, target_map, locked_map, emergency_addrs, v_lookup, False, band, min_trade
             )
 
-        if trigger_type in ("MANUAL_FORCE", "INITIAL_DEPLOY", "NEW_CAPITAL_DEPLOY", "SCHEDULED_14D") and (
-            len(exec_events) > 0 or (deploy_capital >= 200.0 and not planned_sells and not planned_buys)
+        if trigger_type in ("RESUME_AUTO_START", "MANUAL_FORCE", "INITIAL_DEPLOY", "NEW_CAPITAL_DEPLOY", "SCHEDULED_14D") and (
+            len(exec_events) > 0 or (not is_preview_capital and not planned_sells and not planned_buys)
         ):
             state["last_rebalance_at"] = now_iso
 
@@ -1005,6 +1107,7 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
     state["last_signal_type"] = trigger_type
     state["last_trigger_reason"] = trigger_reason
     state["effective_mode"] = effective_mode
+    state["is_preview_capital"] = is_preview_capital
     state["mode_fallback_reason"] = mode_fallback_reason
     state["using_virtual_book"] = using_virtual_book
     state["working_positions_usd"] = {k: round(v, 2) for k, v in current_positions_usd.items()}
@@ -1016,6 +1119,88 @@ def run_autobot_cycle(force_rebalance: bool = False) -> Dict[str, Any]:
     atomic_write_json(AUTOBOT_STATE_FILE, state, indent=2)
 
     return get_autobot_dashboard_payload(cached_onchain=onchain, cached_creds=cred_meta)
+
+
+def resume_autobot() -> Dict[str, Any]:
+    """
+    Called when the user clicks '▶️ 자동운용 재개 실행' on /autobot after depositing funds.
+    1) Verifies .env signing key (Direct EOA) unless user explicitly opted into DRY_RUN.
+    2) Enables auto-bot (`enabled=True`).
+    3) If funds (>= min_deploy_equity_usd) are already in the wallet, IMMEDIATELY executes
+       Spot->Perp transfer (if needed) + SGRA+ target portfolio allocation!
+       Otherwise arms `AWAITING_DEPOSIT` so funds are automatically deployed upon arrival.
+    """
+    cfg = load_autobot_config()
+    req_mode = str(cfg.get("mode", "LIVE")).upper()
+    account_addr, _, cred_meta = get_wallet_credentials_meta()
+
+    if req_mode == "LIVE":
+        if not cred_meta["key_configured"]:
+            return {
+                "ok": False,
+                "code": "MISSING_KEY",
+                "message": (
+                    "아직 운용 지갑 서명키(.env)가 등록되지 않았습니다.\n"
+                    "폴더 내 setup_wallet_key.bat 파일을 더블클릭하여 지갑 키를 1회 등록하신 뒤 "
+                    "다시 [▶️ 자동운용 재개 실행]을 눌러주세요."
+                ),
+                "payload": get_autobot_dashboard_payload(cached_creds=cred_meta),
+            }
+        if cred_meta.get("is_delegated_agent_key"):
+            return {
+                "ok": False,
+                "code": "AGENT_KEY_NOT_ALLOWED",
+                "message": (
+                    "Hyperliquid 프로토콜 규약상 일반 주문용 API 위임키는 볼트 입출금(vaultTransfer) 서명이 불가합니다.\n"
+                    "setup_wallet_key.bat을 실행해 운용 지갑 본체의 개인키를 등록해주세요."
+                ),
+                "payload": get_autobot_dashboard_payload(cached_creds=cred_meta),
+            }
+
+        onchain = fetch_onchain_account_state(account_addr)
+        save_autobot_config({"enabled": True, "mode": "LIVE"})
+        min_eq = float(cfg.get("min_deploy_equity_usd", 100.0))
+        live_eq = float(onchain.get("total_equity_usd", 0.0))
+
+        if live_eq >= min_eq:
+            payload = run_autobot_cycle(force_rebalance=True, trigger_override="RESUME_AUTO_START")
+            return {
+                "ok": True,
+                "code": "STARTED_AND_DEPLOYED",
+                "message": f"🟢 자동운용이 시작되어 지갑 자산(${live_eq:,.2f})의 SGRA+ 포트폴리오 배분이 즉시 실행되었습니다!",
+                "payload": payload,
+            }
+        else:
+            payload = run_autobot_cycle(force_rebalance=False)
+            return {
+                "ok": True,
+                "code": "ARMED_AWAITING_DEPOSIT",
+                "message": (
+                    f"🟢 자동운용 감시가 켜졌습니다! 현재 지갑 총자산(${live_eq:,.2f})이 최소 기준(${min_eq:,.0f}) 미만이어서 "
+                    f"입금 대기 상태이며, Hyperliquid에 USDC를 입금하시면 자동으로 포트폴리오 매수가 시작됩니다."
+                ),
+                "payload": payload,
+            }
+    else:
+        save_autobot_config({"enabled": True})
+        payload = run_autobot_cycle(force_rebalance=True, trigger_override="RESUME_AUTO_START")
+        return {
+            "ok": True,
+            "code": "STARTED_DRY_RUN",
+            "message": "🧪 모의운용(DRY_RUN) 자동운용이 재개되었습니다.",
+            "payload": payload,
+        }
+
+
+def pause_autobot() -> Dict[str, Any]:
+    save_autobot_config({"enabled": False})
+    payload = run_autobot_cycle(force_rebalance=False)
+    return {
+        "ok": True,
+        "code": "PAUSED",
+        "message": "⏸️ 자동운용이 일시정지되었습니다. (기존 보유 포지션은 그대로 유지됩니다)",
+        "payload": payload,
+    }
 
 
 def get_autobot_dashboard_payload(
@@ -1036,7 +1221,7 @@ def get_autobot_dashboard_payload(
 
     interval_days = int(cfg.get("rebalance_interval_days", 14))
     last_reb_str = state.get("last_rebalance_at")
-    next_reb_str = "최초 시그널 실행 대기"
+    next_reb_str = "재개 실행 시 즉시 진입"
     days_remaining = 0.0
     if last_reb_str:
         try:
@@ -1058,11 +1243,12 @@ def get_autobot_dashboard_payload(
             "days_to_next_rebalance": round(days_remaining, 1),
             "last_signal_type": state.get("last_signal_type"),
             "last_trigger_reason": state.get("last_trigger_reason"),
-            "effective_mode": state.get("effective_mode", "DRY_RUN"),
+            "effective_mode": state.get("effective_mode", cfg.get("mode", "LIVE")),
+            "is_preview_capital": state.get("is_preview_capital", True),
             "mode_fallback_reason": state.get("mode_fallback_reason"),
-            "using_virtual_book": state.get("using_virtual_book", True),
-            "working_positions_usd": state.get("working_positions_usd", state.get("virtual_positions", {})),
-            "working_cash_usd": state.get("working_cash_usd", state.get("virtual_cash_usd", 0.0)),
+            "using_virtual_book": state.get("using_virtual_book", False),
+            "working_positions_usd": state.get("working_positions_usd", {}),
+            "working_cash_usd": state.get("working_cash_usd", 0.0),
             "virtual_positions": state.get("virtual_positions", {}),
             "virtual_cash_usd": state.get("virtual_cash_usd"),
             "pending_locked_withdrawals": state.get("pending_locked_withdrawals", {}),
