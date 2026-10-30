@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-10-30 11:39:22
+### 🔬 주제: **허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별**
+* **레퍼런스 출처**: `GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)`
+* **수학적 모델**: $H = \lim_{\tau \to \infty} \frac{\log(R/S)}{\log(\tau)}$
+* **핵심 가설**: 볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.
+* **검증 데이터**: `214 days (2026-02-27 ~ 2026-10-30)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **69 Jump Street**: Hurst `0.815` | Sortino `6.24` | Kelly `8.7%` | 30일 APR `47.26%` | Sharpe `8.17`
+  - **Growi_test**: Hurst `0.766` | Sortino `2.22` | Kelly `8.1%` | 30일 APR `62.4%` | Sharpe `10.18`
+  - **Hype $1 Club**: Hurst `0.675` | Sortino `4.85` | Kelly `4.1%` | 30일 APR `101.22%` | Sharpe `9.97`
+  - **Jade Lotus Capital**: Hurst `0.662` | Sortino `3.49` | Kelly `0.0%` | 30일 APR `53.17%` | Sharpe `8.32`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-10-30 07:39:22
 ### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
 * **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
@@ -237,23 +254,6 @@
   - **Mahamor**: Hurst `0.255` | Sortino `29.02` | Kelly `14.8%` | 30일 APR `-363.27%` | Sharpe `3.33`
   - **wmm.club | scalp-hype-long-2x**: Hurst `0.5` | Sortino `22.92` | Kelly `13.0%` | 30일 APR `-15.66%` | Sharpe `6.29`
   - **22Cap**: Hurst `0.48` | Sortino `22.93` | Kelly `11.9%` | 30일 APR `3.18%` | Sharpe `10.09`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-10-29 07:39:25
-### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
-* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
-* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
-* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
-* **검증 데이터**: `143 days (2026-02-27 ~ 2026-10-29)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Algo1**: Hurst `0.5` | Sortino `384285930.15` | Kelly `30.0%` | 30일 APR `4.36%` | Sharpe `9.59`
-  - **Mahamor**: Hurst `0.255` | Sortino `29.02` | Kelly `14.8%` | 30일 APR `-363.27%` | Sharpe `3.33`
-  - **wmm.club | scalp-hype-long-2x**: Hurst `0.5` | Sortino `22.92` | Kelly `13.0%` | 30일 APR `-15.66%` | Sharpe `6.29`
-  - **Gucky_4coin_2dot5x**: Hurst `0.59` | Sortino `67.83` | Kelly `12.9%` | 30일 APR `23.76%` | Sharpe `0.97`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
