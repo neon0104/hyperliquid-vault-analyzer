@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-10-31 07:39:26
+### 🔬 주제: **알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍**
+* **레퍼런스 출처**: `GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)`
+* **수학적 모델**: $t_{1/2} = \frac{\ln(2)}{\lambda}$
+* **핵심 가설**: TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.
+* **검증 데이터**: `215 days (2026-02-27 ~ 2026-10-31)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.623` | Sortino `6.34` | Kelly `11.5%` | 30일 APR `302.54%` | Sharpe `8.78`
+  - **Buyback Spread Engine**: Hurst `0.534` | Sortino `2.65` | Kelly `6.1%` | 30일 APR `206.18%` | Sharpe `8.12`
+  - **Danny Ocean**: Hurst `0.392` | Sortino `5.98` | Kelly `9.7%` | 30일 APR `134.6%` | Sharpe `13.97`
+  - **V4 Alpha Quantum**: Hurst `0.567` | Sortino `6.91` | Kelly `7.3%` | 30일 APR `152.63%` | Sharpe `8.69`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-10-31 03:41:52
 ### 🔬 주제: **칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링**
 * **레퍼런스 출처**: `GitHub: pykalman / R.E. Kalman (1960)`
@@ -230,23 +247,6 @@
 * **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
 * **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
 * **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
-* **검증 데이터**: `213 days (2026-02-27 ~ 2026-10-29)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **137S Long Guard I**: Hurst `0.403` | Sortino `3.81` | Kelly `2.1%` | 30일 APR `214.43%` | Sharpe `8.08`
-  - **137S MHF Long & Short I**: Hurst `0.666` | Sortino `3.92` | Kelly `0.0%` | 30일 APR `179.05%` | Sharpe `5.83`
-  - **Growi_test**: Hurst `0.613` | Sortino `2.2` | Kelly `6.5%` | 30일 APR `153.99%` | Sharpe `10.21`
-  - **137S IF Long I**: Hurst `0.649` | Sortino `3.74` | Kelly `0.0%` | 30일 APR `167.94%` | Sharpe `5.39`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-10-29 11:45:28
-### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
-* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
-* **수학적 모델**: $w_i = w_i \times \frac{V_i^{-1}}{\sum V_j^{-1}}$
-* **핵심 가설**: 전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.
 * **검증 데이터**: `213 days (2026-02-27 ~ 2026-10-29)`
 
 #### 🧪 실증 발견 및 온체인 볼트 분석 결과:
