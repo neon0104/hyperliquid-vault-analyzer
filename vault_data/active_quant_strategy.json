@@ -1,60 +1,60 @@
 {
-  "updated_at": "2026-10-30T23:39:32.516233",
+  "updated_at": "2026-10-31T03:41:51.123564",
   "champion_strategy": {
     "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
     "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-    "total_return_pct": 42.43,
-    "cagr_pct": 82.81,
-    "sharpe_ratio": 1.95,
-    "sortino_ratio": 3.03,
+    "total_return_pct": 42.18,
+    "cagr_pct": 81.75,
+    "sharpe_ratio": 1.94,
+    "sortino_ratio": 3.01,
     "max_drawdown_pct": 14.51,
-    "calmar_ratio": 5.71,
-    "final_capital": 142434.53
+    "calmar_ratio": 5.64,
+    "final_capital": 142182.29
   },
   "tournament_rankings": [
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산",
-      "total_return_pct": 42.43,
-      "cagr_pct": 82.81,
-      "sharpe_ratio": 1.95,
-      "sortino_ratio": 3.03,
+      "total_return_pct": 42.18,
+      "cagr_pct": 81.75,
+      "sharpe_ratio": 1.94,
+      "sortino_ratio": 3.01,
       "max_drawdown_pct": 14.51,
-      "calmar_ratio": 5.71,
-      "final_capital": 142434.53
+      "calmar_ratio": 5.64,
+      "final_capital": 142182.29
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
       "description": "역대 A+ 등급 볼트의 일시적 -10%~-20% 낙폭 시 저점 집중 매수",
-      "total_return_pct": 2.41,
-      "cagr_pct": 4.14,
-      "sharpe_ratio": 0.3,
-      "sortino_ratio": 0.41,
+      "total_return_pct": 2.71,
+      "cagr_pct": 4.64,
+      "sharpe_ratio": 0.32,
+      "sortino_ratio": 0.43,
       "max_drawdown_pct": 25.27,
-      "calmar_ratio": 0.16,
-      "final_capital": 102408.04
+      "calmar_ratio": 0.18,
+      "final_capital": 102707.95
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": -3.59,
-      "cagr_pct": -6.04,
-      "sharpe_ratio": -0.2,
-      "sortino_ratio": -0.26,
+      "total_return_pct": -3.71,
+      "cagr_pct": -6.21,
+      "sharpe_ratio": -0.21,
+      "sortino_ratio": -0.27,
       "max_drawdown_pct": 14.0,
-      "calmar_ratio": -0.43,
-      "final_capital": 96412.14
+      "calmar_ratio": -0.44,
+      "final_capital": 96292.6
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출",
-      "total_return_pct": -7.3,
-      "cagr_pct": -12.12,
-      "sharpe_ratio": -0.9,
-      "sortino_ratio": -1.1,
+      "total_return_pct": -7.06,
+      "cagr_pct": -11.69,
+      "sharpe_ratio": -0.87,
+      "sortino_ratio": -1.05,
       "max_drawdown_pct": 11.9,
-      "calmar_ratio": -1.02,
-      "final_capital": 92704.71
+      "calmar_ratio": -0.98,
+      "final_capital": 92936.79
     }
   ]
 }
