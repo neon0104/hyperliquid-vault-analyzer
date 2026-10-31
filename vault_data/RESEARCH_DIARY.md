@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-10-31 15:39:28
+### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
+* **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
+* **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
+* **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
+* **검증 데이터**: `215 days (2026-02-27 ~ 2026-10-31)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.623` | Sortino `6.34` | Kelly `11.5%` | 30일 APR `302.54%` | Sharpe `8.78`
+  - **Buyback Spread Engine**: Hurst `0.534` | Sortino `2.65` | Kelly `6.1%` | 30일 APR `206.18%` | Sharpe `8.12`
+  - **Danny Ocean**: Hurst `0.392` | Sortino `5.98` | Kelly `9.7%` | 30일 APR `134.6%` | Sharpe `13.97`
+  - **V4 Alpha Quantum**: Hurst `0.567` | Sortino `6.91` | Kelly `7.3%` | 30일 APR `152.63%` | Sharpe `8.69`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-10-31 11:39:31
 ### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
 * **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
@@ -237,23 +254,6 @@
   - **22Cap**: Hurst `0.48` | Sortino `7.61` | Kelly `2.0%` | 30일 APR `3.18%` | Sharpe `10.09`
   - **HYPErQuantum4**: Hurst `0.628` | Sortino `7.14` | Kelly `8.6%` | 30일 APR `49.98%` | Sharpe `8.93`
   - **Hindenburg Short Alpha**: Hurst `0.342` | Sortino `7.04` | Kelly `0.8%` | 30일 APR `55.04%` | Sharpe `6.49`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-10-29 11:45:31
-### 🔬 주제: **허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별**
-* **레퍼런스 출처**: `GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)`
-* **수학적 모델**: $H = \lim_{\tau \to \infty} \frac{\log(R/S)}{\log(\tau)}$
-* **핵심 가설**: 볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.
-* **검증 데이터**: `213 days (2026-02-27 ~ 2026-10-29)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **137S MHF Long & Short I**: Hurst `0.666` | Sortino `3.92` | Kelly `0.0%` | 30일 APR `179.05%` | Sharpe `5.83`
-  - **137S IF Long I**: Hurst `0.649` | Sortino `3.74` | Kelly `0.0%` | 30일 APR `167.94%` | Sharpe `5.39`
-  - **Buyback Spread Engine**: Hurst `0.64` | Sortino `2.6` | Kelly `7.3%` | 30일 APR `42.86%` | Sharpe `7.34`
-  - **Cold Process**: Hurst `0.636` | Sortino `2.05` | Kelly `6.4%` | 30일 APR `54.88%` | Sharpe `9.24`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
