@@ -307,13 +307,15 @@ def fetch_onchain_account_state(account_address: Optional[str]) -> Dict[str, Any
                 }
                 vault_total += eq
 
-        total_eq = perp_withdrawable + spot_usdc + vault_total
+        perp_wd_floor = math.floor(max(0.0, perp_withdrawable) * 100.0) / 100.0
+        spot_usdc_floor = math.floor(max(0.0, spot_usdc) * 100.0) / 100.0
+        total_eq = perp_wd_floor + spot_usdc_floor + vault_total
         return {
             "connected": True,
             "account_address": account_address,
             "perp_account_value_usd": round(perp_acct_val, 2),
-            "perp_withdrawable_usd": round(perp_withdrawable, 2),
-            "spot_usdc_usd": round(spot_usdc, 2),
+            "perp_withdrawable_usd": perp_wd_floor,
+            "spot_usdc_usd": spot_usdc_floor,
             "vault_total_equity_usd": round(vault_total, 2),
             "total_equity_usd": round(total_eq, 2),
             "vault_positions": vault_positions,
@@ -851,7 +853,13 @@ def run_autobot_cycle(
     if not cfg.get("enabled", False) and not force_rebalance:
         trigger_type = "PAUSED_STANDBY"
         if effective_mode == "LIVE":
-            if not cred_meta["key_configured"]:
+            if not cred_meta["key_configured"] and not is_preview_capital:
+                trigger_reason = (
+                    f"✅ Hyperliquid 내 운용 가능 자금(${live_total_eq:,.2f} USDC) 확인 완료! — "
+                    f"폴더 내 setup_wallet_key.bat으로 서명키(.env) 1회 등록 후 [▶️ 자동운용 재개 실행]을 누르면 "
+                    f"Spot→Perps 자동 이체 및 포트폴리오 배분이 즉시 시작됩니다."
+                )
+            elif not cred_meta["key_configured"]:
                 trigger_reason = (
                     "입금 전 대기 중 (일시정지) — ① setup_wallet_key.bat 서명키 등록 및 ② Hyperliquid USDC 입금 후 "
                     "[▶️ 자동운용 재개 실행]을 누르면 즉시 자동 포트폴리오 운용이 시작됩니다."
@@ -924,7 +932,8 @@ def run_autobot_cycle(
                 from hyperliquid.exchange import Exchange
                 pk_norm = priv_key if priv_key.startswith("0x") else ("0x" + priv_key)
                 wallet = eth_account.Account.from_key(pk_norm)
-                exchange = Exchange(wallet, constants.MAINNET_API_URL, account_address=account_addr)
+                acct_override = None if (not account_addr or wallet.address.lower() == account_addr.lower()) else account_addr
+                exchange = Exchange(wallet, constants.MAINNET_API_URL, account_address=acct_override)
                 info_live = Info(constants.MAINNET_API_URL, skip_ws=True)
 
             # PHASE 1: Withdrawals / Trims
@@ -989,7 +998,7 @@ def run_autobot_cycle(
                 spot_free = float(refreshed.get("spot_usdc_usd", 0.0))
                 needed_buys = sum(b["delta_usd"] for b in planned_buys)
                 if needed_buys > perp_free and spot_free >= 10.0 and cfg.get("auto_spot_to_perp", True):
-                    bridge_amt = round(min(spot_free - 0.5, needed_buys - perp_free + cash_buf), 2)
+                    bridge_amt = math.floor(min(spot_free, needed_buys - perp_free + cash_buf) * 100.0) / 100.0
                     if bridge_amt >= 5.0:
                         try:
                             b_resp = exchange.usd_class_transfer(amount=bridge_amt, to_perp=True)

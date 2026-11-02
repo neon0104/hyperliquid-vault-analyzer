@@ -1046,6 +1046,20 @@ def api_autobot_pause():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+@app.route("/api/autobot/launch-key-gui", methods=["POST"])
+@jwt_required()
+def api_autobot_launch_key_gui():
+    if request.remote_addr not in ("127.0.0.1", "::1"):
+        return jsonify({"ok": False, "error": "보안을 위해 로컬 PC(localhost) 접속에서만 실행 가능합니다."}), 403
+    try:
+        import subprocess
+        script_path = str(Path(__file__).parent / "setup_wallet_key.py")
+        subprocess.Popen([sys.executable, "-X", "utf8", script_path, "--gui"])
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 @app.route("/api/autobot/config", methods=["POST"])
 @jwt_required()
 def api_autobot_config():
@@ -5363,15 +5377,20 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
 <!-- 서명키 미등록 안내 모달 -->
 <div id="key-modal" class="modal-bg" onclick="if(event.target===this) closeKeyModal()">
     <div class="modal-box">
-        <h3 style="margin:0 0 10px 0; color:#fbbf24;">🔑 자동주문 서명키(.env) 1회 등록이 필요합니다</h3>
-        <p id="key-modal-msg" style="font-size:0.88rem; color:var(--text); line-height:1.6; white-space:pre-line;"></p>
-        <pre class="cmd-box">폴더 경로: C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer
-실행 파일: setup_wallet_key.bat (더블클릭 후 Private Key 붙여넣기 → Enter)</pre>
-        <p style="font-size:0.8rem; color:var(--muted); line-height:1.5; margin-bottom:18px;">
-            ※ 본 봇에는 외부 지갑 출금(withdraw3/usdSend) 코드가 아예 없으며, 내 지갑의 Perps 계정과 검증된 볼트 사이의 리밸런싱만 수행합니다.
+        <h3 style="margin:0 0 10px 0; color:#fbbf24;">🔑 메타마스크 서명키 1회 연결 안내</h3>
+        <p id="key-modal-msg" style="font-size:0.86rem; color:var(--text); line-height:1.55; white-space:pre-line; margin-bottom:12px;"></p>
+        <div style="background:#080b12; border:1px solid var(--border); border-radius:10px; padding:13px 15px; font-size:0.83rem; line-height:1.65; margin-bottom:14px;">
+            <b style="color:#7cb3ff;">① 메타마스크에서 개인키 복사:</b><br>
+            메타마스크 열기 → 상단 계정 이름 옆 <b>점 3개(⋮)</b> 클릭 → <b>[계정 세부 정보(Account details)]</b> → <b>[개인 키 표시/내보내기(Show private key)]</b> → 비밀번호 입력 후 복사<br>
+            <b style="color:#34d399;">② 아래 초록색 버튼을 눌러 보안 등록 창 띄우기:</b><br>
+            화면에 뜨는 창에서 <b>[📋 붙여넣기]</b> → <b>[💾 보안 저장 및 지갑 연결하기]</b> 클릭!
+        </div>
+        <p style="font-size:0.78rem; color:var(--muted); line-height:1.45; margin-bottom:16px;">
+            ※ 개인키는 인터넷으로 전송되지 않고 내 PC의 로컬 <code>.env</code> 파일에만 격리 저장됩니다.
         </p>
-        <div style="display:flex; justify-content:flex-end;">
-            <button class="btn btn-primary" onclick="closeKeyModal()">확인</button>
+        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-start" onclick="launchKeyGui()">🪟 지금 서명키 등록 창 바로 열기</button>
+            <button class="btn" onclick="closeKeyModal()">닫기</button>
         </div>
     </div>
 </div>
@@ -5414,6 +5433,32 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
         document.getElementById('key-modal').style.display = 'none';
     }
 
+    async function launchKeyGui() {
+        try {
+            const res = await fetch('/api/autobot/launch-key-gui', { method: 'POST' });
+            const out = await res.json();
+            if (out.ok) {
+                showToast('🪟 내 PC 화면에 서명키 보안 등록 창을 열었습니다! 개인키를 붙여넣고 저장해주세요.');
+                let checks = 0;
+                const timer = setInterval(async () => {
+                    checks++;
+                    await loadStatus();
+                    if ((botData && botData.credentials && botData.credentials.key_configured) || checks >= 30) {
+                        clearInterval(timer);
+                        if (botData && botData.credentials && botData.credentials.key_configured) {
+                            closeKeyModal();
+                            showToast('✅ 서명키 연결 완료! 이제 [▶️ 자동운용 재개 실행] 버튼을 누르시면 시작됩니다!');
+                        }
+                    }
+                }, 2500);
+            } else {
+                showToast('오류: ' + (out.error || '창 열기 실패'));
+            }
+        } catch (e) {
+            showToast('등록 창 호출 중 통신 오류가 발생했습니다.');
+        }
+    }
+
     async function loadStatus() {
         try {
             const res = await fetch('/api/autobot/status');
@@ -5453,7 +5498,7 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
 
         if (!isEnabled) {
             modeEl.className = 'badge badge-standby';
-            modeEl.textContent = '⏸️ 입금 전 대기 중 (자동운용 일시정지)';
+            modeEl.textContent = isPreview ? '⏸️ 입금 전 대기 중 (자동운용 일시정지)' : '⏸️ 자금 확인 완료 — 재개 대기 중';
             mainBtn.className = 'btn btn-start';
             mainBtn.textContent = '▶️ 자동운용 재개 실행';
             forceBtn.disabled = true;
@@ -5530,9 +5575,10 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
         const wVaultSum = Object.values(wPos).reduce((a, b) => a + Number(b || 0), 0);
         const wCash = Number(st.working_cash_usd || 0);
         if (!isEnabled && !st.using_virtual_book) {
-            document.getElementById('kpi-working-total').textContent = '⏸️ 대기 중';
-            document.getElementById('kpi-working-sub').innerHTML =
-                `예상 배분 기준금: <b>${fmtUsd(cfg.target_capital_usd || 20000)}</b><br>입금 후 [자동운용 재개 실행] 시 실제 입금액 전액 자동 배분`;
+            document.getElementById('kpi-working-total').textContent = isPreview ? '⏸️ 대기 중' : fmtUsd(sig.deploy_capital_usd || 0);
+            document.getElementById('kpi-working-sub').innerHTML = isPreview
+                ? `예상 배분 기준금: <b>${fmtUsd(cfg.target_capital_usd || 20000)}</b><br>입금 후 [자동운용 재개 실행] 시 실제 입금액 전액 자동 배분`
+                : `<span style="color:#fbbf24;font-weight:700;">[운용 가능 확인됨]</span> Spot→Perp 자동이체 지원<br>[▶️ 자동운용 재개 실행] 클릭 시 즉시 자동 배분`;
         } else if (st.last_signal_type === 'AWAITING_DEPOSIT') {
             document.getElementById('kpi-working-total').textContent = '🟢 입금 대기';
             document.getElementById('kpi-working-sub').innerHTML =
