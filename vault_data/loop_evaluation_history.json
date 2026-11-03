@@ -2945,21 +2945,21 @@
   {
     "evaluated_date": "2026-11-03",
     "referenced_date": "2026-11-02",
-    "portfolio_24h_profit_usd": -1274.09,
-    "portfolio_24h_return_pct": -1.2741,
+    "portfolio_24h_profit_usd": -608.75,
+    "portfolio_24h_return_pct": -0.6088,
     "evaluated_holdings": [
       {
         "vault_name": "Quant Mirror",
         "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-        "allocated_usd": 6247.15,
-        "actual_24h_gain_usd": -46.39,
+        "allocated_usd": 6212.49,
+        "actual_24h_gain_usd": -46.13,
         "actual_24h_return_pct": -0.7425
       },
       {
         "vault_name": "Akka Hyper AI",
         "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
-        "allocated_usd": 22205.68,
-        "actual_24h_gain_usd": 106.1,
+        "allocated_usd": 16000.18,
+        "actual_24h_gain_usd": 76.45,
         "actual_24h_return_pct": 0.4778
       },
       {
@@ -2970,24 +2970,24 @@
         "actual_24h_return_pct": -2.1828
       },
       {
-        "vault_name": "pakhom",
-        "address": "0x2837c128734ade71c55085cbe556699f064ea4a4",
-        "allocated_usd": 7162.99,
-        "actual_24h_gain_usd": -556.04,
-        "actual_24h_return_pct": -7.7626
-      },
-      {
         "vault_name": "+convexity",
         "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
-        "allocated_usd": 25140.01,
-        "actual_24h_gain_usd": 5.34,
+        "allocated_usd": 23157.25,
+        "actual_24h_gain_usd": 4.92,
         "actual_24h_return_pct": 0.0213
+      },
+      {
+        "vault_name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "allocated_usd": 15464.94,
+        "actual_24h_gain_usd": 137.8,
+        "actual_24h_return_pct": 0.891
       },
       {
         "vault_name": "Danny Ocean",
         "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-        "allocated_usd": 14244.17,
-        "actual_24h_gain_usd": -237.4,
+        "allocated_usd": 14165.14,
+        "actual_24h_gain_usd": -236.09,
         "actual_24h_return_pct": -1.6667
       }
     ]

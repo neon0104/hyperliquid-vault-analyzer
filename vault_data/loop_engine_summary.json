@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-11-03T09:16:54.444259",
+  "timestamp": "2026-11-03T11:39:29.146610",
   "latest_data_date": "2026-11-03",
   "self_evaluation_24h": {
     "evaluated_date": "2026-11-03",
     "referenced_date": "2026-11-02",
-    "portfolio_24h_profit_usd": -1274.09,
-    "portfolio_24h_return_pct": -1.2741,
+    "portfolio_24h_profit_usd": -608.75,
+    "portfolio_24h_return_pct": -0.6088,
     "evaluated_holdings": [
       {
         "vault_name": "Quant Mirror",
         "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-        "allocated_usd": 6247.15,
-        "actual_24h_gain_usd": -46.39,
+        "allocated_usd": 6212.49,
+        "actual_24h_gain_usd": -46.13,
         "actual_24h_return_pct": -0.7425
       },
       {
         "vault_name": "Akka Hyper AI",
         "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
-        "allocated_usd": 22205.68,
-        "actual_24h_gain_usd": 106.1,
+        "allocated_usd": 16000.18,
+        "actual_24h_gain_usd": 76.45,
         "actual_24h_return_pct": 0.4778
       },
       {
@@ -29,48 +29,58 @@
         "actual_24h_return_pct": -2.1828
       },
       {
-        "vault_name": "pakhom",
-        "address": "0x2837c128734ade71c55085cbe556699f064ea4a4",
-        "allocated_usd": 7162.99,
-        "actual_24h_gain_usd": -556.04,
-        "actual_24h_return_pct": -7.7626
-      },
-      {
         "vault_name": "+convexity",
         "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
-        "allocated_usd": 25140.01,
-        "actual_24h_gain_usd": 5.34,
+        "allocated_usd": 23157.25,
+        "actual_24h_gain_usd": 4.92,
         "actual_24h_return_pct": 0.0213
+      },
+      {
+        "vault_name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "allocated_usd": 15464.94,
+        "actual_24h_gain_usd": 137.8,
+        "actual_24h_return_pct": 0.891
       },
       {
         "vault_name": "Danny Ocean",
         "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-        "allocated_usd": 14244.17,
-        "actual_24h_gain_usd": -237.4,
+        "allocated_usd": 14165.14,
+        "actual_24h_gain_usd": -236.09,
         "actual_24h_return_pct": -1.6667
       }
     ]
   },
   "champion_model": {
-    "strategy_name": "SGRA+ Risk-Conviction Weighted (HWM Delta)",
-    "description": "리더지분율>=30% + 쿠션샤프·로버스트니스 + 칼날방지(14d>=-5%, DD<=40%) + 위험조정 가중배분",
-    "total_return_pct": 21.09,
-    "phase_min_return_pct": 9.65,
-    "phase_max_return_pct": 47.06,
-    "positive_offsets": "14/14",
-    "cagr_pct": 56.63,
-    "sharpe_ratio": 1.87,
-    "sortino_ratio": 3.01,
-    "max_drawdown_pct": 10.9,
-    "calmar_ratio": 5.19,
-    "final_capital": 121087.72
+    "strategy_name": "SGRA+ Quality & Support Weighted (HWM Delta)",
+    "description": "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분",
+    "total_return_pct": 12.16,
+    "phase_min_return_pct": -4.89,
+    "phase_max_return_pct": 29.56,
+    "positive_offsets": "12/14",
+    "cagr_pct": 31.51,
+    "sharpe_ratio": 1.18,
+    "sortino_ratio": 1.79,
+    "max_drawdown_pct": 11.16,
+    "calmar_ratio": 2.82,
+    "final_capital": 112162.15
   },
   "recommended_portfolio": [
     {
+      "name": "PF1",
+      "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+      "allocation_pct": 24.63,
+      "allocation_usd": 24625.21,
+      "apr_30d": -4.04,
+      "mdd": 5.02,
+      "sharpe_ratio": 18.72,
+      "leader_equity_usd": 55543.43
+    },
+    {
       "name": "Loop Fund",
       "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
-      "allocation_pct": 25.04,
-      "allocation_usd": 25042.8,
+      "allocation_pct": 23.99,
+      "allocation_usd": 23994.93,
       "apr_30d": -0.76,
       "mdd": 9.43,
       "sharpe_ratio": 10.88,
@@ -79,68 +89,58 @@
     {
       "name": "+convexity",
       "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
-      "allocation_pct": 24.94,
-      "allocation_usd": 24935.42,
+      "allocation_pct": 18.73,
+      "allocation_usd": 18734.81,
       "apr_30d": -35.85,
       "mdd": 13.26,
       "sharpe_ratio": 7.5,
       "leader_equity_usd": 287693.76
     },
     {
-      "name": "Danny Ocean",
-      "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-      "allocation_pct": 14.51,
-      "allocation_usd": 14506.8,
-      "apr_30d": 117.89,
-      "mdd": 14.1,
-      "sharpe_ratio": 14.06,
-      "leader_equity_usd": 27351.3
+      "name": "Akka Hyper AI",
+      "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
+      "allocation_pct": 13.11,
+      "allocation_usd": 13107.6,
+      "apr_30d": -14.94,
+      "mdd": 28.67,
+      "sharpe_ratio": 5.81,
+      "leader_equity_usd": 90095.82
+    },
+    {
+      "name": "Sentiment Edge ",
+      "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+      "allocation_pct": 13.08,
+      "allocation_usd": 13077.51,
+      "apr_30d": -70.27,
+      "mdd": 21.41,
+      "sharpe_ratio": 6.99,
+      "leader_equity_usd": 24316.17
     },
     {
       "name": "Quant Mirror",
       "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-      "allocation_pct": 6.47,
-      "allocation_usd": 6471.0,
+      "allocation_pct": 6.46,
+      "allocation_usd": 6459.94,
       "apr_30d": -17.87,
       "mdd": 15.5,
       "sharpe_ratio": 7.47,
       "leader_equity_usd": 8883.31
-    },
-    {
-      "name": "Algo1",
-      "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
-      "allocation_pct": 3.23,
-      "allocation_usd": 3228.15,
-      "apr_30d": 4.61,
-      "mdd": 0.0,
-      "sharpe_ratio": 9.62,
-      "leader_equity_usd": 10228.57
-    },
-    {
-      "name": "Momentum Edge",
-      "address": "0xc1703054b55bfa1ac6dbaf25cb1c783ca133181f",
-      "allocation_pct": 3.04,
-      "allocation_usd": 3042.23,
-      "apr_30d": -51.29,
-      "mdd": 39.27,
-      "sharpe_ratio": 4.75,
-      "leader_equity_usd": 5628.6
     }
   ],
   "all_tournament_results": [
     {
-      "strategy_name": "SGRA+ Risk-Conviction Weighted (HWM Delta)",
-      "description": "리더지분율>=30% + 쿠션샤프·로버스트니스 + 칼날방지(14d>=-5%, DD<=40%) + 위험조정 가중배분",
-      "total_return_pct": 21.09,
-      "phase_min_return_pct": 9.65,
-      "phase_max_return_pct": 47.06,
-      "positive_offsets": "14/14",
-      "cagr_pct": 56.63,
-      "sharpe_ratio": 1.87,
-      "sortino_ratio": 3.01,
-      "max_drawdown_pct": 10.9,
-      "calmar_ratio": 5.19,
-      "final_capital": 121087.72
+      "strategy_name": "SGRA+ Quality & Support Weighted (HWM Delta)",
+      "description": "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분",
+      "total_return_pct": 12.16,
+      "phase_min_return_pct": -4.89,
+      "phase_max_return_pct": 29.56,
+      "positive_offsets": "12/14",
+      "cagr_pct": 31.51,
+      "sharpe_ratio": 1.18,
+      "sortino_ratio": 1.79,
+      "max_drawdown_pct": 11.16,
+      "calmar_ratio": 2.82,
+      "final_capital": 112162.15
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
