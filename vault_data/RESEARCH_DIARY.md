@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-03 09:16:55
+### 🔬 주제: **Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진**
+* **레퍼런스 출처**: `GitHub: skfolio / Shadwick & Keating (2002)`
+* **수학적 모델**: $\Omega(L) = \frac{\int_L^\infty (1-F(x))dx}{\int_{-\infty}^L F(x)dx}$
+* **핵심 가설**: MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.
+* **검증 데이터**: `218 days (2026-02-27 ~ 2026-11-03)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.702` | Sortino `6.02` | Kelly `10.2%` | 30일 APR `227.78%` | Sharpe `8.68`
+  - **Buyback Spread Engine**: Hurst `0.571` | Sortino `2.66` | Kelly `8.0%` | 30일 APR `244.58%` | Sharpe `7.7`
+  - **Bunny**: Hurst `0.5` | Sortino `50.0` | Kelly `30.0%` | 30일 APR `5.56%` | Sharpe `12.48`
+  - **V4 Alpha Quantum**: Hurst `0.637` | Sortino `6.82` | Kelly `7.1%` | 30일 APR `145.58%` | Sharpe `8.77`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-02 11:39:34
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
@@ -230,23 +247,6 @@
 * **레퍼런스 출처**: `GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)`
 * **수학적 모델**: $t_{1/2} = \frac{\ln(2)}{\lambda}$
 * **핵심 가설**: TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.
-* **검증 데이터**: `215 days (2026-02-27 ~ 2026-10-31)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.623` | Sortino `6.34` | Kelly `11.5%` | 30일 APR `302.54%` | Sharpe `8.78`
-  - **Buyback Spread Engine**: Hurst `0.534` | Sortino `2.65` | Kelly `6.1%` | 30일 APR `206.18%` | Sharpe `8.12`
-  - **Danny Ocean**: Hurst `0.392` | Sortino `5.98` | Kelly `9.7%` | 30일 APR `134.6%` | Sharpe `13.97`
-  - **V4 Alpha Quantum**: Hurst `0.567` | Sortino `6.91` | Kelly `7.3%` | 30일 APR `152.63%` | Sharpe `8.69`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-10-31 03:41:52
-### 🔬 주제: **칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링**
-* **레퍼런스 출처**: `GitHub: pykalman / R.E. Kalman (1960)`
-* **수학적 모델**: $y_t = \alpha_t + \beta_t x_t + \epsilon_t, \quad \beta_t = \beta_{t-1} + \eta_t$
-* **핵심 가설**: 비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.
 * **검증 데이터**: `215 days (2026-02-27 ~ 2026-10-31)`
 
 #### 🧪 실증 발견 및 온체인 볼트 분석 결과:
