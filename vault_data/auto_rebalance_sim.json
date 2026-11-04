@@ -1,6 +1,6 @@
 {
-  "period": "2026-05-27 to 2026-11-04",
-  "days": 161,
+  "period": "2026-05-27 to 2026-11-05",
+  "days": 162,
   "dates": [
     "2026-05-27",
     "2026-05-28",
@@ -163,18 +163,19 @@
     "2026-11-01",
     "2026-11-02",
     "2026-11-03",
-    "2026-11-04"
+    "2026-11-04",
+    "2026-11-05"
   ],
   "initial_capital": 100000.0,
-  "final_value": 104650.89,
-  "total_return": 4.65,
-  "cagr": 10.86,
+  "final_value": 104236.94,
+  "total_return": 4.24,
+  "cagr": 9.8,
   "mdd": -7.29,
-  "sharpe": 0.76,
-  "sortino": 1.01,
-  "calmar": 1.49,
-  "win_rate": 50.3,
-  "fees": 2635.43,
+  "sharpe": 0.7,
+  "sortino": 0.93,
+  "calmar": 1.34,
+  "win_rate": 50.0,
+  "fees": 2655.39,
   "positive_offsets": "10/14",
   "ejection_count": 11,
   "rebalance_count": 12,
@@ -342,9 +343,10 @@
       104730.02,
       104717.09,
       104038.12,
-      104650.89
+      104650.89,
+      104236.94
     ],
-    "fees": 2635.43,
+    "fees": 2655.39,
     "rebalance_events": [
       {
         "date": "2026-05-27",
@@ -9635,16 +9637,77 @@
             "return_pct": -1.22
           }
         ]
+      },
+      "2026-11-05": {
+        "total_value": 104892.82,
+        "total_return": 4.89,
+        "cash": 1802.82,
+        "holdings": [
+          {
+            "name": "+convexity",
+            "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 26027.53,
+            "cost": 24872.1,
+            "profit": 1155.42,
+            "return_pct": 4.65
+          },
+          {
+            "name": "Mad Scientists",
+            "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 11457.13,
+            "cost": 10845.71,
+            "profit": 611.43,
+            "return_pct": 5.64
+          },
+          {
+            "name": "Loop Fund",
+            "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 26600.09,
+            "cost": 25998.18,
+            "profit": 601.92,
+            "return_pct": 2.32
+          },
+          {
+            "name": "Quant Mirror",
+            "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 6263.66,
+            "cost": 6269.57,
+            "profit": -5.91,
+            "return_pct": -0.09
+          },
+          {
+            "name": "Aaroh",
+            "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 7175.16,
+            "cost": 7166.54,
+            "profit": 8.63,
+            "return_pct": 0.12
+          },
+          {
+            "name": "Sentiment Edge ",
+            "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 25566.41,
+            "cost": 26177.71,
+            "profit": -611.3,
+            "return_pct": -2.34
+          }
+        ]
       }
     }
   },
   "benchmark": {
     "name": "Equal-Weight Universe Benchmark (TVL >= $10k)",
-    "final_value": 108759.01,
-    "total_return": 8.76,
-    "cagr": 20.97,
+    "final_value": 110811.78,
+    "total_return": 10.81,
+    "cagr": 26.02,
     "mdd": -9.12,
-    "sharpe": 0.99,
+    "sharpe": 1.17,
     "values": [
       100000.0,
       98779.88,
@@ -9807,14 +9870,15 @@
       109167.13,
       109104.81,
       107101.23,
-      108759.01
+      108759.01,
+      110811.78
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 50.3,
-    "cumulative_fees_paid": "$2,635.43",
+    "accuracy_rate": 50.0,
+    "cumulative_fees_paid": "$2,655.39",
     "volatility_drag_reduction": "1.8% p.p. MDD 방어",
-    "alpha_over_benchmark": "-4.11% p.p.",
-    "status": "VALIDATED — 무결 패널(161일, 14개 전 오프셋 10/14 흑자) 10% HWM 수수료·5bps 슬리피지·30% TVL 캡 차감 후 평균 순수익 +4.65% (CAGR +10.9%, Sharpe 0.76, MDD -7.29%)"
+    "alpha_over_benchmark": "-6.57% p.p.",
+    "status": "VALIDATED — 무결 패널(162일, 14개 전 오프셋 10/14 흑자) 10% HWM 수수료·5bps 슬리피지·30% TVL 캡 차감 후 평균 순수익 +4.24% (CAGR +9.8%, Sharpe 0.70, MDD -7.29%)"
   }
 }
