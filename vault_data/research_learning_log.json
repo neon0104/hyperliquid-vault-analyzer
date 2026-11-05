@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-10-29 07:39:25",
-    "topic_id": "TOPIC_FRACTIONAL_KELLY",
-    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
-    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
-    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
-    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
-    "validation_dataset": "143 days (2026-02-27 ~ 2026-10-29)",
-    "top_discovered_vaults": [
-      {
-        "name": "Algo1",
-        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
-        "data_days": 11,
-        "hurst": 0.5,
-        "sortino": 384285930.15,
-        "kelly_f": 30.0,
-        "apr_30d": 4.36,
-        "mdd": 0.09,
-        "sharpe": 9.59,
-        "leader_usd": 10222.21
-      },
-      {
-        "name": "Mahamor",
-        "address": "0xc75d9370c9f769b05baae78204a89854db920c1f",
-        "data_days": 23,
-        "hurst": 0.255,
-        "sortino": 29.02,
-        "kelly_f": 14.8,
-        "apr_30d": -363.27,
-        "mdd": 65.1,
-        "sharpe": 3.33,
-        "leader_usd": 7050.43
-      },
-      {
-        "name": "wmm.club | scalp-hype-long-2x",
-        "address": "0x8029743e299591f2cd890a0332199fe6ced6d6ea",
-        "data_days": 13,
-        "hurst": 0.5,
-        "sortino": 22.92,
-        "kelly_f": 13.0,
-        "apr_30d": -15.66,
-        "mdd": 32.16,
-        "sharpe": 6.29,
-        "leader_usd": 10635.01
-      },
-      {
-        "name": "Gucky_4coin_2dot5x",
-        "address": "0x73f6553d3a6b570ab37957b32a75c7fc0ebff6e9",
-        "data_days": 46,
-        "hurst": 0.59,
-        "sortino": 67.83,
-        "kelly_f": 12.9,
-        "apr_30d": 23.76,
-        "mdd": 279.08,
-        "sharpe": 0.97,
-        "leader_usd": 733.81
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-10-29 11:39:28",
     "topic_id": "TOPIC_FRACTIONAL_KELLY",
     "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
@@ -2995,6 +2935,66 @@
         "mdd": 0.29,
         "sharpe": 18.51,
         "leader_usd": 25695.16
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-05 23:39:47",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "220 days (2026-02-27 ~ 2026-11-05)",
+    "top_discovered_vaults": [
+      {
+        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
+        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+        "data_days": 219,
+        "hurst": 0.708,
+        "sortino": 5.92,
+        "kelly_f": 8.1,
+        "apr_30d": 234.45,
+        "mdd": 19.66,
+        "sharpe": 8.65,
+        "leader_usd": 776646.13
+      },
+      {
+        "name": "Buyback Spread Engine",
+        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
+        "data_days": 155,
+        "hurst": 0.521,
+        "sortino": 2.8,
+        "kelly_f": 6.3,
+        "apr_30d": 269.41,
+        "mdd": 10.62,
+        "sharpe": 7.92,
+        "leader_usd": 20199.69
+      },
+      {
+        "name": "Gen Wealth Algo",
+        "address": "0xdda7f4805dfdf145a74cd68992d90780f73cf6c7",
+        "data_days": 27,
+        "hurst": 0.515,
+        "sortino": 6.85,
+        "kelly_f": 0.0,
+        "apr_30d": 224.68,
+        "mdd": 31.83,
+        "sharpe": 4.64,
+        "leader_usd": 7833.05
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "data_days": 192,
+        "hurst": 0.455,
+        "sortino": 5.99,
+        "kelly_f": 8.7,
+        "apr_30d": 136.07,
+        "mdd": 13.83,
+        "sharpe": 14.26,
+        "leader_usd": 27609.78
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
