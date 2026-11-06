@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-06T19:39:35.385896",
+  "updated_at": "2026-11-06T23:39:32.773586",
   "champion_strategy": {
     "strategy_name": "SGRA+ Quality & Support Weighted (HWM Delta)",
     "description": "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분",
