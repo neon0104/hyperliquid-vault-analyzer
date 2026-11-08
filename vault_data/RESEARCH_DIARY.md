@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-08 11:39:42
+### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
+* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
+* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
+* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
+* **검증 데이터**: `223 days (2026-02-27 ~ 2026-11-08)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Bunny**: Hurst `0.5` | Sortino `50.0` | Kelly `30.0%` | 30일 APR `3.83%` | Sharpe `11.53`
+  - **Hype U-Boat**: Hurst `0.5` | Sortino `30.14` | Kelly `23.2%` | 30일 APR `25.34%` | Sharpe `10.89`
+  - **FuturAI Labs - High Sharpe, Low Volatili**: Hurst `0.403` | Sortino `3.69` | Kelly `16.6%` | 30일 APR `16.04%` | Sharpe `18.15`
+  - **Passivbot Canon**: Hurst `0.489` | Sortino `5.92` | Kelly `13.1%` | 30일 APR `71.46%` | Sharpe `9.01`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-08 07:39:32
 ### 🔬 주제: **하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화**
 * **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Frank Sortino (1994)`
@@ -237,23 +254,6 @@
   - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.658` | Sortino `5.76` | Kelly `6.1%` | 30일 APR `189.62%` | Sharpe `8.54`
   - **Buyback Spread Engine**: Hurst `0.622` | Sortino `2.97` | Kelly `8.1%` | 30일 APR `352.72%` | Sharpe `7.76`
   - **V4 Alpha Quantum**: Hurst `0.36` | Sortino `6.88` | Kelly `8.3%` | 30일 APR `181.7%` | Sharpe `8.5`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-05 23:39:47
-### 🔬 주제: **Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진**
-* **레퍼런스 출처**: `GitHub: skfolio / Shadwick & Keating (2002)`
-* **수학적 모델**: $\Omega(L) = \frac{\int_L^\infty (1-F(x))dx}{\int_{-\infty}^L F(x)dx}$
-* **핵심 가설**: MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.
-* **검증 데이터**: `220 days (2026-02-27 ~ 2026-11-05)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.708` | Sortino `5.92` | Kelly `8.1%` | 30일 APR `234.45%` | Sharpe `8.65`
-  - **Buyback Spread Engine**: Hurst `0.521` | Sortino `2.8` | Kelly `6.3%` | 30일 APR `269.41%` | Sharpe `7.92`
-  - **Gen Wealth Algo**: Hurst `0.515` | Sortino `6.85` | Kelly `0.0%` | 30일 APR `224.68%` | Sharpe `4.64`
-  - **Danny Ocean**: Hurst `0.455` | Sortino `5.99` | Kelly `8.7%` | 30일 APR `136.07%` | Sharpe `14.26`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
