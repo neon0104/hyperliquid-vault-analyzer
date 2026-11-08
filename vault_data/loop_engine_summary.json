@@ -1,69 +1,69 @@
 {
-  "timestamp": "2026-11-08T23:39:40.105969",
-  "latest_data_date": "2026-11-08",
+  "timestamp": "2026-11-09T03:41:54.387378",
+  "latest_data_date": "2026-11-09",
   "self_evaluation_24h": {
-    "evaluated_date": "2026-11-08",
-    "referenced_date": "2026-11-07",
-    "portfolio_24h_profit_usd": -90.97,
-    "portfolio_24h_return_pct": -0.091,
+    "evaluated_date": "2026-11-09",
+    "referenced_date": "2026-11-08",
+    "portfolio_24h_profit_usd": -114.21,
+    "portfolio_24h_return_pct": -0.1142,
     "evaluated_holdings": [
-      {
-        "vault_name": "Mad Scientists",
-        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
-        "allocated_usd": 13050.18,
-        "actual_24h_gain_usd": -9.41,
-        "actual_24h_return_pct": -0.0721
-      },
       {
         "vault_name": "Loop Fund",
         "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
         "allocated_usd": 25000.0,
-        "actual_24h_gain_usd": -18.22,
-        "actual_24h_return_pct": -0.0729
+        "actual_24h_gain_usd": -86.15,
+        "actual_24h_return_pct": -0.3446
       },
       {
         "vault_name": "Quant Mirror",
         "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-        "allocated_usd": 6508.05,
-        "actual_24h_gain_usd": -10.33,
-        "actual_24h_return_pct": -0.1587
-      },
-      {
-        "vault_name": "PF1",
-        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
-        "allocated_usd": 25108.16,
-        "actual_24h_gain_usd": -57.48,
-        "actual_24h_return_pct": -0.2289
+        "allocated_usd": 6509.07,
+        "actual_24h_gain_usd": -24.35,
+        "actual_24h_return_pct": -0.3741
       },
       {
         "vault_name": "Sentiment Edge ",
         "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
-        "allocated_usd": 16948.82,
-        "actual_24h_gain_usd": -8.4,
-        "actual_24h_return_pct": -0.0496
+        "allocated_usd": 24760.19,
+        "actual_24h_gain_usd": 101.88,
+        "actual_24h_return_pct": 0.4115
       },
       {
         "vault_name": "Danny Ocean",
         "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-        "allocated_usd": 13384.8,
-        "actual_24h_gain_usd": 12.87,
-        "actual_24h_return_pct": 0.0962
+        "allocated_usd": 13346.48,
+        "actual_24h_gain_usd": -63.71,
+        "actual_24h_return_pct": -0.4774
+      },
+      {
+        "vault_name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "allocated_usd": 12200.12,
+        "actual_24h_gain_usd": -41.88,
+        "actual_24h_return_pct": -0.3433
+      },
+      {
+        "vault_name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "allocated_usd": 7618.75,
+        "actual_24h_gain_usd": 0.0,
+        "actual_24h_return_pct": 0.0
       }
     ]
   },
   "champion_model": {
     "strategy_name": "SGRA+ Quality & Support Weighted (HWM Delta)",
     "description": "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분",
-    "total_return_pct": 11.46,
-    "phase_min_return_pct": -4.97,
-    "phase_max_return_pct": 29.2,
+    "total_return_pct": 11.28,
+    "phase_min_return_pct": -5.23,
+    "phase_max_return_pct": 28.99,
     "positive_offsets": "11/14",
-    "cagr_pct": 28.58,
-    "sharpe_ratio": 1.09,
-    "sortino_ratio": 1.66,
-    "max_drawdown_pct": 11.18,
-    "calmar_ratio": 2.56,
-    "final_capital": 111462.23
+    "cagr_pct": 27.93,
+    "sharpe_ratio": 1.07,
+    "sortino_ratio": 1.63,
+    "max_drawdown_pct": 11.19,
+    "calmar_ratio": 2.49,
+    "final_capital": 111278.56
   },
   "recommended_portfolio": [
     {
@@ -71,132 +71,132 @@
       "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
       "allocation_pct": 25.0,
       "allocation_usd": 25000.0,
-      "apr_30d": -40.06,
+      "apr_30d": -32.43,
       "mdd": 9.43,
-      "sharpe_ratio": 10.45,
-      "leader_equity_usd": 90388.52
+      "sharpe_ratio": 10.42,
+      "leader_equity_usd": 90077.03
+    },
+    {
+      "name": "The Black-White 15 IQ gap is genetic",
+      "address": "0xd02ca067292ffc53a17024387f991b849d8cdbe2",
+      "allocation_pct": 20.14,
+      "allocation_usd": 20142.97,
+      "apr_30d": -19.97,
+      "mdd": 14.93,
+      "sharpe_ratio": 5.86,
+      "leader_equity_usd": 70665.38
+    },
+    {
+      "name": "PF1",
+      "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+      "allocation_pct": 19.58,
+      "allocation_usd": 19580.19,
+      "apr_30d": -6.82,
+      "mdd": 14.02,
+      "sharpe_ratio": 13.76,
+      "leader_equity_usd": 54829.65
     },
     {
       "name": "Sentiment Edge ",
       "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
-      "allocation_pct": 24.76,
-      "allocation_usd": 24760.19,
-      "apr_30d": -87.23,
-      "mdd": 22.68,
-      "sharpe_ratio": 6.87,
-      "leader_equity_usd": 24165.11
+      "allocation_pct": 15.54,
+      "allocation_usd": 15538.8,
+      "apr_30d": -38.49,
+      "mdd": 21.84,
+      "sharpe_ratio": 6.95,
+      "leader_equity_usd": 24264.55
     },
     {
       "name": "Danny Ocean",
       "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-      "allocation_pct": 13.35,
-      "allocation_usd": 13346.48,
-      "apr_30d": 85.28,
-      "mdd": 14.64,
-      "sharpe_ratio": 13.63,
-      "leader_equity_usd": 26848.84
-    },
-    {
-      "name": "Mad Scientists",
-      "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
-      "allocation_pct": 12.2,
-      "allocation_usd": 12200.12,
-      "apr_30d": -2.41,
-      "mdd": 4.66,
-      "sharpe_ratio": 11.74,
-      "leader_equity_usd": 11815.6
-    },
-    {
-      "name": "Solus Capital",
-      "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
-      "allocation_pct": 7.62,
-      "allocation_usd": 7618.75,
-      "apr_30d": 0.0,
-      "mdd": 12.31,
-      "sharpe_ratio": 7.86,
-      "leader_equity_usd": 25127.35
+      "allocation_pct": 13.29,
+      "allocation_usd": 13292.28,
+      "apr_30d": 66.48,
+      "mdd": 14.78,
+      "sharpe_ratio": 13.46,
+      "leader_equity_usd": 26720.05
     },
     {
       "name": "Quant Mirror",
       "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-      "allocation_pct": 6.51,
-      "allocation_usd": 6509.07,
-      "apr_30d": -20.83,
-      "mdd": 14.87,
-      "sharpe_ratio": 7.64,
-      "leader_equity_usd": 8896.77
+      "allocation_pct": 6.45,
+      "allocation_usd": 6445.75,
+      "apr_30d": -23.35,
+      "mdd": 15.38,
+      "sharpe_ratio": 7.33,
+      "leader_equity_usd": 8863.49
     }
   ],
   "all_tournament_results": [
     {
       "strategy_name": "SGRA+ Quality & Support Weighted (HWM Delta)",
       "description": "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분",
-      "total_return_pct": 11.46,
-      "phase_min_return_pct": -4.97,
-      "phase_max_return_pct": 29.2,
+      "total_return_pct": 11.28,
+      "phase_min_return_pct": -5.23,
+      "phase_max_return_pct": 28.99,
       "positive_offsets": "11/14",
-      "cagr_pct": 28.58,
-      "sharpe_ratio": 1.09,
-      "sortino_ratio": 1.66,
-      "max_drawdown_pct": 11.18,
-      "calmar_ratio": 2.56,
-      "final_capital": 111462.23
+      "cagr_pct": 27.93,
+      "sharpe_ratio": 1.07,
+      "sortino_ratio": 1.63,
+      "max_drawdown_pct": 11.19,
+      "calmar_ratio": 2.49,
+      "final_capital": 111278.56
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
       "description": "우량 볼트의 일시적 -1%~-22% 낙폭 구간 역발상 매수",
-      "total_return_pct": 3.81,
-      "phase_min_return_pct": -16.88,
-      "phase_max_return_pct": 26.25,
+      "total_return_pct": 3.83,
+      "phase_min_return_pct": -16.91,
+      "phase_max_return_pct": 26.37,
       "positive_offsets": "9/14",
-      "cagr_pct": 10.48,
+      "cagr_pct": 10.45,
       "sharpe_ratio": 0.45,
       "sortino_ratio": 0.86,
       "max_drawdown_pct": 14.01,
       "calmar_ratio": 0.75,
-      "final_capital": 103812.23
+      "final_capital": 103834.04
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 달러 예치금(log USD) + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": 1.87,
-      "phase_min_return_pct": -5.2,
-      "phase_max_return_pct": 16.01,
+      "total_return_pct": 1.67,
+      "phase_min_return_pct": -5.15,
+      "phase_max_return_pct": 15.56,
       "positive_offsets": "7/14",
-      "cagr_pct": 4.71,
-      "sharpe_ratio": 0.33,
-      "sortino_ratio": 0.46,
+      "cagr_pct": 4.2,
+      "sharpe_ratio": 0.31,
+      "sortino_ratio": 0.43,
       "max_drawdown_pct": 13.09,
-      "calmar_ratio": 0.36,
-      "final_capital": 101873.25
+      "calmar_ratio": 0.32,
+      "final_capital": 101672.07
     },
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 APR 모멘텀 추격 + 변동성 역가중",
-      "total_return_pct": -6.87,
-      "phase_min_return_pct": -35.97,
-      "phase_max_return_pct": 18.16,
-      "positive_offsets": "5/14",
-      "cagr_pct": -11.27,
+      "total_return_pct": -6.82,
+      "phase_min_return_pct": -36.12,
+      "phase_max_return_pct": 18.33,
+      "positive_offsets": "4/14",
+      "cagr_pct": -11.12,
       "sharpe_ratio": -0.13,
-      "sortino_ratio": -0.06,
+      "sortino_ratio": -0.05,
       "max_drawdown_pct": 28.91,
-      "calmar_ratio": -0.39,
-      "final_capital": 93132.67
+      "calmar_ratio": -0.38,
+      "final_capital": 93181.81
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 최적화한 0.3x 부분 켈리 비중 배분",
       "total_return_pct": -8.71,
-      "phase_min_return_pct": -24.58,
-      "phase_max_return_pct": -2.9,
+      "phase_min_return_pct": -24.68,
+      "phase_max_return_pct": -2.84,
       "positive_offsets": "0/14",
-      "cagr_pct": -17.79,
+      "cagr_pct": -17.71,
       "sharpe_ratio": -0.82,
       "sortino_ratio": -0.94,
       "max_drawdown_pct": 16.83,
-      "calmar_ratio": -1.06,
-      "final_capital": 91292.49
+      "calmar_ratio": -1.05,
+      "final_capital": 91288.43
     }
   ]
 }

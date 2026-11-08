@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-09 03:41:56
+### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
+* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
+* **수학적 모델**: $w_i = w_i \times \frac{V_i^{-1}}{\sum V_j^{-1}}$
+* **핵심 가설**: 전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.
+* **검증 데이터**: `224 days (2026-02-27 ~ 2026-11-09)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Gen Wealth Algo**: Hurst `0.447` | Sortino `6.55` | Kelly `0.0%` | 30일 APR `228.78%` | Sharpe `7.0`
+  - **Buyback Spread Engine**: Hurst `0.547` | Sortino `2.9` | Kelly `7.3%` | 30일 APR `255.52%` | Sharpe `8.3`
+  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.542` | Sortino `5.67` | Kelly `9.2%` | 30일 APR `178.23%` | Sharpe `8.5`
+  - **Bunny**: Hurst `0.5` | Sortino `50.0` | Kelly `27.2%` | 30일 APR `3.5%` | Sharpe `11.79`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-08 23:39:41
 ### 🔬 주제: **알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍**
 * **레퍼런스 출처**: `GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)`
@@ -237,23 +254,6 @@
   - **Citadel**: Hurst `0.691` | Sortino `6.71` | Kelly `0.0%` | 30일 APR `3.17%` | Sharpe `13.39`
   - **Quantitative Market Neutral Strategy**: Hurst `0.688` | Sortino `1.04` | Kelly `0.0%` | 30일 APR `0.17%` | Sharpe `4.18`
   - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.658` | Sortino `5.76` | Kelly `6.1%` | 30일 APR `189.62%` | Sharpe `8.54`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-06 15:39:31
-### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
-* **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
-* **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
-* **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
-* **검증 데이터**: `221 days (2026-02-27 ~ 2026-11-06)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Gen Wealth Algo**: Hurst `0.491` | Sortino `6.74` | Kelly `0.0%` | 30일 APR `225.16%` | Sharpe `6.37`
-  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.658` | Sortino `5.76` | Kelly `6.1%` | 30일 APR `189.62%` | Sharpe `8.54`
-  - **Buyback Spread Engine**: Hurst `0.622` | Sortino `2.97` | Kelly `8.1%` | 30일 APR `352.72%` | Sharpe `7.76`
-  - **V4 Alpha Quantum**: Hurst `0.36` | Sortino `6.88` | Kelly `8.3%` | 30일 APR `181.7%` | Sharpe `8.5`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 

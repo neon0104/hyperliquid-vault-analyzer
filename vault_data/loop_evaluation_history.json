@@ -1,55 +1,5 @@
 [
   {
-    "evaluated_date": "2026-09-10",
-    "referenced_date": "2026-09-09",
-    "portfolio_24h_profit_usd": 74.94,
-    "portfolio_24h_return_pct": 0.0749,
-    "evaluated_holdings": [
-      {
-        "vault_name": "Mad Scientists",
-        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 51.63,
-        "actual_24h_return_pct": 0.2581
-      },
-      {
-        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
-        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": -3.19,
-        "actual_24h_return_pct": -0.0159
-      },
-      {
-        "vault_name": "Citadel",
-        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 0.0,
-        "actual_24h_return_pct": 0.0
-      },
-      {
-        "vault_name": "22Cap",
-        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 9.9,
-        "actual_24h_return_pct": 0.0742
-      },
-      {
-        "vault_name": "BitRocket",
-        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 21.32,
-        "actual_24h_return_pct": 0.1599
-      },
-      {
-        "vault_name": "FuturAI Labs - High Sharpe, Medium Volat",
-        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": -4.72,
-        "actual_24h_return_pct": -0.0354
-      }
-    ]
-  },
-  {
     "evaluated_date": "2026-09-11",
     "referenced_date": "2026-09-10",
     "portfolio_24h_profit_usd": -101.57,
@@ -2989,6 +2939,56 @@
         "allocated_usd": 13384.8,
         "actual_24h_gain_usd": 12.87,
         "actual_24h_return_pct": 0.0962
+      }
+    ]
+  },
+  {
+    "evaluated_date": "2026-11-09",
+    "referenced_date": "2026-11-08",
+    "portfolio_24h_profit_usd": -114.21,
+    "portfolio_24h_return_pct": -0.1142,
+    "evaluated_holdings": [
+      {
+        "vault_name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "allocated_usd": 25000.0,
+        "actual_24h_gain_usd": -86.15,
+        "actual_24h_return_pct": -0.3446
+      },
+      {
+        "vault_name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "allocated_usd": 6509.07,
+        "actual_24h_gain_usd": -24.35,
+        "actual_24h_return_pct": -0.3741
+      },
+      {
+        "vault_name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "allocated_usd": 24760.19,
+        "actual_24h_gain_usd": 101.88,
+        "actual_24h_return_pct": 0.4115
+      },
+      {
+        "vault_name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "allocated_usd": 13346.48,
+        "actual_24h_gain_usd": -63.71,
+        "actual_24h_return_pct": -0.4774
+      },
+      {
+        "vault_name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "allocated_usd": 12200.12,
+        "actual_24h_gain_usd": -41.88,
+        "actual_24h_return_pct": -0.3433
+      },
+      {
+        "vault_name": "Solus Capital",
+        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+        "allocated_usd": 7618.75,
+        "actual_24h_gain_usd": 0.0,
+        "actual_24h_return_pct": 0.0
       }
     ]
   }
