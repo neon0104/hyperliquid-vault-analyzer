@@ -1,69 +1,69 @@
 {
-  "timestamp": "2026-11-09T23:39:27.682551",
-  "latest_data_date": "2026-11-09",
+  "timestamp": "2026-11-10T03:42:11.160015",
+  "latest_data_date": "2026-11-10",
   "self_evaluation_24h": {
-    "evaluated_date": "2026-11-09",
-    "referenced_date": "2026-11-08",
-    "portfolio_24h_profit_usd": -114.21,
-    "portfolio_24h_return_pct": -0.1142,
+    "evaluated_date": "2026-11-10",
+    "referenced_date": "2026-11-09",
+    "portfolio_24h_profit_usd": -1612.87,
+    "portfolio_24h_return_pct": -1.6129,
     "evaluated_holdings": [
       {
         "vault_name": "Loop Fund",
         "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
         "allocated_usd": 25000.0,
-        "actual_24h_gain_usd": -86.15,
-        "actual_24h_return_pct": -0.3446
+        "actual_24h_gain_usd": -400.99,
+        "actual_24h_return_pct": -1.604
       },
       {
         "vault_name": "Quant Mirror",
         "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-        "allocated_usd": 6509.07,
-        "actual_24h_gain_usd": -24.35,
-        "actual_24h_return_pct": -0.3741
+        "allocated_usd": 6445.75,
+        "actual_24h_gain_usd": -26.01,
+        "actual_24h_return_pct": -0.4036
+      },
+      {
+        "vault_name": "The Black-White 15 IQ gap is genetic",
+        "address": "0xd02ca067292ffc53a17024387f991b849d8cdbe2",
+        "allocated_usd": 20142.97,
+        "actual_24h_gain_usd": -744.84,
+        "actual_24h_return_pct": -3.6978
+      },
+      {
+        "vault_name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "allocated_usd": 19580.19,
+        "actual_24h_gain_usd": 11.38,
+        "actual_24h_return_pct": 0.0581
       },
       {
         "vault_name": "Sentiment Edge ",
         "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
-        "allocated_usd": 24760.19,
-        "actual_24h_gain_usd": 101.88,
-        "actual_24h_return_pct": 0.4115
+        "allocated_usd": 15538.8,
+        "actual_24h_gain_usd": -64.54,
+        "actual_24h_return_pct": -0.4153
       },
       {
         "vault_name": "Danny Ocean",
         "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-        "allocated_usd": 13346.48,
-        "actual_24h_gain_usd": -63.71,
-        "actual_24h_return_pct": -0.4774
-      },
-      {
-        "vault_name": "Mad Scientists",
-        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
-        "allocated_usd": 12200.12,
-        "actual_24h_gain_usd": -41.88,
-        "actual_24h_return_pct": -0.3433
-      },
-      {
-        "vault_name": "Solus Capital",
-        "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
-        "allocated_usd": 7618.75,
-        "actual_24h_gain_usd": 0.0,
-        "actual_24h_return_pct": 0.0
+        "allocated_usd": 13292.28,
+        "actual_24h_gain_usd": -387.86,
+        "actual_24h_return_pct": -2.9179
       }
     ]
   },
   "champion_model": {
     "strategy_name": "SGRA+ Quality & Support Weighted (HWM Delta)",
     "description": "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분",
-    "total_return_pct": 11.28,
-    "phase_min_return_pct": -5.23,
-    "phase_max_return_pct": 28.99,
-    "positive_offsets": "11/14",
-    "cagr_pct": 27.93,
-    "sharpe_ratio": 1.07,
-    "sortino_ratio": 1.63,
-    "max_drawdown_pct": 11.19,
-    "calmar_ratio": 2.49,
-    "final_capital": 111278.56
+    "total_return_pct": 10.37,
+    "phase_min_return_pct": -6.3,
+    "phase_max_return_pct": 28.12,
+    "positive_offsets": "10/14",
+    "cagr_pct": 25.49,
+    "sharpe_ratio": 0.99,
+    "sortino_ratio": 1.51,
+    "max_drawdown_pct": 11.27,
+    "calmar_ratio": 2.26,
+    "final_capital": 110372.02
   },
   "recommended_portfolio": [
     {
@@ -71,132 +71,132 @@
       "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
       "allocation_pct": 25.0,
       "allocation_usd": 25000.0,
-      "apr_30d": -32.43,
-      "mdd": 9.43,
-      "sharpe_ratio": 10.42,
-      "leader_equity_usd": 90077.03
-    },
-    {
-      "name": "The Black-White 15 IQ gap is genetic",
-      "address": "0xd02ca067292ffc53a17024387f991b849d8cdbe2",
-      "allocation_pct": 20.14,
-      "allocation_usd": 20142.97,
-      "apr_30d": -19.97,
-      "mdd": 14.93,
-      "sharpe_ratio": 5.86,
-      "leader_equity_usd": 70665.38
+      "apr_30d": -51.51,
+      "mdd": 11.4,
+      "sharpe_ratio": 10.24,
+      "leader_equity_usd": 88632.18
     },
     {
       "name": "PF1",
       "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
-      "allocation_pct": 19.58,
-      "allocation_usd": 19580.19,
-      "apr_30d": -6.82,
-      "mdd": 14.02,
-      "sharpe_ratio": 13.76,
-      "leader_equity_usd": 54829.65
+      "allocation_pct": 24.97,
+      "allocation_usd": 24970.05,
+      "apr_30d": -11.02,
+      "mdd": 13.58,
+      "sharpe_ratio": 14.07,
+      "leader_equity_usd": 54909.63
     },
     {
       "name": "Sentiment Edge ",
       "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
-      "allocation_pct": 15.54,
-      "allocation_usd": 15538.8,
-      "apr_30d": -38.49,
-      "mdd": 21.84,
-      "sharpe_ratio": 6.95,
-      "leader_equity_usd": 24264.55
+      "allocation_pct": 18.92,
+      "allocation_usd": 18918.23,
+      "apr_30d": -43.52,
+      "mdd": 22.69,
+      "sharpe_ratio": 6.86,
+      "leader_equity_usd": 24163.76
     },
     {
       "name": "Danny Ocean",
       "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-      "allocation_pct": 13.29,
-      "allocation_usd": 13292.28,
-      "apr_30d": 66.48,
-      "mdd": 14.78,
-      "sharpe_ratio": 13.46,
-      "leader_equity_usd": 26720.05
+      "allocation_pct": 12.8,
+      "allocation_usd": 12802.53,
+      "apr_30d": 29.6,
+      "mdd": 15.71,
+      "sharpe_ratio": 12.55,
+      "leader_equity_usd": 25943.21
+    },
+    {
+      "name": "Mad Scientists",
+      "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+      "allocation_pct": 11.89,
+      "allocation_usd": 11887.62,
+      "apr_30d": -19.87,
+      "mdd": 7.65,
+      "sharpe_ratio": 11.05,
+      "leader_equity_usd": 11581.92
     },
     {
       "name": "Quant Mirror",
       "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-      "allocation_pct": 6.45,
-      "allocation_usd": 6445.75,
-      "apr_30d": -23.35,
-      "mdd": 15.38,
-      "sharpe_ratio": 7.33,
-      "leader_equity_usd": 8863.49
+      "allocation_pct": 6.42,
+      "allocation_usd": 6421.57,
+      "apr_30d": -29.67,
+      "mdd": 18.66,
+      "sharpe_ratio": 7.0,
+      "leader_equity_usd": 8827.72
     }
   ],
   "all_tournament_results": [
     {
       "strategy_name": "SGRA+ Quality & Support Weighted (HWM Delta)",
       "description": "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분",
-      "total_return_pct": 11.28,
-      "phase_min_return_pct": -5.23,
-      "phase_max_return_pct": 28.99,
-      "positive_offsets": "11/14",
-      "cagr_pct": 27.93,
-      "sharpe_ratio": 1.07,
-      "sortino_ratio": 1.63,
-      "max_drawdown_pct": 11.19,
-      "calmar_ratio": 2.49,
-      "final_capital": 111278.56
+      "total_return_pct": 10.37,
+      "phase_min_return_pct": -6.3,
+      "phase_max_return_pct": 28.12,
+      "positive_offsets": "10/14",
+      "cagr_pct": 25.49,
+      "sharpe_ratio": 0.99,
+      "sortino_ratio": 1.51,
+      "max_drawdown_pct": 11.27,
+      "calmar_ratio": 2.26,
+      "final_capital": 110372.02
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
       "description": "우량 볼트의 일시적 -1%~-22% 낙폭 구간 역발상 매수",
-      "total_return_pct": 3.83,
-      "phase_min_return_pct": -16.91,
-      "phase_max_return_pct": 26.37,
-      "positive_offsets": "9/14",
-      "cagr_pct": 10.45,
-      "sharpe_ratio": 0.45,
-      "sortino_ratio": 0.86,
+      "total_return_pct": 2.35,
+      "phase_min_return_pct": -17.81,
+      "phase_max_return_pct": 24.02,
+      "positive_offsets": "7/14",
+      "cagr_pct": 6.95,
+      "sharpe_ratio": 0.28,
+      "sortino_ratio": 0.61,
       "max_drawdown_pct": 14.01,
-      "calmar_ratio": 0.75,
-      "final_capital": 103834.04
+      "calmar_ratio": 0.5,
+      "final_capital": 102349.21
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 달러 예치금(log USD) + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": 1.67,
-      "phase_min_return_pct": -5.15,
-      "phase_max_return_pct": 15.56,
-      "positive_offsets": "7/14",
-      "cagr_pct": 4.2,
-      "sharpe_ratio": 0.31,
-      "sortino_ratio": 0.43,
+      "total_return_pct": 0.92,
+      "phase_min_return_pct": -5.9,
+      "phase_max_return_pct": 14.47,
+      "positive_offsets": "6/14",
+      "cagr_pct": 2.5,
+      "sharpe_ratio": 0.23,
+      "sortino_ratio": 0.33,
       "max_drawdown_pct": 13.09,
-      "calmar_ratio": 0.32,
-      "final_capital": 101672.07
+      "calmar_ratio": 0.19,
+      "final_capital": 100920.19
     },
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 APR 모멘텀 추격 + 변동성 역가중",
-      "total_return_pct": -6.82,
-      "phase_min_return_pct": -36.12,
-      "phase_max_return_pct": 18.33,
+      "total_return_pct": -7.4,
+      "phase_min_return_pct": -36.17,
+      "phase_max_return_pct": 17.45,
       "positive_offsets": "4/14",
-      "cagr_pct": -11.12,
-      "sharpe_ratio": -0.13,
-      "sortino_ratio": -0.05,
+      "cagr_pct": -12.39,
+      "sharpe_ratio": -0.16,
+      "sortino_ratio": -0.09,
       "max_drawdown_pct": 28.91,
-      "calmar_ratio": -0.38,
-      "final_capital": 93181.81
+      "calmar_ratio": -0.43,
+      "final_capital": 92596.03
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 최적화한 0.3x 부분 켈리 비중 배분",
-      "total_return_pct": -8.71,
-      "phase_min_return_pct": -24.68,
-      "phase_max_return_pct": -2.84,
+      "total_return_pct": -9.1,
+      "phase_min_return_pct": -25.02,
+      "phase_max_return_pct": -3.72,
       "positive_offsets": "0/14",
-      "cagr_pct": -17.71,
-      "sharpe_ratio": -0.82,
-      "sortino_ratio": -0.94,
+      "cagr_pct": -18.39,
+      "sharpe_ratio": -0.86,
+      "sortino_ratio": -0.98,
       "max_drawdown_pct": 16.83,
-      "calmar_ratio": -1.05,
-      "final_capital": 91288.43
+      "calmar_ratio": -1.09,
+      "final_capital": 90896.49
     }
   ]
 }
