@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-10-31 11:39:31",
-    "topic_id": "TOPIC_HRP_HIERARCHICAL",
-    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
-    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
-    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
-    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
-    "validation_dataset": "215 days (2026-02-27 ~ 2026-10-31)",
-    "top_discovered_vaults": [
-      {
-        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
-        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
-        "data_days": 214,
-        "hurst": 0.623,
-        "sortino": 6.34,
-        "kelly_f": 11.5,
-        "apr_30d": 302.54,
-        "mdd": 20.94,
-        "sharpe": 8.78,
-        "leader_usd": 811654.57
-      },
-      {
-        "name": "Buyback Spread Engine",
-        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
-        "data_days": 150,
-        "hurst": 0.534,
-        "sortino": 2.65,
-        "kelly_f": 6.1,
-        "apr_30d": 206.18,
-        "mdd": 11.19,
-        "sharpe": 8.12,
-        "leader_usd": 19418.26
-      },
-      {
-        "name": "Danny Ocean",
-        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-        "data_days": 187,
-        "hurst": 0.392,
-        "sortino": 5.98,
-        "kelly_f": 9.7,
-        "apr_30d": 134.6,
-        "mdd": 14.21,
-        "sharpe": 13.97,
-        "leader_usd": 27255.03
-      },
-      {
-        "name": "V4 Alpha Quantum",
-        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
-        "data_days": 80,
-        "hurst": 0.567,
-        "sortino": 6.91,
-        "kelly_f": 7.3,
-        "apr_30d": 152.63,
-        "mdd": 1.06,
-        "sharpe": 8.69,
-        "leader_usd": 8045.31
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-10-31 15:39:28",
     "topic_id": "TOPIC_GARCH_VOLATILITY",
     "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
@@ -2995,6 +2935,66 @@
         "mdd": 0.04,
         "sharpe": 11.79,
         "leader_usd": 2979.92
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-09 11:39:35",
+    "topic_id": "TOPIC_HURST_EXPONENT",
+    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
+    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
+    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
+    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
+    "validation_dataset": "224 days (2026-02-27 ~ 2026-11-09)",
+    "top_discovered_vaults": [
+      {
+        "name": "69 Jump Street",
+        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
+        "data_days": 225,
+        "hurst": 0.737,
+        "sortino": 6.12,
+        "kelly_f": 5.7,
+        "apr_30d": 22.45,
+        "mdd": 30.49,
+        "sharpe": 8.16,
+        "leader_usd": 30176.39
+      },
+      {
+        "name": "Gucky_1coin_1dot5x",
+        "address": "0xd2f03635901956b950737bbf02463dfad9f2e9e1",
+        "data_days": 223,
+        "hurst": 0.701,
+        "sortino": 1.32,
+        "kelly_f": 0.0,
+        "apr_30d": 8.04,
+        "mdd": 22.94,
+        "sharpe": 7.94,
+        "leader_usd": 4723.88
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "data_days": 196,
+        "hurst": 0.694,
+        "sortino": 5.4,
+        "kelly_f": 4.1,
+        "apr_30d": 66.48,
+        "mdd": 14.78,
+        "sharpe": 13.46,
+        "leader_usd": 26720.05
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "data_days": 117,
+        "hurst": 0.667,
+        "sortino": 3.47,
+        "kelly_f": 2.0,
+        "apr_30d": 14.8,
+        "mdd": 32.08,
+        "sharpe": 6.91,
+        "leader_usd": 69210.98
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
