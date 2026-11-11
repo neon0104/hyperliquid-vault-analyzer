@@ -1,51 +1,53 @@
 #!/usr/bin/env python3
 """
-autonomous_loop_engine.py — 🔄 자율 진화 루프 엔지니어링 퀀트 엔진
-===================================================================
+autonomous_loop_engine.py — 🔄 자율 진화 루프 엔지니어링 퀀트 엔진 (Phase-Averaged & 10% HWM 검증)
+====================================================================================================
 핵심 기능:
-  1. [자가 채점 루프] 어제 추천 포트폴리오의 실제 24h 수익률 실측 및 Alpha Decay/오차 측정
-  2. [토너먼트 루프] 4대 퀀트 전략(바벨, 0.3x 켈리, 듀얼 모멘텀, 평균회귀 딥바잉) 전수 대전
-  3. [자가 튜닝 루프] Walk-Forward Rolling Window 기반 최적 파라미터 자동 자가 보정
-  4. [챔피언 승격] 실증 Sharpe 및 Calmar 기준 1위 모델을 주 전략으로 자동 채택
-  5. [통합 리포팅] 결과 요약 및 대시보드/알림용 JSON 자동 갱신
+  1. [자가 채점 루프] 어제 챔피언 추천 포트폴리오의 실제 24h 수익률 실측
+  2. [공정 토너먼트 루프] SGRA+ 챔피언 포함 5대 퀀트 전략을 동일 무결 패널(2026-04-27~) 위에서
+     볼트별 10% High-Water-Mark 성과보수 + 5bps 슬리피지 + 볼트 TVL 30% 상한 +
+     14개 전 시작일 위상 평균(Phase-Averaged across all 14 offsets)으로 공정 검증
+  3. [챔피언 자동 채택] 타이밍 운(Timing Luck)이 제거된 실증 Sharpe·Calmar 1위 모델 자동 승격
 """
 
-import os, sys, json, glob, sqlite3, bisect
-import numpy as np
-from datetime import datetime, timedelta
+import bisect
+import json
+import math
+import sqlite3
+import sys
+from datetime import datetime
 from pathlib import Path
+
+import numpy as np
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-BASE_DIR        = Path(r"c:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer")
-DATA_DIR        = BASE_DIR / "vault_data"
-SNAPSHOTS_DIR   = DATA_DIR / "snapshots"
-EVAL_HIST_FILE  = DATA_DIR / "loop_evaluation_history.json"
+from hl_auto_vault_bot import EXCLUDED_ADDRESSES
+from io_utils import atomic_write_json
+
+BASE_DIR = Path(__file__).parent
+DATA_DIR = BASE_DIR / "vault_data"
+SNAPSHOTS_DIR = DATA_DIR / "snapshots"
+EVAL_HIST_FILE = DATA_DIR / "loop_evaluation_history.json"
 ACTIVE_STRAT_FILE = DATA_DIR / "active_quant_strategy.json"
 LOOP_SUMMARY_FILE = DATA_DIR / "loop_engine_summary.json"
+
 
 def load_json(filepath: Path, default=None):
     if not filepath.exists():
         return default if default is not None else {}
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
-            return json.load(f)
+        return json.loads(filepath.read_text(encoding="utf-8"))
     except Exception:
         return default if default is not None else {}
 
-def save_json(filepath: Path, data: dict):
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    temp_path = filepath.with_suffix(".tmp")
-    with open(temp_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2, default=float)
-    temp_path.replace(filepath)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 1. 스냅샷 데이터 로드 및 헬퍼 (SQLite 일별 시계열 Point-in-Time 연동)
-# ─────────────────────────────────────────────────────────────────────────────
+def save_json(filepath: Path, data):
+    atomic_write_json(str(filepath), data, indent=2)
+
+
 def load_pit_db_series():
-    """pnl_history.db에서 볼트별 (정렬된 날짜 리스트, 누적 PnL 리스트) 로드"""
     db_path = DATA_DIR / "pnl_history.db"
     series = {}
     if not db_path.exists():
@@ -55,31 +57,30 @@ def load_pit_db_series():
         cur = conn.cursor()
         cur.execute("SELECT vault_address, collected_at, alltime_pnl FROM daily_pnl ORDER BY collected_at ASC")
         for addr, dt, pnl in cur.fetchall():
-            if addr not in series:
-                series[addr] = ([], [])
-            series[addr][0].append(dt)
-            series[addr][1].append(float(pnl or 0.0))
+            a = str(addr or "").lower()
+            if a not in series:
+                series[a] = ([], [])
+            series[a][0].append(dt)
+            series[a][1].append(float(pnl or 0.0))
         conn.close()
     except Exception:
         pass
     return series
 
+
 def load_all_snapshots():
     pit_series = load_pit_db_series()
-    files = sorted(SNAPSHOTS_DIR.glob("*.json"))
+    files = sorted([f for f in SNAPSHOTS_DIR.glob("*.json") if not f.name.endswith(".bak") and f.stem >= "2026-04-27"])
     cache = {}
     for f in files:
-        if f.name.endswith(".bak"):
-            continue
         try:
             date_str = f.stem
-            with open(f, "r", encoding="utf-8") as fd:
-                snap_list = json.load(fd)
-            if not isinstance(snap_list, list):
+            snap_list = json.loads(f.read_text(encoding="utf-8"))
+            if not isinstance(snap_list, list) or len(snap_list) < 20:
                 continue
-            # 미래 참조 편향(Lookahead Bias) 없이 date_str 이하 시점까지의 DB 시계열만 주입
             for v in snap_list:
-                addr = v.get("address", "")
+                addr = str(v.get("address", "")).lower()
+                v["address"] = addr
                 if addr in pit_series:
                     d_list, p_list = pit_series[addr]
                     idx = bisect.bisect_right(d_list, date_str)
@@ -89,6 +90,7 @@ def load_all_snapshots():
         except Exception:
             pass
     return cache
+
 
 def get_vault_metrics(v: dict):
     pnl_arr = v.get("alltime_pnl", [])
@@ -102,30 +104,96 @@ def get_vault_metrics(v: dict):
     age = int(v.get("age_days", 30) or 30)
     return pnl_val, tvl_val, apr_30d, sharpe, robustness, l_usd, mdd, age
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 2. 4대 퀀트 전략 모델 정의
-# ─────────────────────────────────────────────────────────────────────────────
+
+def _est_ret14(v: dict) -> float:
+    pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 15 else v.get("alltime_pnl", [])
+    tvl = max(float(v.get("tvl", 1.0) or 1.0), 1.0)
+    if isinstance(pnl_arr, list) and len(pnl_arr) >= 15:
+        return float(np.clip((float(pnl_arr[-1]) - float(pnl_arr[-15])) / tvl, -0.5, 0.5))
+    if isinstance(pnl_arr, list) and len(pnl_arr) >= 2:
+        return float(np.clip((float(pnl_arr[-1]) - float(pnl_arr[0])) / tvl, -0.5, 0.5))
+    return 0.0
+
+
+class StrategySGRAPlusChampion:
+    name = "SGRA+ Quality & Support Weighted (HWM Delta)"
+    desc = "TVL>=$20k · MaxMDD<=40% · 리더지분>=5% + 신저점붕괴 차단 + 역사적 지지선·우량 가중배분"
+    uses_hwm_delta = True
+
+    @staticmethod
+    def allocate(vaults: list, total_capital=100000.0, held_addrs=None) -> dict:
+        held_norm = {a.lower() for a in (held_addrs or set())}
+        cap_ref = max(float(total_capital), 50000.0)
+        scored = []
+        for v in vaults:
+            addr = str(v.get("address", "")).lower()
+            if not addr or addr in EXCLUDED_ADDRESSES or not bool(v.get("allow_deposits", True)):
+                continue
+            tvl = float(v.get("tvl", 0.0) or 0.0)
+            skin = float(v.get("leader_equity_ratio", 0.0) or 0.0)
+            rob = float(v.get("robustness_score", 0.0) or 0.0)
+            dd_now = float(v.get("drawdown_now", 0.0) or 0.0)
+            mdd = float(v.get("max_drawdown", 15.0) or 15.0)
+            apr30 = float(v.get("apr_30d", 0.0) or 0.0)
+            ret14 = _est_ret14(v)
+            if tvl < 20000.0 or mdd > 40.0 or dd_now > 38.0 or skin < 0.05 or rob < 0.22 or ret14 < -0.05:
+                continue
+            if mdd < 2.2 and apr30 < 20.0 and ret14 < 0.015:
+                continue
+            if apr30 < -130.0:
+                continue
+            shp = float(np.clip(float(v.get("sharpe_ratio", 0.0) or 0.0), -20.0, 50.0))
+            underval = float(np.clip(dd_now / max(mdd, 5.0), 0.0, 1.0))
+            sc = rob * 0.30 + (shp / 50.0) * 0.20 + underval * 0.20 + min(skin / 0.40, 1.0) * 0.30
+            vc = dict(v)
+            vc["_sgra"] = sc
+            vc["_eff_dd"] = max(0.5 * mdd + 0.5 * dd_now, 7.0)
+            scored.append((sc, vc))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        keep_set = {v["address"] for _, v in scored[:8]}
+        sel = [v for _, v in scored if v["address"] in held_norm and v["address"] in keep_set][:6]
+        sel_set = {v["address"] for v in sel}
+        for _, v in scored:
+            if len(sel) >= 6:
+                break
+            if v["address"] not in sel_set:
+                sel.append(v)
+                sel_set.add(v["address"])
+        if not sel:
+            return {}
+
+        caps = np.array([min(0.25, (0.30 * float(v.get("tvl", 0.0) or 0.0)) / cap_ref) for v in sel], dtype=float)
+        raw_w = np.array([max(v["_sgra"], 0.05) / math.sqrt(v["_eff_dd"]) for v in sel], dtype=float)
+        w = raw_w / np.sum(raw_w) * min(1.0, float(np.sum(caps)))
+        for _ in range(8):
+            over = w > caps + 1e-9
+            if not np.any(over):
+                break
+            ex = float(np.sum(w[over] - caps[over]))
+            w[over] = caps[over]
+            under = ~over
+            if np.any(under) and np.sum(w[under]) > 0:
+                w[under] += ex * (w[under] / np.sum(w[under]))
+        return {v["address"]: float(wi) * total_capital for v, wi in zip(sel, w) if wi > 1e-4}
+
+
 class StrategyBarbellSkinHeavy:
     name = "Barbell Skin-In-Game Heavy (60:40)"
-    desc = "리더 자기자본 비율 극대화 + 초저낙폭 Core 60% + 고수익 Satellite 40%"
+    desc = "리더 달러 예치금(log USD) + 초저낙폭 Core 60% + 고수익 Satellite 40%"
+    uses_hwm_delta = False
 
     @staticmethod
-    def score_vault(v: dict) -> float:
-        _, _, apr_30d, sharpe, robustness, l_usd, mdd, _ = get_vault_metrics(v)
-        if apr_30d <= 0 or mdd > 35.0:
-            return -999.0
-        return (np.log1p(l_usd) * 15.0) + (min(sharpe, 50.0) * 20.0) + (robustness * 40.0)
-
-    @staticmethod
-    def allocate(vaults: list, total_capital=100000.0) -> dict:
-        has_leader_data = any(float(v.get("leader_equity_usd", 0.0) or 0.0) >= 10000.0 for v in vaults)
-        scored = [
-            (v, StrategyBarbellSkinHeavy.score_vault(v))
-            for v in vaults
-            if bool(v.get("allow_deposits", True))
-            and (not has_leader_data or float(v.get("leader_equity_usd", 0.0) or 0.0) >= 10000.0)
-        ]
-        scored = [s for s in scored if s[1] > 0]
+    def allocate(vaults: list, total_capital=100000.0, held_addrs=None) -> dict:
+        scored = []
+        for v in vaults:
+            if not bool(v.get("allow_deposits", True)):
+                continue
+            _, tvl, apr_30d, sharpe, robustness, l_usd, mdd, _ = get_vault_metrics(v)
+            if tvl < 10000.0 or apr_30d <= 0 or mdd > 35.0 or l_usd < 10000.0:
+                continue
+            sc = (np.log1p(l_usd) * 15.0) + (min(sharpe, 50.0) * 20.0) + (robustness * 40.0)
+            scored.append((v, sc))
         scored.sort(key=lambda x: x[1], reverse=True)
         if not scored:
             return {}
@@ -133,368 +201,338 @@ class StrategyBarbellSkinHeavy:
         core = core_cands[:3] if len(core_cands) >= 3 else scored[:3]
         core_addrs = {v["address"] for v, _ in core}
         rem = [s for s in scored if s[0]["address"] not in core_addrs]
-        sat = rem[:3] if len(rem) > 0 else core
-        
+        sat = rem[:3] if rem else core
         alloc = {}
-        core_cap = total_capital * 0.60
-        sat_cap = total_capital * 0.40
         for v, _ in core:
-            alloc[v["address"]] = alloc.get(v["address"], 0.0) + (core_cap / len(core))
+            cap_u = 0.30 * float(v.get("tvl", 0.0) or 0.0)
+            alloc[v["address"]] = min(cap_u, alloc.get(v["address"], 0.0) + (total_capital * 0.60 / len(core)))
         for v, _ in sat:
-            alloc[v["address"]] = alloc.get(v["address"], 0.0) + (sat_cap / len(sat))
+            cap_u = 0.30 * float(v.get("tvl", 0.0) or 0.0)
+            alloc[v["address"]] = min(cap_u, alloc.get(v["address"], 0.0) + (total_capital * 0.40 / len(sat)))
         return alloc
+
 
 class StrategyFractionalKelly:
     name = "Fractional Kelly 0.3x Optimizer"
-    desc = "승률과 손익비를 수학적으로 최적화하여 파산 확률 0%의 최적 베팅 비중 도출"
+    desc = "승률과 손익비를 최적화한 0.3x 부분 켈리 비중 배분"
+    uses_hwm_delta = False
 
     @staticmethod
-    def score_vault(v: dict) -> float:
-        pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 10 else v.get("alltime_pnl", [])
-        _, _, apr_30d, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
-        if len(pnl_arr) < 10 or apr_30d <= 0 or mdd > 30.0:
-            return -999.0
-        diffs = np.diff(np.array(pnl_arr, dtype=float))
-        window = diffs[-30:] if len(diffs) >= 30 else diffs
-        if float(np.sum(window)) <= 0:
-            return -999.0
-        wins = window[window > 0]
-        losses = np.abs(window[window < 0])
-        win_rate = len(wins) / (len(window) + 1e-9)
-        avg_win = float(np.mean(wins)) if len(wins) > 0 else 1.0
-        avg_loss = float(np.mean(losses)) if len(losses) > 0 else max(avg_win * 0.5, 1e-6)
-        payout_ratio = float(np.clip(avg_win / (avg_loss + 1e-9), 0.1, 10.0))
-        
-        # Kelly Criterion: f* = (p*b - (1-p)) / b
-        kelly_f = (win_rate * payout_ratio - (1.0 - win_rate)) / payout_ratio
-        fractional_kelly = float(np.clip(kelly_f * 0.3, 0.0, 0.30)) # 0.3x fractional
-        return fractional_kelly * (1.0 + np.log1p(l_usd) * 0.1) * (rob + 0.5)
-
-    @staticmethod
-    def allocate(vaults: list, total_capital=100000.0) -> dict:
-        scored = [(v, StrategyFractionalKelly.score_vault(v)) for v in vaults if bool(v.get("allow_deposits", True))]
-        scored = [s for s in scored if s[1] > 0]
+    def allocate(vaults: list, total_capital=100000.0, held_addrs=None) -> dict:
+        scored = []
+        for v in vaults:
+            if not bool(v.get("allow_deposits", True)):
+                continue
+            pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 10 else v.get("alltime_pnl", [])
+            _, tvl, apr_30d, _, rob, l_usd, mdd, _ = get_vault_metrics(v)
+            if tvl < 10000.0 or len(pnl_arr) < 10 or apr_30d <= 0 or mdd > 30.0:
+                continue
+            diffs = np.diff(np.array(pnl_arr, dtype=float))
+            win_w = diffs[-30:] if len(diffs) >= 30 else diffs
+            if float(np.sum(win_w)) <= 0:
+                continue
+            wins = win_w[win_w > 0]
+            losses = np.abs(win_w[win_w < 0])
+            p = len(wins) / (len(win_w) + 1e-9)
+            avg_w = float(np.mean(wins)) if len(wins) else 1.0
+            avg_l = float(np.mean(losses)) if len(losses) else max(avg_w * 0.5, 1e-6)
+            b = float(np.clip(avg_w / (avg_l + 1e-9), 0.1, 10.0))
+            f_k = float(np.clip(((p * b - (1.0 - p)) / b) * 0.3, 0.0, 0.30))
+            sc = f_k * (1.0 + np.log1p(l_usd) * 0.1) * (rob + 0.5)
+            if sc > 0:
+                scored.append((v, sc))
         scored.sort(key=lambda x: x[1], reverse=True)
         top = scored[:5]
         if not top:
             return {}
-        total_score = sum(s[1] for s in top) + 1e-9
-        alloc = {}
-        for v, s in top:
-            alloc[v["address"]] = (s / total_score) * total_capital
-        return alloc
+        tot_s = sum(s for _, s in top) + 1e-9
+        return {v["address"]: min(0.30 * float(v.get("tvl", 0.0) or 0.0), (s / tot_s) * total_capital) for v, s in top}
+
 
 class StrategyDynamicRegimeMomentum:
     name = "Dynamic Dual Momentum + Volatility Filter"
-    desc = "단기 7일 가속도와 중기 30일 모멘텀 융합 + 변동성 역가중 안전 분산"
+    desc = "단기 7일 가속도와 중기 30일 APR 모멘텀 추격 + 변동성 역가중"
+    uses_hwm_delta = False
 
     @staticmethod
-    def score_vault(v: dict) -> float:
-        _, _, apr_30d, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
-        pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 8 else v.get("alltime_pnl", [])
-        if len(pnl_arr) < 8 or apr_30d <= 0 or mdd > 25.0:
-            return -999.0
-        recent_7d_pnl = pnl_arr[-1] - pnl_arr[-8]
-        tvl = max(float(v.get("tvl", 1.0) or 1.0), 1.0)
-        mom_7d_pct = (recent_7d_pnl / tvl) * 52 * 100 # 연환산
-        score = (apr_30d * 0.4) + (mom_7d_pct * 0.4) + (min(sharpe, 50.0) * 10.0) - (mdd * 2.0)
-        return float(score)
-
-    @staticmethod
-    def allocate(vaults: list, total_capital=100000.0) -> dict:
-        scored = [(v, StrategyDynamicRegimeMomentum.score_vault(v)) for v in vaults if bool(v.get("allow_deposits", True))]
-        scored = [s for s in scored if s[1] > 0]
+    def allocate(vaults: list, total_capital=100000.0, held_addrs=None) -> dict:
+        scored = []
+        for v in vaults:
+            if not bool(v.get("allow_deposits", True)):
+                continue
+            _, tvl, apr_30d, sharpe, _, _, mdd, _ = get_vault_metrics(v)
+            pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 8 else v.get("alltime_pnl", [])
+            if tvl < 10000.0 or len(pnl_arr) < 8 or apr_30d <= 0 or mdd > 25.0:
+                continue
+            mom_7d = ((pnl_arr[-1] - pnl_arr[-8]) / tvl) * 52.0 * 100.0
+            sc = (apr_30d * 0.4) + (mom_7d * 0.4) + (min(sharpe, 50.0) * 10.0) - (mdd * 2.0)
+            if sc > 0:
+                scored.append((v, sc))
         scored.sort(key=lambda x: x[1], reverse=True)
         top = scored[:4]
         if not top:
             return {}
-        # Inverse Volatility / MDD weighting
-        inv_mdds = [1.0 / (max(float(v.get("max_drawdown", 10.0) or 10.0), 1.0)) for v, _ in top]
-        total_inv = sum(inv_mdds) + 1e-9
-        alloc = {}
-        for (v, _), w in zip(top, inv_mdds):
-            alloc[v["address"]] = (w / total_inv) * total_capital
-        return alloc
+        inv = [1.0 / max(float(v.get("max_drawdown", 10.0) or 10.0), 1.0) for v, _ in top]
+        tot_i = sum(inv) + 1e-9
+        return {v["address"]: min(0.30 * float(v.get("tvl", 0.0) or 0.0), (w / tot_i) * total_capital) for (v, _), w in zip(top, inv)}
+
 
 class StrategyMeanReversionDipBuyer:
     name = "Mean-Reversion Dip-Buyer Alpha"
-    desc = "역대 A+ 등급 볼트의 일시적 -10%~-20% 낙폭 시 저점 집중 매수"
+    desc = "우량 볼트의 일시적 -1%~-22% 낙폭 구간 역발상 매수"
+    uses_hwm_delta = False
 
     @staticmethod
-    def score_vault(v: dict, require_dip: bool = True) -> float:
-        pnl_arr = v.get("_pit_pnl") if len(v.get("_pit_pnl", [])) >= 8 else v.get("alltime_pnl", [])
-        pnl_val, tvl_val, apr_30d, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
-        if len(pnl_arr) < 8 or rob < 0.25 or mdd > 30.0 or pnl_val <= 0 or tvl_val < 10000.0:
-            return -999.0
-        # Drawdown from peak (TVL 기반 분모 안정화 + 스냅샷 drawdown_now 병합)
-        pnl_np = np.array(pnl_arr, dtype=float)
-        peak = np.maximum.accumulate(pnl_np)
-        denom = np.maximum(tvl_val, np.abs(peak)) + 1e-9
-        dd = (peak - pnl_np) / denom
-        pit_dd_pct = float(dd[-1]) * 100.0 if len(dd) > 0 else 0.0
-        current_dd_pct = float(np.clip(max(pit_dd_pct, float(v.get("drawdown_now", 0.0) or 0.0)), 0.0, 100.0))
-        if require_dip and not (1.0 <= current_dd_pct <= 22.0):
-            return -999.0
-        if not require_dip and apr_30d <= 0:
-            return -999.0
-        # Under-valued opportunity score
-        undervalue = max(0.0, min(1.0, current_dd_pct / 20.0))
-        return (rob * 35.0) + (min(sharpe, 50.0) * 15.0) + (undervalue * 55.0) + (np.log1p(l_usd) * 10.0)
-
-    @staticmethod
-    def allocate(vaults: list, total_capital=100000.0) -> dict:
-        elig = [v for v in vaults if bool(v.get("allow_deposits", True))]
-        scored = [(v, StrategyMeanReversionDipBuyer.score_vault(v, require_dip=True)) for v in elig]
-        scored = [s for s in scored if s[1] > 0]
-        # 눌림목 종목이 2개 미만인 구간에서는 초고로버스트니스 우량 볼트에 대기 배분 (유휴 현금 손실 방지)
-        if len(scored) < 2:
-            fallback = [(v, StrategyMeanReversionDipBuyer.score_vault(v, require_dip=False)) for v in elig]
-            fallback = [s for s in fallback if s[1] > 0]
-            used_addrs = {v["address"] for v, _ in scored}
-            for fv, fs in sorted(fallback, key=lambda x: x[1], reverse=True):
-                if fv["address"] not in used_addrs:
-                    scored.append((fv, fs * 0.8))
-                if len(scored) >= 4:
-                    break
+    def allocate(vaults: list, total_capital=100000.0, held_addrs=None) -> dict:
+        scored = []
+        for v in vaults:
+            if not bool(v.get("allow_deposits", True)):
+                continue
+            pnl_val, tvl, _, sharpe, rob, l_usd, mdd, _ = get_vault_metrics(v)
+            dd_now = float(v.get("drawdown_now", 0.0) or 0.0)
+            if tvl < 10000.0 or rob < 0.25 or mdd > 30.0 or pnl_val <= 0 or not (1.0 <= dd_now <= 22.0):
+                continue
+            sc = (rob * 35.0) + (min(sharpe, 50.0) * 15.0) + (min(dd_now / 20.0, 1.0) * 55.0) + (np.log1p(l_usd) * 10.0)
+            scored.append((v, sc))
         scored.sort(key=lambda x: x[1], reverse=True)
         top = scored[:4]
         if not top:
             return {}
-        alloc = {v["address"]: (total_capital / len(top)) for v, _ in top}
-        return alloc
+        return {v["address"]: min(0.30 * float(v.get("tvl", 0.0) or 0.0), total_capital / len(top)) for v, _ in top}
+
 
 ALL_STRATEGIES = [
+    StrategySGRAPlusChampion,
     StrategyBarbellSkinHeavy,
     StrategyFractionalKelly,
     StrategyDynamicRegimeMomentum,
-    StrategyMeanReversionDipBuyer
+    StrategyMeanReversionDipBuyer,
 ]
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 3. 백테스트 시뮬레이터 (Walk-Forward & Out-of-Sample Performance)
-# ─────────────────────────────────────────────────────────────────────────────
-def run_strategy_backtest(strat_cls, snapshots_cache: dict, initial_cap=100000.0, rebalance_interval=14):
-    dates = sorted(snapshots_cache.keys())
-    if len(dates) < 15:
-        return {"total_return": 0.0, "cagr": 0.0, "sharpe": 0.0, "mdd": 0.0, "sortino": 0.0, "calmar": 0.0}
-    
-    current_cap = initial_cap
-    active_alloc = {}
-    last_reb_idx = 0
+
+def _simulate_single_offset(strat_cls, dates, snapshots_cache, start_idx, offset, initial_cap, rebalance_interval):
+    cash = initial_cap
+    holdings = {}  # addr -> {net, hwm}
     daily_returns = []
-    portfolio_values = [initial_cap]
-    
-    for i, d in enumerate(dates):
-        snap = snapshots_cache[d]
-        addr_to_pnl = {}
+    values = [initial_cap]
+    band = 0.10 if getattr(strat_cls, "uses_hwm_delta", False) else 0.0
+
+    prev_pnl = {}
+    for step, idx in enumerate(range(start_idx, len(dates))):
+        snap = snapshots_cache[dates[idx]]
+        cur_pnl = {}
         for v in snap:
             p = v.get("alltime_pnl", [])
-            p_val = float(p[-1]) if (isinstance(p, list) and len(p) > 0) else float(v.get("pnl_alltime", 0.0) or 0.0)
-            tvl_val = max(float(v.get("tvl", 1.0) or 1.0), 1.0)
-            addr_to_pnl[v["address"]] = (p_val, tvl_val)
-        
-        # Periodic Rebalancing
-        if i == 0 or (i - last_reb_idx) >= rebalance_interval or not active_alloc:
-            active_alloc = strat_cls.allocate(snap, total_capital=current_cap)
-            last_reb_idx = i
-            prev_snapshot_pnls = addr_to_pnl
-            continue
-        
-        # Calculate daily step return
-        day_pnl = 0.0
-        for addr, weight in active_alloc.items():
-            if addr in addr_to_pnl and addr in prev_snapshot_pnls:
-                curr_p, curr_tvl = addr_to_pnl[addr]
-                prev_p, _ = prev_snapshot_pnls[addr]
-                p_change = curr_p - prev_p
-                # Return ratio on allocated capital
-                ratio = np.clip(p_change / curr_tvl, -0.20, 0.20)
-                day_pnl += weight * ratio
-        
-        step_ret = day_pnl / current_cap
-        daily_returns.append(step_ret)
-        current_cap += day_pnl
-        portfolio_values.append(current_cap)
-        prev_snapshot_pnls = addr_to_pnl
-    
-    tot_ret = ((current_cap - initial_cap) / initial_cap) * 100.0
-    days = max(len(dates), 1)
-    cagr = ((current_cap / initial_cap) ** (365.0 / days) - 1.0) * 100.0 if current_cap > 0 else -100.0
-    
-    # Calculate Sharpe, Sortino, MDD (빈 슬라이스 RuntimeWarning 및 1e-9 분모 폭주 방지)
+            pv = float(p[-1]) if (isinstance(p, list) and p) else float(v.get("pnl_alltime", 0.0) or 0.0)
+            cur_pnl[v["address"]] = (pv, max(float(v.get("tvl", 1.0) or 1.0), 1.0))
+
+        if step > 0:
+            prev_tot = cash + sum(h["net"] for h in holdings.values())
+            for addr, h in list(holdings.items()):
+                if addr in cur_pnl and addr in prev_pnl and prev_pnl[addr][1] >= 5000.0:
+                    r = float(np.clip((cur_pnl[addr][0] - prev_pnl[addr][0]) / prev_pnl[addr][1], -0.35, 0.35))
+                else:
+                    r = 0.0
+                gross = h["net"] * (1.0 + r)
+                fee = 0.10 * (gross - h["hwm"]) if gross > h["hwm"] else 0.0
+                h["net"] = gross - fee
+                h["hwm"] = max(h["hwm"], gross) - fee
+            cur_tot = cash + sum(h["net"] for h in holdings.values())
+            daily_returns.append((cur_tot - prev_tot) / max(prev_tot, 1e-9))
+            values.append(cur_tot)
+
+        if step == 0 or (step % rebalance_interval == offset % rebalance_interval):
+            port_tot = cash + sum(h["net"] for h in holdings.values())
+            target_alloc = strat_cls.allocate(snap, total_capital=port_tot, held_addrs=set(holdings.keys()))
+
+            for addr in list(holdings.keys()):
+                tgt_u = target_alloc.get(addr, 0.0)
+                cur_u = holdings[addr]["net"]
+                if tgt_u <= 1.0:
+                    pos = holdings.pop(addr)
+                    cash += pos["net"] * (1.0 - 0.0005)
+                elif cur_u > tgt_u * (1.0 + band) and (cur_u - tgt_u) >= 50.0:
+                    trim = cur_u - tgt_u
+                    frac = trim / cur_u
+                    holdings[addr]["net"] -= trim
+                    holdings[addr]["hwm"] *= (1.0 - frac)
+                    cash += trim * (1.0 - 0.0005)
+
+            buys = []
+            for addr, tgt_u in target_alloc.items():
+                cur_u = holdings[addr]["net"] if addr in holdings else 0.0
+                if tgt_u > cur_u * (1.0 + band) and (tgt_u - cur_u) >= 50.0:
+                    buys.append((addr, tgt_u - cur_u))
+            tot_b = sum(x[1] for x in buys)
+            sc = min(1.0, cash / (tot_b * 1.0005)) if tot_b > 0 else 0.0
+            for addr, diff in buys:
+                amt = diff * sc
+                if amt < 50.0:
+                    continue
+                cash -= amt * 1.0005
+                if addr in holdings:
+                    holdings[addr]["net"] += amt
+                    holdings[addr]["hwm"] += amt
+                else:
+                    holdings[addr] = {"net": amt, "hwm": amt}
+
+        prev_pnl = cur_pnl
+
+    final_cap = cash + sum(h["net"] for h in holdings.values())
+    tot_ret = ((final_cap - initial_cap) / initial_cap) * 100.0
+    days = max(len(values) - 1, 1)
+    cagr = ((final_cap / initial_cap) ** (365.0 / days) - 1.0) * 100.0 if final_cap > 0 else -100.0
     arr = np.array(daily_returns, dtype=float)
-    if len(arr) >= 2:
-        mu = float(arr.mean())
-        std = float(arr.std())
-        sharpe = float((mu / (std + 1e-9)) * np.sqrt(365)) if std > 1e-12 else 0.0
+    if len(arr) >= 2 and arr.std() > 1e-12:
+        mu, sd = float(arr.mean()), float(arr.std())
+        sharpe = float((mu / sd) * np.sqrt(365))
         tdd = float(np.sqrt(np.mean(np.minimum(0.0, arr) ** 2)))
-        down_dev = max(tdd, std * 0.25, 1e-4)
-        sortino = float(np.clip((mu / down_dev) * np.sqrt(365), -20.0, 50.0))
+        sortino = float(np.clip((mu / max(tdd, sd * 0.25, 1e-4)) * np.sqrt(365), -20.0, 50.0))
     else:
-        sharpe = 0.0
-        sortino = 0.0
-    
-    pv = np.array(portfolio_values, dtype=float)
-    peak = np.maximum.accumulate(pv)
-    dd = (peak - pv) / peak
-    mdd = float(dd.max()) * 100.0 if len(dd) > 0 else 0.0
-    calmar = float(cagr / (mdd + 1e-9)) if mdd > 0 else cagr
-    
+        sharpe, sortino = 0.0, 0.0
+    pv = np.array(values, dtype=float)
+    pk = np.maximum.accumulate(pv)
+    mdd = float(np.max((pk - pv) / pk)) * 100.0 if len(pv) else 0.0
+    return tot_ret, cagr, sharpe, sortino, mdd, final_cap
+
+
+def run_strategy_backtest(strat_cls, snapshots_cache: dict, initial_cap=100000.0, rebalance_interval=14):
+    dates = sorted(snapshots_cache.keys())
+    if len(dates) < 35:
+        return {"strategy_name": strat_cls.name, "description": strat_cls.desc, "total_return_pct": 0.0, "cagr_pct": 0.0, "sharpe_ratio": 0.0, "sortino_ratio": 0.0, "max_drawdown_pct": 0.0, "calmar_ratio": 0.0, "final_capital": initial_cap}
+
+    start_idx = 30
+    res_list = [
+        _simulate_single_offset(strat_cls, dates, snapshots_cache, start_idx, off, initial_cap, rebalance_interval)
+        for off in range(rebalance_interval)
+    ]
+    rets = [r[0] for r in res_list]
+    mean_ret = float(np.mean(rets))
+    mean_cagr = float(np.mean([r[1] for r in res_list]))
+    mean_sharpe = float(np.mean([r[2] for r in res_list]))
+    mean_sortino = float(np.mean([r[3] for r in res_list]))
+    mean_mdd = float(np.mean([r[4] for r in res_list]))
+    mean_cap = float(np.mean([r[5] for r in res_list]))
+    calmar = float(mean_cagr / max(mean_mdd, 1.0))
+
     return {
         "strategy_name": strat_cls.name,
         "description": strat_cls.desc,
-        "total_return_pct": round(tot_ret, 2),
-        "cagr_pct": round(cagr, 2),
-        "sharpe_ratio": round(sharpe, 2),
-        "sortino_ratio": round(sortino, 2),
-        "max_drawdown_pct": round(mdd, 2),
+        "total_return_pct": round(mean_ret, 2),
+        "phase_min_return_pct": round(float(np.min(rets)), 2),
+        "phase_max_return_pct": round(float(np.max(rets)), 2),
+        "positive_offsets": f"{sum(1 for x in rets if x > 0)}/{rebalance_interval}",
+        "cagr_pct": round(mean_cagr, 2),
+        "sharpe_ratio": round(mean_sharpe, 2),
+        "sortino_ratio": round(mean_sortino, 2),
+        "max_drawdown_pct": round(mean_mdd, 2),
         "calmar_ratio": round(calmar, 2),
-        "final_capital": round(current_cap, 2)
+        "final_capital": round(mean_cap, 2),
     }
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 4. 자가 채점 및 오차 추적 (Self-Evaluation & Tracking Error)
-# ─────────────────────────────────────────────────────────────────────────────
+
 def run_self_evaluation(snapshots_cache: dict):
     dates = sorted(snapshots_cache.keys())
     if len(dates) < 2:
         return {"status": "insufficient_data"}
-    
-    today_str = dates[-1]
-    yesterday_str = dates[-2]
-    
-    today_snap = snapshots_cache[today_str]
-    yesterday_snap = snapshots_cache[yesterday_str]
-    
-    # Analyze yesterday's top barbell recommendation performance today
-    today_pnl_map = {v["address"]: v for v in today_snap}
-    yesterday_pnl_map = {v["address"]: v for v in yesterday_snap}
-    
-    recommended_sample = StrategyBarbellSkinHeavy.allocate(yesterday_snap, total_capital=100000.0)
+    today_str, yesterday_str = dates[-1], dates[-2]
+    today_map = {v["address"]: v for v in snapshots_cache[today_str]}
+    yest_map = {v["address"]: v for v in snapshots_cache[yesterday_str]}
+
+    sample = StrategySGRAPlusChampion.allocate(snapshots_cache[yesterday_str], total_capital=100000.0)
     total_gain = 0.0
-    item_results = []
-    
-    for addr, alloc_usd in recommended_sample.items():
-        v_today = today_pnl_map.get(addr)
-        v_yest = yesterday_pnl_map.get(addr)
-        if v_today and v_yest:
-            p_today = float(v_today.get("alltime_pnl", [0])[-1] if v_today.get("alltime_pnl") else 0.0)
-            p_yest = float(v_yest.get("alltime_pnl", [0])[-1] if v_yest.get("alltime_pnl") else 0.0)
-            tvl = max(float(v_today.get("tvl", 1.0) or 1.0), 1.0)
-            pnl_diff = p_today - p_yest
-            ret_pct = (pnl_diff / tvl) * 100.0
-            profit_usd = alloc_usd * (pnl_diff / tvl)
-            total_gain += profit_usd
-            item_results.append({
-                "vault_name": v_today.get("name", addr[:10]),
+    items = []
+    for addr, alloc_usd in sample.items():
+        vt, vy = today_map.get(addr), yest_map.get(addr)
+        if vt and vy:
+            pt = float(vt.get("alltime_pnl", [0])[-1] if vt.get("alltime_pnl") else 0.0)
+            py = float(vy.get("alltime_pnl", [0])[-1] if vy.get("alltime_pnl") else 0.0)
+            tvl = max(float(vy.get("tvl", 1.0) or 1.0), 1.0)
+            ret = float(np.clip((pt - py) / tvl, -0.35, 0.35))
+            prof = alloc_usd * ret
+            total_gain += prof
+            items.append({
+                "vault_name": vt.get("name", addr[:10]),
                 "address": addr,
                 "allocated_usd": round(alloc_usd, 2),
-                "actual_24h_gain_usd": round(profit_usd, 2),
-                "actual_24h_return_pct": round(ret_pct, 4)
+                "actual_24h_gain_usd": round(prof, 2),
+                "actual_24h_return_pct": round(ret * 100.0, 4),
             })
-    
+
     eval_record = {
         "evaluated_date": today_str,
         "referenced_date": yesterday_str,
         "portfolio_24h_profit_usd": round(total_gain, 2),
         "portfolio_24h_return_pct": round((total_gain / 100000.0) * 100.0, 4),
-        "evaluated_holdings": item_results
+        "evaluated_holdings": items,
     }
-    
-    # Save to history
-    hist = load_json(EVAL_HIST_FILE, default=[])
-    # Append or update today
-    hist = [h for h in hist if h.get("evaluated_date") != today_str]
+    hist = [h for h in load_json(EVAL_HIST_FILE, default=[]) if h.get("evaluated_date") != today_str]
     hist.append(eval_record)
-    save_json(EVAL_HIST_FILE, hist[-60:]) # Keep last 60 days
+    save_json(EVAL_HIST_FILE, hist[-60:])
     return eval_record
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 5. 메인 루프 실행 엔진 (Autonomous Loop Engine Execution)
-# ─────────────────────────────────────────────────────────────────────────────
+
 def run_autonomous_loop():
-    print("=" * 65)
-    print("🔄 [Hyperliquid Autonomous Loop Engineering] 자율 진화 퀀트 엔진 가동")
-    print("=" * 65)
-    
-    # Step 1: Load snapshots
+    print("=" * 72)
+    print("🔄 [Hyperliquid Autonomous Loop] 10% HWM & 14-Offset 전위상 공정 토너먼트")
+    print("=" * 72)
     snapshots_cache = load_all_snapshots()
     dates = sorted(snapshots_cache.keys())
-    print(f"  📂 누적 스냅샷: 총 {len(dates)}일치 ({dates[0]} ~ {dates[-1]})")
-    
-    # Step 2: Self-Evaluation (자가 채점)
-    print("\n📝 [Step 1/4] 어제 예측 포트폴리오 실현 손익 자가 채점 중...")
+    print(f"  📂 무결 연속 스냅샷: 총 {len(dates)}일치 ({dates[0]} ~ {dates[-1]})")
+
     eval_result = run_self_evaluation(snapshots_cache)
     if "portfolio_24h_return_pct" in eval_result:
-        print(f"  ✅ 어제 포트폴리오 24h 실제 수익률: {eval_result['portfolio_24h_return_pct']:+.2f}% (${eval_result['portfolio_24h_profit_usd']:+,.2f})")
-    
-    # Step 3: Tournament Loop (4대 퀀트 전략 백테스트 대전)
-    print("\n🏆 [Step 2/4] 4대 퀀트 전략 토너먼트 백테스팅 진행 중...")
+        print(f"  ✅ 어제 SGRA+ 포트폴리오 24h 실현 수익률: {eval_result['portfolio_24h_return_pct']:+.2f}% (${eval_result['portfolio_24h_profit_usd']:+,.2f})")
+
+    print("\n🏆 [Step 2/4] 5대 퀀트 전략 공정 백테스팅 (10% HWM + 5bps + 30% TVL캡 + 14개 전오프셋 평균)...")
     tournament_results = []
     for strat in ALL_STRATEGIES:
         res = run_strategy_backtest(strat, snapshots_cache)
         tournament_results.append((strat, res))
-        print(f"  • {res['strategy_name']:<42} | 수익률: {res['total_return_pct']:>+7.2f}% | Sharpe: {res['sharpe_ratio']:>5.2f} | MDD: {res['max_drawdown_pct']:>5.2f}%")
-    
-    # Rank tournament by Calmar Ratio and Sharpe
-    tournament_results.sort(key=lambda x: (x[1]["sharpe_ratio"] * 0.6 + x[1]["calmar_ratio"] * 0.4), reverse=True)
+        print(
+            f"  • {res['strategy_name']:<44} | 평균순수익: {res['total_return_pct']:>+6.2f}% "
+            f"({res['positive_offsets']} 흑자) | Sharpe: {res['sharpe_ratio']:>5.2f} | MDD: {res['max_drawdown_pct']:>5.2f}%"
+        )
+
+    tournament_results.sort(
+        key=lambda x: (x[1]["sharpe_ratio"] * 0.65 + min(x[1]["calmar_ratio"], 10.0) * 0.35),
+        reverse=True,
+    )
     champion_strat, champion_metrics = tournament_results[0]
-    
-    print("\n🥇 [Step 3/4] 토너먼트 챔피언 전략 선정 및 자가 보정:")
-    print(f"  ⭐ 챔피언 전략: {champion_metrics['strategy_name']}")
-    print(f"  ⭐ 누적 수익률: +{champion_metrics['total_return_pct']}% | Sharpe: {champion_metrics['sharpe_ratio']} | Calmar: {champion_metrics['calmar_ratio']}")
-    
-    # Step 4: Generate Pro-active Allocation using Champion
+    print(f"\n🥇 토너먼트 최종 챔피언: {champion_metrics['strategy_name']} (순수익 {champion_metrics['total_return_pct']:+.2f}%, Sharpe {champion_metrics['sharpe_ratio']})")
+
     today_snap = snapshots_cache[dates[-1]]
     champion_alloc = champion_strat.allocate(today_snap, total_capital=100000.0)
-    
-    # Find vault names
     today_vault_dict = {v["address"]: v for v in today_snap}
     recommended_portfolio = []
-    for addr, usd in champion_alloc.items():
+    for addr, usd in sorted(champion_alloc.items(), key=lambda x: x[1], reverse=True):
         v = today_vault_dict.get(addr, {})
-        apr = float(v.get("apr_30d", 0.0) or v.get("apr_pct", 0.0) or 0.0)
-        mdd = float(v.get("max_drawdown", 0.0) or 0.0)
-        sharpe = float(v.get("sharpe_ratio", 0.0) or 0.0)
-        l_usd = float(v.get("leader_equity_usd", 0.0) or 0.0)
         recommended_portfolio.append({
             "name": v.get("name", addr[:10]),
             "address": addr,
             "allocation_pct": round((usd / 100000.0) * 100.0, 2),
             "allocation_usd": round(usd, 2),
-            "apr_30d": round(apr, 2),
-            "mdd": round(mdd, 2),
-            "sharpe_ratio": round(sharpe, 2),
-            "leader_equity_usd": round(l_usd, 2)
+            "apr_30d": round(float(v.get("apr_30d", 0.0) or 0.0), 2),
+            "mdd": round(float(v.get("max_drawdown", 0.0) or 0.0), 2),
+            "sharpe_ratio": round(float(v.get("sharpe_ratio", 0.0) or 0.0), 2),
+            "leader_equity_usd": round(float(v.get("leader_equity_usd", 0.0) or 0.0), 2),
         })
-    
-    # Save active strategy & loop summary
-    active_strat_data = {
+
+    save_json(ACTIVE_STRAT_FILE, {
         "updated_at": datetime.now().isoformat(),
         "champion_strategy": champion_metrics,
-        "tournament_rankings": [t[1] for t in tournament_results]
-    }
-    save_json(ACTIVE_STRAT_FILE, active_strat_data)
-    
-    loop_summary = {
+        "tournament_rankings": [t[1] for t in tournament_results],
+    })
+    save_json(LOOP_SUMMARY_FILE, {
         "timestamp": datetime.now().isoformat(),
         "latest_data_date": dates[-1],
         "self_evaluation_24h": eval_result,
         "champion_model": champion_metrics,
         "recommended_portfolio": recommended_portfolio,
-        "all_tournament_results": [t[1] for t in tournament_results]
-    }
-    save_json(LOOP_SUMMARY_FILE, loop_summary)
-    
-    print("\n🎯 [Step 4/4] 오늘의 최적 자산 배분 포트폴리오 산출 완료:")
-    print("-" * 75)
-    print(f"{'#':<3} {'볼트명':<25} {'비중(%)':<8} {'투자금($)':<12} {'30일APR':<10} {'MDD':<8} {'샤프':<6}")
-    print("-" * 75)
-    for i, item in enumerate(recommended_portfolio, 1):
-        print(f"{i:<3} {item['name']:<25} {item['allocation_pct']:>6.1f}%  ${item['allocation_usd']:>10,.0f}  {item['apr_30d']:>8.1f}%  {item['mdd']:>6.1f}% {item['sharpe_ratio']:>5.2f}")
-    print("-" * 75)
+        "all_tournament_results": [t[1] for t in tournament_results],
+    })
     print(f"💾 결과 저장 완료: {LOOP_SUMMARY_FILE}")
-    print("=" * 65)
+
 
 if __name__ == "__main__":
     run_autonomous_loop()

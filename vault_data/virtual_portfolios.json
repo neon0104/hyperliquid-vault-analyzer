@@ -3,9 +3,19 @@
     "id": "default",
     "name": "나의 실제 포트폴리오",
     "ptype": "custom",
-    "total_capital": 0.0,
-    "invest_date": "2026-03-12",
-    "positions": {}
+    "total_capital": 7881.78,
+    "invest_date": "2026-11-02",
+    "positions": {
+      "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2": 1722.84,
+      "0x1e37a337ed460039d1b15bd3bc489de789768d5e": 246.33,
+      "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631": 186.6,
+      "0x565b1c32936bdaa526947178acc95c5b08cfacc4": 1351.52,
+      "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 1393.08,
+      "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18": 545.47,
+      "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 222.66,
+      "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086": 151.78,
+      "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 1969.94
+    }
   },
   {
     "id": "31c861e0",
@@ -83,6 +93,45 @@
       "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 10100.0,
       "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 12000.0,
       "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f": 1600.0
+    }
+  },
+  {
+    "id": "cd3de242",
+    "name": "실제와 비교",
+    "ptype": "custom",
+    "total_capital": 7882.0,
+    "invest_date": "2026-11-04",
+    "positions": {
+      "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04": 10.0,
+      "0x1e37a337ed460039d1b15bd3bc489de789768d5e": 10.0,
+      "0xda51323fe9800c8365646ad5c7ade0dd17fdc167": 10.0,
+      "0x565b1c32936bdaa526947178acc95c5b08cfacc4": 10.0,
+      "0xd6e56265890b76413d1d527eb9b75e334c0c5b42": 10.0,
+      "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11": 10.0,
+      "0x0ff219ac20596b457558341bc410bc7a08a1394c": 10.0,
+      "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 10.0,
+      "0x14ecb3f4932522b8d508fa6e237e2746a4999feb": 10.0,
+      "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc": 5.0,
+      "0xa6a34f0bf2ccea9a1ddf9e9a973f17c498dc5e40": 5.0
+    }
+  },
+  {
+    "id": "ad2d3569",
+    "name": "내가 구성한 PF",
+    "ptype": "custom",
+    "total_capital": 7882.0,
+    "invest_date": "2026-11-09",
+    "positions": {
+      "0x1e37a337ed460039d1b15bd3bc489de789768d5e": 10.0,
+      "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04": 10.0,
+      "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 10.0,
+      "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc": 10.0,
+      "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99": 10.0,
+      "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18": 10.0,
+      "0xd02ca067292ffc53a17024387f991b849d8cdbe2": 10.0,
+      "0xbbf7d7a9d0eaeab4115f022a6863450296112422": 10.0,
+      "0xca230e816bdb34a46960c2f978a30a563d1ae9e0": 10.0,
+      "0xa6a34f0bf2ccea9a1ddf9e9a973f17c498dc5e40": 10.0
     }
   }
 ]

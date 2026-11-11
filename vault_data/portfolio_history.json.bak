@@ -14570,5 +14570,671 @@
         "leader_eq": 0.9313493243294835
       }
     ]
+  },
+  "2026-11-02": {
+    "portfolio_value": 186082.85,
+    "daily_pnl": 34.19,
+    "daily_return_pct": 0.0184,
+    "cumulative_pnl": 86082.85,
+    "cumulative_pct": 86.0828,
+    "max_equity_ever": 186082.85,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1503,
+    "n_vaults": 3,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 45.17,
+        "apr_30d": 4.62,
+        "robustness": 0.9585,
+        "undervalue": 0.917,
+        "leader_eq": 0.08018137333971753
+      },
+      {
+        "name": "Citadel",
+        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+        "alloc_pct": 45.17,
+        "apr_30d": 2.94,
+        "robustness": 0.9405,
+        "undervalue": 0.983,
+        "leader_eq": 0.20613964876576266
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 9.66,
+        "apr_30d": 34.08,
+        "robustness": 0.7801,
+        "undervalue": 1.028,
+        "leader_eq": 0.9313493243294835
+      }
+    ]
+  },
+  "2026-11-03": {
+    "portfolio_value": 186142.16,
+    "daily_pnl": 59.31,
+    "daily_return_pct": 0.0319,
+    "cumulative_pnl": 86142.16,
+    "cumulative_pct": 86.1422,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.0,
+    "risk_score": 0.1489,
+    "n_vaults": 3,
+    "vaults": [
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "alloc_pct": 46.69,
+        "apr_30d": 4.61,
+        "robustness": 0.9667,
+        "undervalue": 1.015,
+        "leader_eq": 0.9521937078732708
+      },
+      {
+        "name": "Hyper2",
+        "address": "0xc26aad50fc965758414715d28a05b0607db103e4",
+        "alloc_pct": 46.69,
+        "apr_30d": 3.59,
+        "robustness": 0.8981,
+        "undervalue": 0.997,
+        "leader_eq": 0.9999998909110462
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 6.62,
+        "apr_30d": 117.89,
+        "robustness": 0.6841,
+        "undervalue": 0.913,
+        "leader_eq": 0.5656239196289524
+      }
+    ]
+  },
+  "2026-11-04": {
+    "portfolio_value": 186054.42,
+    "daily_pnl": -87.74,
+    "daily_return_pct": -0.0471,
+    "cumulative_pnl": 86054.42,
+    "cumulative_pct": 86.0544,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.0471,
+    "risk_score": 0.3749,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 14.33,
+        "apr_30d": -4.55,
+        "robustness": 0.9518,
+        "undervalue": 1.0,
+        "leader_eq": 0.054964684248860696
+      },
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 11.85,
+        "apr_30d": -2.23,
+        "robustness": 0.937,
+        "undervalue": 1.0,
+        "leader_eq": 0.07302968437319184
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 13.73,
+        "apr_30d": 45.54,
+        "robustness": 0.8406,
+        "undervalue": 0.817,
+        "leader_eq": 0.2818155931757356
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 4.79,
+        "apr_30d": 18.45,
+        "robustness": 0.7799,
+        "undervalue": 1.014,
+        "leader_eq": 0.9110104761680804
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 5.3,
+        "apr_30d": 59.49,
+        "robustness": 0.6995,
+        "undervalue": 1.052,
+        "leader_eq": 0.05000060352999882
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 13.96,
+        "apr_30d": -12.79,
+        "robustness": 0.5224,
+        "undervalue": 1.0,
+        "leader_eq": 0.41254164668463167
+      },
+      {
+        "name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "alloc_pct": 32.61,
+        "apr_30d": -69.85,
+        "robustness": 0.4802,
+        "undervalue": 1.0,
+        "leader_eq": 0.2604360279704272
+      },
+      {
+        "name": "LowRiskCryptoGainer",
+        "address": "0xd57c9295947b5a616a3933344ef03a1ad67318ea",
+        "alloc_pct": 3.43,
+        "apr_30d": -58.72,
+        "robustness": 0.6095,
+        "undervalue": 1.0,
+        "leader_eq": 0.05221482487622685
+      }
+    ]
+  },
+  "2026-11-05": {
+    "portfolio_value": 185913.64,
+    "daily_pnl": -140.78,
+    "daily_return_pct": -0.0757,
+    "cumulative_pnl": 85913.64,
+    "cumulative_pct": 85.9136,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.1228,
+    "risk_score": 0.4225,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 20.4,
+        "apr_30d": 8.99,
+        "robustness": 0.9504,
+        "undervalue": 0.92,
+        "leader_eq": 0.05497477316900293
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 15.45,
+        "apr_30d": 34.2,
+        "robustness": 0.8468,
+        "undervalue": 0.825,
+        "leader_eq": 0.2764413155452132
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 5.67,
+        "apr_30d": -1.83,
+        "robustness": 0.7459,
+        "undervalue": 1.0,
+        "leader_eq": 0.9110837749312483
+      },
+      {
+        "name": "LowRiskCryptoGainer",
+        "address": "0xd57c9295947b5a616a3933344ef03a1ad67318ea",
+        "alloc_pct": 1.97,
+        "apr_30d": -40.81,
+        "robustness": 0.706,
+        "undervalue": 1.0,
+        "leader_eq": 0.05237238828801137
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 6.51,
+        "apr_30d": 64.95,
+        "robustness": 0.6994,
+        "undervalue": 1.057,
+        "leader_eq": 0.050011693037481
+      },
+      {
+        "name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "alloc_pct": 34.22,
+        "apr_30d": -80.22,
+        "robustness": 0.4767,
+        "undervalue": 1.0,
+        "leader_eq": 0.2604360279704272
+      },
+      {
+        "name": "Aaroh",
+        "address": "0x094833499583333b4294e61eb8efc20fcda97eb9",
+        "alloc_pct": 15.78,
+        "apr_30d": -67.21,
+        "robustness": 0.5994,
+        "undervalue": 1.0,
+        "leader_eq": 0.27594374946427314
+      }
+    ]
+  },
+  "2026-11-06": {
+    "portfolio_value": 185790.98,
+    "daily_pnl": -122.66,
+    "daily_return_pct": -0.066,
+    "cumulative_pnl": 85790.98,
+    "cumulative_pct": 85.791,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.1887,
+    "risk_score": 0.3932,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 23.25,
+        "apr_30d": -13.71,
+        "robustness": 0.9522,
+        "undervalue": 1.0,
+        "leader_eq": 0.05486526533429133
+      },
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 4.33,
+        "apr_30d": -19.96,
+        "robustness": 0.8685,
+        "undervalue": 1.0,
+        "leader_eq": 0.07875168469948608
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 9.65,
+        "apr_30d": -8.96,
+        "robustness": 0.8158,
+        "undervalue": 1.0,
+        "leader_eq": 0.27318966912942494
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 6.04,
+        "apr_30d": -57.22,
+        "robustness": 0.7435,
+        "undervalue": 1.0,
+        "leader_eq": 0.8350939856558923
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 6.73,
+        "apr_30d": 75.34,
+        "robustness": 0.6984,
+        "undervalue": 1.067,
+        "leader_eq": 0.05000013420989466
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 11.82,
+        "apr_30d": -21.89,
+        "robustness": 0.4865,
+        "undervalue": 1.0,
+        "leader_eq": 0.41254164668463167
+      },
+      {
+        "name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "alloc_pct": 35.79,
+        "apr_30d": -51.23,
+        "robustness": 0.4815,
+        "undervalue": 1.0,
+        "leader_eq": 0.25909787666125
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 2.39,
+        "apr_30d": 6.0,
+        "robustness": 0.6311,
+        "undervalue": 0.877,
+        "leader_eq": 0.20374790309622687
+      }
+    ]
+  },
+  "2026-11-07": {
+    "portfolio_value": 185708.28,
+    "daily_pnl": -82.7,
+    "daily_return_pct": -0.0445,
+    "cumulative_pnl": 85708.28,
+    "cumulative_pct": 85.7083,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.2331,
+    "risk_score": 0.4344,
+    "n_vaults": 7,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 9.2,
+        "apr_30d": -12.21,
+        "robustness": 0.9016,
+        "undervalue": 1.0,
+        "leader_eq": 0.07787322497727578
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 13.75,
+        "apr_30d": -7.44,
+        "robustness": 0.8158,
+        "undervalue": 1.0,
+        "leader_eq": 0.27318966912942494
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 8.49,
+        "apr_30d": -51.35,
+        "robustness": 0.7435,
+        "undervalue": 1.0,
+        "leader_eq": 0.8754983871343178
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 13.1,
+        "apr_30d": 75.55,
+        "robustness": 0.6977,
+        "undervalue": 1.067,
+        "leader_eq": 0.05000013407683896
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 5.46,
+        "apr_30d": 105.44,
+        "robustness": 0.6851,
+        "undervalue": 0.839,
+        "leader_eq": 0.6038464159856508
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 15.25,
+        "apr_30d": -17.93,
+        "robustness": 0.4885,
+        "undervalue": 1.0,
+        "leader_eq": 0.41254164668463167
+      },
+      {
+        "name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "alloc_pct": 34.75,
+        "apr_30d": -65.21,
+        "robustness": 0.4783,
+        "undervalue": 1.0,
+        "leader_eq": 0.25909787666125
+      }
+    ]
+  },
+  "2026-11-08": {
+    "portfolio_value": 185488.58,
+    "daily_pnl": -219.7,
+    "daily_return_pct": -0.1183,
+    "cumulative_pnl": 85488.58,
+    "cumulative_pct": 85.4886,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.3511,
+    "risk_score": 0.4228,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 21.36,
+        "apr_30d": -12.52,
+        "robustness": 0.952,
+        "undervalue": 1.0,
+        "leader_eq": 0.05477330980273647
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 10.77,
+        "apr_30d": -2.41,
+        "robustness": 0.8387,
+        "undervalue": 1.0,
+        "leader_eq": 0.2923116095359941
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 5.32,
+        "apr_30d": -40.06,
+        "robustness": 0.7434,
+        "undervalue": 1.0,
+        "leader_eq": 0.9145133768069961
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 9.12,
+        "apr_30d": 66.51,
+        "robustness": 0.6976,
+        "undervalue": 1.059,
+        "leader_eq": 0.05000020986835874
+      },
+      {
+        "name": "Danny Ocean",
+        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
+        "alloc_pct": 3.43,
+        "apr_30d": 85.28,
+        "robustness": 0.685,
+        "undervalue": 0.823,
+        "leader_eq": 0.6071737396738174
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 5.59,
+        "apr_30d": -20.83,
+        "robustness": 0.4873,
+        "undervalue": 1.0,
+        "leader_eq": 0.41254164668463167
+      },
+      {
+        "name": "Gucky_1coin_1dot5x",
+        "address": "0xd2f03635901956b950737bbf02463dfad9f2e9e1",
+        "alloc_pct": 31.58,
+        "apr_30d": -110.04,
+        "robustness": 0.655,
+        "undervalue": 1.0,
+        "leader_eq": 0.09427973040809745
+      },
+      {
+        "name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "alloc_pct": 12.83,
+        "apr_30d": -87.23,
+        "robustness": 0.4782,
+        "undervalue": 1.0,
+        "leader_eq": 0.25909787666125
+      }
+    ]
+  },
+  "2026-11-09": {
+    "portfolio_value": 185491.31,
+    "daily_pnl": 2.73,
+    "daily_return_pct": 0.0015,
+    "cumulative_pnl": 85491.31,
+    "cumulative_pct": 85.4913,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.3497,
+    "risk_score": 0.4492,
+    "n_vaults": 9,
+    "vaults": [
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 6.29,
+        "apr_30d": -6.82,
+        "robustness": 0.8616,
+        "undervalue": 1.0,
+        "leader_eq": 0.07715388201174829
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 18.27,
+        "apr_30d": 0.23,
+        "robustness": 0.8384,
+        "undervalue": 0.5,
+        "leader_eq": 0.2923116095359941
+      },
+      {
+        "name": "Hype U-Boat",
+        "address": "0xccee00943de1dc5e9f80aad18d8a9fb6ff5b51b5",
+        "alloc_pct": 4.82,
+        "apr_30d": 19.07,
+        "robustness": 0.7616,
+        "undervalue": 1.016,
+        "leader_eq": 0.055913548025300956
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 9.36,
+        "apr_30d": -32.43,
+        "robustness": 0.7432,
+        "undervalue": 1.0,
+        "leader_eq": 0.9145133768069961
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "alloc_pct": 11.26,
+        "apr_30d": 59.53,
+        "robustness": 0.6975,
+        "undervalue": 1.052,
+        "leader_eq": 0.05000000206060276
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 5.14,
+        "apr_30d": -23.35,
+        "robustness": 0.4842,
+        "undervalue": 1.0,
+        "leader_eq": 0.41254164668463167
+      },
+      {
+        "name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "alloc_pct": 13.17,
+        "apr_30d": -38.49,
+        "robustness": 0.4794,
+        "undervalue": 1.0,
+        "leader_eq": 0.25909787666125
+      },
+      {
+        "name": "Stratwise Multi-Asset Public",
+        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+        "alloc_pct": 0.88,
+        "apr_30d": 14.8,
+        "robustness": 0.5697,
+        "undervalue": 0.998,
+        "leader_eq": 0.18907667122678648
+      },
+      {
+        "name": "Gucky_1coin_1dot5x",
+        "address": "0xd2f03635901956b950737bbf02463dfad9f2e9e1",
+        "alloc_pct": 30.81,
+        "apr_30d": 8.04,
+        "robustness": 0.6539,
+        "undervalue": 0.719,
+        "leader_eq": 0.09427973040809745
+      }
+    ]
+  },
+  "2026-11-10": {
+    "portfolio_value": 185272.82,
+    "daily_pnl": -218.49,
+    "daily_return_pct": -0.1178,
+    "cumulative_pnl": 85272.82,
+    "cumulative_pct": 85.2728,
+    "max_equity_ever": 186142.16,
+    "mdd_pct": 0.467,
+    "risk_score": 0.4398,
+    "n_vaults": 8,
+    "vaults": [
+      {
+        "name": "Growi HF",
+        "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "alloc_pct": 24.18,
+        "apr_30d": -25.95,
+        "robustness": 0.9525,
+        "undervalue": 1.0,
+        "leader_eq": 0.05024093110072684
+      },
+      {
+        "name": "PF1",
+        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
+        "alloc_pct": 5.46,
+        "apr_30d": -11.02,
+        "robustness": 0.865,
+        "undervalue": 1.0,
+        "leader_eq": 0.08179160624893907
+      },
+      {
+        "name": "Mad Scientists",
+        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
+        "alloc_pct": 9.7,
+        "apr_30d": -19.87,
+        "robustness": 0.8066,
+        "undervalue": 1.0,
+        "leader_eq": 0.29237915184490576
+      },
+      {
+        "name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "alloc_pct": 6.51,
+        "apr_30d": -51.51,
+        "robustness": 0.7419,
+        "undervalue": 1.0,
+        "leader_eq": 0.9145587580929548
+      },
+      {
+        "name": "Hype U-Boat",
+        "address": "0xccee00943de1dc5e9f80aad18d8a9fb6ff5b51b5",
+        "alloc_pct": 4.15,
+        "apr_30d": 21.15,
+        "robustness": 0.7393,
+        "undervalue": 1.019,
+        "leader_eq": 0.055913548025300956
+      },
+      {
+        "name": "Sentiment Edge ",
+        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
+        "alloc_pct": 14.87,
+        "apr_30d": -43.52,
+        "robustness": 0.4781,
+        "undervalue": 1.0,
+        "leader_eq": 0.25909787666125
+      },
+      {
+        "name": "Quant Mirror",
+        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
+        "alloc_pct": 4.83,
+        "apr_30d": -29.67,
+        "robustness": 0.4806,
+        "undervalue": 1.0,
+        "leader_eq": 0.41254164668463167
+      },
+      {
+        "name": "Gucky_1coin_1dot5x",
+        "address": "0xd2f03635901956b950737bbf02463dfad9f2e9e1",
+        "alloc_pct": 30.3,
+        "apr_30d": -78.58,
+        "robustness": 0.6171,
+        "undervalue": 1.0,
+        "leader_eq": 0.09427973040809745
+      }
+    ]
   }
 }

@@ -1,66 +1,55 @@
 @echo off
 setlocal enabledelayedexpansion
+chcp 65001 >nul
+set PYTHONUTF8=1
+set PYTHONIOENCODING=utf-8
 cd /d "C:\Users\USER\.gemini\antigravity\scratch\hyperliquid-vault-analyzer"
 
-:: Log file
 set LOG_FILE=auto_run.log
 echo ======================================================== >> %LOG_FILE%
-echo [%date% %time%] Starting 4-hour data update... >> %LOG_FILE%
+echo [%date% %time%] Starting 4-hour data and SGRA+ autobot update... >> %LOG_FILE%
 
-:: Check admin
-net session >nul 2>&1
-if %errorLevel% == 0 (
-    echo [INFO] Running with Admin privileges. >> %LOG_FILE%
-) else (
-    echo [WARN] Not running as Admin. Some commands might fail. >> %LOG_FILE%
-)
-
-:: Abort any stuck rebase before pulling
 git rebase --abort >nul 2>&1
 
-:: Pull latest from GitHub (merge strategy to avoid rebase conflicts)
-echo Pulling latest changes from GitHub... >> %LOG_FILE%
-git pull origin main --no-rebase >> %LOG_FILE% 2>&1
+echo [0/9] Pulling latest changes from GitHub... >> %LOG_FILE%
+git pull origin main --no-rebase --autostash >> %LOG_FILE% 2>&1
 
-:: Run data collection (no skip check - collect every 4 hours)
-echo Running fetch_my_portfolio.py... >> %LOG_FILE%
-python fetch_my_portfolio.py >> %LOG_FILE% 2>&1
+echo [1/9] Running fetch_my_portfolio.py... >> %LOG_FILE%
+python -X utf8 fetch_my_portfolio.py >> %LOG_FILE% 2>&1
 
-echo Running analyze_top_vaults.py... >> %LOG_FILE%
-python analyze_top_vaults.py >> %LOG_FILE% 2>&1
+echo [2/9] Running analyze_top_vaults.py... >> %LOG_FILE%
+python -X utf8 analyze_top_vaults.py >> %LOG_FILE% 2>&1
 
-echo Running daily_pnl_collector.py... >> %LOG_FILE%
-python daily_pnl_collector.py >> %LOG_FILE% 2>&1
+echo [3/9] Running daily_pnl_collector.py... >> %LOG_FILE%
+python -X utf8 daily_pnl_collector.py >> %LOG_FILE% 2>&1
 
-echo Running hl_auto_vault_bot.py (SGRA+ Auto Signal ^& Rebalancer)... >> %LOG_FILE%
-python hl_auto_vault_bot.py >> %LOG_FILE% 2>&1
+echo [4/9] Running hl_auto_vault_bot.py... >> %LOG_FILE%
+python -X utf8 hl_auto_vault_bot.py >> %LOG_FILE% 2>&1
 
-echo Running autonomous_loop_engine.py (Self-Improving Loop)... >> %LOG_FILE%
-python autonomous_loop_engine.py >> %LOG_FILE% 2>&1
+echo [5/9] Running auto_rebalancer.py... >> %LOG_FILE%
+python -X utf8 auto_rebalancer.py >> %LOG_FILE% 2>&1
 
-echo Running autonomous_researcher.py (AI Quant Research Diary)... >> %LOG_FILE%
-python autonomous_researcher.py >> %LOG_FILE% 2>&1
+echo [6/9] Running autonomous_loop_engine.py... >> %LOG_FILE%
+python -X utf8 autonomous_loop_engine.py >> %LOG_FILE% 2>&1
 
-echo Running master_portfolio_manager.py (Master Ensemble Optimizer)... >> %LOG_FILE%
-python master_portfolio_manager.py >> %LOG_FILE% 2>&1
+echo [7/9] Running autonomous_researcher.py... >> %LOG_FILE%
+python -X utf8 autonomous_researcher.py >> %LOG_FILE% 2>&1
 
-echo Running export_dashboard_data.py (GitHub Pages Static Data)... >> %LOG_FILE%
-python export_dashboard_data.py >> %LOG_FILE% 2>&1
+echo [8/9] Running master_portfolio_manager.py... >> %LOG_FILE%
+python -X utf8 master_portfolio_manager.py >> %LOG_FILE% 2>&1
 
-:: Push to GitHub
-echo Pushing updated data to GitHub... >> %LOG_FILE%
-git add . >> %LOG_FILE% 2>&1
+echo [9/9] Running export_dashboard_data.py... >> %LOG_FILE%
+python -X utf8 export_dashboard_data.py >> %LOG_FILE% 2>&1
+
+echo Pushing public analytics data to GitHub... >> %LOG_FILE%
+git add vault_data/snapshots/*.json vault_data/master_portfolio_recommendation.json vault_data/loop_engine_summary.json vault_data/active_quant_strategy.json vault_data/auto_rebalance_sim.json vault_data/RESEARCH_DIARY.md vault_data/research_learning_log.json vault_data/loop_evaluation_history.json docs/data.json >> %LOG_FILE% 2>&1
 git commit -m "Auto-update vault data [%date% %time%]" >> %LOG_FILE% 2>&1
 
-:: Use merge pull to avoid rebase conflicts
-git pull origin main --no-rebase >> %LOG_FILE% 2>&1
+git pull origin main --no-rebase --autostash >> %LOG_FILE% 2>&1
 git push origin main >> %LOG_FILE% 2>&1
 
-:: 강제푸시(force push) 폴백 제거:
-:: 원격의 더 최신 데이터(예: GitHub Actions 커밋)를 덮어써 유실시킬 수 있어 삭제했습니다.
-:: 푸시가 실패하면 그대로 두고 다음 주기에 pull 후 재시도하는 것이 안전합니다.
 if %errorlevel% neq 0 (
-    echo [WARN] Push failed. 다음 주기에 pull 후 재시도합니다. 반복되면 수동 확인 필요. >> %LOG_FILE%
+    echo [WARN] Push failed - will retry next cycle. >> %LOG_FILE%
 )
 
 echo [%date% %time%] Update completed. >> %LOG_FILE%

@@ -1,8 +1,18 @@
 {
-  "_comment": "내 실제 포트폴리오 - 볼트주소: 투자금액(USD). 아래 예시를 참고해 직접 수정하세요.",
+  "_comment": "SGRA+ 자동운용 봇 실시간 동기화 포트폴리오 (positions = 실제 투자 원금 basis)",
   "account_address": "0x954642ca2027408F69b028B6d0FebE54D6A34a2C",
-  "fetched_at": "2026-11-02T10:23:19",
-  "total_capital": 100000,
-  "invest_date": "2026-03-12",
-  "positions": {}
+  "fetched_at": "2026-11-11T15:39:06",
+  "total_capital": 7881.78,
+  "invest_date": "2026-01-22",
+  "positions": {
+    "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2": 1722.84,
+    "0x1e37a337ed460039d1b15bd3bc489de789768d5e": 246.33,
+    "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631": 186.6,
+    "0x565b1c32936bdaa526947178acc95c5b08cfacc4": 1351.52,
+    "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5": 1393.08,
+    "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18": 545.47,
+    "0xba939edf38c0ae0cc689c98b492e0535f43e4550": 222.66,
+    "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086": 151.78,
+    "0xfeab64de8cdf9dcebc0f49812499e396273efc06": 1969.94
+  }
 }

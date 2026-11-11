@@ -12,9 +12,16 @@ SNAPSHOTS_DIR = os.path.join(DATA_DIR, "snapshots")
 MY_PORT_FILE  = "my_portfolio.json"
 
 
+_SNAPS_MEM_CACHE = {"sig": None, "data": None}
+
+
 def load_snapshots_all():
+    files = sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json")))
+    sig = (len(files), files[-1] if files else "", os.path.getmtime(files[-1]) if files else 0.0)
+    if _SNAPS_MEM_CACHE["sig"] == sig and _SNAPS_MEM_CACHE["data"] is not None:
+        return _SNAPS_MEM_CACHE["data"]
     result = {}
-    for fp in sorted(glob.glob(os.path.join(SNAPSHOTS_DIR, "*.json"))):
+    for fp in files:
         date = os.path.basename(fp).replace(".json", "")
         try:
             with open(fp, encoding="utf-8") as f:
@@ -23,6 +30,8 @@ def load_snapshots_all():
                 result[date] = {v["address"]: v for v in raw if "address" in v}
         except Exception:
             pass
+    _SNAPS_MEM_CACHE["sig"] = sig
+    _SNAPS_MEM_CACHE["data"] = result
     return result
 
 
@@ -128,7 +137,8 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
                 if v: break
 
         name       = v.get("name", addr[:16] + "...")
-        apr_30d    = float(v.get("apr_30d", 0))
+        apr_calc   = float(v.get("apr_30d", 0))
+        apr_30d    = float(v["apr_pct"]) if v.get("apr_pct") is not None else apr_calc
         mdd        = float(v.get("max_drawdown", 0))
         tvl        = float(v.get("tvl", 1))
         robust     = float(v.get("robustness_score", 0))
@@ -163,7 +173,7 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
             my_pnl_real    = pnl_vault_diff * my_share
         else:
             # Fallback to APR calculation
-            daily_r        = apr_30d / 100 / 365
+            daily_r        = apr_calc / 100 / 365
             my_pnl_real    = amount * ((1 + daily_r) ** days_held - 1)
 
         est_value  = amount + my_pnl_real
@@ -321,6 +331,401 @@ def calc_portfolio_performance(positions, invest_date, total_capital, snapshots)
         "net_history_values": net_hist_values,
         "mdd":            mdd_val
     }
+
+
+
+import threading as _threading
+import time as _time
+
+_LIVE_CACHE_LOCK = _threading.Lock()
+_LIVE_CACHE = {"ts": 0.0, "data": None}
+
+
+def calc_live_onchain_portfolio_performance(p_cfg, snapshots, ttl_sec=4.0):
+    """
+    Computes 100% real-time on-chain performance for '나의 실제 포트폴리오' (id='default')
+    directly from Hyperliquid Mainnet `userVaultEquities` + `vaultDetails(vaultAddress, user)`:
+      - invested_usd = exact basis (`vaultEquity - pnl`)
+      - est_value    = exact `Your Deposits` (`vaultEquity`)
+      - pnl          = exact `All-time Earned` / active PnL (`pnl`)
+      - net_value    = exact post-10% withdrawal payout (`vaultWithdraw` formula)
+      - apr_30d      = exact Hyperliquid `Past Month Return` (`apr * 100`)
+    """
+    now_t = _time.time()
+    with _LIVE_CACHE_LOCK:
+        if _LIVE_CACHE["data"] is not None and (now_t - _LIVE_CACHE["ts"]) < ttl_sec:
+            return _LIVE_CACHE["data"]
+
+    try:
+        import hl_auto_vault_bot as _bot
+        account_addr, _, _ = _bot.get_wallet_credentials_meta()
+        if not account_addr:
+            my_pf = load_my_portfolio()
+            account_addr = my_pf.get("account_address")
+        onchain = _bot.fetch_onchain_account_state(account_addr)
+    except Exception:
+        onchain = {"connected": False}
+
+    if not onchain.get("connected"):
+        return calc_portfolio_performance(
+            p_cfg.get("positions", {}),
+            p_cfg.get("invest_date"),
+            p_cfg.get("total_capital", 100000.0),
+            snapshots,
+        )
+
+    v_pos_map = onchain.get("vault_positions") or {}
+    cash_usd = round(
+        float(onchain.get("perp_withdrawable_usd", 0.0) or 0.0)
+        + float(onchain.get("spot_usdc_usd", 0.0) or 0.0),
+        2,
+    )
+
+    if not v_pos_map and cash_usd < 1.0:
+        return calc_portfolio_performance(
+            p_cfg.get("positions", {}),
+            p_cfg.get("invest_date"),
+            p_cfg.get("total_capital", 100000.0),
+            snapshots,
+        )
+
+    v_details = _bot.fetch_live_vault_follower_details(account_addr, list(v_pos_map.keys()))
+
+    dates = sorted(snapshots.keys()) if snapshots else []
+    latest_dt = dates[-1] if dates else datetime.now().strftime("%Y-%m-%d")
+    latest_map = snapshots[latest_dt] if (snapshots and latest_dt in snapshots) else {}
+
+    raw_holdings = []
+    for addr, pos_info in v_pos_map.items():
+        addr_low = addr.lower()
+        det = v_details.get(addr_low) or {}
+        v = latest_map.get(addr_low, {})
+        if not v and snapshots:
+            for d in reversed(dates):
+                v = snapshots[d].get(addr_low, {})
+                if v:
+                    break
+
+        eq_val = float(det.get("vault_equity_usd", pos_info.get("equity_usd", 0.0)) or 0.0)
+        if "pnl_usd" in det:
+            cur_pnl = float(det["pnl_usd"])
+            all_pnl = float(det.get("all_time_pnl_usd", cur_pnl))
+            principal = float(det["principal_usd"])
+        else:
+            saved_p = float((p_cfg.get("positions") or {}).get(addr_low, eq_val) or eq_val)
+            principal = round(saved_p, 2)
+            cur_pnl = eq_val - principal
+            all_pnl = cur_pnl
+
+        comm_rate = float(det.get("leader_commission", 0.10) or 0.10)
+        net_pnl_val = cur_pnl * (1.0 - comm_rate) if cur_pnl > 0 else cur_pnl
+        net_val = principal + net_pnl_val
+
+        hl_apr = float(det["hl_apr_pct"]) if "hl_apr_pct" in det else float(v.get("apr_pct", v.get("apr_30d", 0.0)) or 0.0)
+        mdd = float(v.get("max_drawdown", 0.0) or 0.0)
+        tvl = float(det["tvl_usd"]) if det.get("tvl_usd") is not None else float(v.get("tvl", 1.0) or 1.0)
+        robust = float(v.get("robustness_score", 0.0) or 0.0)
+        grade = v.get("equity_curve_grade", "-")
+        allow_dep = bool(det.get("allow_deposits", v.get("allow_deposits", True)))
+        leader_eq = float(v.get("leader_equity_ratio", 0.0) or 0.0)
+        name = str(det.get("name") or v.get("name") or (addr_low[:16] + "..."))
+
+        pnl_pct = (cur_pnl / principal * 100.0) if principal > 0 else 0.0
+        net_pnl_pct = (net_pnl_val / principal * 100.0) if principal > 0 else 0.0
+        monthly_est = principal * hl_apr / 100.0 / 12.0
+
+        raw_holdings.append({
+            "address": addr_low,
+            "name": name,
+            "invested_usd": round(principal, 2),
+            "weight_pct": 0.0,  # filled after sum
+            "apr_30d": round(hl_apr, 2),
+            "monthly_return_pct": round(float(v.get("monthly_return", 0.0) or 0.0), 2),
+            "mdd": round(mdd, 2),
+            "tvl": round(tvl, 0),
+            "robustness": round(robust, 3),
+            "grade": grade,
+            "leader_eq": round(leader_eq * 100.0, 1),
+            "allow_deposits": allow_dep,
+            "days_held": 1,  # filled from active session start below
+            "est_value": round(eq_val, 2),
+            "pnl": round(cur_pnl, 2),
+            "all_time_pnl": round(all_pnl, 2),
+            "pnl_pct": round(pnl_pct, 2),
+            "net_pnl": round(net_pnl_val, 2),
+            "net_pnl_pct": round(net_pnl_pct, 2),
+            "net_value": round(net_val, 2),
+            "monthly_est": round(monthly_est, 2),
+            "is_locked": bool(pos_info.get("is_locked", False)),
+            "locked_until": pos_info.get("locked_until"),
+            "is_danger": (mdd > 35.0 or float(v.get("apr_30d", 0.0) or 0.0) < -130.0),
+        })
+
+    active_val_sum = sum(h["est_value"] for h in raw_holdings)
+    active_prin_sum = round(sum(h["invested_usd"] for h in raw_holdings), 2)
+    active_unrealized_pnl = round(active_val_sum - active_prin_sum, 2)
+    for h in raw_holdings:
+        h["weight_pct"] = round(h["est_value"] / active_val_sum * 100.0, 1) if active_val_sum > 0 else 0.0
+
+    raw_holdings.sort(key=lambda x: x["pnl"], reverse=True)
+
+    # Reconstruct exact active deployment session & rebalance history from L1 ledger
+    # (never using `followerState.vaultEntryTime`, which Hyperliquid retains across full exits!)
+    ledger_summary = _bot.fetch_wallet_vault_ledger_summary(
+        account_addr,
+        vault_name_map={h["address"]: h["name"] for h in raw_holdings},
+        live_holdings_map={h["address"]: h for h in raw_holdings},
+        snapshots=snapshots,
+        ttl_sec=(0.0 if ttl_sec <= 0 else 10.0),
+    )
+
+    if ledger_summary.get("ok") and ledger_summary.get("invest_date"):
+        invest_date = str(ledger_summary["invest_date"])
+        entry_dt = datetime.fromtimestamp(float(ledger_summary["session_start_ms"]) / 1000.0)
+        days_held_exact = max(0.05, (datetime.now() - entry_dt).total_seconds() / 86400.0)
+        days_held_int = max(1, int(round(days_held_exact)))
+    else:
+        invest_date = str(p_cfg.get("invest_date") or latest_dt)
+        try:
+            start_dt = datetime.strptime(invest_date, "%Y-%m-%d")
+            days_held_int = max(1, (datetime.now() - start_dt).days)
+            days_held_exact = float(days_held_int)
+        except Exception:
+            days_held_int = 1
+            days_held_exact = 1.0
+
+    for h in raw_holdings:
+        h["days_held"] = days_held_int
+
+    fallback_cap = float(p_cfg.get("total_capital", 0.0) or 0.0)
+    if fallback_cap < 100.0:
+        fallback_cap = round(active_prin_sum + cash_usd, 2)
+    if ledger_summary.get("ok") and float(ledger_summary.get("net_capital_usd", 0.0) or 0.0) >= 100.0:
+        base_cap = round(float(ledger_summary["net_capital_usd"]), 2)
+    else:
+        base_cap = _bot.compute_net_wallet_capital(account_addr, fallback_capital=fallback_cap)
+    if base_cap < 100.0:
+        base_cap = round(active_prin_sum + cash_usd, 2)
+
+    total_val = round(active_val_sum + cash_usd, 2)
+    total_pnl = round(total_val - base_cap, 2)
+    total_pct = round((total_pnl / base_cap * 100.0), 2) if base_cap > 0 else 0.0
+
+    active_net_val_sum = sum(h["net_value"] for h in raw_holdings)
+    net_total_val = round(active_net_val_sum + cash_usd, 2)
+    net_total_pnl = round(net_total_val - base_cap, 2)
+    net_total_pct = round((net_total_pnl / base_cap * 100.0), 2) if base_cap > 0 else 0.0
+    realized_pnl_usd = round(
+        float(ledger_summary.get("realized_pnl_usd", (active_prin_sum + cash_usd) - base_cap)), 2
+    ) if ledger_summary.get("ok") else round((active_prin_sum + cash_usd) - base_cap, 2)
+
+    # Replay true day-by-day on-chain portfolio equity curve strictly from `invest_date` to `today_str`
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    hist_dates = [d for d in dates if invest_date <= d <= today_str]
+    if invest_date not in hist_dates:
+        hist_dates.insert(0, invest_date)
+    if today_str not in hist_dates:
+        hist_dates.append(today_str)
+
+    hist_values = []
+    net_hist_values = []
+
+    if ledger_summary.get("ok") and ledger_summary.get("session_vault_events") and snapshots:
+        vault_evs = ledger_summary["session_vault_events"]
+        fund_evs = ledger_summary.get("session_funding_events") or []
+        init_cap = base_cap - sum(float(f.get("delta_usd", 0.0) or 0.0) for f in fund_evs)
+        sim_cash = float(init_cap)
+        sim_lots = []  # [{"vault", "amt", "entry_date", "ref_d", "last_gross"}]
+        ev_idx = 0
+        f_idx = 0
+
+        for d in hist_dates:
+            while f_idx < len(fund_evs) and fund_evs[f_idx]["date"] <= d:
+                sim_cash += float(fund_evs[f_idx].get("delta_usd", 0.0) or 0.0)
+                f_idx += 1
+            while ev_idx < len(vault_evs) and vault_evs[ev_idx]["date"] <= d:
+                ev = vault_evs[ev_idx]
+                ev_idx += 1
+                vaddr = ev["vault"]
+                if ev["kind"] == "DEPOSIT":
+                    amt_u = float(ev["usdc"])
+                    sim_cash -= amt_u
+                    ref_d = next(
+                        (sd for sd in dates if sd >= ev["date"] and vaddr in snapshots[sd] and snapshots[sd][vaddr].get("alltime_pnl")),
+                        None,
+                    )
+                    sim_lots.append({
+                        "vault": vaddr,
+                        "amt": amt_u,
+                        "entry_date": ev["date"],
+                        "ref_d": ref_d,
+                        "last_gross": amt_u,
+                    })
+                elif ev["kind"] == "WITHDRAW":
+                    sim_cash += float(ev["net_withdrawn_usd"])
+                    rem_b = float(ev["basis_usd"])
+                    for lt in sim_lots:
+                        if lt["vault"] != vaddr or lt["amt"] <= 1e-6 or rem_b <= 1e-6:
+                            continue
+                        take = min(lt["amt"], rem_b)
+                        ratio_left = max(0.0, (lt["amt"] - take) / lt["amt"]) if lt["amt"] > 0 else 0.0
+                        lt["amt"] = max(0.0, lt["amt"] - take)
+                        lt["last_gross"] = lt["last_gross"] * ratio_left
+                        rem_b -= take
+                    sim_lots = [lt for lt in sim_lots if lt["amt"] > 0.01]
+
+            if d == invest_date and d != today_str:
+                hist_values.append(round(base_cap, 2))
+                net_hist_values.append(round(base_cap, 2))
+            elif d == today_str:
+                hist_values.append(total_val)
+                net_hist_values.append(net_total_val)
+            else:
+                day_g = max(0.0, sim_cash)
+                day_n = max(0.0, sim_cash)
+                snap_d = snapshots.get(d, {})
+                for lt in sim_lots:
+                    ref_d = lt["ref_d"]
+                    vaddr = lt["vault"]
+                    amt_u = lt["amt"]
+                    if ref_d and d >= ref_d and vaddr in snap_d and snap_d[vaddr].get("alltime_pnl"):
+                        s0 = snapshots[ref_d][vaddr]
+                        p_diff = float(snap_d[vaddr]["alltime_pnl"][-1]) - float(s0["alltime_pnl"][-1])
+                        tvl0 = max(float(s0.get("tvl", 1.0) or 1.0), 1.0)
+                        lt["last_gross"] = max(0.0, amt_u + p_diff * (amt_u / tvl0))
+                    vg = lt["last_gross"]
+                    gp = vg - amt_u
+                    vn = amt_u + (gp * 0.90 if gp > 0 else gp)
+                    day_g += vg
+                    day_n += vn
+                hist_values.append(round(day_g, 2))
+                net_hist_values.append(round(day_n, 2))
+    else:
+        snap_hist = calc_portfolio_performance(
+            {h["address"]: h["invested_usd"] for h in raw_holdings},
+            invest_date,
+            active_prin_sum,
+            snapshots,
+        )
+        hist_dates = list(snap_hist.get("history_dates") or [])
+        hist_values = [round(v + cash_usd + realized_pnl_usd, 2) for v in (snap_hist.get("history_values") or [])]
+        net_hist_values = [round(v + cash_usd + realized_pnl_usd, 2) for v in (snap_hist.get("net_history_values") or [])]
+        if not hist_dates:
+            hist_dates = [invest_date, today_str] if invest_date != today_str else [today_str]
+            hist_values = [base_cap, total_val] if len(hist_dates) == 2 else [total_val]
+            net_hist_values = [base_cap, net_total_val] if len(hist_dates) == 2 else [net_total_val]
+        else:
+            if hist_dates[0] == invest_date:
+                hist_values[0] = round(base_cap, 2)
+                net_hist_values[0] = round(base_cap, 2)
+            if hist_dates[-1] == today_str:
+                hist_values[-1] = total_val
+                net_hist_values[-1] = net_total_val
+            else:
+                hist_dates.append(today_str)
+                hist_values.append(total_val)
+                net_hist_values.append(net_total_val)
+
+    monthly_returns = []
+    if hist_dates and hist_values:
+        ym_buckets = {}
+        for d, vg, vn in zip(hist_dates, hist_values, net_hist_values):
+            ym_buckets.setdefault(d[:7], []).append((d, vg, vn))
+        prev_g = float(base_cap)
+        prev_n = float(base_cap)
+        for ym in sorted(ym_buckets.keys()):
+            items = ym_buckets[ym]
+            start_d = items[0][0]
+            end_d, end_g, end_n = items[-1]
+            r_g = ((end_g / prev_g) - 1.0) * 100.0 if prev_g > 0 else 0.0
+            r_n = ((end_n / prev_n) - 1.0) * 100.0 if prev_n > 0 else 0.0
+            monthly_returns.append({
+                "month": ym,
+                "short_label": f"{ym[2:4]}.{ym[5:7]}",
+                "month_num": f"{int(ym[5:7])}월",
+                "start_date": start_d,
+                "end_date": end_d,
+                "days": len(items),
+                "start_net": round(prev_n, 2),
+                "end_net": round(end_n, 2),
+                "net_pnl": round(end_n - prev_n, 2),
+                "net_pct": round(r_n, 2),
+                "gross_pnl": round(end_g - prev_g, 2),
+                "gross_pct": round(r_g, 2),
+            })
+            prev_g = end_g
+            prev_n = end_n
+
+    eff_days = max(1.0, days_held_exact)
+    if eff_days < 7.0:
+        avg_monthly_gross_pct = (total_pct / eff_days) * 30.4375
+        avg_monthly_net_pct = (net_total_pct / eff_days) * 30.4375
+    else:
+        avg_monthly_gross_pct = ((1.0 + max(total_pct, -99.9999) / 100.0) ** (30.4375 / eff_days) - 1.0) * 100.0
+        avg_monthly_net_pct = ((1.0 + max(net_total_pct, -99.9999) / 100.0) ** (30.4375 / eff_days) - 1.0) * 100.0
+
+    mdd_val = 0.0
+    if hist_values:
+        eq_arr = np.array([base_cap] + hist_values, dtype=float)
+        rm = np.maximum.accumulate(eq_arr)
+        denom = np.where(rm > 0, rm, 1.0)
+        dd = (rm - eq_arr) / denom * 100.0
+        mdd_val = round(float(dd.max()), 2)
+
+    rebalance_summary = None
+    rebalance_history = []
+    if ledger_summary.get("ok"):
+        rebalance_history = ledger_summary.get("rebalance_history") or []
+        rebalance_summary = {
+            "rebalance_count": int(ledger_summary.get("rebalance_count", 0) or 0),
+            "session_start_ts": ledger_summary.get("session_start_ts", invest_date),
+            "last_rebalance_ts": ledger_summary.get("last_rebalance_ts"),
+            "total_withdrawn_basis_usd": round(float(ledger_summary.get("total_withdrawn_basis_usd", 0.0) or 0.0), 2),
+            "total_withdrawn_net_usd": round(float(ledger_summary.get("total_withdrawn_net_usd", 0.0) or 0.0), 2),
+            "realized_pnl_usd": realized_pnl_usd,
+            "realized_pnl_pct_on_exited": round(float(ledger_summary.get("realized_pnl_pct_on_exited", 0.0) or 0.0), 2),
+            "realized_pnl_pct_on_capital": round((realized_pnl_usd / base_cap * 100.0) if base_cap > 0 else 0.0, 2),
+            "active_unrealized_pnl_usd": active_unrealized_pnl,
+            "active_unrealized_pnl_pct": round((active_unrealized_pnl / active_prin_sum * 100.0) if active_prin_sum > 0 else 0.0, 2),
+            "total_commission_usd": round(float(ledger_summary.get("total_commission_usd", 0.0) or 0.0), 2),
+        }
+
+    out_res = {
+        "is_live_onchain": True,
+        "fetched_at": onchain.get("fetched_at"),
+        "account_address": account_addr,
+        "wallet_cash_usd": cash_usd,
+        "active_principal_usd": active_prin_sum,
+        "active_unrealized_pnl_usd": active_unrealized_pnl,
+        "realized_pnl_usd": realized_pnl_usd,
+        "rebalance_summary": rebalance_summary,
+        "rebalance_history": rebalance_history,
+        "total_invested": round(base_cap, 2),
+        "total_value": total_val,
+        "total_pnl": total_pnl,
+        "total_pnl_pct": total_pct,
+        "net_total_pnl": net_total_pnl,
+        "net_total_pnl_pct": net_total_pct,
+        "net_total_value": net_total_val,
+        "avg_monthly_gross_pct": round(avg_monthly_gross_pct, 2),
+        "avg_monthly_net_pct": round(avg_monthly_net_pct, 2),
+        "monthly_returns": monthly_returns,
+        "monthly_est": round(sum(h["monthly_est"] for h in raw_holdings), 2),
+        "annual_est": round(sum(h["monthly_est"] for h in raw_holdings) * 12.0, 2),
+        "holdings": raw_holdings,
+        "n_vaults": len(raw_holdings),
+        "invest_date": invest_date,
+        "analysis_date": onchain.get("fetched_at", latest_dt),
+        "days_held": days_held_int,
+        "history_dates": hist_dates,
+        "history_values": hist_values,
+        "net_history_values": net_hist_values,
+        "mdd": mdd_val,
+    }
+    with _LIVE_CACHE_LOCK:
+        _LIVE_CACHE["ts"] = _time.time()
+        _LIVE_CACHE["data"] = out_res
+    return out_res
 
 
 def calc_my_portfolio(positions, invest_date, snapshots):

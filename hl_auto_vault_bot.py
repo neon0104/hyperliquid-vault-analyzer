@@ -19,6 +19,7 @@ Features:
      - 4-hour intraday Emergency Exit Guardrail on held vaults (`ret_14d < -8%` or `drawdown_now > 25%`).
 """
 import argparse
+import contextlib
 import json
 import math
 import os
@@ -53,6 +54,46 @@ VIRTUAL_PORTFOLIOS_FILE = DATA_DIR / "virtual_portfolios.json"
 AUTOBOT_CONFIG_FILE = DATA_DIR / "autobot_config.json"
 AUTOBOT_STATE_FILE = DATA_DIR / "autobot_state.json"
 AUTOBOT_LOG_FILE = DATA_DIR / "autobot_exec_log.json"
+AUTOBOT_LOCK_FILE = DATA_DIR / "autobot.lock"
+
+
+@contextlib.contextmanager
+def _autobot_process_lock(timeout_sec: float = 45.0):
+    """Cross-process exclusive lock to prevent duplicate simultaneous execution."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    fh = open(AUTOBOT_LOCK_FILE, "a+b")
+    locked = False
+    deadline = time.time() + timeout_sec
+    try:
+        while True:
+            try:
+                if sys.platform == "win32":
+                    import msvcrt
+                    fh.seek(0)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+                else:
+                    import fcntl
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                locked = True
+                break
+            except OSError:
+                if time.time() >= deadline:
+                    break
+                time.sleep(0.25)
+        yield locked
+    finally:
+        if locked:
+            try:
+                if sys.platform == "win32":
+                    import msvcrt
+                    fh.seek(0)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    import fcntl
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+            except Exception:
+                pass
+        fh.close()
 
 # Protocol vault HLP has a 4-day lockup and different mechanics; keep standard user-leader vaults cleanly separated
 EXCLUDED_ADDRESSES = frozenset({
@@ -68,7 +109,15 @@ DEFAULT_BOT_CONFIG: Dict[str, Any] = {
     "rebalance_interval_days": 14,      # 최적 검증 주기: 14일
     "no_trade_band_rel": 0.10,          # 10% 상대 비중 불감대 (HWM 성과보수 크레딧 보존)
     "rank_buffer": 2,                   # 기존 보유 볼트가 Top (6 + 2 = 8) 이내면 교체 방지
-    "min_vault_tvl_usd": 10000.0,       # 최소 볼트 TVL ($10,000)
+    "min_vault_tvl_usd": 20000.0,       # 최소 볼트 TVL ($20,000 하드 필터)
+    "max_historical_mdd_pct": 40.0,     # 역사적 최대 낙폭(Max MDD) 40% 이하 하드 필터
+    "max_entry_drawdown_pct": 38.0,     # 신규 편입 시 최대 허용 현재낙폭(DD<=38%)
+    "min_leader_equity_ratio": 0.05,    # 최소 리더 지분율 하한 (5% 이상)
+    "min_active_mdd_pct": 2.2,          # 초저변동 정체 예금형 볼트(Max MDD < 2.2% & 저수익) 독식 방지 필터
+    "max_mdd_expansion_10d_pct": 6.5,   # 최근 10일간 역사적 MDD 급확장(+6.5%p 초과) 신저점 붕괴 볼트(pakhom형) 진입 차단
+    "min_entry_apr_30d_pct": -130.0,    # 최근 30일 APR 급붕괴(-130% 미만) 추락 볼트 진입 차단
+    "min_depth_reference_usd": 50000.0, # 소액 운용 시에도 소형 볼트 과집중을 막는 기관급 유동성 깊이 기준($50,000)
+    "score_risk_weighting": True,       # 균등배분 대신 우량·지지선 점수 / sqrt(유효낙폭) 비례 가중평균 배분
     "max_vault_tvl_share": 0.30,        # 단일 볼트 TVL의 최대 30% 이내 진입
     "max_single_slot_weight": 0.25,     # 포트폴리오 내 단일 볼트 최대 25% 상한
     "min_trade_usd": 50.0,              # $50 미만 미세 주문 생략
@@ -76,7 +125,7 @@ DEFAULT_BOT_CONFIG: Dict[str, Any] = {
     "auto_spot_to_perp": True,          # Spot 계정에 있는 USDC를 Perps 계정으로 자동 이체
     "emergency_guard_enabled": True,    # 4시간 주기 비상 손절/추세붕괴 감시
     "emergency_ret14_floor": -0.08,     # 보유 볼트 14일 수익률 -8% 이하 시 즉시 탈출
-    "emergency_dd_ceiling": 25.0,       # 보유 볼트 현재 낙폭 25% 초과 시 즉시 탈출
+    "emergency_dd_ceiling": 25.0,       # 목표 외 편출 볼트의 현재 낙폭 25% 초과(또는 보유 볼트 40% 하드캡 초과) 시 탈출
     "notify_on_dry_run": False,         # 모의운용(DRY_RUN) 중에는 텔레그램/디스코드 알림 생략 (LIVE 전환 시 자동 발송)
 }
 
@@ -262,28 +311,52 @@ def fetch_onchain_account_state(account_address: Optional[str]) -> Dict[str, Any
         }
 
     try:
-        info = Info(constants.MAINNET_API_URL, skip_ws=True)
+        def _post_info(pl: dict) -> Any:
+            rq = urllib.request.Request(
+                constants.MAINNET_API_URL + "/info",
+                data=json.dumps(pl).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(rq, timeout=6) as rp:
+                return json.loads(rp.read().decode("utf-8"))
+
         now_ms = int(time.time() * 1000)
 
         # 1) Perp Clearinghouse State
-        ch = info.user_state(account_address) or {}
+        ch = _post_info({"type": "clearinghouseState", "user": account_address}) or {}
         ms = ch.get("marginSummary") or {}
         perp_acct_val = float(ms.get("accountValue", 0.0) or 0.0)
         perp_withdrawable = float(ch.get("withdrawable", 0.0) or 0.0)
 
-        # 2) Spot Clearinghouse State (check if user deposited USDC into Spot)
+        # 2) Spot Clearinghouse State & Unified Account Detection
         spot_usdc = 0.0
+        is_unified_account = False
         try:
-            sp = info.spot_user_state(account_address) or {}
+            u_abs = _post_info({"type": "userAbstraction", "user": account_address})
+            if isinstance(u_abs, str) and "unified" in u_abs.lower():
+                is_unified_account = True
+        except Exception:
+            pass
+
+        try:
+            sp = _post_info({"type": "spotClearinghouseState", "user": account_address}) or {}
+            avail_after_maint = None
+            for pair in sp.get("tokenToAvailableAfterMaintenance", []) or []:
+                if isinstance(pair, list) and len(pair) == 2 and int(pair[0]) == 0:
+                    avail_after_maint = float(pair[1] or 0.0)
+                    break
             for b in sp.get("balances", []):
                 if str(b.get("coin", "")).upper() == "USDC":
                     spot_usdc = float(b.get("total", 0.0) or 0.0) - float(b.get("hold", 0.0) or 0.0)
+                    if avail_after_maint is not None:
+                        spot_usdc = min(spot_usdc, avail_after_maint)
                     break
         except Exception:
             pass
 
         # 3) User Vault Equities + Lockup Timestamps
-        raw_veq = info.post("/info", {"type": "userVaultEquities", "user": account_address})
+        raw_veq = _post_info({"type": "userVaultEquities", "user": account_address})
         vault_positions: Dict[str, Dict[str, Any]] = {}
         vault_total = 0.0
         if isinstance(raw_veq, list):
@@ -313,6 +386,7 @@ def fetch_onchain_account_state(account_address: Optional[str]) -> Dict[str, Any
         return {
             "connected": True,
             "account_address": account_address,
+            "is_unified_account": is_unified_account,
             "perp_account_value_usd": round(perp_acct_val, 2),
             "perp_withdrawable_usd": perp_wd_floor,
             "spot_usdc_usd": spot_usdc_floor,
@@ -333,6 +407,568 @@ def fetch_onchain_account_state(account_address: Optional[str]) -> Dict[str, Any
             "vault_positions": {},
             "error": str(e),
         }
+
+
+def fetch_live_vault_follower_details(
+    account_address: Optional[str],
+    vault_addresses: List[str],
+) -> Dict[str, Dict[str, Any]]:
+    """
+    Fetches real-time Hyperliquid `vaultDetails(vaultAddress, user)` in parallel
+    so our dashboard matches Hyperliquid UI (`Your Deposits`, `All-time Earned`,
+    `Past Month Return APR`, and exact invested principal `basis = vaultEquity - pnl`) 100%.
+    """
+    if not account_address or not vault_addresses:
+        return {}
+    from concurrent.futures import ThreadPoolExecutor
+
+    addrs_clean = sorted({str(a).strip().lower() for a in vault_addresses if a})
+
+    def _hl_post_fast(payload: dict) -> Any:
+        req = urllib.request.Request(
+            constants.MAINNET_API_URL + "/info",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+
+    def _fetch_one(vaddr: str) -> Tuple[str, Optional[Dict[str, Any]]]:
+        try:
+            vd = _hl_post_fast({"type": "vaultDetails", "vaultAddress": vaddr, "user": account_address}) or {}
+            fs = vd.get("followerState") or {}
+            eq = float(fs.get("vaultEquity", 0.0) or 0.0)
+            cur_pnl = float(fs.get("pnl", 0.0) or 0.0)
+            all_pnl = float(fs.get("allTimePnl", cur_pnl) or 0.0)
+            principal = round(max(0.0, eq - cur_pnl), 2)
+            hl_apr_pct = round(float(vd.get("apr", 0.0) or 0.0) * 100.0, 2)
+            comm = float(vd.get("leaderCommission", 0.10) or 0.10)
+            return vaddr, {
+                "address": vaddr,
+                "name": str(vd.get("name") or vaddr[:12]),
+                "vault_equity_usd": eq,
+                "pnl_usd": cur_pnl,
+                "all_time_pnl_usd": all_pnl,
+                "principal_usd": principal,
+                "hl_apr_pct": hl_apr_pct,
+                "leader_commission": comm,
+                "tvl_usd": float(vd.get("tvl", 0.0) or 0.0) if vd.get("tvl") is not None else None,
+                "allow_deposits": bool(vd.get("allowDeposits", True)),
+                "entry_time_ms": int(fs.get("vaultEntryTime", 0) or 0),
+                "lockup_until_ms": int(fs.get("lockupUntil", 0) or 0),
+            }
+        except Exception:
+            return vaddr, None
+
+    out: Dict[str, Dict[str, Any]] = {}
+    with ThreadPoolExecutor(max_workers=min(8, max(1, len(addrs_clean)))) as pool:
+        for k, val in pool.map(_fetch_one, addrs_clean):
+            if val is not None:
+                out[k] = val
+    return out
+
+
+_LEDGER_CACHE_LOCK = threading.Lock() if "threading" in globals() else __import__("threading").Lock()
+_LEDGER_RAW_CACHE: Dict[str, Tuple[float, List[Dict[str, Any]]]] = {}
+
+
+def _fetch_raw_wallet_ledger(account_address: str, ttl_sec: float = 10.0) -> List[Dict[str, Any]]:
+    addr_low = (account_address or "").strip().lower()
+    if not addr_low.startswith("0x"):
+        return []
+    now_t = time.time()
+    if ttl_sec > 0:
+        with _LEDGER_CACHE_LOCK:
+            cached = _LEDGER_RAW_CACHE.get(addr_low)
+            if cached and (now_t - cached[0]) < ttl_sec:
+                return cached[1]
+
+    req = urllib.request.Request(
+        constants.MAINNET_API_URL + "/info",
+        data=json.dumps({
+            "type": "userNonFundingLedgerUpdates",
+            "user": account_address,
+            "startTime": 0,
+        }).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=8) as resp:
+        led = json.loads(resp.read().decode("utf-8"))
+    if not isinstance(led, list):
+        return []
+    led_sorted = sorted(
+        [e for e in led if isinstance(e, dict)],
+        key=lambda x: int(x.get("time", 0) or 0),
+    )
+    with _LEDGER_CACHE_LOCK:
+        _LEDGER_RAW_CACHE[addr_low] = (now_t, led_sorted)
+    return led_sorted
+
+
+def _resolve_vault_names_helper(extra_names: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    names: Dict[str, str] = {}
+    # 1. Latest snapshot names
+    try:
+        snap_files = sorted([f for f in SNAP_DIR.glob("*.json") if not f.name.endswith(".bak")])
+        if snap_files:
+            rows = json.loads(snap_files[-1].read_text(encoding="utf-8"))
+            if isinstance(rows, list):
+                for r in rows:
+                    a = str(r.get("address", "")).strip().lower()
+                    nm = str(r.get("name", "")).strip()
+                    if a and nm:
+                        names[a] = nm
+    except Exception:
+        pass
+    # 2. Execution log names (captures exited vaults like pakhom, Akka Hyper AI, Quant Mirror)
+    try:
+        if AUTOBOT_LOG_FILE.exists():
+            logs = json.loads(AUTOBOT_LOG_FILE.read_text(encoding="utf-8"))
+            if isinstance(logs, list):
+                for entry in reversed(logs):
+                    a = str(entry.get("address", "")).strip().lower()
+                    nm = str(entry.get("vault", "")).strip()
+                    if a and nm and a != nm.lower() and "perps account" not in nm.lower():
+                        names[a] = nm
+    except Exception:
+        pass
+    # 3. Caller-supplied live names
+    if extra_names:
+        for k, v in extra_names.items():
+            if k and v:
+                names[str(k).strip().lower()] = str(v).strip()
+    return names
+
+
+def fetch_wallet_vault_ledger_summary(
+    account_address: Optional[str],
+    vault_name_map: Optional[Dict[str, str]] = None,
+    live_holdings_map: Optional[Dict[str, Dict[str, Any]]] = None,
+    snapshots: Optional[Dict[str, Dict[str, Any]]] = None,
+    ttl_sec: float = 10.0,
+) -> Dict[str, Any]:
+    """
+    Reconstructs the active portfolio session directly from Hyperliquid L1
+    `userNonFundingLedgerUpdates(startTime=0)`:
+      1) Detects exact active deployment session start (`invest_date = '2026-11-02'`),
+         preventing stale `followerState.vaultEntryTime` (e.g. Jan test deposits) from polluting start dates.
+      2) Computes exact external capital (`net_capital_usd = $7,881.78`).
+      3) Groups all `vaultWithdraw` & `vaultDeposit` transactions into chronological rebalance batches
+         with exact realized PnL (`netWithdrawnUsd - basis`) and follow-up live unrealized PnL per lot.
+    """
+    if not account_address or not account_address.startswith("0x"):
+        return {"ok": False}
+    try:
+        led = _fetch_raw_wallet_ledger(account_address, ttl_sec=ttl_sec)
+    except Exception:
+        return {"ok": False}
+    if not led:
+        return {"ok": False}
+
+    addr_low = account_address.strip().lower()
+    name_map = _resolve_vault_names_helper(vault_name_map)
+
+    vault_basis_map: Dict[str, float] = {}
+    wallet_cash_est = 0.0
+    session_started = False
+    session_start_ms = 0
+    session_net_capital = 0.0
+    session_vault_events: List[Dict[str, Any]] = []
+    session_funding_events: List[Dict[str, Any]] = []
+
+    for ev in led:
+        t_ms = int(ev.get("time", 0) or 0)
+        dt_obj = datetime.fromtimestamp(t_ms / 1000.0) if t_ms > 0 else datetime.now()
+        ts_str = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
+        date_str = dt_obj.strftime("%Y-%m-%d")
+        d = ev.get("delta") or {}
+        dtype = str(d.get("type", ""))
+
+        total_vault_basis = sum(v for v in vault_basis_map.values() if v > 0.01)
+
+        if dtype == "deposit":
+            amt = float(d.get("usdc", 0.0) or 0.0)
+            wallet_cash_est += amt
+            if session_started and total_vault_basis > 1.0:
+                session_net_capital += amt
+                session_funding_events.append({"time_ms": t_ms, "date": date_str, "ts": ts_str, "delta_usd": amt})
+        elif dtype == "withdraw":
+            amt = float(d.get("usdc", 0.0) or 0.0)
+            wallet_cash_est = max(0.0, wallet_cash_est - amt)
+            if session_started and total_vault_basis > 1.0:
+                session_net_capital = max(0.0, session_net_capital - amt)
+                session_funding_events.append({"time_ms": t_ms, "date": date_str, "ts": ts_str, "delta_usd": -amt})
+        elif dtype == "send":
+            amt = float(d.get("usdcValue", d.get("amount", 0.0)) or 0.0)
+            src = str(d.get("user", "")).lower()
+            dst = str(d.get("destination", "")).lower()
+            if dst == addr_low and src != addr_low:
+                wallet_cash_est += amt
+                if session_started and total_vault_basis > 1.0:
+                    session_net_capital += amt
+                    session_funding_events.append({"time_ms": t_ms, "date": date_str, "ts": ts_str, "delta_usd": amt})
+            elif src == addr_low and dst != addr_low:
+                wallet_cash_est = max(0.0, wallet_cash_est - amt)
+                if session_started and total_vault_basis > 1.0:
+                    session_net_capital = max(0.0, session_net_capital - amt)
+                    session_funding_events.append({"time_ms": t_ms, "date": date_str, "ts": ts_str, "delta_usd": -amt})
+        elif dtype == "vaultDeposit":
+            vaddr = str(d.get("vault", "")).strip().lower()
+            amt = float(d.get("usdc", 0.0) or 0.0)
+            if amt <= 0 or not vaddr:
+                continue
+            # Start a fresh active session whenever prior vault basis was fully exited (<= $1.00)
+            if total_vault_basis <= 1.0:
+                session_started = True
+                session_start_ms = t_ms
+                session_net_capital = max(wallet_cash_est, amt)
+                session_vault_events = []
+                session_funding_events = []
+            session_vault_events.append({
+                "time_ms": t_ms,
+                "ts": ts_str,
+                "date": date_str,
+                "kind": "DEPOSIT",
+                "vault": vaddr,
+                "name": name_map.get(vaddr, vaddr[:12] + "..."),
+                "usdc": round(amt, 6),
+                "hash": str(ev.get("hash", "")),
+            })
+            vault_basis_map[vaddr] = vault_basis_map.get(vaddr, 0.0) + amt
+            wallet_cash_est = max(0.0, wallet_cash_est - amt)
+        elif dtype == "vaultWithdraw":
+            vaddr = str(d.get("vault", "")).strip().lower()
+            if not vaddr:
+                continue
+            basis = float(d.get("basis", 0.0) or 0.0)
+            net_out = float(d.get("netWithdrawnUsd", 0.0) or 0.0)
+            req_usd = float(d.get("requestedUsd", net_out) or net_out)
+            comm = float(d.get("commission", 0.0) or 0.0)
+            closing_cost = float(d.get("closingCost", 0.0) or 0.0)
+            prev_b = vault_basis_map.get(vaddr, basis)
+            eff_basis = basis if basis > 0.0 else prev_b
+            rem_b = max(0.0, prev_b - eff_basis)
+            realized_pnl = net_out - eff_basis
+            realized_pct = (realized_pnl / eff_basis * 100.0) if eff_basis > 0 else 0.0
+            if session_started:
+                session_vault_events.append({
+                    "time_ms": t_ms,
+                    "ts": ts_str,
+                    "date": date_str,
+                    "kind": "WITHDRAW",
+                    "vault": vaddr,
+                    "name": name_map.get(vaddr, vaddr[:12] + "..."),
+                    "basis_usd": round(eff_basis, 6),
+                    "net_withdrawn_usd": round(net_out, 6),
+                    "requested_usd": round(req_usd, 6),
+                    "commission_usd": round(comm, 6),
+                    "closing_cost_usd": round(closing_cost, 6),
+                    "realized_pnl_usd": round(realized_pnl, 6),
+                    "realized_pnl_pct": round(realized_pct, 2),
+                    "is_full_exit": rem_b <= 1.0,
+                    "hash": str(ev.get("hash", "")),
+                })
+            vault_basis_map[vaddr] = rem_b
+            wallet_cash_est += net_out
+
+    if not session_started or session_start_ms <= 0:
+        return {"ok": False}
+
+    invest_dt = datetime.fromtimestamp(session_start_ms / 1000.0)
+    invest_date = invest_dt.strftime("%Y-%m-%d")
+
+    # Match execution logs by timestamp for trigger labeling
+    exec_triggers: List[Tuple[float, str]] = []
+    try:
+        if AUTOBOT_LOG_FILE.exists():
+            logs = json.loads(AUTOBOT_LOG_FILE.read_text(encoding="utf-8"))
+            if isinstance(logs, list):
+                for l_item in logs:
+                    if l_item.get("status") != "OK":
+                        continue
+                    act = str(l_item.get("action", ""))
+                    if act not in ("DEPOSIT", "WITHDRAW_FULL", "WITHDRAW_PARTIAL"):
+                        continue
+                    t_s = str(l_item.get("ts", ""))
+                    trig = str(l_item.get("trigger", ""))
+                    if t_s and trig:
+                        exec_triggers.append((datetime.fromisoformat(t_s).timestamp() * 1000.0, trig))
+    except Exception:
+        pass
+
+    # Pair DEPOSIT lots with subsequent WITHDRAW events (FIFO) and live unrealized PnL
+    dep_lots_by_vault: Dict[str, List[Dict[str, Any]]] = {}
+    for sev in session_vault_events:
+        vaddr = sev["vault"]
+        if sev["kind"] == "DEPOSIT":
+            lot = {
+                "event": sev,
+                "orig_usd": float(sev["usdc"]),
+                "rem_usd": float(sev["usdc"]),
+                "closed_net_usd": 0.0,
+                "closed_basis_usd": 0.0,
+                "closed_at": None,
+            }
+            sev["_lot"] = lot
+            dep_lots_by_vault.setdefault(vaddr, []).append(lot)
+        elif sev["kind"] == "WITHDRAW":
+            w_basis = float(sev["basis_usd"])
+            w_net = float(sev["net_withdrawn_usd"])
+            w_ts = sev["ts"][:16]
+            lots = dep_lots_by_vault.get(vaddr, [])
+            rem_to_match = w_basis
+            for lot in lots:
+                if lot["rem_usd"] <= 1e-6 or rem_to_match <= 1e-6:
+                    continue
+                take_b = min(lot["rem_usd"], rem_to_match)
+                share_ratio = (take_b / w_basis) if w_basis > 0 else 0.0
+                lot["rem_usd"] = max(0.0, lot["rem_usd"] - take_b)
+                lot["closed_basis_usd"] += take_b
+                lot["closed_net_usd"] += w_net * share_ratio
+                lot["closed_at"] = w_ts
+                rem_to_match -= take_b
+
+    # Allocate exact live unrealized PnL across currently open lots per vault
+    snap_dates = sorted(snapshots.keys()) if snapshots else []
+    latest_snap_d = snap_dates[-1] if snap_dates else None
+    live_map = live_holdings_map or {}
+
+    for vaddr, lots in dep_lots_by_vault.items():
+        open_lots = [lt for lt in lots if lt["rem_usd"] > 0.5]
+        live_info = live_map.get(vaddr)
+        if open_lots and live_info is not None:
+            target_live_pnl = float(live_info.get("pnl", 0.0) or 0.0)
+            if len(open_lots) == 1:
+                open_lots[0]["open_pnl_usd"] = target_live_pnl
+            else:
+                # Estimate relative PnL per lot from snapshot curve since each lot's deposit date,
+                # then shift residual proportionally to lot principal so sum == exact live PnL
+                est_pnls: List[float] = []
+                total_open_rem = sum(lt["rem_usd"] for lt in open_lots)
+                for lt in open_lots:
+                    l_date = lt["event"]["date"]
+                    est_p = 0.0
+                    if snapshots and latest_snap_d:
+                        ref_d = next((sd for sd in snap_dates if sd >= l_date and vaddr in snapshots[sd]), None)
+                        if ref_d and vaddr in snapshots.get(latest_snap_d, {}):
+                            s0 = snapshots[ref_d][vaddr]
+                            s1 = snapshots[latest_snap_d][vaddr]
+                            if s0.get("alltime_pnl") and s1.get("alltime_pnl"):
+                                p_diff = float(s1["alltime_pnl"][-1]) - float(s0["alltime_pnl"][-1])
+                                tvl0 = max(float(s0.get("tvl", 1.0) or 1.0), 1.0)
+                                est_p = p_diff * (lt["rem_usd"] / tvl0)
+                    est_pnls.append(est_p)
+                residual = target_live_pnl - sum(est_pnls)
+                running_alloc = 0.0
+                for idx_l, lt in enumerate(open_lots):
+                    if idx_l == len(open_lots) - 1:
+                        lt["open_pnl_usd"] = target_live_pnl - running_alloc
+                    else:
+                        w = (lt["rem_usd"] / total_open_rem) if total_open_rem > 0 else (1.0 / len(open_lots))
+                        val_p = round(est_pnls[idx_l] + residual * w, 2)
+                        lt["open_pnl_usd"] = val_p
+                        running_alloc += val_p
+        else:
+            for lt in open_lots:
+                lt["open_pnl_usd"] = 0.0
+
+    # Group events into execution batches (5-minute window)
+    raw_batches: List[List[Dict[str, Any]]] = []
+    for sev in session_vault_events:
+        if not raw_batches or (sev["time_ms"] - raw_batches[-1][-1]["time_ms"]) > 300_000:
+            raw_batches.append([sev])
+        else:
+            raw_batches[-1].append(sev)
+
+    rebalance_history: List[Dict[str, Any]] = []
+    rebalance_seq = 0
+    cum_realized_pnl = 0.0
+    total_withdrawn_basis = 0.0
+    total_withdrawn_net = 0.0
+    total_commission_paid = 0.0
+
+    for b_idx, batch_evs in enumerate(raw_batches):
+        b_start_ms = batch_evs[0]["time_ms"]
+        b_end_ms = batch_evs[-1]["time_ms"]
+        b_ts = batch_evs[0]["ts"][:16]
+        b_date = batch_evs[0]["date"]
+
+        withdraws_raw = [e for e in batch_evs if e["kind"] == "WITHDRAW"]
+        deposits_raw = [e for e in batch_evs if e["kind"] == "DEPOSIT"]
+
+        # Match trigger code from autobot_exec_log.json
+        matched_trig = ""
+        best_gap = 600_000.0
+        for e_ms, trig in exec_triggers:
+            gap = abs(e_ms - b_start_ms)
+            if gap <= best_gap:
+                best_gap = gap
+                matched_trig = trig
+
+        if b_idx == 0 and not withdraws_raw:
+            event_kind = "INITIAL_DEPLOY"
+            title_ko = "최초 포트폴리오 구축"
+            badge_ko = "🚀 최초 진입"
+            reason_ko = "SGRA+ 챔피언 전략 최초 자금 분산 예치"
+        elif withdraws_raw and deposits_raw:
+            rebalance_seq += 1
+            event_kind = "REBALANCE"
+            if matched_trig == "EMERGENCY_EXIT":
+                title_ko = f"{rebalance_seq}차 리밸런싱"
+                badge_ko = "⚡ 비상 방어 교체"
+                reason_ko = "위험·낙폭 임계치 도달 볼트 전액 청산 후 우량 코어 볼트 재투입"
+            elif matched_trig == "SCHEDULED_14D":
+                title_ko = f"{rebalance_seq}차 리밸런싱"
+                badge_ko = "📅 14일 정기 교체"
+                reason_ko = "14일 주기 SGRA+ 정기 스코어 재산정 및 비중 리밸런싱"
+            elif matched_trig == "MANUAL_FORCE":
+                title_ko = f"{rebalance_seq}차 리밸런싱"
+                badge_ko = "🛠️ 수동 즉시 리밸런싱"
+                reason_ko = "사용자 수동 실행에 따른 즉시 포트폴리오 교체"
+            else:
+                title_ko = f"{rebalance_seq}차 리밸런싱"
+                badge_ko = "🔄 포트폴리오 교체"
+                reason_ko = "온체인 볼트 출금 및 신규 볼트 재배치"
+        elif withdraws_raw:
+            rebalance_seq += 1
+            event_kind = "WITHDRAW_ONLY"
+            title_ko = f"{rebalance_seq}차 리밸런싱 (출금)"
+            badge_ko = "📤 볼트 회수"
+            reason_ko = "보유 볼트 자금 회수"
+        else:
+            event_kind = "DEPOSIT_ADD"
+            title_ko = "추가 분산 예치"
+            badge_ko = "📥 추가 투입"
+            reason_ko = "유휴 현금 볼트 추가 예치"
+
+        w_items = []
+        b_w_basis = 0.0
+        b_w_net = 0.0
+        b_realized = 0.0
+        b_comm = 0.0
+        for w in withdraws_raw:
+            wb = round(float(w["basis_usd"]), 2)
+            wn = round(float(w["net_withdrawn_usd"]), 2)
+            wp = round(float(w["realized_pnl_usd"]), 2)
+            wc = round(float(w["commission_usd"]), 2)
+            b_w_basis += wb
+            b_w_net += wn
+            b_realized += wp
+            b_comm += wc
+            w_items.append({
+                "vault": w["vault"],
+                "name": name_map.get(w["vault"], w["name"]),
+                "basis_usd": wb,
+                "net_withdrawn_usd": wn,
+                "realized_pnl_usd": wp,
+                "realized_pnl_pct": round((wp / wb * 100.0) if wb > 0 else 0.0, 2),
+                "commission_usd": wc,
+                "is_full_exit": bool(w["is_full_exit"]),
+            })
+
+        cum_realized_pnl = round(cum_realized_pnl + b_realized, 2)
+        total_withdrawn_basis = round(total_withdrawn_basis + b_w_basis, 2)
+        total_withdrawn_net = round(total_withdrawn_net + b_w_net, 2)
+        total_commission_paid = round(total_commission_paid + b_comm, 2)
+
+        d_items = []
+        b_dep_sum = 0.0
+        b_dep_followup_pnl = 0.0
+        for dep in deposits_raw:
+            lt = dep.get("_lot") or {}
+            orig_u = round(float(dep["usdc"]), 2)
+            b_dep_sum += orig_u
+            if lt.get("rem_usd", 0.0) <= 0.5 and lt.get("closed_basis_usd", 0.0) > 0:
+                lot_status = "CLOSED"
+                lot_pnl = round(float(lt["closed_net_usd"] - lt["closed_basis_usd"]), 2)
+                lot_cur_val = round(float(lt["closed_net_usd"]), 2)
+                closed_at_str = lt.get("closed_at")
+            else:
+                lot_status = "ACTIVE"
+                open_pnl = float(lt.get("open_pnl_usd", 0.0) or 0.0)
+                partial_closed_pnl = float(lt.get("closed_net_usd", 0.0) - lt.get("closed_basis_usd", 0.0))
+                lot_pnl = round(open_pnl + partial_closed_pnl, 2)
+                lot_cur_val = round(orig_u + lot_pnl, 2)
+                closed_at_str = None
+            lot_pct = round((lot_pnl / orig_u * 100.0) if orig_u > 0 else 0.0, 2)
+            b_dep_followup_pnl += lot_pnl
+            d_items.append({
+                "vault": dep["vault"],
+                "name": name_map.get(dep["vault"], dep["name"]),
+                "amount_usd": orig_u,
+                "lot_status": lot_status,
+                "closed_at": closed_at_str,
+                "followup_value_usd": lot_cur_val,
+                "followup_pnl_usd": lot_pnl,
+                "followup_pnl_pct": lot_pct,
+            })
+
+        d_items.sort(key=lambda x: x["amount_usd"], reverse=True)
+        b_dep_sum = round(b_dep_sum, 2)
+        b_dep_followup_pnl = round(b_dep_followup_pnl, 2)
+
+        rebalance_history.append({
+            "seq": rebalance_seq if event_kind != "INITIAL_DEPLOY" else 0,
+            "event_kind": event_kind,
+            "trigger": matched_trig or event_kind,
+            "title": title_ko,
+            "badge": badge_ko,
+            "reason": reason_ko,
+            "ts": b_ts,
+            "date": b_date,
+            "time_ms": b_start_ms,
+            "end_time_ms": b_end_ms,
+            "withdrawals": w_items,
+            "deposits": d_items,
+            "withdrawn_basis_usd": round(b_w_basis, 2),
+            "withdrawn_net_usd": round(b_w_net, 2),
+            "realized_pnl_usd": round(b_realized, 2),
+            "realized_pnl_pct": round((b_realized / b_w_basis * 100.0) if b_w_basis > 0 else 0.0, 2),
+            "cumulative_realized_pnl_usd": cum_realized_pnl,
+            "commission_usd": round(b_comm, 2),
+            "deposited_total_usd": b_dep_sum,
+            "deposits_followup_pnl_usd": b_dep_followup_pnl,
+            "deposits_followup_pnl_pct": round((b_dep_followup_pnl / b_dep_sum * 100.0) if b_dep_sum > 0 else 0.0, 2),
+        })
+
+    # Reverse chronological order (most recent rebalance at top) for UI display
+    rebalance_history_desc = list(reversed(rebalance_history))
+    last_reb_ts = next((r["ts"] for r in rebalance_history_desc if r["event_kind"] != "INITIAL_DEPLOY"), None)
+
+    return {
+        "ok": True,
+        "invest_date": invest_date,
+        "session_start_ms": session_start_ms,
+        "session_start_ts": invest_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "net_capital_usd": round(session_net_capital, 2),
+        "rebalance_count": rebalance_seq,
+        "last_rebalance_ts": last_reb_ts,
+        "total_withdrawn_basis_usd": total_withdrawn_basis,
+        "total_withdrawn_net_usd": total_withdrawn_net,
+        "realized_pnl_usd": cum_realized_pnl,
+        "realized_pnl_pct_on_exited": round(
+            (cum_realized_pnl / total_withdrawn_basis * 100.0) if total_withdrawn_basis > 0 else 0.0, 2
+        ),
+        "total_commission_usd": total_commission_paid,
+        "session_vault_events": session_vault_events,
+        "session_funding_events": session_funding_events,
+        "rebalance_history": rebalance_history_desc,
+    }
+
+
+def compute_net_wallet_capital(account_address: Optional[str], fallback_capital: float = 0.0) -> float:
+    """
+    Computes the exact net external USDC capital funded into the active portfolio session
+    from Hyperliquid L1 `userNonFundingLedgerUpdates`.
+    """
+    if not account_address or not account_address.startswith("0x"):
+        return round(fallback_capital, 2)
+    summary = fetch_wallet_vault_ledger_summary(account_address, ttl_sec=10.0)
+    if summary.get("ok") and float(summary.get("net_capital_usd", 0.0) or 0.0) >= 100.0:
+        return round(float(summary["net_capital_usd"]), 2)
+    return round(fallback_capital, 2)
 
 
 # ==============================================================================
@@ -371,7 +1007,28 @@ def compute_sgra_signal(
 
     pnl_mat = np.full((T, N), np.nan)
     tvl_mat = np.full((T, N), np.nan)
+    mdd_mat = np.full((T, N), np.nan)
     allow_mat = np.zeros((T, N), dtype=bool)
+
+    db_path = DATA_DIR / "pnl_history.db"
+    if db_path.exists():
+        try:
+            conn = sqlite3.connect(str(db_path))
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT vault_address, collected_at, tvl, alltime_pnl FROM daily_pnl WHERE collected_at >= ?",
+                (panel_dates[0],),
+            )
+            date_idx = {d: idx for idx, d in enumerate(panel_dates)}
+            for addr, dt, tvl_db, apnl_db in cur.fetchall():
+                a = str(addr or "").lower()
+                if a in addr_idx and dt in date_idx:
+                    ti, ai = date_idx[dt], addr_idx[a]
+                    tvl_mat[ti, ai] = float(tvl_db or 0.0)
+                    pnl_mat[ti, ai] = float(apnl_db or 0.0)
+            conn.close()
+        except Exception:
+            pass
 
     for t, d in enumerate(panel_dates):
         for v in snaps_by_date[d]:
@@ -385,6 +1042,7 @@ def compute_sgra_signal(
             elif v.get("pnl_alltime") is not None:
                 pnl_mat[t, i] = float(v.get("pnl_alltime", 0.0) or 0.0)
             tvl_mat[t, i] = float(v.get("tvl", 0.0) or 0.0)
+            mdd_mat[t, i] = float(v.get("max_drawdown", 15.0) or 15.0)
             allow_mat[t, i] = bool(v.get("allow_deposits", True))
 
     ret_mat = np.full((T, N), np.nan)
@@ -440,6 +1098,9 @@ def compute_sgra_signal(
 
         p_arr = v.get("alltime_pnl", [])
         pnl_alltime = float(p_arr[-1]) if (isinstance(p_arr, list) and p_arr) else float(v.get("pnl_alltime", 0.0) or 0.0)
+        snap_mdd_now = float(v.get("max_drawdown", 15.0) or 15.0)
+        mdd_10d_ago = float(mdd_mat[max(0, T - 11), i]) if not np.isnan(mdd_mat[max(0, T - 11), i]) else snap_mdd_now
+        mdd_exp_10d = snap_mdd_now - mdd_10d_ago
 
         v_feats[addr] = {
             "address": addr,
@@ -452,9 +1113,11 @@ def compute_sgra_signal(
             "leader_usd": float(v.get("leader_equity_usd", 0.0) or 0.0),
             "snap_sharpe": float(np.clip(float(v.get("sharpe_ratio", 0.0) or 0.0), -20.0, 50.0)),
             "robustness": float(v.get("robustness_score", 0.0) or 0.0),
-            "snap_mdd": float(v.get("max_drawdown", 15.0) or 15.0),
+            "snap_mdd": snap_mdd_now,
+            "mdd_exp_10d": round(mdd_exp_10d, 2),
             "drawdown_now": max(dd30_now, float(v.get("drawdown_now", 0.0) or 0.0)),
             "apr_30d": float(v.get("apr_30d", 0.0) or 0.0),
+            "hl_apr_pct": float(v.get("apr_pct", 0.0) or 0.0),
             "pnl_alltime": pnl_alltime,
             "ret7": ret7,
             "ret14": ret14,
@@ -465,27 +1128,46 @@ def compute_sgra_signal(
     is_bear = (mkt_cum14 < -0.015 or breadth14 < 0.42 or mkt_dd30 > 0.035)
     regime = "BULL" if is_bull else ("BEAR" if is_bear else "NEUTRAL")
 
-    # Core Scoring (SGRA+)
-    min_tvl = float(cfg.get("min_vault_tvl_usd", 10000.0))
+    # Core Scoring & Risk-Conviction Weighting (TVL>=$20k, MaxMDD<=40%, Skin>=5%, Proven Support + Quality Weight)
+    min_tvl = float(cfg.get("min_vault_tvl_usd", 20000.0))
+    max_hist_mdd = float(cfg.get("max_historical_mdd_pct", 40.0))
+    max_entry_dd = float(cfg.get("max_entry_drawdown_pct", 38.0))
+    min_skin = float(cfg.get("min_leader_equity_ratio", 0.05))
+    min_active_mdd = float(cfg.get("min_active_mdd_pct", 2.2))
+    max_mdd_exp10 = float(cfg.get("max_mdd_expansion_10d_pct", 6.5))
+    min_apr30 = float(cfg.get("min_entry_apr_30d_pct", -130.0))
+    min_depth_ref = float(cfg.get("min_depth_reference_usd", 50000.0))
+    use_risk_w = bool(cfg.get("score_risk_weighting", True))
     buf = int(cfg.get("rank_buffer", 2))
     max_tvl_share = float(cfg.get("max_vault_tvl_share", 0.30))
     max_slot_w = float(cfg.get("max_single_slot_weight", 0.25))
-    cap_ref = max(float(deploy_capital_usd), 1000.0)
+    cap_ref = max(float(deploy_capital_usd), min_depth_ref, 1000.0)
 
     core_scored: List[Tuple[float, Dict[str, Any]]] = []
     for v in v_feats.values():
-        if not v["allow"] or v["tvl"] < min_tvl or v["leader_ratio"] < 0.30 or v["robustness"] < 0.20 or v["ret14"] < -0.05:
+        if not v["allow"] or v["tvl"] < min_tvl or v["leader_ratio"] < min_skin:
             continue
+        if v["snap_mdd"] > max_hist_mdd or v["drawdown_now"] > max_entry_dd:
+            continue
+        if v["robustness"] < 0.22 or v["ret14"] < -0.05:
+            continue
+        # Exclude ultra-low-vol stagnant T-bill park vaults (e.g. Growi HF / Citadel / FuturAI) unless earning >=20% APR
+        if min_active_mdd > 0.0 and v["snap_mdd"] < min_active_mdd and v["apr_30d"] < 20.0 and v["ret14"] < 0.015:
+            continue
+        # Block pakhom-type active floor collapse (exploding 10d historical MaxMDD or catastrophic 30D APR)
+        if v["mdd_exp_10d"] > max_mdd_exp10 or v["apr_30d"] < min_apr30:
+            continue
+
         underval = float(np.clip(v["drawdown_now"] / max(v["snap_mdd"], 5.0), 0.0, 1.0))
         score = (
-            v["robustness"] * 0.35
-            + (v["snap_sharpe"] / 50.0) * 0.30
+            v["robustness"] * 0.30
+            + (v["snap_sharpe"] / 50.0) * 0.20
             + underval * 0.20
-            + min(v["leader_ratio"] / 0.40, 1.0) * 0.15
+            + min(v["leader_ratio"] / 0.40, 1.0) * 0.30
         )
         v_copy = dict(v)
         v_copy["sgra_score"] = round(score, 4)
-        v_copy["sleeve"] = "CORE (Skin>=30% 복리)"
+        v_copy["sleeve"] = "CORE (우량·지지선 가중)"
         core_scored.append((score, v_copy))
 
     core_scored.sort(key=lambda x: x[0], reverse=True)
@@ -502,22 +1184,29 @@ def compute_sgra_signal(
             sel_core.append(v)
             sel_addrs.add(v["address"])
 
-    # Apply realistic <=30% Vault TVL & <=25% slot capacity cap
+    # Apply Risk-Adjusted Score Conviction Weighting + Institutional <=30% Vault TVL & <=25% Slot Cap
     target_weights: Dict[str, float] = {}
     selected_meta: Dict[str, Dict[str, Any]] = {}
     if sel_core:
         caps = np.array([min(max_slot_w, (max_tvl_share * v["tvl"]) / cap_ref) for v in sel_core], dtype=float)
-        w = np.ones(len(sel_core), dtype=float)
-        w = w / np.sum(w) * min(1.0, float(np.sum(caps)))
-        for _ in range(6):
+        if use_risk_w:
+            raw_w = np.array([
+                max(float(v["sgra_score"]), 0.05) / math.sqrt(max(0.5 * v["snap_mdd"] + 0.5 * v["drawdown_now"], 7.0))
+                for v in sel_core
+            ], dtype=float)
+        else:
+            raw_w = np.ones(len(sel_core), dtype=float)
+        w = raw_w / np.sum(raw_w) * min(1.0, float(np.sum(caps)))
+        for _ in range(16):
             over = w > caps + 1e-9
             if not np.any(over):
                 break
             ex = float(np.sum(w[over] - caps[over]))
             w[over] = caps[over]
-            under = ~over
+            under = w < caps - 1e-9
             if np.any(under) and np.sum(w[under]) > 0:
                 w[under] += ex * (w[under] / np.sum(w[under]))
+        w = np.minimum(w, caps)
         for v, wi in zip(sel_core, w):
             if wi > 1e-4:
                 target_weights[v["address"]] = float(wi)
@@ -530,9 +1219,9 @@ def compute_sgra_signal(
         for v in v_feats.values():
             if v["address"] in target_weights:
                 continue
-            if not v["allow"] or v["tvl"] < min_tvl or v["vdays"] < 14 or v["pnl_alltime"] <= 0:
+            if not v["allow"] or v["tvl"] < min_tvl or v["leader_ratio"] < min_skin or v["vdays"] < 14 or v["pnl_alltime"] <= 0:
                 continue
-            if v["ret14"] <= 0.02 or v["snap_mdd"] > 30.0 or v["snap_sharpe"] < 2.0:
+            if v["ret14"] <= 0.02 or v["snap_mdd"] > min(30.0, max_hist_mdd) or v["snap_sharpe"] < 2.0:
                 continue
             v_copy = dict(v)
             v_copy["sgra_score"] = round(v["ret14"], 4)
@@ -550,7 +1239,7 @@ def compute_sgra_signal(
                 selected_meta[mv["address"]] = mv
                 rem -= add_w
 
-    # Emergency Guardrail Inspection on Currently Held Vaults
+    # Emergency Guardrail Inspection on Currently Held Vaults (Non-Whip-Saw Consistent)
     emergency_exits: List[Dict[str, Any]] = []
     if cfg.get("emergency_guard_enabled", True):
         r14_floor = float(cfg.get("emergency_ret14_floor", -0.08))
@@ -562,8 +1251,13 @@ def compute_sgra_signal(
             reasons = []
             if vf["ret14"] < r14_floor:
                 reasons.append(f"14일 수익률 급락 ({vf['ret14']*100:+.1f}% < {r14_floor*100:.0f}%)")
-            if vf["drawdown_now"] > dd_ceil and h_addr not in target_weights:
-                reasons.append(f"현재 낙폭 한도 초과 ({vf['drawdown_now']:.1f}% > {dd_ceil:.0f}%)")
+            if vf["drawdown_now"] > max_hist_mdd:
+                reasons.append(f"최대 허용 낙폭 하드캡 돌파 ({vf['drawdown_now']:.1f}% > {max_hist_mdd:.0f}%)")
+            elif h_addr not in target_weights:
+                if vf["drawdown_now"] > dd_ceil:
+                    reasons.append(f"목표 외 편출 및 낙폭 한도 초과 ({vf['drawdown_now']:.1f}% > {dd_ceil:.0f}%)")
+                elif vf["mdd_exp_10d"] > max_mdd_exp10:
+                    reasons.append(f"최근 10일 역사적 MDD 급확장 붕괴 (+{vf['mdd_exp_10d']:.1f}%p)")
             if vf["tvl_chg_7d"] <= -40.0 and vf["leader_ratio"] < 0.30:
                 reasons.append(f"7일 TVL 급유출 ({vf['tvl_chg_7d']:.1f}%)")
             if not vf["allow"] and vf["apr_30d"] < -10.0:
@@ -589,6 +1283,9 @@ def compute_sgra_signal(
             "cushioned_sharpe": round(m["snap_sharpe"], 2),
             "robustness": round(m["robustness"], 3),
             "drawdown_now_pct": round(m["drawdown_now"], 2),
+            "max_mdd_pct": round(m["snap_mdd"], 2),
+            "apr_30d_pct": round(m["apr_30d"], 1),
+            "hl_apr_pct": round(m.get("hl_apr_pct", 0.0), 2),
             "ret_14d_pct": round(m["ret14"] * 100.0, 2),
             "sgra_score": m["sgra_score"],
         })
@@ -637,7 +1334,7 @@ def _build_delta_plan(
         if only_emergency and addr not in emergency_addrs:
             continue
 
-        if tgt_u <= 0.5 and cur_u > 1.0:
+        if tgt_u <= 0.5 and cur_u > 7.0:
             planned_sells.append({
                 "address": addr, "name": vname, "action": "WITHDRAW_FULL",
                 "current_usd": round(cur_u, 2), "target_usd": 0.0, "delta_usd": round(cur_u, 2),
@@ -671,6 +1368,109 @@ def _build_delta_plan(
     return planned_sells, planned_buys, skipped_band
 
 
+def _fetch_fresh_vault_withdrawal_bounds(account_addr: str, vault_addr: str) -> Tuple[float, float]:
+    """실시간 vaultDetails 조회로 거래소 Max 출금 가능액(maxWithdrawable)과 현재 평가금(vaultEquity)을 반환"""
+    try:
+        rq = urllib.request.Request(
+            constants.MAINNET_API_URL + "/info",
+            data=json.dumps({"type": "vaultDetails", "vaultAddress": vault_addr, "user": account_addr}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(rq, timeout=5) as rp:
+            d = json.loads(rp.read().decode("utf-8")) or {}
+        mw = float(d.get("maxWithdrawable") or 0.0)
+        veq = float((d.get("followerState") or {}).get("vaultEquity") or mw)
+        if mw <= 0.0 and veq > 0.0:
+            mw = veq
+        return mw, veq
+    except Exception:
+        return 0.0, 0.0
+
+
+def _execute_live_vault_withdrawal(
+    exchange: Any,
+    account_addr: str,
+    vault_addr: str,
+    action: str,
+    requested_usd: float,
+) -> Tuple[bool, float, Any]:
+    """
+    Hyperliquid L1 볼트 출금 프로토콜 규약 준수 실행기:
+    - 기존 `amt * 0.998` 방식은 잔류 예치금이 $0.01 ~ $4.99 사이로 남아
+      Hyperliquid L1의 `"Vault deposits must be at least $5."` 규약에 의해 거절됨.
+    - WITHDRAW_FULL(전액 출금) 시:
+      1) 최신 `maxWithdrawable` 기준 100% 전액 지분 상환 시도 (오버클램프 -> 정밀 maxWithdrawable 3회 -> usd=0 검증)
+      2) 만약 초단기 마크가격 급변동으로 1~3단계가 모두 거절될 경우 `maxWithdrawable - $5.50` 안전 출금으로 99%+ 즉시 회수
+    - WITHDRAW_TRIM(일부 축소) 시:
+      잔류 예치금이 $5.50 미만으로 남지 않도록 출금액 상한을 자동 보정.
+    """
+    mw, veq = _fetch_fresh_vault_withdrawal_bounds(account_addr, vault_addr)
+
+    if action != "WITHDRAW_FULL":
+        base_eq = veq if veq > 0.0 else requested_usd
+        max_avail = mw if mw > 0.0 else requested_usd
+        send_usd = min(requested_usd, max_avail)
+        if 0.0 < (base_eq - send_usd) < 5.50:
+            send_usd = max(0.0, max_avail - 5.50)
+        if send_usd < 5.0:
+            return False, 0.0, {"status": "err", "response": "Trim amount below $5 minimum after $5.50 retention guard"}
+        micro_usd = int(round(send_usd * 1_000_000))
+        resp = exchange.vault_usd_transfer(vault_address=vault_addr, is_deposit=False, usd=micro_usd)
+        ok = isinstance(resp, dict) and resp.get("status") == "ok"
+        return ok, round(send_usd, 2), resp
+
+    last_resp: Any = None
+
+    # Step 1: Request 1% above live maxWithdrawable (Hyperliquid L1 clamps >= equity to 100% share burn, leaving $0.00)
+    base_full = max(mw, veq, requested_usd)
+    if base_full > 0.01:
+        over_micro = int(round(base_full * 1.01 * 1_000_000))
+        resp = exchange.vault_usd_transfer(vault_address=vault_addr, is_deposit=False, usd=over_micro)
+        last_resp = resp
+        if isinstance(resp, dict) and resp.get("status") == "ok":
+            return True, round(mw if mw > 0 else requested_usd, 2), resp
+
+    # Step 2: Up to 3 rapid retries fetching fresh millisecond maxWithdrawable (exact Hyperliquid Web 'Max' value)
+    for attempt in range(3):
+        mw, veq = _fetch_fresh_vault_withdrawal_bounds(account_addr, vault_addr)
+        if veq <= 0.05 and mw <= 0.05:
+            return True, round(requested_usd, 2), {"status": "ok", "note": "already_withdrawn"}
+        target_val = mw if mw > 0.0 else (veq if veq > 0.0 else requested_usd)
+        micro_usd = int(round(target_val * 1_000_000)) if attempt == 0 else int(math.floor(target_val * 1_000_000))
+        if micro_usd <= 0:
+            continue
+        resp = exchange.vault_usd_transfer(vault_address=vault_addr, is_deposit=False, usd=micro_usd)
+        last_resp = resp
+        if isinstance(resp, dict) and resp.get("status") == "ok":
+            return True, round(micro_usd / 1_000_000.0, 2), resp
+        time.sleep(0.15)
+
+    # Step 3: Try usd=0 shorthand and verify on-chain balance actually dropped to ~$0
+    mw_before, veq_before = _fetch_fresh_vault_withdrawal_bounds(account_addr, vault_addr)
+    resp0 = exchange.vault_usd_transfer(vault_address=vault_addr, is_deposit=False, usd=0)
+    if isinstance(resp0, dict) and resp0.get("status") == "ok":
+        time.sleep(0.8)
+        _, veq_after = _fetch_fresh_vault_withdrawal_bounds(account_addr, vault_addr)
+        if veq_after <= 0.50:
+            return True, round(mw_before if mw_before > 0 else requested_usd, 2), resp0
+        last_resp = resp0
+
+    # Step 4: Guaranteed $5.50-retention rescue if open perp mark price whipsaws every millisecond
+    mw_final, _ = _fetch_fresh_vault_withdrawal_bounds(account_addr, vault_addr)
+    avail_final = mw_final if mw_final > 0.0 else requested_usd
+    if avail_final > 10.50:
+        safe_usd = math.floor((avail_final - 5.50) * 100.0) / 100.0
+        resp_safe = exchange.vault_usd_transfer(
+            vault_address=vault_addr, is_deposit=False, usd=int(round(safe_usd * 1_000_000))
+        )
+        last_resp = resp_safe
+        if isinstance(resp_safe, dict) and resp_safe.get("status") == "ok":
+            return True, round(safe_usd, 2), resp_safe
+
+    return False, round(requested_usd, 2), last_resp
+
+
 def _sync_live_portfolio_files(
     account_addr: str,
     onchain: Dict[str, Any],
@@ -691,21 +1491,41 @@ def _sync_live_portfolio_files(
     live_eq = round(float(onchain.get("total_equity_usd", sum(current_positions_usd.values()))), 2)
     today_str = now_iso[:10]
 
-    # Reset invest_date & baseline total_capital when transitioning from pre-funding (<$200) to funded operation
-    if is_fresh_deploy or old_cap < 200.0 or old_pf.get("account_address", "").lower() != account_addr.lower():
-        base_cap = live_eq
+    # Fetch exact per-vault principal (basis = vaultEquity - pnl) so fluctuating equity NEVER overwrites principal
+    v_details = fetch_live_vault_follower_details(account_addr, list(current_positions_usd.keys()))
+    principal_positions: Dict[str, float] = {}
+    live_equities: Dict[str, float] = {}
+    for addr, cur_eq in current_positions_usd.items():
+        det = v_details.get(addr.lower())
+        if det and det["principal_usd"] > 0.01:
+            principal_positions[addr.lower()] = round(float(det["principal_usd"]), 2)
+            live_equities[addr.lower()] = round(float(det["vault_equity_usd"]), 2)
+        else:
+            old_p = (old_pf.get("positions") or {}).get(addr.lower())
+            principal_positions[addr.lower()] = round(float(old_p if old_p else cur_eq), 2)
+            live_equities[addr.lower()] = round(float(cur_eq), 2)
+
+    ledger_summary = fetch_wallet_vault_ledger_summary(account_addr, ttl_sec=5.0)
+    ledger_cap = float(ledger_summary.get("net_capital_usd", 0.0) or 0.0) if ledger_summary.get("ok") else 0.0
+    if ledger_cap < 100.0:
+        ledger_cap = compute_net_wallet_capital(account_addr, fallback_capital=(old_cap if old_cap >= 200.0 else live_eq))
+    base_cap = round(ledger_cap, 2) if ledger_cap >= 200.0 else (live_eq if (is_fresh_deploy or old_cap < 200.0) else old_cap)
+
+    if ledger_summary.get("ok") and ledger_summary.get("invest_date"):
+        inv_date = str(ledger_summary["invest_date"])
+    elif is_fresh_deploy or old_cap < 200.0 or old_pf.get("account_address", "").lower() != account_addr.lower():
         inv_date = today_str
     else:
-        base_cap = old_cap
         inv_date = str(old_pf.get("invest_date") or today_str)
 
     atomic_write_json(MY_PORTFOLIO_FILE, {
-        "_comment": "SGRA+ 자동운용 봇 실시간 동기화 포트폴리오",
+        "_comment": "SGRA+ 자동운용 봇 실시간 동기화 포트폴리오 (positions = 실제 투자 원금 basis)",
         "account_address": account_addr,
         "fetched_at": now_iso,
         "total_capital": base_cap,
         "invest_date": inv_date,
-        "positions": current_positions_usd,
+        "positions": principal_positions,
+        "live_equities": live_equities,
     }, indent=2)
 
     if VIRTUAL_PORTFOLIOS_FILE.exists():
@@ -715,10 +1535,9 @@ def _sync_live_portfolio_files(
                 changed = False
                 for p in vp_list:
                     if p.get("id") == "default":
-                        p["positions"] = current_positions_usd
+                        p["positions"] = principal_positions
                         p["total_capital"] = base_cap
-                        if is_fresh_deploy or float(p.get("total_capital", 0) or 0) < 200.0:
-                            p["invest_date"] = inv_date
+                        p["invest_date"] = inv_date
                         changed = True
                         break
                 if changed:
@@ -728,6 +1547,19 @@ def _sync_live_portfolio_files(
 
 
 def run_autobot_cycle(
+    force_rebalance: bool = False,
+    trigger_override: Optional[str] = None,
+) -> Dict[str, Any]:
+    with _autobot_process_lock(timeout_sec=45.0) as locked:
+        if not locked:
+            return get_autobot_dashboard_payload()
+        return _run_autobot_cycle_unlocked(
+            force_rebalance=force_rebalance,
+            trigger_override=trigger_override,
+        )
+
+
+def _run_autobot_cycle_unlocked(
     force_rebalance: bool = False,
     trigger_override: Optional[str] = None,
 ) -> Dict[str, Any]:
@@ -800,7 +1632,7 @@ def run_autobot_cycle(
             deploy_capital = target_cap
             avail_cash_usd = target_cap
 
-    signal = compute_sgra_signal(deploy_capital, set(current_positions_usd.keys()), cfg)
+    signal = compute_sgra_signal(deploy_capital, {k for k, v in current_positions_usd.items() if v > 7.0}, cfg)
     if "error" in signal:
         state["last_checked_at"] = now_iso
         state["last_error"] = signal["error"]
@@ -841,7 +1673,8 @@ def run_autobot_cycle(
         and avail_cash_usd >= min_deploy_eq
     )
     excess_cash_usd = avail_cash_usd - float(signal.get("cash_reserve_usd", 0.0))
-    has_new_capital = (excess_cash_usd >= max(300.0, 0.12 * deploy_capital) and len(planned_buys) > 0)
+    redeploy_cash_floor = max(200.0, min(500.0, 0.08 * deploy_capital))
+    has_new_capital = (excess_cash_usd >= redeploy_cash_floor and len(planned_buys) > 0)
 
     trigger_type = "HOLD_NO_SIGNAL"
     trigger_reason = (
@@ -915,10 +1748,31 @@ def run_autobot_cycle(
         trigger_reason = f"🔄 정기 {interval_days}일 리밸런싱 시그널 도달 ({days_since_reb:.1f}일 경과)"
         should_execute = True
 
-    if trigger_type == "EMERGENCY_EXIT":
-        planned_sells, planned_buys, skipped_band = _build_delta_plan(
-            current_positions_usd, target_map, locked_map, emergency_addrs, v_lookup, True, band, min_trade
-        )
+    only_urgent_addrs = emergency_addrs | set(unlocked_retry_addrs)
+    if trigger_type in ("EMERGENCY_EXIT", "LOCKUP_UNLOCKED_RETRY") and days_since_reb < interval_days:
+        for s_item in planned_sells:
+            if s_item["address"] not in only_urgent_addrs:
+                skipped_band.append({
+                    "address": s_item["address"],
+                    "name": s_item["name"],
+                    "current_usd": s_item["current_usd"],
+                    "target_usd": s_item["target_usd"],
+                    "reason": "정기 리밸런싱 주기 전 HWM 크레딧 보존 유지",
+                })
+        planned_sells = [s for s in planned_sells if s["address"] in only_urgent_addrs]
+    elif trigger_type == "HOLD_NO_SIGNAL":
+        rem_d = max(0.0, interval_days - days_since_reb)
+        for item in planned_sells + planned_buys:
+            if item["current_usd"] > 0.5:
+                skipped_band.append({
+                    "address": item["address"],
+                    "name": item["name"],
+                    "current_usd": item["current_usd"],
+                    "target_usd": item["target_usd"],
+                    "reason": f"정기 리밸런싱(D-{rem_d:.1f}일) 전 HWM 크레딧 보존 유지",
+                })
+        planned_sells = []
+        planned_buys = []
 
     exec_events: List[Dict[str, Any]] = []
     new_pending_locked: Dict[str, Any] = {}
@@ -941,26 +1795,31 @@ def run_autobot_cycle(
                 addr = s["address"]
                 amt = float(s["delta_usd"])
                 if s["is_locked"]:
+                    prev_q = pending_locked.get(addr)
                     new_pending_locked[addr] = {
                         "name": s["name"],
                         "amount_usd": amt,
                         "locked_until": s["locked_until"],
-                        "queued_at": now_iso,
+                        "queued_at": prev_q.get("queued_at", now_iso) if isinstance(prev_q, dict) else now_iso,
                     }
-                    exec_events.append({
-                        "ts": now_iso, "mode": effective_mode, "trigger": trigger_type,
-                        "action": "QUEUED_24H_LOCKUP", "vault": s["name"], "address": addr,
-                        "amount_usd": amt, "status": "PENDING_UNLOCK",
-                        "detail": f"입금 후 24시간 락업 중 ({s['locked_until']} 해제 후 자동 재시도)",
-                    })
+                    if not prev_q:
+                        exec_events.append({
+                            "ts": now_iso, "mode": effective_mode, "trigger": trigger_type,
+                            "action": "QUEUED_24H_LOCKUP", "vault": s["name"], "address": addr,
+                            "amount_usd": amt, "status": "PENDING_UNLOCK",
+                            "detail": f"입금 후 24시간 락업 중 ({s['locked_until']} 해제 후 자동 재시도)",
+                        })
                     continue
 
                 if effective_mode == "LIVE" and exchange is not None:
                     try:
-                        send_usd = amt * 0.998 if s["action"] == "WITHDRAW_FULL" else amt
-                        micro_usd = int(round(send_usd * 1_000_000))
-                        resp = exchange.vault_usd_transfer(vault_address=addr, is_deposit=False, usd=micro_usd)
-                        ok = isinstance(resp, dict) and resp.get("status") == "ok"
+                        ok, send_usd, resp = _execute_live_vault_withdrawal(
+                            exchange=exchange,
+                            account_addr=account_addr,
+                            vault_addr=addr,
+                            action=s["action"],
+                            requested_usd=amt,
+                        )
                         exec_events.append({
                             "ts": now_iso, "mode": "LIVE", "trigger": trigger_type,
                             "action": s["action"], "vault": s["name"], "address": addr,
@@ -989,35 +1848,58 @@ def run_autobot_cycle(
                         "detail": s["reason"],
                     })
 
-            # Refresh live Perps withdrawable USDC after withdrawals & optionally bridge Spot USDC -> Perps
+            # Refresh live withdrawable USDC after withdrawals & handle both Standard and Unified Accounts
             if effective_mode == "LIVE" and exchange is not None and info_live is not None:
                 if planned_sells:
                     time.sleep(2.5)
                 refreshed = fetch_onchain_account_state(account_addr)
                 perp_free = float(refreshed.get("perp_withdrawable_usd", 0.0))
                 spot_free = float(refreshed.get("spot_usdc_usd", 0.0))
+                is_unified = bool(refreshed.get("is_unified_account", False))
                 needed_buys = sum(b["delta_usd"] for b in planned_buys)
-                if needed_buys > perp_free and spot_free >= 10.0 and cfg.get("auto_spot_to_perp", True):
-                    bridge_amt = math.floor(min(spot_free, needed_buys - perp_free + cash_buf) * 100.0) / 100.0
-                    if bridge_amt >= 5.0:
-                        try:
-                            b_resp = exchange.usd_class_transfer(amount=bridge_amt, to_perp=True)
-                            time.sleep(1.5)
-                            refreshed = fetch_onchain_account_state(account_addr)
-                            perp_free = float(refreshed.get("perp_withdrawable_usd", 0.0))
-                            exec_events.append({
-                                "ts": now_iso, "mode": "LIVE", "trigger": trigger_type,
-                                "action": "SPOT_TO_PERP_BRIDGE", "vault": "Hyperliquid Perps Account", "address": account_addr,
-                                "amount_usd": bridge_amt, "status": "OK",
-                                "detail": json.dumps(b_resp, ensure_ascii=False)[:200],
-                            })
-                        except Exception as bx:
-                            exec_events.append({
-                                "ts": now_iso, "mode": "LIVE", "trigger": trigger_type,
-                                "action": "SPOT_TO_PERP_BRIDGE", "vault": "Hyperliquid Perps Account", "address": account_addr,
-                                "amount_usd": bridge_amt, "status": "ERROR", "detail": str(bx)[:200],
-                            })
-                spendable_usd = max(0.0, min(perp_free - cash_buf, deploy_capital))
+
+                if is_unified:
+                    # Hyperliquid Unified Account: Spot & Perps share one margin pool; vault_usd_transfer draws directly!
+                    avail_live_free = perp_free + spot_free
+                else:
+                    if needed_buys > perp_free and spot_free >= 10.0 and cfg.get("auto_spot_to_perp", True):
+                        bridge_amt = math.floor(min(spot_free, needed_buys - perp_free + cash_buf) * 100.0) / 100.0
+                        if bridge_amt >= 5.0:
+                            try:
+                                b_resp = exchange.usd_class_transfer(amount=bridge_amt, to_perp=True)
+                                b_str = json.dumps(b_resp, ensure_ascii=False)
+                                if isinstance(b_resp, dict) and b_resp.get("status") == "ok":
+                                    time.sleep(1.5)
+                                    refreshed = fetch_onchain_account_state(account_addr)
+                                    perp_free = float(refreshed.get("perp_withdrawable_usd", 0.0))
+                                    exec_events.append({
+                                        "ts": now_iso, "mode": "LIVE", "trigger": trigger_type,
+                                        "action": "SPOT_TO_PERP_BRIDGE", "vault": "Hyperliquid Perps Account", "address": account_addr,
+                                        "amount_usd": bridge_amt, "status": "OK",
+                                        "detail": b_str[:200],
+                                    })
+                                elif "unified account" in b_str.lower():
+                                    is_unified = True
+                                else:
+                                    exec_events.append({
+                                        "ts": now_iso, "mode": "LIVE", "trigger": trigger_type,
+                                        "action": "SPOT_TO_PERP_BRIDGE", "vault": "Hyperliquid Perps Account", "address": account_addr,
+                                        "amount_usd": bridge_amt, "status": "REJECTED",
+                                        "detail": b_str[:200],
+                                    })
+                            except Exception as bx:
+                                if "unified account" in str(bx).lower():
+                                    is_unified = True
+                                else:
+                                    exec_events.append({
+                                        "ts": now_iso, "mode": "LIVE", "trigger": trigger_type,
+                                        "action": "SPOT_TO_PERP_BRIDGE", "vault": "Hyperliquid Perps Account", "address": account_addr,
+                                        "amount_usd": bridge_amt, "status": "ERROR", "detail": str(bx)[:200],
+                                    })
+                    avail_live_free = (perp_free + spot_free) if is_unified else perp_free
+
+                target_cash_res = float(signal.get("cash_reserve_usd", 0.0))
+                spendable_usd = max(0.0, min(avail_live_free - max(cash_buf, target_cash_res), deploy_capital))
             else:
                 target_cash_res = float(signal.get("cash_reserve_usd", 0.0))
                 spendable_usd = max(0.0, avail_cash_usd - max(cash_buf, target_cash_res))
@@ -1106,11 +1988,50 @@ def run_autobot_cycle(
             planned_sells, planned_buys, skipped_band = _build_delta_plan(
                 current_positions_usd, target_map, locked_map, emergency_addrs, v_lookup, False, band, min_trade
             )
+            if trigger_type in ("EMERGENCY_EXIT", "LOCKUP_UNLOCKED_RETRY") and days_since_reb < interval_days:
+                rem_d = max(0.0, interval_days - days_since_reb)
+                for s_item in planned_sells:
+                    if s_item["address"] not in only_urgent_addrs:
+                        skipped_band.append({
+                            "address": s_item["address"],
+                            "name": s_item["name"],
+                            "current_usd": s_item["current_usd"],
+                            "target_usd": s_item["target_usd"],
+                            "reason": f"정기 리밸런싱(D-{rem_d:.1f}일) 전 HWM 크레딧 보존 유지",
+                        })
+                planned_sells = [s_item for s_item in planned_sells if s_item["address"] in only_urgent_addrs]
+                if not planned_sells and avail_cash_usd < redeploy_cash_floor:
+                    for b_item in planned_buys:
+                        if b_item["current_usd"] > 0.5:
+                            skipped_band.append({
+                                "address": b_item["address"],
+                                "name": b_item["name"],
+                                "current_usd": b_item["current_usd"],
+                                "target_usd": b_item["target_usd"],
+                                "reason": f"교체 회수금 투입 완료 · 정기 리밸런싱(D-{rem_d:.1f}일)까지 유지",
+                            })
+                    planned_buys = [b_item for b_item in planned_buys if b_item["current_usd"] <= 0.5]
 
-        if trigger_type in ("RESUME_AUTO_START", "MANUAL_FORCE", "INITIAL_DEPLOY", "NEW_CAPITAL_DEPLOY", "SCHEDULED_14D") and (
-            len(exec_events) > 0 or (not is_preview_capital and not planned_sells and not planned_buys)
+        vault_tx_ok = any(
+            e.get("action") in ("DEPOSIT", "WITHDRAW_FULL", "WITHDRAW_TRIM")
+            and e.get("status") in ("OK", "SIMULATED_OK")
+            for e in exec_events
+        )
+        if (
+            trigger_type in ("RESUME_AUTO_START", "MANUAL_FORCE", "INITIAL_DEPLOY", "SCHEDULED_14D")
+            or (trigger_type == "NEW_CAPITAL_DEPLOY" and not last_reb_str)
+        ) and (
+            vault_tx_ok or (not is_preview_capital and not planned_sells and not planned_buys)
         ):
             state["last_rebalance_at"] = now_iso
+    elif effective_mode == "LIVE" and account_addr and current_positions_usd:
+        _sync_live_portfolio_files(
+            account_addr=account_addr,
+            onchain=onchain,
+            current_positions_usd=current_positions_usd,
+            now_iso=now_iso,
+            is_fresh_deploy=False,
+        )
 
     state["last_checked_at"] = now_iso
     state["last_signal_type"] = trigger_type

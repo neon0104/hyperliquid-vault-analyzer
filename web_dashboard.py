@@ -100,11 +100,19 @@ create_default_admin()
 @app.errorhandler(ExpiredSignatureError)
 @app.errorhandler(InvalidTokenError)
 def handle_auth_failures(e):
-    return redirect("/login")
+    import urllib.parse as _up
+    nxt = request.full_path.rstrip("?") if request.path != "/login" else "/live"
+    if nxt.startswith("/api/"):
+        return jsonify({"error": "Unauthorized"}), 401
+    return redirect(f"/login?next={_up.quote(nxt, safe='/?=&')}")
 
 # ── 로그인 / 로그아웃 라우트 ──────────────────────────────────────────────────
 @app.route("/login", methods=["GET", "POST"])
 def login_view():
+    next_url = request.args.get("next") or request.form.get("next") or "/"
+    if not next_url.startswith("/") or next_url.startswith("//") or next_url.startswith("/login"):
+        next_url = "/"
+
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
@@ -115,20 +123,21 @@ def login_view():
         conn.close()
         
         if not user or not user["is_active"] or not _check_password(password, user["password_hash"]):
-            return render_template_string(LOGIN_HTML, error="이메일 또는 비밀번호가 올바르지 않습니다.")
+            return render_template_string(LOGIN_HTML, error="이메일 또는 비밀번호가 올바르지 않습니다.", next_url=next_url)
             
         identity = str(user["id"])
+        cookie_days = 30
         access_token = create_access_token(
             identity=identity,
             additional_claims={"role": user["role"], "username": user["username"]},
-            expires_delta=timedelta(hours=24)  # 모바일 편의를 위해 24시간
+            expires_delta=timedelta(days=cookie_days)  # 모바일 웹앱(PWA) 편의를 위해 30일 유지
         )
         
-        response = make_response(redirect("/"))
-        set_access_cookies(response, access_token)
+        response = make_response(redirect(next_url))
+        set_access_cookies(response, access_token, max_age=cookie_days * 86400)
         return response
         
-    return render_template_string(LOGIN_HTML)
+    return render_template_string(LOGIN_HTML, next_url=next_url)
 
 @app.route("/logout")
 def logout_view():
@@ -691,20 +700,39 @@ def api_get_portfolios():
             pass
             
     results = []
+    force_live = request.args.get("refresh") == "1"
     for p in portfolios:
-        perf = portfolio_tracker.calc_portfolio_performance(p.get("positions", {}), p.get("invest_date"), p.get("total_capital", 100000.0), snaps)
-        insights = portfolio_tracker.get_portfolio_insights(p.get("positions", {}), perf, latest_snap)
-        results.append({
-            "id": p.get("id"),
-            "name": p.get("name"),
-            "ptype": p.get("ptype", "custom"),
-            "total_capital": p.get("total_capital"),
-            "invest_date": p.get("invest_date"),
-            "positions": p.get("positions", {}),
-            "performance": perf,
-            "insights": insights
-        })
-    return jsonify(results)
+        if p.get("id") == "default":
+            perf = portfolio_tracker.calc_live_onchain_portfolio_performance(p, snaps, ttl_sec=(0.0 if force_live else 4.0))
+            live_pos_basis = {h["address"]: h["invested_usd"] for h in perf.get("holdings", [])} or p.get("positions", {})
+            insights = portfolio_tracker.get_portfolio_insights(live_pos_basis, perf, latest_snap)
+            results.append({
+                "id": p.get("id"),
+                "name": p.get("name"),
+                "ptype": p.get("ptype", "custom"),
+                "total_capital": perf.get("total_invested", p.get("total_capital")),
+                "invest_date": perf.get("invest_date", p.get("invest_date")),
+                "positions": live_pos_basis,
+                "performance": perf,
+                "insights": insights
+            })
+        else:
+            perf = portfolio_tracker.calc_portfolio_performance(p.get("positions", {}), p.get("invest_date"), p.get("total_capital", 100000.0), snaps)
+            insights = portfolio_tracker.get_portfolio_insights(p.get("positions", {}), perf, latest_snap)
+            results.append({
+                "id": p.get("id"),
+                "name": p.get("name"),
+                "ptype": p.get("ptype", "custom"),
+                "total_capital": p.get("total_capital"),
+                "invest_date": p.get("invest_date"),
+                "positions": p.get("positions", {}),
+                "performance": perf,
+                "insights": insights
+            })
+    resp = jsonify(results)
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    resp.headers["Pragma"] = "no-cache"
+    return resp
 
 
 @app.route("/api/portfolios", methods=["POST"])
@@ -980,6 +1008,189 @@ def api_get_vault_mdds():
         return jsonify({"error": str(e)}), 500
 
 
+
+@app.route("/mobile-connect")
+@jwt_required()
+def mobile_connect_gui():
+    import socket, subprocess, base64, io
+    port = int(os.environ.get("PORT", "5001"))
+
+    # 1. Detect Tailscale 100.x.x.x IP if installed & connected
+    ts_ip = None
+    for ts_bin in ["tailscale", r"C:\Program Files\Tailscale\tailscale.exe"]:
+        try:
+            out = subprocess.check_output([ts_bin, "ip", "-4"], text=True, timeout=2, stderr=subprocess.DEVNULL).strip()
+            for line in out.splitlines():
+                if line.strip().startswith("100."):
+                    ts_ip = line.strip()
+                    break
+            if ts_ip:
+                break
+        except Exception:
+            pass
+
+    # 2. Detect LAN Wi-Fi IP
+    lan_ip = "127.0.0.1"
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        lan_ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        pass
+
+    ts_url = f"http://{ts_ip}:{port}/live" if ts_ip else None
+    lan_url = f"http://{lan_ip}:{port}/live"
+
+    # 3. Detect Cloudflare External HTTPS Tunnel URL (works outside office on 5G/LTE with 0 app install!)
+    cf_url = None
+    try:
+        st_path = DATA_DIR / "status.json"
+        if st_path.exists():
+            st_data = json.loads(st_path.read_text(encoding="utf-8"))
+            cand_cf = st_data.get("public_mobile_url") or (
+                (st_data.get("public_url") + "/live") if st_data.get("public_url") else None
+            )
+            if cand_cf and cand_cf.startswith("https://"):
+                cf_url = cand_cf
+    except Exception:
+        pass
+
+    def _make_qr_b64(target_url: str) -> str:
+        try:
+            import qrcode
+            qr = qrcode.QRCode(box_size=7, border=2)
+            qr.add_data(target_url)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            buf = io.BytesIO()
+            img.save(buf, format="PNG")
+            return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode("ascii")
+        except Exception:
+            return ""
+
+    primary_url = ts_url or cf_url or lan_url
+    qr_src = _make_qr_b64(primary_url)
+    lan_qr_src = _make_qr_b64(lan_url)
+
+    html = """<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📱 휴대폰 직행 웹앱(PWA) 연결 가이드</title>
+<style>
+  body { background:#0b0f19; color:#f1f5f9; font-family:'Inter',system-ui,sans-serif; margin:0; padding:32px 18px; }
+  .wrap { max-width:860px; margin:0 auto; }
+  .card { background:#131a2f; border:1px solid rgba(255,255,255,0.09); border-radius:18px; padding:26px; margin-bottom:22px; box-shadow:0 12px 32px rgba(0,0,0,0.35); }
+  h1 { font-size:1.45rem; margin:0 0 8px 0; }
+  h2 { font-size:1.12rem; margin:0 0 12px 0; color:#60a5fa; }
+  .url-box { background:#090d16; border:1px solid #2b3a67; padding:12px 16px; border-radius:10px; font-family:monospace; font-size:1.05rem; color:#34d399; font-weight:700; word-break:break-all; margin:10px 0; }
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px; align-items:center; }
+  .qr-img { width:210px; height:210px; border-radius:14px; border:4px solid #fff; display:block; margin:0 auto; }
+  .step { margin-bottom:10px; line-height:1.6; color:#cbd5e1; font-size:0.93rem; }
+  .badge-ok { display:inline-block; background:rgba(16,185,129,0.16); color:#34d399; border:1px solid rgba(16,185,129,0.4); padding:4px 10px; border-radius:999px; font-size:0.78rem; font-weight:700; }
+  .badge-warn { display:inline-block; background:rgba(245,158,11,0.16); color:#fbbf24; border:1px solid rgba(245,158,11,0.4); padding:4px 10px; border-radius:999px; font-size:0.78rem; font-weight:700; }
+  .btn { display:inline-block; padding:10px 18px; border-radius:10px; text-decoration:none; font-weight:700; font-size:0.88rem; background:#3b82f6; color:#fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+    <h1>📱 내 실제 포트폴리오 · 휴대폰 직행 앱(PWA) 연결</h1>
+    <a class="btn" href="/live">← 내 실제 포트폴리오로 돌아가기</a>
+  </div>
+
+  <div class="card">
+    <div style="margin-bottom:12px;">
+      {% if ts_url %}
+        <span class="badge-ok">🟢 Tailscale 영구 고정 사설망 연결됨 (회사 밖 5G/LTE 어디서나 접속 가능!)</span>
+      {% elif cf_url %}
+        <span class="badge-ok">🟢 회사 밖(5G / LTE / 집) 보안 HTTPS 직행 터널 활성화됨 (별도 앱 설치 불필요!)</span>
+      {% else %}
+        <span class="badge-warn">🟡 현재 회사 내부 Wi-Fi 직행 모드 활성화됨</span>
+      {% endif %}
+    </div>
+    <div class="grid2">
+      <div style="text-align:center;">
+        {% if qr_src %}<img class="qr-img" src="{{ qr_src }}" alt="Mobile QR">{% endif %}
+        <div style="font-size:0.8rem; color:#94a3b8; margin-top:8px;">⚠️ 네이버 앱 대신 <b>기본 카메라</b>로 스캔 후 <b>Chrome</b>으로 여세요</div>
+      </div>
+      <div>
+        <h2>{% if ts_url %}1순위: 내 전용 영구 고정 직행 주소 (5G/LTE/Wi-Fi 겸용){% elif cf_url %}지금 바로 회사 밖(5G/LTE) & 사내 어디서든 열리는 주소{% else %}사내 Wi-Fi 전용 주소{% endif %}</h2>
+        <div class="url-box">{{ primary_url }}</div>
+        <div class="step">✅ 접속 후 최초 1회 로그인(<code>admin@hyperliquid.com</code>)하면 <b>30일간 자동로그인</b>이 유지됩니다.</div>
+        <div class="step">✅ <code>192.168.0.23</code> 주소는 사내 공유기 전용이므로 기존 북마크/바로가기는 삭제하시고 <b>반드시 위 주소로 등록</b>해 주세요.</div>
+        {% if (ts_url or cf_url) and lan_url != primary_url %}
+          <div style="font-size:0.82rem; color:#94a3b8; margin-top:8px;">참고 (회사 내부 Wi-Fi 전용 주소): <code>{{ lan_url }}</code></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🤖 안드로이드(갤럭시) 전용 앱(PWA)으로 설치하는 정확한 방법</h2>
+    <div class="step"><b>1단계:</b> 위 QR코드를 <b>안드로이드 기본 카메라</b>로 비추거나 텔레그램으로 전송된 링크를 누른 뒤, 반드시 <b>Chrome(크롬) 브라우저</b>에서 엽니다. <span style="color:#f87171;">(네이버 앱 [N] 인앱 브라우저에서는 앱 설치가 제한됩니다!)</span></div>
+    <div class="step"><b>2단계:</b> 로그인 후 크롬 우측 상단 <b>[점 3개(⋮) 메뉴]</b> 터치 → <b>[홈 화면에 추가]</b> 터치 → <b>[설치]</b> 터치!</div>
+    <div class="step" style="color:#34d399; margin-top:8px;">👉 바탕화면에 생성된 <b>[내 포트폴리오]</b> 아이콘을 누르면 회사 안/밖(5G) 어디서든 전체화면 전용 앱으로 즉시 열립니다!</div>
+  </div>
+
+  {% if not ts_url %}
+  <div class="card">
+    <h2>🔒 (선택) PC를 재부팅해도 주소가 평생 안 바뀌게 고정하려면 (Tailscale 1분 세팅)</h2>
+    <div class="step">💡 현재 HTTPS 주소는 PC가 켜져 있는 동안 계속 유지되며, 만약 PC가 재부팅되어 새 주소가 발급되면 <b>텔레그램으로 새 링크가 자동 전송</b>됩니다.</div>
+    <div class="step"><b>영구 고정 IP를 원하실 때만:</b> ① PC에서 <code>setup_tailscale_mobile.bat</code> 더블클릭 후 구글 로그인 → ② 안드로이드 <b>Play 스토어</b>에서 <b>Tailscale</b> 설치 후 같은 구글 로그인 & 스위치 ON → <code>http://100.x.x.x:5001/live</code> 평생 고정!</div>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>"""
+    return render_template_string(html, ts_url=ts_url, cf_url=cf_url, lan_url=lan_url, primary_url=primary_url, qr_src=qr_src, lan_qr_src=lan_qr_src)
+
+@app.route("/manifest.json")
+def pwa_manifest():
+    return jsonify({
+        "name": "나의 실제 포트폴리오 · Hyperliquid",
+        "short_name": "내 포트폴리오",
+        "description": "Hyperliquid 실시간 온체인 포트폴리오 모니터",
+        "start_url": "/live",
+        "scope": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#0b0f19",
+        "theme_color": "#0b0f19",
+        "icons": [
+            {"src": "/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+        ]
+    })
+
+
+@app.route("/app-icon.svg")
+def pwa_icon_svg():
+    svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0f172a"/>
+          <stop offset="100%" stop-color="#1e293b"/>
+        </linearGradient>
+        <linearGradient id="accent" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#3b82f6"/>
+          <stop offset="100%" stop-color="#10b981"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="112" fill="url(#g)"/>
+      <rect x="24" y="24" width="464" height="464" rx="92" fill="none" stroke="url(#accent)" stroke-width="10" opacity="0.55"/>
+      <polyline points="96,348 188,268 256,304 388,156" fill="none" stroke="url(#accent)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="316,156 388,156 388,228" fill="none" stroke="#10b981" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="388" cy="156" r="18" fill="#34d399"/>
+    </svg>"""
+    resp = make_response(svg)
+    resp.headers["Content-Type"] = "image/svg+xml"
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
+
+
+@app.route("/live")
 @app.route("/m")
 @app.route("/my-portfolio")
 @jwt_required()
@@ -1125,6 +1336,7 @@ LOGIN_HTML = """<!DOCTYPE html>
         <p>비인가자의 접근이 제한된 시스템입니다.</p>
         {% if error %}<div class="error">{{ error }}</div>{% endif %}
         <form method="POST" action="/login">
+            <input type="hidden" name="next" value="{{ next_url or '/' }}">
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="email" required placeholder="admin@hyperliquid.com">
@@ -1279,8 +1491,8 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="view
     </div>
     <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; border:1px solid var(--border);">
         <div>
-            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Leader Eq Min (%):</label>
-            <input type="number" id="leaderFilter" oninput="filterTable()" placeholder="e.g. 10" style="padding:8px; width:100px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
+            <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Leader Eq Min ($):</label>
+            <input type="number" id="leaderFilter" oninput="filterTable()" placeholder="e.g. 10000" style="padding:8px; width:120px; background:var(--bg); border:1px solid var(--border); color:#fff; border-radius:8px;">
         </div>
         <div>
             <label style="font-size:0.8rem; color:var(--muted); margin-right:8px;">Max MDD (%):</label>
@@ -1303,7 +1515,7 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="view
                 <th>Rank</th>
                 <th>Vault Name</th>
                 <th>TVL (USD/KRW)</th>
-                <th style="text-align:center;">Leader Eq%</th>
+                <th style="text-align:center;">Leader Eq ($ / %)</th>
                 <th>All-time PnL</th>
                 <th>All-time MDD</th>
                 <th>Sharpe Ratio</th>
@@ -1315,7 +1527,8 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="view
         </thead>
         <tbody>
         {% for v in vaults %}
-        <tr data-leader="{{ v.leader_equity_ratio }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}" data-tvl="{{ v.tvl }}" data-address="{{v.address}}">
+        {% set leader_usd_val = (v.leader_equity_usd if v.leader_equity_usd is defined and v.leader_equity_usd is not none else (v.tvl * v.leader_equity_ratio)) %}
+        <tr data-leader="{{ v.leader_equity_ratio }}" data-leader-usd="{{ leader_usd_val | round(2) }}" data-deposit="{{ 'open' if v.allow_deposits else 'closed' }}" data-mdd="{{ v.max_drawdown }}" data-tvl="{{ v.tvl }}" data-address="{{v.address}}">
             <td style="text-align:center;"><input type="checkbox" class="vault-cb" data-address="{{v.address}}" onchange="updateSelectionCount()" style="width:18px;height:18px;cursor:pointer;accent-color:var(--accent2);"></td>
             <td>
                 #{{v.rank}}<br>
@@ -1333,8 +1546,9 @@ MAIN_HTML = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="view
                 <small style="color:var(--muted)">≈ {{ "{:,.1f}".format(v.tvl * 1400 / 100000000) }} 억원</small>
             </td>
             <td style="text-align:center;">
-                <span class="badge" style="background:rgba(26,188,156,0.1);color:var(--accent2)">{{ (v.leader_equity_ratio * 100)|round(1) }}%</span><br>
-                <small style="color:var(--muted)">≈ {{ "{:,.1f}".format(v.leader_equity_usd * 1400 / 100000000) }} 억원</small>
+                <span style="font-weight:700; color:#fff;">${{ "{:,.0f}".format(leader_usd_val) }}</span>
+                <span class="badge" style="background:rgba(26,188,156,0.1);color:var(--accent2);margin-left:3px;">{{ (v.leader_equity_ratio * 100)|round(1) }}%</span><br>
+                <small style="color:var(--muted)">≈ {{ "{:,.1f}".format(leader_usd_val * 1400 / 100000000) }} 억원</small>
             </td>
             <td>
                 <span style="color:{{ 'var(--success)' if v.pnl_alltime >= 0 else 'var(--danger)' }}; font-weight:600;">${{ "{:,.0f}".format(v.pnl_alltime) }}</span>
@@ -1582,8 +1796,8 @@ function closeModal() {
 }
 
 function filterTable() {
-    let leaderMin = parseFloat(document.getElementById('leaderFilter').value);
-    if(isNaN(leaderMin)) leaderMin = 0; else leaderMin = leaderMin / 100.0;
+    let leaderMinUsd = parseFloat(document.getElementById('leaderFilter').value);
+    if(isNaN(leaderMinUsd)) leaderMinUsd = 0;
     
     let mddMax = parseFloat(document.getElementById('mddFilter').value);
     if(isNaN(mddMax)) mddMax = 999;
@@ -1595,11 +1809,11 @@ function filterTable() {
     let count = 0;
     
     rows.forEach(row => {
-        const leader = parseFloat(row.getAttribute('data-leader'));
+        const leaderUsd = parseFloat(row.getAttribute('data-leader-usd')) || 0;
         const mdd = parseFloat(row.getAttribute('data-mdd'));
         const tvl = parseFloat(row.getAttribute('data-tvl'));
         
-        const leaderMatch = leader >= leaderMin;
+        const leaderMatch = leaderUsd >= leaderMinUsd;
         const mddMatch = mdd <= mddMax;
         const tvlMatch = tvl >= tvlMin;
         
@@ -1672,7 +1886,7 @@ document.addEventListener('DOMContentLoaded', filterTable);
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">
     <a href="/autobot" id="tab-autobot" class="tab-item"><span class="icon">🤖</span><span>AutoBot</span></a>
-    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
+    <a href="/live" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
     <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
@@ -1680,7 +1894,7 @@ document.addEventListener('DOMContentLoaded', filterTable);
 <script>
     (function() {
         const path = window.location.pathname;
-        if(path==='/m'||path==='/my-portfolio') {
+        if(path==='/live'||path==='/m'||path==='/my-portfolio') {
             document.getElementById('tab-portfolio').classList.add('active');
         } else if(path==='/settings'||path==='/discord') {
             document.getElementById('tab-settings').classList.add('active');
@@ -3122,7 +3336,7 @@ function runBacktest() {
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">
     <a href="/autobot" id="tab-autobot" class="tab-item"><span class="icon">🤖</span><span>AutoBot</span></a>
-    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
+    <a href="/live" id="tab-portfolio" class="tab-item"><span class="icon">📱</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
     <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
@@ -3130,7 +3344,7 @@ function runBacktest() {
 <script>
     (function() {
         const path = window.location.pathname;
-        if(path==='/m'||path==='/my-portfolio') {
+        if(path==='/live'||path==='/m'||path==='/my-portfolio') {
             document.getElementById('tab-portfolio').classList.add('active');
         } else if(path==='/settings'||path==='/discord') {
             document.getElementById('tab-settings').classList.add('active');
@@ -3305,7 +3519,7 @@ function testTelegram(){
 </script>
 <!-- ── 📱 모바일 하단 플로팅 탭바 마크업 ── -->
 <div class="mobile-tab-bar">
-    <a href="/m" id="tab-portfolio" class="tab-item"><span class="icon">💼</span><span>Portfolio</span></a>
+    <a href="/live" id="tab-portfolio" class="tab-item"><span class="icon">💼</span><span>Portfolio</span></a>
     <a href="/" id="tab-analysis" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
     <a href="/settings" id="tab-settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
@@ -3313,7 +3527,7 @@ function testTelegram(){
 <script>
     (function() {
         const path = window.location.pathname;
-        if(path==='/m'||path==='/my-portfolio') {
+        if(path==='/live'||path==='/m'||path==='/my-portfolio') {
             document.getElementById('tab-portfolio').classList.add('active');
         } else if(path==='/settings'||path==='/discord') {
             document.getElementById('tab-settings').classList.add('active');
@@ -3328,8 +3542,16 @@ MY_HTML = """<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HL Vault Analyzer - Virtual Portfolios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0f19">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="내 포트폴리오">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/app-icon.svg">
+    <link rel="apple-touch-icon" href="/app-icon.svg">
+    <title>나의 실제 포트폴리오 · Hyperliquid Live</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -3679,6 +3901,96 @@ MY_HTML = """<!DOCTYPE html>
         .pnl-green { color: var(--success); }
         .pnl-red { color: var(--danger); }
 
+        /* ── Rebalancing History & PnL Breakdown ── */
+        .rebalance-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        @media (max-width: 900px) {
+            .rebalance-kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 520px) {
+            .rebalance-kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .rebalance-kpi-box {
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+        .rebalance-kpi-lbl {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .rebalance-kpi-val {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        .rebalance-kpi-sub {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+        .reb-badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .reb-badge-emg {
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        .reb-badge-init {
+            background: rgba(59, 130, 246, 0.16);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+        }
+        .reb-badge-sched {
+            background: rgba(16, 185, 129, 0.16);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .reb-lot-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .reb-lot-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: 0.83rem;
+        }
+        .reb-vlink {
+            color: #f8fafc;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .reb-vlink:hover {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+
         /* ── Modal Design ── */
         .modal {
             display: none;
@@ -3932,6 +4244,21 @@ MY_HTML = """<!DOCTYPE html>
             .grid-3 {
                 grid-template-columns: 1fr;
             }
+            #tab-details .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            #tab-details .grid-3 .glass-card {
+                padding: 13px 10px !important;
+            }
+            #tab-details .grid-3 .stat-val {
+                font-size: 1.22rem !important;
+                word-break: keep-all;
+            }
+            #tab-details .grid-3 .p-card-stat-label {
+                font-size: 0.68rem !important;
+                line-height: 1.3;
+            }
 
             table {
                 font-size: 0.8rem;
@@ -3948,6 +4275,7 @@ MY_HTML = """<!DOCTYPE html>
 <header>
     <h1>💼 Virtual Portfolios Manager</h1>
     <div>
+        <a class="btn" href="/mobile-connect" style="background:rgba(59,130,246,0.18);border:1px solid #60a5fa;color:#93c5fd;font-weight:700;">📱 휴대폰 앱 연결 (QR)</a>
         <a class="btn" href="/autobot" style="background:rgba(26,188,156,0.16);border:1px solid #1abc9c;color:#1abc9c;font-weight:700;">🤖 $20k 자동운용 관제</a>
         <button class="btn btn-primary" onclick="openCreateModal()">➕ 새 가상 포트폴리오</button>
         <a class="btn back-btn" href="/">← 메인 대시보드</a>
@@ -3980,10 +4308,16 @@ MY_HTML = """<!DOCTYPE html>
     <!-- TAB 2: 상세 분석 및 AI 인사이트 -->
     <div id="tab-details" class="tab-panel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap:10px;">
-            <h2 id="details-portfolio-title" style="font-size:1.5rem; color:#fff;">기본 포트폴리오</h2>
-            <div style="display:flex; gap:10px;">
-                <button class="btn btn-primary" onclick="openEditModal()">✏️ 포트폴리오 수정</button>
-                <button class="btn btn-danger" onclick="deleteActivePortfolio()">🗑️ 포트폴리오 삭제</button>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <h2 id="details-portfolio-title" style="font-size:1.5rem; color:#fff; margin:0;">기본 포트폴리오</h2>
+                <span id="details-live-badge" style="display:none; background:rgba(46,204,113,0.16); color:#2ecc71; border:1px solid rgba(46,204,113,0.45); padding:4px 10px; border-radius:999px; font-size:0.78rem; font-weight:700;">🟢 Hyperliquid 실시간 온체인 동기화</span>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <button class="btn btn-primary" onclick="loadPortfoliosData(activePortfolioId, true)" style="background:rgba(56,189,248,0.18); border:1px solid rgba(56,189,248,0.45); color:#7dd3fc;">🔄 실시간 새로고침</button>
+                <button id="btn-auto-refresh" class="btn" onclick="toggleAutoRefresh()" style="background:rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.4); color:#34d399; font-size:0.78rem; padding:8px 12px;">⏱️ 60초 자동갱신 ON</button>
+                <button id="btn-unlock-edit" class="btn" onclick="toggleEditLock()" style="display:none; background:rgba(148,163,184,0.12); border:1px solid rgba(148,163,184,0.3); color:#94a3b8; font-size:0.78rem; padding:8px 12px;" title="모바일 오작동 방지를 위해 편집 버튼이 잠겨 있습니다">🔒 편집 잠금</button>
+                <button id="btn-edit-port" class="btn btn-primary" onclick="openEditModal()">✏️ 포트폴리오 수정</button>
+                <button id="btn-del-port" class="btn btn-danger" onclick="deleteActivePortfolio()">🗑️ 포트폴리오 삭제</button>
             </div>
         </div>
 
@@ -4049,6 +4383,28 @@ MY_HTML = """<!DOCTYPE html>
             </div>
         </div>
 
+        <!-- Rebalancing History & Realized/Unrealized PnL Card (Live Portfolio) -->
+        <div class="glass-card" id="rebalance-history-card" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:10px; margin-bottom:18px;">
+                <h3 style="margin:0; border:none; padding:0;">🔄 포트폴리오 리밸런싱 이력 및 손익 명세</h3>
+                <span id="rebalance-subtitle" style="font-size:0.78rem; color:var(--text-muted);">Hyperliquid L1 온체인 원장 실시간 추적</span>
+            </div>
+            <div class="rebalance-kpi-grid" id="rebalance-kpi-grid"></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:165px;">실행 일시 / 구분</th>
+                            <th style="min-width:250px;">📤 출금(청산) 볼트 및 확정 손익</th>
+                            <th style="min-width:300px;">📥 입금(편입·재투입) 볼트 및 이후 손익</th>
+                            <th style="min-width:140px; text-align:right;">해당 회차 손익 요약</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details-rebalance-table"></tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Positions Table -->
         <div class="glass-card">
             <h3>📌 보유 볼트 및 구성 비율</h3>
@@ -4059,10 +4415,10 @@ MY_HTML = """<!DOCTYPE html>
                             <th>볼트 이름</th>
                             <th>투자 원금 (USD)</th>
                             <th>비중 (%)</th>
-                            <th>30d APR / MDD</th>
-                            <th>평가 금액 (세전)</th>
-                            <th>세전 수익금 (ROI)</th>
-                            <th>공제 후 순자산 / 순수익 (예상)</th>
+                            <th>거래소 APR / MDD</th>
+                            <th>평가 금액 (Your Deposits)</th>
+                            <th>수익금 (All-time Earned)</th>
+                            <th>출금 실수령 (수수료 10% 후)</th>
                         </tr>
                     </thead>
                     <tbody id="details-positions-table">
@@ -4196,7 +4552,7 @@ MY_HTML = """<!DOCTYPE html>
 <!-- Mobile Navigation Bar -->
 <div class="mobile-tab-bar">
     <a href="/autobot" class="tab-item"><span class="icon">🤖</span><span>AutoBot</span></a>
-    <a href="/m" class="tab-item active"><span class="icon">💼</span><span>Portfolios</span></a>
+    <a href="/live" class="tab-item active"><span class="icon">💼</span><span>내 포트폴리오</span></a>
     <a href="/" class="tab-item"><span class="icon">🔬</span><span>Analysis</span></a>
     <a href="/settings" class="tab-item"><span class="icon">⚙️</span><span>Settings</span></a>
     <a href="/logout" class="tab-item" style="color:var(--danger);"><span class="icon">🚪</span><span>Logout</span></a>
@@ -4212,13 +4568,80 @@ MY_HTML = """<!DOCTYPE html>
 
     const availableVaults = {{ available_vaults | tojson }};
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDirectLiveMode = (
+        window.location.pathname === '/live'
+        || window.location.pathname === '/m'
+        || urlParams.get('tab') === 'live'
+        || urlParams.get('tab') === 'details'
+        || window.matchMedia('(display-mode: standalone)').matches
+    );
+    let autoRefreshEnabled = true;
+    let editUnlocked = false;
+    let autoRefreshTimer = null;
+
+    function toggleAutoRefresh() {
+        autoRefreshEnabled = !autoRefreshEnabled;
+        const btn = document.getElementById('btn-auto-refresh');
+        if (btn) {
+            btn.innerText = autoRefreshEnabled ? '⏱️ 60초 자동갱신 ON' : '⏸️ 자동갱신 일시정지';
+            btn.style.color = autoRefreshEnabled ? '#34d399' : '#94a3b8';
+            btn.style.borderColor = autoRefreshEnabled ? 'rgba(16,185,129,0.4)' : 'rgba(148,163,184,0.3)';
+        }
+    }
+
+    function toggleEditLock() {
+        editUnlocked = !editUnlocked;
+        syncEditButtonsVisibility();
+        showToast(editUnlocked ? '🔓 포트폴리오 편집 잠금이 해제되었습니다.' : '🔒 실수 방지 편집 잠금이 켜졌습니다.');
+    }
+
+    function syncEditButtonsVisibility() {
+        const isDefault = (activePortfolioId === 'default');
+        const lockBtn = document.getElementById('btn-unlock-edit');
+        const editBtn = document.getElementById('btn-edit-port');
+        const delBtn = document.getElementById('btn-del-port');
+        if (!lockBtn || !editBtn || !delBtn) return;
+        if (isDefault) {
+            lockBtn.style.display = 'inline-block';
+            lockBtn.innerText = editUnlocked ? '🔓 편집 잠금해제됨' : '🔒 편집 잠금';
+            editBtn.style.display = editUnlocked ? 'inline-block' : 'none';
+            delBtn.style.display = editUnlocked ? 'inline-block' : 'none';
+        } else {
+            lockBtn.style.display = 'none';
+            editBtn.style.display = 'inline-block';
+            delBtn.style.display = 'inline-block';
+        }
+    }
+
+    let initialDirectPending = isDirectLiveMode;
+
     // Initialize Page
     document.addEventListener("DOMContentLoaded", () => {
-        // Set default date to today
         document.getElementById('modal-port-date').value = new Date().toISOString().substring(0, 10);
-        
-        loadPortfoliosData();
+        if (isDirectLiveMode) {
+            activePortfolioId = 'default';
+            document.querySelectorAll('.tab-nav-btn').forEach((btn, i) => btn.classList.toggle('active', i === 1));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById('tab-details').classList.add('active');
+            document.getElementById('details-portfolio-title').innerText = '📂 나의 실제 포트폴리오 (실시간 불러오는 중...)';
+        }
+        loadPortfoliosData(isDirectLiveMode ? 'default' : null, true, true);
         loadScenariosData();
+
+        // 60초마다 화면이 켜져 있을 때 실시간 온체인 데이터 자동 갱신
+        autoRefreshTimer = setInterval(() => {
+            if (autoRefreshEnabled && document.visibilityState === 'visible' && activePortfolioId === 'default') {
+                loadPortfoliosData('default', true, true);
+            }
+        }, 60000);
+
+        // 휴대폰 잠금 해제 / 앱 복귀 시 즉시 최신 거래소 잔고 갱신
+        document.addEventListener('visibilitychange', () => {
+            if (autoRefreshEnabled && document.visibilityState === 'visible' && activePortfolioId === 'default') {
+                loadPortfoliosData('default', true, true);
+            }
+        });
     });
 
     // switch tabs
@@ -4247,9 +4670,18 @@ MY_HTML = """<!DOCTYPE html>
         }
     }
 
+    function fmtUsd2(v) {
+        return Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function fmtCardUsd(v, isLive) {
+        return isLive ? fmtUsd2(v) : Math.round(Number(v || 0)).toLocaleString('en-US');
+    }
+
     // Load API Data
-    function loadPortfoliosData(selectIdAfterLoad = null) {
-        fetch('/api/portfolios')
+    function loadPortfoliosData(selectIdAfterLoad = null, forceRefresh = false, silent = false) {
+        const tsParam = `_t=${Date.now()}`;
+        const url = forceRefresh ? `/api/portfolios?refresh=1&${tsParam}` : `/api/portfolios?${tsParam}`;
+        fetch(url, { cache: 'no-store' })
             .then(res => {
                 if (res.redirected || res.status === 401) {
                     window.location.href = '/login';
@@ -4292,11 +4724,22 @@ MY_HTML = """<!DOCTYPE html>
                         activePortfolioId = portfolios[0].id;
                     }
                     renderPortfoliosList();
+                    if (initialDirectPending) {
+                        initialDirectPending = false;
+                        switchTab('tab-details');
+                    } else if (document.getElementById('tab-details').classList.contains('active')) {
+                        renderActivePortfolioDetails();
+                    }
+                    if (forceRefresh && !silent) {
+                        showToast("✅ Hyperliquid 거래소 실시간 온체인 잔고·수익을 동기화했습니다.");
+                    }
                 }
             })
             .catch(err => {
                 console.error("Error loading portfolios:", err);
-                showToast("❌ 포트폴리오 데이터를 불러오지 못했습니다. 새로고침해보세요.");
+                if (!silent) {
+                    showToast("❌ 서버 연결 실패 (외부 LTE/5G에서는 외부 터널 주소나 Tailscale 연결이 필요합니다)");
+                }
             });
     }
 
@@ -4390,6 +4833,14 @@ MY_HTML = """<!DOCTYPE html>
                 badgeHtml = `<span class="p-card-type ${p.ptype === 'custom' ? 'custom' : 'ai'}">${p.ptype === 'custom' ? '수동' : 'AI 최적화'}</span>`;
             }
 
+            const isLiveCard = Boolean(perf.is_live_onchain);
+            if (isLiveCard) {
+                badgeHtml = `<span class="p-card-type ai" style="background:rgba(46,204,113,0.18);color:#2ecc71;border:1px solid rgba(46,204,113,0.4);">🟢 실시간 온체인</span>`;
+            }
+            const cTotPnl = Number(perf.total_pnl || 0);
+            const cTotStr = cTotPnl >= 0 ? `+$${fmtCardUsd(cTotPnl, isLiveCard)}` : `-$${fmtCardUsd(Math.abs(cTotPnl), isLiveCard)}`;
+            const cNetPnl = Number(perf.net_total_pnl || 0);
+            const cNetStr = cNetPnl >= 0 ? `+$${fmtCardUsd(cNetPnl, isLiveCard)}` : `-$${fmtCardUsd(Math.abs(cNetPnl), isLiveCard)}`;
             card.innerHTML = `
                 <div class="p-card-header">
                     <div class="p-card-title">📂 ${escapeHtml(p.name)}</div>
@@ -4398,27 +4849,27 @@ MY_HTML = """<!DOCTYPE html>
                 <div class="p-card-stats">
                     <div>
                         <div class="p-card-stat-label">투자 원금</div>
-                        <div class="p-card-stat-val">$${Math.round(p.total_capital).toLocaleString()}</div>
+                        <div class="p-card-stat-val">$${fmtCardUsd(p.total_capital, isLiveCard)}</div>
                     </div>
                     <div>
                         <div class="p-card-stat-label">최대 낙폭 (MDD)</div>
                         <div class="p-card-stat-val" style="color:var(--danger);">${perf.mdd || 0}%</div>
                     </div>
                     <div>
-                        <div class="p-card-stat-label">현재 가치 (세전)</div>
-                        <div class="p-card-stat-val">$${Math.round(perf.total_value || p.total_capital).toLocaleString()}</div>
+                        <div class="p-card-stat-label">현재 가치 (거래소 합계)</div>
+                        <div class="p-card-stat-val">$${fmtCardUsd(perf.total_value || p.total_capital, isLiveCard)}</div>
                     </div>
                     <div>
-                        <div class="p-card-stat-label">공제 후 순자산 (예상)</div>
-                        <div class="p-card-stat-val" style="color:var(--accent2);">$${Math.round(perf.net_total_value || p.total_capital).toLocaleString()}</div>
+                        <div class="p-card-stat-label">출금 실수령 순자산</div>
+                        <div class="p-card-stat-val" style="color:var(--accent2);">$${fmtCardUsd(perf.net_total_value || p.total_capital, isLiveCard)}</div>
                     </div>
                     <div>
-                        <div class="p-card-stat-label">세전 수익금 / 수익률</div>
-                        <div class="p-card-stat-val ${pnlColor}">${sign}$${Math.round(perf.total_pnl || 0).toLocaleString()} (${sign}${perf.total_pnl_pct || 0}%)</div>
+                        <div class="p-card-stat-label">수익금 / 수익률 (Earned)</div>
+                        <div class="p-card-stat-val ${pnlColor}">${cTotStr} (${sign}${Number(perf.total_pnl_pct || 0).toFixed(2)}%)</div>
                     </div>
                     <div>
-                        <div class="p-card-stat-label">공제 후 순수익 / 순수익률</div>
-                        <div class="p-card-stat-val ${netPnlColor}">${netSign}$${Math.round(perf.net_total_pnl || 0).toLocaleString()} (${netSign}${perf.net_total_pnl_pct || 0}%)</div>
+                        <div class="p-card-stat-label">출금 실수령 순수익</div>
+                        <div class="p-card-stat-val ${netPnlColor}">${cNetStr} (${netSign}${Number(perf.net_total_pnl_pct || 0).toFixed(2)}%)</div>
                     </div>
                     <div>
                         <div class="p-card-stat-label">투자 기간</div>
@@ -4468,24 +4919,47 @@ MY_HTML = """<!DOCTYPE html>
         }
 
         document.getElementById('details-portfolio-title').innerText = `📂 ${p.name}`;
+        if (typeof syncEditButtonsVisibility === 'function') syncEditButtonsVisibility();
         
         const perf = p.performance || {};
-        document.getElementById('details-total-value').innerText = `$${Math.round(perf.total_value || p.total_capital).toLocaleString()}`;
-        document.getElementById('details-total-capital').innerText = `원금 $${Math.round(p.total_capital).toLocaleString()}`;
+        const isLive = Boolean(perf.is_live_onchain);
+        const liveBadgeEl = document.getElementById('details-live-badge');
+        if (liveBadgeEl) {
+            liveBadgeEl.style.display = isLive ? 'inline-block' : 'none';
+            if (isLive && perf.fetched_at) {
+                liveBadgeEl.innerText = `🟢 Hyperliquid 실시간 온체인 (${String(perf.fetched_at).replace('T', ' ')})`;
+            }
+        }
+        document.getElementById('details-total-value').innerText = `$${fmtCardUsd(perf.total_value || p.total_capital, isLive)}`;
+        let capSub = `총 원금 $${fmtCardUsd(p.total_capital, isLive)}`;
+        if (isLive) {
+            const cashU = Number(perf.wallet_cash_usd || 0);
+            const realPnl = Number(perf.realized_pnl_usd || 0);
+            capSub += ` (볼트원금 $${fmtUsd2(perf.active_principal_usd || 0)} · 현금 $${fmtUsd2(cashU)}`;
+            if (Math.abs(realPnl) >= 0.5) {
+                capSub += ` · 기실현 ${realPnl >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(realPnl))}`;
+            }
+            capSub += `)`;
+        }
+        document.getElementById('details-total-capital').innerText = capSub;
         
-        const sign = perf.total_pnl >= 0 ? '+' : '';
-        const pnlColor = perf.total_pnl >= 0 ? 'var(--success)' : 'var(--danger)';
-        const pnlText = `${sign}$${Math.round(perf.total_pnl || 0).toLocaleString()} (${sign}${perf.total_pnl_pct || 0}%)`;
+        const totPnl = Number(perf.total_pnl || 0);
+        const pnlSignStr = totPnl >= 0 ? `+$${fmtCardUsd(totPnl, isLive)}` : `-$${fmtCardUsd(Math.abs(totPnl), isLive)}`;
+        const sign = totPnl >= 0 ? '+' : '';
+        const pnlColor = totPnl >= 0 ? 'var(--success)' : 'var(--danger)';
+        const pnlText = `${pnlSignStr} (${sign}${Number(perf.total_pnl_pct || 0).toFixed(2)}%)`;
         document.getElementById('details-total-pnl').innerText = pnlText;
         document.getElementById('details-total-pnl').style.color = pnlColor;
         document.getElementById('details-days-held').innerText = `투자 시작일: ${p.invest_date} (경과: ${perf.days_held || 0}일)`;
         document.getElementById('details-portfolio-mdd').innerText = `${perf.mdd || 0}%`;
 
         // Render Net elements
-        const netSign = (perf.net_total_pnl || 0) >= 0 ? '+' : '';
-        const netPnlColor = (perf.net_total_pnl || 0) >= 0 ? 'var(--success)' : 'var(--danger)';
-        const netPnlText = `${netSign}$${Math.round(perf.net_total_pnl || 0).toLocaleString()} (${netSign}${perf.net_total_pnl_pct || 0}%)`;
-        document.getElementById('details-net-value').innerText = `$${Math.round(perf.net_total_value || p.total_capital).toLocaleString()}`;
+        const netPnlVal = Number(perf.net_total_pnl || 0);
+        const netSignStr = netPnlVal >= 0 ? `+$${fmtCardUsd(netPnlVal, isLive)}` : `-$${fmtCardUsd(Math.abs(netPnlVal), isLive)}`;
+        const netSign = netPnlVal >= 0 ? '+' : '';
+        const netPnlColor = netPnlVal >= 0 ? 'var(--success)' : 'var(--danger)';
+        const netPnlText = `${netSignStr} (${netSign}${Number(perf.net_total_pnl_pct || 0).toFixed(2)}%)`;
+        document.getElementById('details-net-value').innerText = `$${fmtCardUsd(perf.net_total_value || p.total_capital, isLive)}`;
         document.getElementById('details-net-pnl').innerText = netPnlText;
         document.getElementById('details-net-pnl').style.color = netPnlColor;
 
@@ -4513,9 +4987,9 @@ MY_HTML = """<!DOCTYPE html>
                     const nCls = m.net_pct >= 0 ? 'pnl-green' : 'pnl-red';
                     const nSgn = m.net_pct >= 0 ? '+' : '';
                     const usdSgn = m.net_pnl >= 0 ? '+' : '-';
-                    const usdFmt = Math.abs(m.net_pnl) < 100 ? Math.abs(m.net_pnl).toFixed(2) : Math.round(Math.abs(m.net_pnl)).toLocaleString();
-                    const sFmt = m.start_net < 100 ? m.start_net.toFixed(2) : Math.round(m.start_net).toLocaleString();
-                    const eFmt = m.end_net < 100 ? m.end_net.toFixed(2) : Math.round(m.end_net).toLocaleString();
+                    const usdFmt = isLive ? fmtUsd2(Math.abs(m.net_pnl)) : (Math.abs(m.net_pnl) < 100 ? Math.abs(m.net_pnl).toFixed(2) : Math.round(Math.abs(m.net_pnl)).toLocaleString());
+                    const sFmt = isLive ? fmtUsd2(m.start_net) : (m.start_net < 100 ? m.start_net.toFixed(2) : Math.round(m.start_net).toLocaleString());
+                    const eFmt = isLive ? fmtUsd2(m.end_net) : (m.end_net < 100 ? m.end_net.toFixed(2) : Math.round(m.end_net).toLocaleString());
                     const mTr = document.createElement('tr');
                     mTr.innerHTML = `
                         <td style="font-weight:700; color:#fff;">${m.month} <small style="color:var(--text-muted); font-weight:400;">(${m.start_date.slice(5)} ~ ${m.end_date.slice(5)}, ${m.days}일)</small></td>
@@ -4532,31 +5006,186 @@ MY_HTML = """<!DOCTYPE html>
             }
         }
 
+        // Render Rebalancing History & Realized/Unrealized PnL Card
+        const rebCard = document.getElementById('rebalance-history-card');
+        const rebKpiGrid = document.getElementById('rebalance-kpi-grid');
+        const rebTbody = document.getElementById('details-rebalance-table');
+        const rebSub = document.getElementById('rebalance-subtitle');
+        const rebSum = perf.rebalance_summary || null;
+        const rebHist = perf.rebalance_history || [];
+
+        if (rebCard && rebKpiGrid && rebTbody) {
+            if (isLive && rebSum && rebHist.length > 0) {
+                rebCard.style.display = 'block';
+                const rReal = Number(rebSum.realized_pnl_usd || 0);
+                const rRealCls = rReal >= 0 ? 'pnl-green' : 'pnl-red';
+                const rRealStr = `${rReal >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(rReal))}`;
+
+                const rUnr = Number(rebSum.active_unrealized_pnl_usd || 0);
+                const rUnrCls = rUnr >= 0 ? 'pnl-green' : 'pnl-red';
+                const rUnrStr = `${rUnr >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(rUnr))}`;
+
+                const rComb = Number(perf.total_pnl || (rReal + rUnr));
+                const rCombCls = rComb >= 0 ? 'pnl-green' : 'pnl-red';
+                const rCombStr = `${rComb >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(rComb))}`;
+
+                if (rebSub) {
+                    rebSub.innerText = `최초 구축: ${rebSum.session_start_ts ? rebSum.session_start_ts.slice(0, 16) : p.invest_date} · 최근 교체: ${rebSum.last_rebalance_ts || '없음'}`;
+                }
+
+                rebKpiGrid.innerHTML = `
+                    <div class="rebalance-kpi-box">
+                        <div class="rebalance-kpi-lbl">리밸런싱 실행 횟수</div>
+                        <div class="rebalance-kpi-val" style="color:#fbbf24;">총 ${rebSum.rebalance_count}회 교체</div>
+                        <div class="rebalance-kpi-sub">최초 진입 포함 총 ${rebHist.length}건 온체인 체결</div>
+                    </div>
+                    <div class="rebalance-kpi-box">
+                        <div class="rebalance-kpi-lbl">청산 볼트 확정 손익 (실현)</div>
+                        <div class="rebalance-kpi-val ${rRealCls}">${rRealStr}</div>
+                        <div class="rebalance-kpi-sub">회수 원금 $${fmtUsd2(rebSum.total_withdrawn_basis_usd)} → 실회수 $${fmtUsd2(rebSum.total_withdrawn_net_usd)} (${rebSum.realized_pnl_pct_on_exited >= 0 ? '+' : ''}${Number(rebSum.realized_pnl_pct_on_exited || 0).toFixed(2)}%)</div>
+                    </div>
+                    <div class="rebalance-kpi-box">
+                        <div class="rebalance-kpi-lbl">현재 보유 볼트 평가손익 (미실현)</div>
+                        <div class="rebalance-kpi-val ${rUnrCls}">${rUnrStr}</div>
+                        <div class="rebalance-kpi-sub">현재 운용 원금 $${fmtUsd2(perf.active_principal_usd || 0)} (${rebSum.active_unrealized_pnl_pct >= 0 ? '+' : ''}${Number(rebSum.active_unrealized_pnl_pct || 0).toFixed(2)}%)</div>
+                    </div>
+                    <div class="rebalance-kpi-box">
+                        <div class="rebalance-kpi-lbl">총 누적 손익 합계 (확정 + 평가)</div>
+                        <div class="rebalance-kpi-val ${rCombCls}">${rCombStr}</div>
+                        <div class="rebalance-kpi-sub">원금 $${fmtUsd2(p.total_capital)} 대비 ${Number(perf.total_pnl_pct || 0) >= 0 ? '+' : ''}${Number(perf.total_pnl_pct || 0).toFixed(2)}% (수수료 공제후 ${netSignStr})</div>
+                    </div>
+                `;
+
+                rebTbody.innerHTML = '';
+                rebHist.forEach(ev => {
+                    const tr = document.createElement('tr');
+                    let badgeCls = 'reb-badge-sched';
+                    if (ev.event_kind === 'INITIAL_DEPLOY') badgeCls = 'reb-badge-init';
+                    else if (ev.trigger === 'EMERGENCY_EXIT') badgeCls = 'reb-badge-emg';
+
+                    // Withdrawals cell
+                    let wHtml = '';
+                    if (ev.withdrawals && ev.withdrawals.length > 0) {
+                        wHtml = `<div class="reb-lot-list">` + ev.withdrawals.map(w => {
+                            const wp = Number(w.realized_pnl_usd || 0);
+                            const wCls = wp >= 0 ? 'pnl-green' : 'pnl-red';
+                            const wStr = `${wp >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(wp))} (${wp >= 0 ? '+' : ''}${Number(w.realized_pnl_pct || 0).toFixed(2)}%)`;
+                            return `
+                                <div class="reb-lot-row">
+                                    <div>
+                                        <a class="reb-vlink" href="https://app.hyperliquid.xyz/vaults/${w.vault}" target="_blank">${escapeHtml(w.name)} ↗</a>
+                                        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">원금 $${fmtUsd2(w.basis_usd)} → 회수 $${fmtUsd2(w.net_withdrawn_usd)}${w.commission_usd > 0 ? ` (수수료 $${fmtUsd2(w.commission_usd)})` : ''}</div>
+                                    </div>
+                                    <div class="${wCls}" style="font-weight:800; text-align:right;">
+                                        확정 ${wStr}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') + `</div>`;
+                    } else {
+                        wHtml = `<div style="color:var(--text-muted); font-size:0.83rem; padding:4px 0;">신규 운용자금 투입 (출금 없음)<br><small>예치 합계 $${fmtUsd2(ev.deposited_total_usd)}</small></div>`;
+                    }
+
+                    // Deposits cell
+                    let dHtml = '';
+                    if (ev.deposits && ev.deposits.length > 0) {
+                        dHtml = `<div class="reb-lot-list">` + ev.deposits.map(d => {
+                            const dp = Number(d.followup_pnl_usd || 0);
+                            const dCls = dp >= 0 ? 'pnl-green' : 'pnl-red';
+                            const dStr = `${dp >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(dp))} (${dp >= 0 ? '+' : ''}${Number(d.followup_pnl_pct || 0).toFixed(2)}%)`;
+                            const stLabel = d.lot_status === 'CLOSED'
+                                ? `<span style="color:#94a3b8; font-size:0.72rem;">[${escapeHtml((d.closed_at || '').slice(5, 10))} 교체청산]</span>`
+                                : `<span style="color:#34d399; font-size:0.72rem;">[보유중]</span>`;
+                            return `
+                                <div class="reb-lot-row">
+                                    <div>
+                                        <a class="reb-vlink" href="https://app.hyperliquid.xyz/vaults/${d.vault}" target="_blank">${escapeHtml(d.name)} ↗</a> ${stLabel}
+                                        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">투입 +$${fmtUsd2(d.amount_usd)} → ${d.lot_status === 'CLOSED' ? '회수' : '현재'} $${fmtUsd2(d.followup_value_usd)}</div>
+                                    </div>
+                                    <div class="${dCls}" style="font-weight:700; text-align:right;">
+                                        ${dStr}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') + `</div>`;
+                    } else {
+                        dHtml = `<span style="color:var(--text-muted); font-size:0.83rem;">재투입 없음 (현금 보유)</span>`;
+                    }
+
+                    // Summary column
+                    const bReal = Number(ev.realized_pnl_usd || 0);
+                    const bRealCls = bReal >= 0 ? 'pnl-green' : 'pnl-red';
+                    const bRealFmt = `${bReal >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(bReal))}`;
+
+                    const bFol = Number(ev.deposits_followup_pnl_usd || 0);
+                    const bFolCls = bFol >= 0 ? 'pnl-green' : 'pnl-red';
+                    const bFolFmt = `${bFol >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(bFol))}`;
+
+                    let summaryHtml = '';
+                    if (ev.event_kind === 'INITIAL_DEPLOY') {
+                        summaryHtml = `
+                            <div style="font-size:0.75rem; color:var(--text-muted);">초기 편입분 누적</div>
+                            <div class="${bFolCls}" style="font-weight:800; font-size:0.95rem; margin-top:2px;">${bFolFmt}</div>
+                            <div style="font-size:0.74rem; color:var(--text-muted);">(${bFol >= 0 ? '+' : ''}${Number(ev.deposits_followup_pnl_pct || 0).toFixed(2)}%)</div>
+                        `;
+                    } else {
+                        summaryHtml = `
+                            <div style="font-size:0.74rem; color:var(--text-muted);">청산 확정 손익</div>
+                            <div class="${bRealCls}" style="font-weight:800; font-size:0.95rem;">${bRealFmt} <small>(${bReal >= 0 ? '+' : ''}${Number(ev.realized_pnl_pct || 0).toFixed(2)}%)</small></div>
+                            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:6px;">교체 편입 후 성과</div>
+                            <div class="${bFolCls}" style="font-weight:700; font-size:0.88rem;">${bFolFmt} <small>(${bFol >= 0 ? '+' : ''}${Number(ev.deposits_followup_pnl_pct || 0).toFixed(2)}%)</small></div>
+                        `;
+                    }
+
+                    tr.innerHTML = `
+                        <td style="vertical-align:top;">
+                            <div style="font-weight:800; color:#fff; font-size:0.92rem;">${escapeHtml(ev.title)}</div>
+                            <div style="font-size:0.8rem; color:#94a3b8; margin-top:2px;">🕒 ${escapeHtml(ev.ts)}</div>
+                            <span class="reb-badge ${badgeCls}">${escapeHtml(ev.badge)}</span>
+                            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:6px; line-height:1.35;">${escapeHtml(ev.reason)}</div>
+                        </td>
+                        <td style="vertical-align:top;">${wHtml}</td>
+                        <td style="vertical-align:top;">${dHtml}</td>
+                        <td style="vertical-align:top; text-align:right;">${summaryHtml}</td>
+                    `;
+                    rebTbody.appendChild(tr);
+                });
+            } else {
+                rebCard.style.display = 'none';
+            }
+        }
+
         // Render Positions Table
         const tbody = document.getElementById('details-positions-table');
         tbody.innerHTML = '';
         if (perf.holdings && perf.holdings.length > 0) {
             perf.holdings.forEach(h => {
-                const hPnlColor = h.pnl >= 0 ? 'pnl-green' : 'pnl-red';
-                const hSign = h.pnl >= 0 ? '+' : '';
+                const pnlNum = Number(h.pnl || 0);
+                const hPnlColor = pnlNum >= 0 ? 'pnl-green' : 'pnl-red';
+                const hPnlFmt = pnlNum >= 0 ? `+$${fmtUsd2(pnlNum)}` : `-$${fmtUsd2(Math.abs(pnlNum))}`;
+                const hPctSign = Number(h.pnl_pct || 0) >= 0 ? '+' : '';
                 
-                const hNetPnlColor = h.net_pnl >= 0 ? 'pnl-green' : 'pnl-red';
-                const hNetSign = h.net_pnl >= 0 ? '+' : '';
+                const netNum = Number(h.net_pnl || 0);
+                const hNetPnlColor = netNum >= 0 ? 'pnl-green' : 'pnl-red';
+                const hNetFmt = netNum >= 0 ? `+$${fmtUsd2(netNum)}` : `-$${fmtUsd2(Math.abs(netNum))}`;
+                const aprNum = Number(h.apr_30d || 0);
+                const aprColor = aprNum >= 0 ? 'var(--success)' : 'var(--danger)';
+                const aprSign = aprNum > 0 ? '+' : '';
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
                         <a href="https://app.hyperliquid.xyz/vaults/${h.address}" target="_blank" style="color:#fff; text-decoration:none; font-weight:700; hover:underline;">
-                            ${escapeHtml(h.name)}
+                            ${escapeHtml(h.name)} ↗
                         </a>
                         <br><small style="color:var(--text-muted); font-size:0.75rem;">${h.address.substring(0, 12)}...</small>
                     </td>
-                    <td>$${h.invested_usd.toLocaleString()}</td>
-                    <td><span class="badge" style="background:rgba(255,255,255,0.05); color:#fff;">${h.weight_pct}%</span></td>
-                    <td style="font-weight:600;"><span style="color:var(--success);">${h.apr_30d}%</span> / <span style="color:var(--danger);">${h.mdd}%</span></td>
-                    <td style="font-weight:600;">$${h.est_value.toLocaleString()}</td>
-                    <td class="${hPnlColor}" style="font-weight:600;">${hSign}$${h.pnl.toLocaleString()} (${hSign}${h.pnl_pct}%)</td>
-                    <td style="font-weight:600; color:var(--accent2);">$${h.net_value.toLocaleString()} <span class="${hNetPnlColor}" style="font-size:0.85rem; font-weight:600;">(${hNetSign}$${h.net_pnl.toLocaleString()})</span></td>
+                    <td>$${fmtUsd2(h.invested_usd)}</td>
+                    <td><span class="badge" style="background:rgba(255,255,255,0.05); color:#fff;">${Number(h.weight_pct || 0).toFixed(1)}%</span></td>
+                    <td style="font-weight:600;"><span style="color:${aprColor};">${aprSign}${aprNum.toFixed(2)}%</span> / <span style="color:var(--danger);">${Number(h.mdd || 0).toFixed(2)}%</span></td>
+                    <td style="font-weight:700; color:#fff;">$${fmtUsd2(h.est_value)}</td>
+                    <td class="${hPnlColor}" style="font-weight:700;">${hPnlFmt} (${hPctSign}${Number(h.pnl_pct || 0).toFixed(2)}%)</td>
+                    <td style="font-weight:600; color:var(--accent2);">$${fmtUsd2(h.net_value)} <span class="${hNetPnlColor}" style="font-size:0.85rem; font-weight:600;">(${hNetFmt})</span></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -4582,12 +5211,12 @@ MY_HTML = """<!DOCTYPE html>
             insightsList.appendChild(li);
         });
 
-        // Draw Line Chart
-        renderEquityCurveChart(perf.history_dates || [], perf.history_values || []);
+        // Draw Line Chart (with rebalance event markers if live)
+        renderEquityCurveChart(perf.history_dates || [], perf.history_values || [], perf.rebalance_history || []);
     }
 
     // Render Equity Curve Chart
-    function renderEquityCurveChart(labels, data) {
+    function renderEquityCurveChart(labels, data, rebHist = []) {
         const ctx = document.getElementById('equity-chart').getContext('2d');
         if (equityChart) {
             equityChart.destroy();
@@ -4597,6 +5226,18 @@ MY_HTML = """<!DOCTYPE html>
             ctx.clearRect(0, 0, 400, 400);
             return;
         }
+
+        const rebByDate = {};
+        (rebHist || []).forEach(r => {
+            if (r && r.date && r.event_kind !== 'INITIAL_DEPLOY') {
+                if (!rebByDate[r.date]) rebByDate[r.date] = [];
+                rebByDate[r.date].push(r);
+            }
+        });
+
+        const ptRadii = labels.map(d => rebByDate[d] ? 6 : (labels.length <= 20 ? 3.5 : 1));
+        const ptColors = labels.map(d => rebByDate[d] ? '#fbbf24' : '#3b82f6');
+        const ptBorders = labels.map(d => rebByDate[d] ? '#ffffff' : '#3b82f6');
 
         equityChart = new Chart(ctx, {
             type: 'line',
@@ -4610,9 +5251,11 @@ MY_HTML = """<!DOCTYPE html>
                     fill: true,
                     tension: 0.2,
                     borderWidth: 2.5,
-                    pointRadius: 1,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: '#3b82f6'
+                    pointRadius: ptRadii,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: ptColors,
+                    pointBorderColor: ptBorders,
+                    pointBorderWidth: 1.5
                 }]
             },
             options: {
@@ -4630,7 +5273,19 @@ MY_HTML = """<!DOCTYPE html>
                         borderWidth: 1,
                         callbacks: {
                             label: function(context) {
-                                return ` $${context.raw.toLocaleString()}`;
+                                const val = Number(context.raw || 0);
+                                return ` 평가 자산: $${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                            },
+                            afterBody: function(items) {
+                                if (!items || !items.length) return [];
+                                const dStr = items[0].label;
+                                const evs = rebByDate[dStr];
+                                if (!evs) return [];
+                                return evs.map(ev => {
+                                    const rp = Number(ev.realized_pnl_usd || 0);
+                                    const rpStr = `${rp >= 0 ? '+' : '-'}$${fmtUsd2(Math.abs(rp))}`;
+                                    return `🔄 ${ev.title} (${ev.ts.slice(11)}): 청산확정 ${rpStr}`;
+                                });
                             }
                         }
                     }
@@ -5269,6 +5924,18 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
                 </select>
             </div>
             <div class="fg">
+                <label>최소 볼트 TVL 기준 (USD, 기본 20000)</label>
+                <input type="number" id="cfg-min-tvl" step="1000" min="5000" value="20000">
+            </div>
+            <div class="fg">
+                <label>최대 허용 역사적 MDD (%, 기본 40%)</label>
+                <input type="number" id="cfg-max-mdd" step="1" min="5" max="80" value="40">
+            </div>
+            <div class="fg">
+                <label>최소 리더 지분율 하한 (%, 기본 5%)</label>
+                <input type="number" id="cfg-min-skin" step="1" min="1" max="90" value="5">
+            </div>
+            <div class="fg">
                 <label>4시간 비상 손절 가드 (14d &lt; -8% 탈출)</label>
                 <select id="cfg-emg">
                     <option value="true">ON — 보유 볼트 급락 시 즉시 회수</option>
@@ -5311,7 +5978,7 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
             <div>
                 <h3 style="margin:0; font-size:1.05rem;">📊 SGRA+ 목표 포트폴리오 & 내 지갑 실시간 보유 현황</h3>
                 <div style="font-size:0.8rem; color:var(--muted); margin-top:4px;">
-                    자금을 입금하고 <b>[▶️ 자동운용 재개 실행]</b>을 누르면 아래 목표 비중(볼트 TVL 30% 상한 자동 반영)대로 즉시 분산 입금되며, 이후 ±10% 이내 변동은 10% 성과수수료(HWM) 절감을 위해 유지합니다.
+                    엄격 기준(<b>TVL ≥ $20,000 · 역사적 Max MDD ≤ 40% · 리더 지분 ≥ 5% · 신저점 붕괴 차단</b>) 통과 볼트 중 검증된 지지선 근접도 및 우량도 비례로 가중 배분하며, ±10% 이내 변동은 10% 성과수수료(HWM) 절감을 위해 유지합니다.
                 </div>
             </div>
             <div id="snap-date-tag" style="font-size:0.8rem; color:var(--teal); font-weight:700;">스냅샷 기준일: -</div>
@@ -5562,6 +6229,9 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
         document.getElementById('cfg-compound').value = String(cfg.compound_profits !== false);
         document.getElementById('cfg-spot-bridge').value = String(cfg.auto_spot_to_perp !== false);
         document.getElementById('cfg-emg').value = String(cfg.emergency_guard_enabled !== false);
+        if (document.getElementById('cfg-min-tvl')) document.getElementById('cfg-min-tvl').value = cfg.min_vault_tvl_usd || 20000;
+        if (document.getElementById('cfg-max-mdd')) document.getElementById('cfg-max-mdd').value = cfg.max_historical_mdd_pct || 40;
+        if (document.getElementById('cfg-min-skin')) document.getElementById('cfg-min-skin').value = Math.round((cfg.min_leader_equity_ratio ?? 0.05) * 100);
 
         // KPI 1: Live On-Chain Telemetry
         document.getElementById('kpi-onchain-total').textContent = fmtUsd(oc.total_equity_usd || 0);
@@ -5658,9 +6328,9 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
                     <td style="font-weight:700; color:#fff;">${a.leader_ratio_pct.toFixed(1)}%</td>
                     <td>${fmtUsd(a.tvl_usd)}</td>
                     <td>
-                        <b>Sharpe ${a.cushioned_sharpe.toFixed(2)}</b><br>
+                        <b>Sharpe ${a.cushioned_sharpe.toFixed(2)}</b> <small style="color:#93c5fd;">(점수 ${Number(a.sgra_score || 0).toFixed(2)})</small><br>
                         <small style="color:${r14Color};">14d ${a.ret_14d_pct >= 0 ? '+' : ''}${a.ret_14d_pct.toFixed(2)}%</small>
-                        <small style="color:var(--muted);"> · DD ${a.drawdown_now_pct.toFixed(1)}%</small>
+                        <small style="color:var(--muted);"> · APR ${(a.hl_apr_pct ?? a.apr_30d_pct) !== undefined ? (Number(a.hl_apr_pct ?? a.apr_30d_pct) >= 0 ? '+' : '') + Number(a.hl_apr_pct ?? a.apr_30d_pct).toFixed(1) + '%' : '-'} · DD ${a.drawdown_now_pct.toFixed(1)}% / MDD ${Number(a.max_mdd_pct || 0).toFixed(1)}%</small>
                     </td>
                     <td>
                         <b>${a.target_weight_pct.toFixed(1)}%</b> (${fmtUsd(a.target_usd)})
@@ -5823,6 +6493,9 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
             compound_profits: document.getElementById('cfg-compound').value === 'true',
             auto_spot_to_perp: document.getElementById('cfg-spot-bridge').value === 'true',
             emergency_guard_enabled: document.getElementById('cfg-emg').value === 'true',
+            min_vault_tvl_usd: Number(document.getElementById('cfg-min-tvl').value || 20000),
+            max_historical_mdd_pct: Number(document.getElementById('cfg-max-mdd').value || 40),
+            min_leader_equity_ratio: Number(document.getElementById('cfg-min-skin').value || 5) / 100.0,
         };
         const res = await fetch('/api/autobot/config', {
             method: 'POST',
@@ -5844,7 +6517,35 @@ AUTOBOT_HTML = r"""<!DOCTYPE html>
 </html>"""
 
 
+def _start_autobot_background_watchdog():
+    """Defense-in-depth background thread: ensures SGRA+ check runs at least every 4h even if Task Scheduler is delayed."""
+    import threading
+
+    def _loop():
+        import time as _t
+        _t.sleep(20)
+        while True:
+            try:
+                import hl_auto_vault_bot
+                st = hl_auto_vault_bot.load_autobot_state()
+                last_chk = st.get("last_checked_at")
+                stale = True
+                if last_chk:
+                    from datetime import datetime as _dt
+                    age_hr = (_dt.now() - _dt.fromisoformat(last_chk)).total_seconds() / 3600.0
+                    stale = age_hr >= 4.1
+                if stale:
+                    hl_auto_vault_bot.run_autobot_cycle(force_rebalance=False)
+            except Exception as _e:
+                print(f"[Autobot Watchdog] {_e}")
+            _t.sleep(900)
+
+    t = threading.Thread(target=_loop, name="autobot-watchdog", daemon=True)
+    t.start()
+
+
 if __name__ == "__main__":
+    _start_autobot_background_watchdog()
     # 포트는 PORT 환경변수로 제어(기본 5001). 터널/도메인 설정(domain_config.json)과
     # 반드시 동일한 포트를 쓰세요. 공개 배포 시엔 gunicorn/waitress 사용을 권장합니다.
     port = int(os.environ.get("PORT", "5001"))

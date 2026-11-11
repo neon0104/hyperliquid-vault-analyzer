@@ -40,9 +40,9 @@ MAX_WORKERS    = 1         # 병렬 스레드 수 (봇 판정 회피를 위해 �
 MIN_TVL        = 0         # TVL 최소값 제한 없음 (상위 200위 전체 대상)
 TOP_RECS       = 10        # 추천 포트폴리오 볼트 수
 SIM_AMOUNT     = 100_000   # 시뮬레이션 투자금 ($)
-MAX_MDD           = 100.0  # MDD 제한 없음 (전 종목 대상)
-MIN_ROBUSTNESS    = 0.35   # 최소 로버스트니스 점수 (0~1) — 수익곡선 품질 기준
-MIN_LEADER_EQUITY = 0.40   # ★ 리더 에쿼티 최소 비율 (40% = skin-in-the-game 필터)
+MAX_MDD           = 40.0   # MDD 40% 이하 하드캡
+MIN_ROBUSTNESS    = 0.25   # 최소 로버스트니스 점수 (0~1) — 수익곡선 품질 기준
+MIN_LEADER_EQUITY = 0.05   # ★ 리더 에쿼티 최소 비율 (5% = skin-in-the-game 하한)
 
 STATS_URL = "https://stats-data.hyperliquid.xyz/Mainnet/vaults"
 API_URL   = constants.MAINNET_API_URL
@@ -894,42 +894,57 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
       - CORE (50%): 로버스트니스 최상위 (가장 안정적)
       - SATELLITE (50%): 저평가점수(undervalue) 최상위 (현재 MDD 부근의 슬럼프지만 회복세(APR>0)를 보이는 종목)
     """
-    # 1차: 모든 기준 적용 (APR > 0 필수 + 초기 손실 없음 + MDD 30% 이하 하드캡)
+    def _est_ret_14d(v_obj: dict) -> float:
+        p_arr = v_obj.get("alltime_pnl", [])
+        tvl_now = max(float(v_obj.get("tvl", 1.0) or 1.0), 1.0)
+        if isinstance(p_arr, list) and len(p_arr) >= 15:
+            return (float(p_arr[-1]) - float(p_arr[-15])) / tvl_now
+        if isinstance(p_arr, list) and len(p_arr) >= 2:
+            return (float(p_arr[-1]) - float(p_arr[0])) / tvl_now
+        return float(v_obj.get("apr_30d", 0.0) or 0.0) / 100.0 * (14.0 / 365.0)
+
+    strict_skin = max(0.05, float(min_leader_equity))
+    # 1차: 사용자 원칙 동기화 (입금 가능 + TVL >= $20,000 + 리더 지분율 >= 5% + 초기 손실 없음 + MDD <= 40% + 14d 칼날방지 >= -5%)
     eligible = [
         v for v in vault_data
         if v.get("allow_deposits", True)
-        and (v.get("leader_equity_ratio", 0) >= min_leader_equity or v.get("leader_equity_usd", 0) >= 50000.0)
+        and v.get("tvl", 0.0) >= 20000.0
+        and v.get("leader_equity_ratio", 0) >= strict_skin
         and v.get("robustness_score", 0.0) >= min_robustness
-        and v.get("apr_30d", 0) > 0          # ★ 최근 30일 수익 양수만 (회복탄력성 최소 기준)
+        and v.get("apr_30d", 0) >= -130.0
+        and not (v.get("max_drawdown", 15.0) < 2.2 and v.get("apr_30d", 0.0) < 20.0)
         and v.get("_ok_no_loss", True)       # ★ 초기 손실 없는 볼트만 추천
-        and v.get("max_drawdown", 0.0) <= 30.0  # ★ MDD 30% 이하 하드캡 적용
+        and v.get("max_drawdown", 0.0) <= 40.0  # ★ MDD 40% 이하 하드캡 적용
+        and _est_ret_14d(v) >= -0.05         # ★ 단기 급락 칼날(14d < -5%) 원천 차단
     ]
-    print(f"  [필터] 1차(입금+리더에쿼티≥{min_leader_equity:.0%}또는$50k+로버스트≥{min_robustness:.2f}+APR>0+MDD≤30%): {len(eligible)}개")
+    print(f"  [필터] 1차(입금+TVL≥$20k+리더지분율≥{strict_skin:.0%}+로버스트≥{min_robustness:.2f}+MDD≤40%+14d≥-5%): {len(eligible)}개")
 
-    # 2차: robustness 기준만 완화 (APR > 0, _ok_no_loss, MDD 하드캡은 유지)
+    # 2차: robustness 완화 (TVL >= $20k, Skin >= 5%, MDD <= 40%, 14d >= -5%, _ok_no_loss 유지)
     if len(eligible) < top_k:
         fallback_rob = min_robustness * 0.5
         eligible = [
             v for v in vault_data
             if v.get("allow_deposits", True)
-            and (v.get("leader_equity_ratio", 0) >= min_leader_equity or v.get("leader_equity_usd", 0) >= 50000.0)
+            and v.get("tvl", 0.0) >= 20000.0
+            and v.get("leader_equity_ratio", 0) >= strict_skin
             and v.get("robustness_score", 0.0) >= fallback_rob
-            and v.get("apr_30d", 0) > 0      # ★ APR > 0 유지
+            and v.get("apr_30d", 0) >= -130.0
             and v.get("_ok_no_loss", True)       # ★ 안전장치 유지
-            and v.get("max_drawdown", 0.0) <= 30.0  # ★ MDD 하드캡 유지
+            and v.get("max_drawdown", 0.0) <= 40.0  # ★ MDD 하드캡 유지
+            and _est_ret_14d(v) >= -0.05     # ★ 칼날 방지 유지
         ]
-        print(f"  [주의] 2차 완화: robustness >= {fallback_rob:.2f} (안전 필터 유지) → {len(eligible)}개")
+        print(f"  [주의] 2차 완화: TVL≥$20k & Skin≥{strict_skin:.0%} & robustness >= {fallback_rob:.2f} → {len(eligible)}개")
 
-    # 3차: 리더 에쿼티 데이터 기준 완화 (단, _ok_no_loss, MDD 하드캡, APR > 0은 항상 엄격하게 유지)
+    # 3차: 최소 안전 필터 유지 (TVL >= $20k, MDD <= 40%)
     if len(eligible) < 3:
         eligible = [
             v for v in vault_data 
             if v.get("allow_deposits", True) 
-            and v.get("apr_30d", 0) > 0
+            and v.get("tvl", 0.0) >= 20000.0
             and v.get("_ok_no_loss", True)       # ★ 안전장치 유지
-            and v.get("max_drawdown", 0.0) <= 30.0  # ★ MDD 하드캡 유지
+            and v.get("max_drawdown", 0.0) <= 40.0  # ★ MDD 하드캡 유지
         ]
-        print(f"  [주의] 3차 최소 필터(입금가능+APR>0+안전 필터 유지): {len(eligible)}개")
+        print(f"  [주의] 3차 최소 필터(입금가능+TVL≥$20k+MDD≤40% 유지): {len(eligible)}개")
 
     # 각 볼트의 undervalue_score 미리 계산
     for v in eligible:
@@ -955,8 +970,11 @@ def get_recommendations(vault_data, top_k=TOP_RECS, min_robustness=MIN_ROBUSTNES
     core_addrs = {v["address"] for v in core_vaults}
     eligible_sat = [v for v in eligible if v["address"] not in core_addrs]
     
-    # SATELLITE 후보 필터: drawdown_now >= 5.0%
-    eligible_sat = [v for v in eligible_sat if v.get("drawdown_now", 0.0) >= 5.0]
+    # SATELLITE 후보 필터: 건강한 눌림목만 허용 (5.0% <= drawdown_now <= 40.0% & 14d 수익률 >= -5.0% 칼날 방지)
+    eligible_sat = [
+        v for v in eligible_sat
+        if 5.0 <= v.get("drawdown_now", 0.0) <= 40.0 and _est_ret_14d(v) >= -0.05
+    ]
     
     # 회복탄력성 저점매수(Buy-the-Dip) 기회 식별 (역사적 MDD의 70% ~ 115% 범위 및 회복성 검증)
     try:
