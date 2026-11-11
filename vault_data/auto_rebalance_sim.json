@@ -1,6 +1,6 @@
 {
-  "period": "2026-05-27 to 2026-11-11",
-  "days": 168,
+  "period": "2026-05-27 to 2026-11-12",
+  "days": 169,
   "dates": [
     "2026-05-27",
     "2026-05-28",
@@ -170,18 +170,19 @@
     "2026-11-08",
     "2026-11-09",
     "2026-11-10",
-    "2026-11-11"
+    "2026-11-11",
+    "2026-11-12"
   ],
   "initial_capital": 100000.0,
-  "final_value": 110542.75,
-  "total_return": 10.54,
-  "cagr": 24.33,
+  "final_value": 110356.93,
+  "total_return": 10.36,
+  "cagr": 23.72,
   "mdd": -7.74,
-  "sharpe": 1.37,
-  "sortino": 1.69,
-  "calmar": 3.14,
-  "win_rate": 50.0,
-  "fees": 3513.53,
+  "sharpe": 1.35,
+  "sortino": 1.66,
+  "calmar": 3.06,
+  "win_rate": 49.7,
+  "fees": 3541.43,
   "positive_offsets": "14/14",
   "ejection_count": 12,
   "rebalance_count": 13,
@@ -356,9 +357,10 @@
       110478.95,
       110556.38,
       110363.82,
-      110542.75
+      110542.75,
+      110356.93
     ],
-    "fees": 3513.53,
+    "fees": 3541.43,
     "rebalance_events": [
       {
         "date": "2026-05-27",
@@ -9722,16 +9724,77 @@
             "return_pct": 0.0
           }
         ]
+      },
+      "2026-11-12": {
+        "total_value": 100098.6,
+        "total_return": 0.1,
+        "cash": 20.25,
+        "holdings": [
+          {
+            "name": "Symphony",
+            "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 22016.73,
+            "cost": 22960.03,
+            "profit": -943.31,
+            "return_pct": -4.11
+          },
+          {
+            "name": "-VectorZero-",
+            "address": "0x241ba250828c6a1289330aeec301e7bdcef31a43",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 8795.17,
+            "cost": 8671.09,
+            "profit": 124.08,
+            "return_pct": 1.43
+          },
+          {
+            "name": "Akka Hyper AI",
+            "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 24986.34,
+            "cost": 25087.74,
+            "profit": -101.4,
+            "return_pct": -0.4
+          },
+          {
+            "name": "Hypernova",
+            "address": "0x800b3a897847d35835b41e986ef50c153861f1bf",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 11344.17,
+            "cost": 11344.17,
+            "profit": 0.0,
+            "return_pct": 0.0
+          },
+          {
+            "name": "Sentiment Edge",
+            "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 15955.04,
+            "cost": 16009.97,
+            "profit": -54.92,
+            "return_pct": -0.34
+          },
+          {
+            "name": "Edge & Hedge",
+            "address": "0x060d01aa996003b3731a992462d7f0ba68bf3b04",
+            "type": "CORE_SGRA_WEIGHTED",
+            "amount": 16980.9,
+            "cost": 17000.34,
+            "profit": -19.44,
+            "return_pct": -0.11
+          }
+        ]
       }
     }
   },
   "benchmark": {
     "name": "Equal-Weight Universe Benchmark (TVL >= $10k)",
-    "final_value": 101955.45,
-    "total_return": 1.96,
-    "cagr": 4.3,
+    "final_value": 103631.13,
+    "total_return": 3.63,
+    "cagr": 8.01,
     "mdd": -13.49,
-    "sharpe": 0.3,
+    "sharpe": 0.45,
     "values": [
       100000.0,
       98779.88,
@@ -9901,14 +9964,15 @@
       106662.2,
       106190.23,
       104360.61,
-      101955.45
+      101955.45,
+      103631.13
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 50.0,
-    "cumulative_fees_paid": "$3,513.53",
+    "accuracy_rate": 49.7,
+    "cumulative_fees_paid": "$3,541.43",
     "volatility_drag_reduction": "5.7% p.p. MDD 방어",
-    "alpha_over_benchmark": "+8.59% p.p.",
-    "status": "VALIDATED — 무결 패널(168일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·30% TVL 캡 차감 후 평균 순수익 +10.54% (CAGR +24.3%, Sharpe 1.37, MDD -7.74%)"
+    "alpha_over_benchmark": "+6.73% p.p.",
+    "status": "VALIDATED — 무결 패널(169일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·30% TVL 캡 차감 후 평균 순수익 +10.36% (CAGR +23.7%, Sharpe 1.35, MDD -7.74%)"
   }
 }

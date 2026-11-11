@@ -1,55 +1,5 @@
 [
   {
-    "evaluated_date": "2026-09-13",
-    "referenced_date": "2026-09-12",
-    "portfolio_24h_profit_usd": 30.23,
-    "portfolio_24h_return_pct": 0.0302,
-    "evaluated_holdings": [
-      {
-        "vault_name": "PF1",
-        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 27.43,
-        "actual_24h_return_pct": 0.1372
-      },
-      {
-        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
-        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 4.84,
-        "actual_24h_return_pct": 0.0242
-      },
-      {
-        "vault_name": "Citadel",
-        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 0.0,
-        "actual_24h_return_pct": 0.0
-      },
-      {
-        "vault_name": "FuturAI Labs - High Sharpe, Medium Volat",
-        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 3.15,
-        "actual_24h_return_pct": 0.0236
-      },
-      {
-        "vault_name": "BitRocket",
-        "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": -8.24,
-        "actual_24h_return_pct": -0.0618
-      },
-      {
-        "vault_name": "Mad Scientists",
-        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 3.03,
-        "actual_24h_return_pct": 0.0228
-      }
-    ]
-  },
-  {
     "evaluated_date": "2026-09-14",
     "referenced_date": "2026-09-13",
     "portfolio_24h_profit_usd": 19.47,
@@ -2989,6 +2939,56 @@
         "allocated_usd": 15709.77,
         "actual_24h_gain_usd": 135.72,
         "actual_24h_return_pct": 0.8639
+      }
+    ]
+  },
+  {
+    "evaluated_date": "2026-11-12",
+    "referenced_date": "2026-11-11",
+    "portfolio_24h_profit_usd": -265.93,
+    "portfolio_24h_return_pct": -0.2659,
+    "evaluated_holdings": [
+      {
+        "vault_name": "Akka Hyper AI",
+        "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
+        "allocated_usd": 25000.0,
+        "actual_24h_gain_usd": -101.05,
+        "actual_24h_return_pct": -0.4042
+      },
+      {
+        "vault_name": "Symphony",
+        "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+        "allocated_usd": 21973.09,
+        "actual_24h_gain_usd": -76.3,
+        "actual_24h_return_pct": -0.3472
+      },
+      {
+        "vault_name": "-VectorZero-",
+        "address": "0x241ba250828c6a1289330aeec301e7bdcef31a43",
+        "allocated_usd": 8830.71,
+        "actual_24h_gain_usd": -14.6,
+        "actual_24h_return_pct": -0.1653
+      },
+      {
+        "vault_name": "Hypernova",
+        "address": "0x800b3a897847d35835b41e986ef50c153861f1bf",
+        "allocated_usd": 11352.62,
+        "actual_24h_gain_usd": 0.0,
+        "actual_24h_return_pct": 0.0
+      },
+      {
+        "vault_name": "Sentiment Edge",
+        "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+        "allocated_usd": 15929.11,
+        "actual_24h_gain_usd": -54.64,
+        "actual_24h_return_pct": -0.343
+      },
+      {
+        "vault_name": "Edge & Hedge",
+        "address": "0x060d01aa996003b3731a992462d7f0ba68bf3b04",
+        "allocated_usd": 16914.48,
+        "actual_24h_gain_usd": -19.34,
+        "actual_24h_return_pct": -0.1143
       }
     ]
   }
