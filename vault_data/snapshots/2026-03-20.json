@@ -42,7 +42,7 @@
     ],
     "vol_score": 102.03,
     "sharpe_ratio": 17.444,
-    "max_drawdown": 22.73,
+    "max_drawdown": 63.6,
     "apr_30d": 488.42,
     "monthly_return": 40.7,
     "pnl_30d": 31342.81,
@@ -54,12 +54,13 @@
     "recovery_score": 0.8903,
     "robustness_score": 0.9076,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 17501.17,
+    "max_dd_dollar": 85012.53,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 1
+    "rank": 1,
+    "drawdown_now": 24.14
   },
   {
     "address": "0x4dec0a851849056e259128464ef28ce78afa27f6",
@@ -103,7 +104,7 @@
     ],
     "vol_score": 46.52,
     "sharpe_ratio": 15.14,
-    "max_drawdown": 5.43,
+    "max_drawdown": 1318.37,
     "apr_30d": 139.22,
     "monthly_return": 11.6,
     "pnl_30d": 80554.12,
@@ -115,12 +116,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5822,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 37670.3,
+    "max_dd_dollar": 1318.37,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 2
+    "rank": 2,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x77fee2df7bad4f1db93052fa82bf78eaab771a16",
@@ -164,7 +166,7 @@
     ],
     "vol_score": 72.52,
     "sharpe_ratio": 19.645,
-    "max_drawdown": 5.41,
+    "max_drawdown": 29.8,
     "apr_30d": 209.44,
     "monthly_return": 17.45,
     "pnl_30d": 9991.29,
@@ -176,12 +178,13 @@
     "recovery_score": 1.0,
     "robustness_score": 0.9402,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 3096.09,
+    "max_dd_dollar": 9938.48,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 3
+    "rank": 3,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x697bc3dd77539fa84156d0e1c95287ea5524fd6b",
@@ -226,7 +229,7 @@
     ],
     "vol_score": 26.26,
     "sharpe_ratio": 14.605,
-    "max_drawdown": 4.21,
+    "max_drawdown": 19.72,
     "apr_30d": 177.12,
     "monthly_return": 14.76,
     "pnl_30d": 11878.64,
@@ -238,12 +241,13 @@
     "recovery_score": 0.8402,
     "robustness_score": 0.9047,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 657.46,
+    "max_dd_dollar": 1887.76,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 4
+    "rank": 4,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x3a6747c8e913085e243a2c22d188dafa8c6a612a",
@@ -287,7 +291,7 @@
     ],
     "vol_score": 42.72,
     "sharpe_ratio": 17.866,
-    "max_drawdown": 0.99,
+    "max_drawdown": 14.0,
     "apr_30d": 111.37,
     "monthly_return": 9.28,
     "pnl_30d": 2277.1,
@@ -299,12 +303,13 @@
     "recovery_score": 1.0,
     "robustness_score": 0.9881,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 242.94,
+    "max_dd_dollar": 2387.48,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 5
+    "rank": 5,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
@@ -349,7 +354,7 @@
     ],
     "vol_score": 57.38,
     "sharpe_ratio": 13.823,
-    "max_drawdown": 13.14,
+    "max_drawdown": 21.44,
     "apr_30d": 54.04,
     "monthly_return": 4.5,
     "pnl_30d": 6283.9,
@@ -361,12 +366,13 @@
     "recovery_score": 0.7371,
     "robustness_score": 0.8619,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 8722.96,
+    "max_dd_dollar": 36291.05,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 6
+    "rank": 6,
+    "drawdown_now": 6.33
   },
   {
     "address": "0xb1688bcae7de088fe9f2ef1d1f79e681fc0443ed",
@@ -411,7 +417,7 @@
     ],
     "vol_score": 12.13,
     "sharpe_ratio": 14.034,
-    "max_drawdown": 6.01,
+    "max_drawdown": 0.0,
     "apr_30d": 100.25,
     "monthly_return": 8.35,
     "pnl_30d": 2679.91,
@@ -423,12 +429,13 @@
     "recovery_score": 1.0,
     "robustness_score": 0.9726,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 1926.55,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 7
+    "rank": 7,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
@@ -471,7 +478,7 @@
     ],
     "vol_score": 34.77,
     "sharpe_ratio": 11.337,
-    "max_drawdown": 1.34,
+    "max_drawdown": 11.66,
     "apr_30d": 31.47,
     "monthly_return": 2.62,
     "pnl_30d": 253937.77,
@@ -483,12 +490,13 @@
     "recovery_score": 1.0,
     "robustness_score": 0.9033,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 130229.37,
+    "max_dd_dollar": 817301.78,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 8
+    "rank": 8,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x9ce25db757351d29a1ee1ee34d73a263dcb33fbf",
@@ -531,7 +539,7 @@
     ],
     "vol_score": 10.92,
     "sharpe_ratio": 12.332,
-    "max_drawdown": 1.08,
+    "max_drawdown": 0.05,
     "apr_30d": 3.89,
     "monthly_return": 0.32,
     "pnl_30d": 117.95,
@@ -543,12 +551,13 @@
     "recovery_score": 0.9772,
     "robustness_score": 0.9268,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 25.55,
+    "max_dd_dollar": 14.46,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 9
+    "rank": 9,
+    "drawdown_now": 0.02
   },
   {
     "address": "0x7bf5d9951f1a7a925fec839bbdc01a0aa8bd34ff",
@@ -593,7 +602,7 @@
     ],
     "vol_score": 101.33,
     "sharpe_ratio": 10.161,
-    "max_drawdown": 22.6,
+    "max_drawdown": 0.0,
     "apr_30d": 643.57,
     "monthly_return": 53.63,
     "pnl_30d": 9639.21,
@@ -605,12 +614,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5635,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 2213.42,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 10
+    "rank": 10,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x61b1cf5c2d7c4bf6d5db14f36651b2242e7cba0a",
@@ -655,7 +665,7 @@
     ],
     "vol_score": 41.39,
     "sharpe_ratio": 10.419,
-    "max_drawdown": 17.63,
+    "max_drawdown": 5.89,
     "apr_30d": 25.69,
     "monthly_return": 2.14,
     "pnl_30d": 15216.49,
@@ -667,12 +677,13 @@
     "recovery_score": 0.6473,
     "robustness_score": 0.7217,
     "equity_curve_grade": "A  (우수)",
-    "max_dd_dollar": 32123.75,
+    "max_dd_dollar": 38811.82,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 11
+    "rank": 11,
+    "drawdown_now": 1.86
   },
   {
     "address": "0xc71f5a493b937e4b1798b86510630336a6dfd804",
@@ -717,7 +728,7 @@
     ],
     "vol_score": 18.13,
     "sharpe_ratio": 12.128,
-    "max_drawdown": 4.71,
+    "max_drawdown": 9.23,
     "apr_30d": 91.31,
     "monthly_return": 7.61,
     "pnl_30d": 916.21,
@@ -729,12 +740,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5485,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 63.82,
+    "max_dd_dollar": 142.62,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 12
+    "rank": 12,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
@@ -779,7 +791,7 @@
     ],
     "vol_score": 47.25,
     "sharpe_ratio": 10.885,
-    "max_drawdown": 21.96,
+    "max_drawdown": 20.06,
     "apr_30d": 3.73,
     "monthly_return": 0.31,
     "pnl_30d": 347.3,
@@ -791,12 +803,13 @@
     "recovery_score": 0.5607,
     "robustness_score": 0.7223,
     "equity_curve_grade": "A  (우수)",
-    "max_dd_dollar": 7136.97,
+    "max_dd_dollar": 44165.5,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 13
+    "rank": 13,
+    "drawdown_now": 16.16
   },
   {
     "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
@@ -841,7 +854,7 @@
     ],
     "vol_score": 100.5,
     "sharpe_ratio": 8.86,
-    "max_drawdown": 3.66,
+    "max_drawdown": 47.56,
     "apr_30d": 72.01,
     "monthly_return": 6.0,
     "pnl_30d": 37112.39,
@@ -853,12 +866,13 @@
     "recovery_score": 0.5147,
     "robustness_score": 0.6848,
     "equity_curve_grade": "A  (우수)",
-    "max_dd_dollar": 10152.43,
+    "max_dd_dollar": 1990.95,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 14
+    "rank": 14,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
@@ -903,7 +917,7 @@
     ],
     "vol_score": 104.25,
     "sharpe_ratio": 6.558,
-    "max_drawdown": 36.82,
+    "max_drawdown": 45.05,
     "apr_30d": 245.11,
     "monthly_return": 20.43,
     "pnl_30d": 2184265.88,
@@ -915,12 +929,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5392,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 1317750.43,
+    "max_dd_dollar": 1807854.54,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 15
+    "rank": 15,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x8fafc23611d59310b957162b8479f354c5a0eb4d",
@@ -964,7 +979,7 @@
     ],
     "vol_score": 6.61,
     "sharpe_ratio": 8.839,
-    "max_drawdown": 18.93,
+    "max_drawdown": 332.48,
     "apr_30d": 23.9,
     "monthly_return": 1.99,
     "pnl_30d": 4590.37,
@@ -976,12 +991,13 @@
     "recovery_score": 0.5092,
     "robustness_score": 0.7704,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 1467.03,
+    "max_dd_dollar": 1671.45,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 16
+    "rank": 16,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
@@ -1026,7 +1042,7 @@
     ],
     "vol_score": 40.19,
     "sharpe_ratio": 13.725,
-    "max_drawdown": 8.94,
+    "max_drawdown": 18.93,
     "apr_30d": 81.43,
     "monthly_return": 6.79,
     "pnl_30d": 1105.79,
@@ -1038,12 +1054,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5962,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 454.31,
+    "max_dd_dollar": 583.66,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 17
+    "rank": 17,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xac02cf3af4094acb8558bb2d84ffd5f3d45c0d17",
@@ -1088,7 +1105,7 @@
     ],
     "vol_score": 53.07,
     "sharpe_ratio": 7.325,
-    "max_drawdown": 23.08,
+    "max_drawdown": 1224.51,
     "apr_30d": 257.84,
     "monthly_return": 21.49,
     "pnl_30d": 5988.68,
@@ -1105,7 +1122,8 @@
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 18
+    "rank": 18,
+    "drawdown_now": 0.33
   },
   {
     "address": "0xd2f03635901956b950737bbf02463dfad9f2e9e1",
@@ -1150,7 +1168,7 @@
     ],
     "vol_score": 124.49,
     "sharpe_ratio": 8.487,
-    "max_drawdown": 20.09,
+    "max_drawdown": 16.21,
     "apr_30d": 105.1,
     "monthly_return": 8.76,
     "pnl_30d": 9371.93,
@@ -1167,7 +1185,8 @@
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 19
+    "rank": 19,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xfdb03a2574e9e7d1c77d9ed752d99cdf25c3db25",
@@ -1212,7 +1231,7 @@
     ],
     "vol_score": 355.12,
     "sharpe_ratio": 9.159,
-    "max_drawdown": 34.42,
+    "max_drawdown": 40.65,
     "apr_30d": 397.86,
     "monthly_return": 33.15,
     "pnl_30d": 4384.31,
@@ -1224,12 +1243,13 @@
     "recovery_score": 0.3115,
     "robustness_score": 0.4543,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 19598.67,
+    "max_dd_dollar": 31368.19,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 20
+    "rank": 20,
+    "drawdown_now": 24.34
   },
   {
     "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
@@ -1274,7 +1294,7 @@
     ],
     "vol_score": 80.95,
     "sharpe_ratio": 6.91,
-    "max_drawdown": 37.81,
+    "max_drawdown": 9.96,
     "apr_30d": 4.23,
     "monthly_return": 0.35,
     "pnl_30d": 1816.6,
@@ -1286,12 +1306,13 @@
     "recovery_score": 0.2438,
     "robustness_score": 0.546,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 71072.22,
+    "max_dd_dollar": 85104.11,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 21
+    "rank": 21,
+    "drawdown_now": 7.24
   },
   {
     "address": "0x5290ab34acb59cfe1371baa5782eba14433d308f",
@@ -1335,7 +1356,7 @@
     ],
     "vol_score": 405.36,
     "sharpe_ratio": 4.051,
-    "max_drawdown": 61.13,
+    "max_drawdown": 295.77,
     "apr_30d": 521.71,
     "monthly_return": 43.48,
     "pnl_30d": 8143.42,
@@ -1347,12 +1368,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.327,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 18062.88,
+    "max_dd_dollar": 6556.04,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 22
+    "rank": 22,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xae6b807ec47e0b7900d1fe2a53885b4602748b03",
@@ -1397,7 +1419,7 @@
     ],
     "vol_score": 23.62,
     "sharpe_ratio": 6.833,
-    "max_drawdown": 26.26,
+    "max_drawdown": 0.0,
     "apr_30d": 103.76,
     "monthly_return": 8.65,
     "pnl_30d": 9311.02,
@@ -1409,12 +1431,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5314,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 2445.32,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 23
+    "rank": 23,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x10a297228eae79617e5873dd924b6aca1ad33c74",
@@ -1458,7 +1481,7 @@
     ],
     "vol_score": 40.39,
     "sharpe_ratio": 6.337,
-    "max_drawdown": 22.91,
+    "max_drawdown": 1.23,
     "apr_30d": 149.26,
     "monthly_return": 12.44,
     "pnl_30d": 4856.15,
@@ -1470,12 +1493,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4952,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 1087.52,
+    "max_dd_dollar": 482.08,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 24
+    "rank": 24,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x07fd993f0fa3a185f7207adccd29f7a87404689d",
@@ -1520,7 +1544,7 @@
     ],
     "vol_score": 148.65,
     "sharpe_ratio": 5.108,
-    "max_drawdown": 53.12,
+    "max_drawdown": 29.64,
     "apr_30d": 104.61,
     "monthly_return": 8.72,
     "pnl_30d": 285930.69,
@@ -1532,12 +1556,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4074,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 824686.25,
+    "max_dd_dollar": 1119378.58,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 25
+    "rank": 25,
+    "drawdown_now": 15.75
   },
   {
     "address": "0xd57c9295947b5a616a3933344ef03a1ad67318ea",
@@ -1582,7 +1607,7 @@
     ],
     "vol_score": 31.85,
     "sharpe_ratio": 6.652,
-    "max_drawdown": 4.35,
+    "max_drawdown": 8.21,
     "apr_30d": 15.22,
     "monthly_return": 1.27,
     "pnl_30d": 1960.61,
@@ -1594,12 +1619,13 @@
     "recovery_score": 0.7191,
     "robustness_score": 0.7283,
     "equity_curve_grade": "A  (우수)",
-    "max_dd_dollar": 676.39,
+    "max_dd_dollar": 121.76,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 26
+    "rank": 26,
+    "drawdown_now": 2.05
   },
   {
     "address": "0x3e2bac5121499410c4020cca55c94e3afb141e0f",
@@ -1643,7 +1669,7 @@
     ],
     "vol_score": 19.17,
     "sharpe_ratio": 6.605,
-    "max_drawdown": 25.86,
+    "max_drawdown": 433.68,
     "apr_30d": 86.17,
     "monthly_return": 7.18,
     "pnl_30d": 1928.07,
@@ -1660,7 +1686,8 @@
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 27
+    "rank": 27,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x50e2fe552727a4b8692c192b4f96d1a6b0d44394",
@@ -1704,7 +1731,7 @@
     ],
     "vol_score": 58.23,
     "sharpe_ratio": 6.766,
-    "max_drawdown": 28.06,
+    "max_drawdown": 6.0,
     "apr_30d": 53.35,
     "monthly_return": 4.45,
     "pnl_30d": 3357.27,
@@ -1716,12 +1743,13 @@
     "recovery_score": 0.3332,
     "robustness_score": 0.5032,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 4164.58,
+    "max_dd_dollar": 4347.42,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 28
+    "rank": 28,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x29b98aaf8eeb316385fe2ed1af564bdc4b03ffd6",
@@ -1765,7 +1793,7 @@
     ],
     "vol_score": 69.94,
     "sharpe_ratio": 5.485,
-    "max_drawdown": 25.98,
+    "max_drawdown": 44.28,
     "apr_30d": 94.04,
     "monthly_return": 7.84,
     "pnl_30d": 10860.65,
@@ -1777,12 +1805,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3319,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 6513.72,
+    "max_dd_dollar": 4677.83,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 29
+    "rank": 29,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xbc5bf88fd012612ba92c5bd96e183955801b7fdc",
@@ -1827,7 +1856,7 @@
     ],
     "vol_score": 213.65,
     "sharpe_ratio": 6.493,
-    "max_drawdown": 36.14,
+    "max_drawdown": 33.34,
     "apr_30d": -78.04,
     "monthly_return": -6.5,
     "pnl_30d": -24836.6,
@@ -1839,12 +1868,13 @@
     "recovery_score": 0.2771,
     "robustness_score": 0.4412,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 111681.57,
+    "max_dd_dollar": 104292.04,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 30
+    "rank": 30,
+    "drawdown_now": 18.61
   },
   {
     "address": "0x4944589914a1ddef29f5f1f2094cfa212a3a3d20",
@@ -1891,7 +1921,7 @@
     ],
     "vol_score": 49.18,
     "sharpe_ratio": 8.015,
-    "max_drawdown": 8.65,
+    "max_drawdown": 0.05,
     "apr_30d": 271.64,
     "monthly_return": 22.64,
     "pnl_30d": 2520.08,
@@ -1903,12 +1933,13 @@
     "recovery_score": 0.2398,
     "robustness_score": 0.5921,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 232.56,
+    "max_dd_dollar": 4.57,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 31
+    "rank": 31,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x58be3403f05d25f224593717feb69f175973bbb4",
@@ -1952,7 +1983,7 @@
     ],
     "vol_score": 12.72,
     "sharpe_ratio": 5.76,
-    "max_drawdown": 13.49,
+    "max_drawdown": 0.31,
     "apr_30d": 44.16,
     "monthly_return": 3.68,
     "pnl_30d": 763.54,
@@ -1964,12 +1995,13 @@
     "recovery_score": 0.7044,
     "robustness_score": 0.7315,
     "equity_curve_grade": "A  (우수)",
-    "max_dd_dollar": 104.3,
+    "max_dd_dollar": 3.13,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 32
+    "rank": 32,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xeaee3e55f8dde6779922166e1502887cebbb5f57",
@@ -2013,7 +2045,7 @@
     ],
     "vol_score": 22.76,
     "sharpe_ratio": 5.791,
-    "max_drawdown": 32.76,
+    "max_drawdown": 3.52,
     "apr_30d": 65.51,
     "monthly_return": 5.46,
     "pnl_30d": 4293.37,
@@ -2025,12 +2057,13 @@
     "recovery_score": 0.3449,
     "robustness_score": 0.5752,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 1666.59,
+    "max_dd_dollar": 1096.61,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 33
+    "rank": 33,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xac26cf5f3c46b5e102048c65b977d2551b72a9c7",
@@ -2075,7 +2108,7 @@
     ],
     "vol_score": 217.43,
     "sharpe_ratio": 3.224,
-    "max_drawdown": 102.02,
+    "max_drawdown": 39.55,
     "apr_30d": 234.32,
     "monthly_return": 19.53,
     "pnl_30d": 471256.44,
@@ -2087,12 +2120,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.253,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 898754.8,
+    "max_dd_dollar": 1008134.71,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 34
+    "rank": 34,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x7833b1d61c016fefaa52a1da509b6daa2fbfd71b",
@@ -2137,7 +2171,7 @@
     ],
     "vol_score": 27.96,
     "sharpe_ratio": 8.664,
-    "max_drawdown": 9.62,
+    "max_drawdown": 3.91,
     "apr_30d": 121.75,
     "monthly_return": 10.15,
     "pnl_30d": 1143.85,
@@ -2149,12 +2183,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5478,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 132.43,
+    "max_dd_dollar": 235.54,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 35
+    "rank": 35,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x131ab0c5032079bb9286ffc1828e11d5931e77bb",
@@ -2198,7 +2233,7 @@
     ],
     "vol_score": 54.27,
     "sharpe_ratio": 4.663,
-    "max_drawdown": 63.97,
+    "max_drawdown": 15.42,
     "apr_30d": 133.81,
     "monthly_return": 11.15,
     "pnl_30d": 6438.09,
@@ -2210,12 +2245,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4194,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 4266.84,
+    "max_dd_dollar": 1538.7,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 36
+    "rank": 36,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xb4d96c7387a45fa2cb170fa1436a86640ab00eb1",
@@ -2260,7 +2296,7 @@
     ],
     "vol_score": 86.35,
     "sharpe_ratio": 5.582,
-    "max_drawdown": 23.46,
+    "max_drawdown": 11.44,
     "apr_30d": 73.55,
     "monthly_return": 6.13,
     "pnl_30d": 2044.81,
@@ -2272,12 +2308,13 @@
     "recovery_score": 0.5087,
     "robustness_score": 0.5567,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 1721.55,
+    "max_dd_dollar": 2408.18,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 37
+    "rank": 37,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x21edf2d791f626ee69352120e7f6e2fbb0f48cf1",
@@ -2321,7 +2358,7 @@
     ],
     "vol_score": 44.5,
     "sharpe_ratio": 4.47,
-    "max_drawdown": 42.6,
+    "max_drawdown": 5.85,
     "apr_30d": 18.17,
     "monthly_return": 1.51,
     "pnl_30d": 6340.66,
@@ -2333,12 +2370,13 @@
     "recovery_score": 0.0954,
     "robustness_score": 0.4092,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 16802.56,
+    "max_dd_dollar": 23890.87,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 38
+    "rank": 38,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x9a28b01435ca5c4b39a79ae2c27fce01292a7f39",
@@ -2384,7 +2422,7 @@
     ],
     "vol_score": 25.11,
     "sharpe_ratio": 5.439,
-    "max_drawdown": 25.35,
+    "max_drawdown": 3.11,
     "apr_30d": 6.3,
     "monthly_return": 0.52,
     "pnl_30d": 1816.16,
@@ -2396,12 +2434,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4832,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 7160.32,
+    "max_dd_dollar": 10979.19,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 39
+    "rank": 39,
+    "drawdown_now": 0.56
   },
   {
     "address": "0xf4ab2cb15b7b3fa298555b801e9f5772ba8f8891",
@@ -2446,7 +2485,7 @@
     ],
     "vol_score": 57.21,
     "sharpe_ratio": 5.219,
-    "max_drawdown": 41.07,
+    "max_drawdown": 4.62,
     "apr_30d": 60.13,
     "monthly_return": 5.01,
     "pnl_30d": 1799.32,
@@ -2458,12 +2497,13 @@
     "recovery_score": 0.1687,
     "robustness_score": 0.421,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 2022.92,
+    "max_dd_dollar": 1787.69,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 40
+    "rank": 40,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
@@ -2507,7 +2547,7 @@
     ],
     "vol_score": 93.12,
     "sharpe_ratio": 4.672,
-    "max_drawdown": 44.98,
+    "max_drawdown": 10.25,
     "apr_30d": 16.5,
     "monthly_return": 1.37,
     "pnl_30d": 4539.31,
@@ -2519,12 +2559,13 @@
     "recovery_score": 0.1005,
     "robustness_score": 0.3779,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 44146.83,
+    "max_dd_dollar": 93942.11,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 41
+    "rank": 41,
+    "drawdown_now": 7.69
   },
   {
     "address": "0x7c5885d2974457eafb1a3a4d848c358111f0714d",
@@ -2567,7 +2608,7 @@
     ],
     "vol_score": 364.74,
     "sharpe_ratio": 9.052,
-    "max_drawdown": 45.45,
+    "max_drawdown": 52.0,
     "apr_30d": -364.41,
     "monthly_return": -30.37,
     "pnl_30d": -15005.33,
@@ -2579,12 +2620,13 @@
     "recovery_score": 0.2844,
     "robustness_score": 0.5347,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 22459.28,
+    "max_dd_dollar": 186080.8,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 42
+    "rank": 42,
+    "drawdown_now": 47.32
   },
   {
     "address": "0xbbf7d7a9d0eaeab4115f022a6863450296112422",
@@ -2628,7 +2670,7 @@
     ],
     "vol_score": 266.58,
     "sharpe_ratio": 4.415,
-    "max_drawdown": 41.82,
+    "max_drawdown": 30.3,
     "apr_30d": 49.01,
     "monthly_return": 4.08,
     "pnl_30d": 24479.58,
@@ -2640,12 +2682,13 @@
     "recovery_score": 0.1636,
     "robustness_score": 0.5016,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 197591.3,
+    "max_dd_dollar": 259484.34,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 43
+    "rank": 43,
+    "drawdown_now": 23.33
   },
   {
     "address": "0x3b4f22366857da94f9346f88eac84718c8a8d48d",
@@ -2689,7 +2732,7 @@
     ],
     "vol_score": 64.32,
     "sharpe_ratio": 4.585,
-    "max_drawdown": 50.92,
+    "max_drawdown": 12.19,
     "apr_30d": 2.63,
     "monthly_return": 0.22,
     "pnl_30d": 385.98,
@@ -2701,12 +2744,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5207,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 13196.54,
+    "max_dd_dollar": 16469.14,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 44
+    "rank": 44,
+    "drawdown_now": 0.12
   },
   {
     "address": "0x152a8bfb92d3ee5fa0c89321695d1fd385085f90",
@@ -2750,7 +2794,7 @@
     ],
     "vol_score": 48.8,
     "sharpe_ratio": 5.139,
-    "max_drawdown": 23.18,
+    "max_drawdown": 3.89,
     "apr_30d": 39.59,
     "monthly_return": 3.3,
     "pnl_30d": 372.56,
@@ -2762,12 +2806,13 @@
     "recovery_score": 0.5364,
     "robustness_score": 0.4694,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 388.5,
+    "max_dd_dollar": 456.55,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 45
+    "rank": 45,
+    "drawdown_now": 3.89
   },
   {
     "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
@@ -2812,7 +2857,7 @@
     ],
     "vol_score": 106.49,
     "sharpe_ratio": 4.891,
-    "max_drawdown": 45.45,
+    "max_drawdown": 15.47,
     "apr_30d": 10.7,
     "monthly_return": 0.89,
     "pnl_30d": 1906.85,
@@ -2824,12 +2869,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.5087,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 33191.74,
+    "max_dd_dollar": 4319.16,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 46
+    "rank": 46,
+    "drawdown_now": 7.34
   },
   {
     "address": "0xb1505ad1a4c7755e0eb236aa2f4327bfc3474768",
@@ -2876,7 +2922,7 @@
     ],
     "vol_score": 80.33,
     "sharpe_ratio": 3.562,
-    "max_drawdown": 45.47,
+    "max_drawdown": 38.37,
     "apr_30d": 37.79,
     "monthly_return": 3.15,
     "pnl_30d": 113954.31,
@@ -2888,12 +2934,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4426,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 263250.36,
+    "max_dd_dollar": 421294.83,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 47
+    "rank": 47,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xffaed3e0b72f123aa0258d135ed436dfd9acc7e4",
@@ -2937,7 +2984,7 @@
     ],
     "vol_score": 177.77,
     "sharpe_ratio": 2.644,
-    "max_drawdown": 80.07,
+    "max_drawdown": 22.11,
     "apr_30d": 325.66,
     "monthly_return": 27.14,
     "pnl_30d": 7523.63,
@@ -2949,12 +2996,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3294,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 6870.14,
+    "max_dd_dollar": 6128.83,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 48
+    "rank": 48,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x5108cd0a328ed28c277f958761fe1cda60c21aa8",
@@ -2998,7 +3046,7 @@
     ],
     "vol_score": 119.87,
     "sharpe_ratio": 5.006,
-    "max_drawdown": 60.73,
+    "max_drawdown": 23.74,
     "apr_30d": -6.82,
     "monthly_return": -0.57,
     "pnl_30d": -647.58,
@@ -3010,12 +3058,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3954,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 21150.11,
+    "max_dd_dollar": 35896.37,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 49
+    "rank": 49,
+    "drawdown_now": 8.85
   },
   {
     "address": "0xac9eac820f3f9d31bd52111e00553a4ab2797994",
@@ -3060,7 +3109,7 @@
     ],
     "vol_score": 157.64,
     "sharpe_ratio": 2.794,
-    "max_drawdown": 94.57,
+    "max_drawdown": 88.5,
     "apr_30d": 373.37,
     "monthly_return": 31.11,
     "pnl_30d": 15267.62,
@@ -3072,12 +3121,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1531,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 12151.41,
+    "max_dd_dollar": 14164.36,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 50
+    "rank": 50,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x9e02aca9865e1859bb7865f6f64801e804a173df",
@@ -3121,7 +3171,7 @@
     ],
     "vol_score": 438.02,
     "sharpe_ratio": 2.393,
-    "max_drawdown": 41.55,
+    "max_drawdown": 8.86,
     "apr_30d": 174.68,
     "monthly_return": 14.56,
     "pnl_30d": 50577.85,
@@ -3133,12 +3183,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3779,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 550103.69,
+    "max_dd_dollar": 1600072.8,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 51
+    "rank": 51,
+    "drawdown_now": 5.04
   },
   {
     "address": "0x65aee08c9235025355ac6c5ad020fb167ecef4fe",
@@ -3181,7 +3232,7 @@
     ],
     "vol_score": 294.27,
     "sharpe_ratio": 3.72,
-    "max_drawdown": 109.89,
+    "max_drawdown": 63.16,
     "apr_30d": 90.05,
     "monthly_return": 7.5,
     "pnl_30d": 16160.31,
@@ -3193,12 +3244,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3497,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 98052.79,
+    "max_dd_dollar": 192646.93,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 52
+    "rank": 52,
+    "drawdown_now": 16.73
   },
   {
     "address": "0x115849ce84370f25cadcf0d348510d73837e1aa5",
@@ -3242,7 +3294,7 @@
     ],
     "vol_score": 20.88,
     "sharpe_ratio": 2.493,
-    "max_drawdown": 53.92,
+    "max_drawdown": 8.27,
     "apr_30d": 79.54,
     "monthly_return": 6.63,
     "pnl_30d": 193157.68,
@@ -3254,12 +3306,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3647,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 67802.44,
+    "max_dd_dollar": 265373.67,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 53
+    "rank": 53,
+    "drawdown_now": 1.12
   },
   {
     "address": "0x1764dd740aba4195643bbb6a44648e0306b00cfa",
@@ -3304,7 +3357,7 @@
     ],
     "vol_score": 201.62,
     "sharpe_ratio": 3.435,
-    "max_drawdown": 108.81,
+    "max_drawdown": 195.02,
     "apr_30d": 257.9,
     "monthly_return": 21.49,
     "pnl_30d": 6077.78,
@@ -3316,12 +3369,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.252,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 12864.12,
+    "max_dd_dollar": 16088.54,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 54
+    "rank": 54,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x4078582c42fdb547b1397fabb5d5a4beab81be9e",
@@ -3365,7 +3419,7 @@
     ],
     "vol_score": 241.86,
     "sharpe_ratio": 3.989,
-    "max_drawdown": 71.43,
+    "max_drawdown": 17.34,
     "apr_30d": 61.01,
     "monthly_return": 5.08,
     "pnl_30d": 7575.53,
@@ -3377,12 +3431,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2821,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 61639.35,
+    "max_dd_dollar": 16630.91,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 55
+    "rank": 55,
+    "drawdown_now": 8.12
   },
   {
     "address": "0x8bb033130be354eed1110ce7228d7095f001d9fe",
@@ -3428,7 +3483,7 @@
     ],
     "vol_score": 38.73,
     "sharpe_ratio": 4.649,
-    "max_drawdown": 52.43,
+    "max_drawdown": 7.58,
     "apr_30d": 15.17,
     "monthly_return": 1.26,
     "pnl_30d": 1002.99,
@@ -3440,12 +3495,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4687,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 3759.97,
+    "max_dd_dollar": 6691.75,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 56
+    "rank": 56,
+    "drawdown_now": 0.37
   },
   {
     "address": "0xa415c4ded17cac76a1d81a54d9f4aeb48ffd4dd0",
@@ -3490,7 +3546,7 @@
     ],
     "vol_score": 29.09,
     "sharpe_ratio": 7.465,
-    "max_drawdown": 15.66,
+    "max_drawdown": 3.69,
     "apr_30d": 18.28,
     "monthly_return": 1.52,
     "pnl_30d": 194.28,
@@ -3502,12 +3558,13 @@
     "recovery_score": 0.6827,
     "robustness_score": 0.7761,
     "equity_curve_grade": "A+ (최우수)",
-    "max_dd_dollar": 240.01,
+    "max_dd_dollar": 493.2,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 57
+    "rank": 57,
+    "drawdown_now": 0.18
   },
   {
     "address": "0x654016a8c9fcf0c4cb7ed6078aba21f7f399f7b7",
@@ -3553,7 +3610,7 @@
     ],
     "vol_score": 219.92,
     "sharpe_ratio": 1.576,
-    "max_drawdown": 79.53,
+    "max_drawdown": 4.04,
     "apr_30d": 170.25,
     "monthly_return": 14.19,
     "pnl_30d": 227948.93,
@@ -3565,12 +3622,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3358,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 451596.28,
+    "max_dd_dollar": 64907.82,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 58
+    "rank": 58,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
@@ -3616,7 +3674,7 @@
     ],
     "vol_score": 137.03,
     "sharpe_ratio": 4.072,
-    "max_drawdown": 77.86,
+    "max_drawdown": 28.52,
     "apr_30d": 94.8,
     "monthly_return": 7.9,
     "pnl_30d": 1227.5,
@@ -3628,12 +3686,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3106,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 4475.12,
+    "max_dd_dollar": 5350.37,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 59
+    "rank": 59,
+    "drawdown_now": 12.94
   },
   {
     "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
@@ -3679,7 +3738,7 @@
     ],
     "vol_score": 72.14,
     "sharpe_ratio": 2.917,
-    "max_drawdown": 41.8,
+    "max_drawdown": 12.16,
     "apr_30d": -30.18,
     "monthly_return": -2.52,
     "pnl_30d": -12190.41,
@@ -3691,12 +3750,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3939,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 28753.65,
+    "max_dd_dollar": 56477.99,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 60
+    "rank": 60,
+    "drawdown_now": 2.31
   },
   {
     "address": "0x0a8499b5e925d95badc893ec7f0b1613e08f6d7c",
@@ -3741,7 +3801,7 @@
     ],
     "vol_score": 81.22,
     "sharpe_ratio": 6.348,
-    "max_drawdown": 34.84,
+    "max_drawdown": 6.06,
     "apr_30d": 126.18,
     "monthly_return": 10.51,
     "pnl_30d": 1282.43,
@@ -3753,12 +3813,13 @@
     "recovery_score": 0.3031,
     "robustness_score": 0.4054,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 1154.21,
+    "max_dd_dollar": 763.92,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 61
+    "rank": 61,
+    "drawdown_now": 6.06
   },
   {
     "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
@@ -3802,7 +3863,7 @@
     ],
     "vol_score": 105.88,
     "sharpe_ratio": 3.398,
-    "max_drawdown": 48.52,
+    "max_drawdown": 7.77,
     "apr_30d": -54.51,
     "monthly_return": -4.54,
     "pnl_30d": -3775.89,
@@ -3814,12 +3875,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3613,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 9515.91,
+    "max_dd_dollar": 5564.57,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 62
+    "rank": 62,
+    "drawdown_now": 5.02
   },
   {
     "address": "0x73e5c11a8a9820afb1a25aa89787ba025b84e60e",
@@ -3864,7 +3926,7 @@
     ],
     "vol_score": 110.62,
     "sharpe_ratio": 3.239,
-    "max_drawdown": 46.09,
+    "max_drawdown": 18.74,
     "apr_30d": 23.02,
     "monthly_return": 1.92,
     "pnl_30d": 546.99,
@@ -3876,12 +3938,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3457,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 2940.87,
+    "max_dd_dollar": 3062.18,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 63
+    "rank": 63,
+    "drawdown_now": 5.14
   },
   {
     "address": "0x540b6833c05442335aed721af5cadaa6c5b0236a",
@@ -3926,7 +3989,7 @@
     ],
     "vol_score": 283.8,
     "sharpe_ratio": 1.095,
-    "max_drawdown": 160.89,
+    "max_drawdown": 55.9,
     "apr_30d": 394.75,
     "monthly_return": 32.9,
     "pnl_30d": 20360.06,
@@ -3938,12 +4001,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1409,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 38099.13,
+    "max_dd_dollar": 41978.88,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 64
+    "rank": 64,
+    "drawdown_now": 23.21
   },
   {
     "address": "0xae08a2282d969bd0c4bf63a626ab8f8e6200022d",
@@ -3987,7 +4051,7 @@
     ],
     "vol_score": 37.29,
     "sharpe_ratio": 1.946,
-    "max_drawdown": 90.01,
+    "max_drawdown": 4.27,
     "apr_30d": 104.79,
     "monthly_return": 8.73,
     "pnl_30d": 2709.6,
@@ -3999,12 +4063,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3819,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 1160.65,
+    "max_dd_dollar": 1302.87,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 65
+    "rank": 65,
+    "drawdown_now": 1.8
   },
   {
     "address": "0xe67dbf2d051106b42104c1a6631af5e5a458b682",
@@ -4050,7 +4115,7 @@
     ],
     "vol_score": 183.69,
     "sharpe_ratio": 3.194,
-    "max_drawdown": 37.54,
+    "max_drawdown": 36.41,
     "apr_30d": -189.15,
     "monthly_return": -15.76,
     "pnl_30d": -76838.5,
@@ -4062,12 +4127,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2853,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 83339.32,
+    "max_dd_dollar": 60093.45,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 66
+    "rank": 66,
+    "drawdown_now": 13.44
   },
   {
     "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
@@ -4111,7 +4177,7 @@
     ],
     "vol_score": 94.71,
     "sharpe_ratio": 2.195,
-    "max_drawdown": 129.96,
+    "max_drawdown": 4.22,
     "apr_30d": 91.1,
     "monthly_return": 7.59,
     "pnl_30d": 2169.4,
@@ -4128,7 +4194,8 @@
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 67
+    "rank": 67,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
@@ -4174,7 +4241,7 @@
     ],
     "vol_score": 1.15,
     "sharpe_ratio": 1.961,
-    "max_drawdown": 53.64,
+    "max_drawdown": 0.0,
     "apr_30d": 3.24,
     "monthly_return": 0.27,
     "pnl_30d": 227.11,
@@ -4186,12 +4253,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4253,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 121.83,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 68
+    "rank": 68,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xf6f3d773e11023e3e686cbda883ecba631fefc15",
@@ -4236,7 +4304,7 @@
     ],
     "vol_score": 173.72,
     "sharpe_ratio": 5.839,
-    "max_drawdown": 39.02,
+    "max_drawdown": 33.01,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -4248,12 +4316,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3846,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 3552.77,
+    "max_dd_dollar": 4947.78,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 69
+    "rank": 69,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x257acedf61ffd72abfcde8332a13a1d015930051",
@@ -4296,7 +4365,7 @@
     ],
     "vol_score": 85.41,
     "sharpe_ratio": 2.104,
-    "max_drawdown": 86.42,
+    "max_drawdown": 14.64,
     "apr_30d": 36.06,
     "monthly_return": 3.0,
     "pnl_30d": 915.63,
@@ -4308,12 +4377,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1671,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 4119.42,
+    "max_dd_dollar": 4460.1,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 70
+    "rank": 70,
+    "drawdown_now": 11.31
   },
   {
     "address": "0x7048b287889c5913d59f812795d7fd5d724be77a",
@@ -4357,7 +4427,7 @@
     ],
     "vol_score": 77.23,
     "sharpe_ratio": 1.391,
-    "max_drawdown": 93.95,
+    "max_drawdown": 862.95,
     "apr_30d": -25.82,
     "monthly_return": -2.15,
     "pnl_30d": -23843.86,
@@ -4369,12 +4439,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.154,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 112040.71,
+    "max_dd_dollar": 1139.09,
     "_filter_pass": true,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": true,
-    "rank": 71
+    "rank": 71,
+    "drawdown_now": 4.42
   },
   {
     "address": "0xf0286a17a720c260c53119757166a4358ab3e422",
@@ -4419,7 +4490,7 @@
     ],
     "vol_score": 228.18,
     "sharpe_ratio": 4.976,
-    "max_drawdown": 0.0,
+    "max_drawdown": 68.63,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -4431,12 +4502,13 @@
     "recovery_score": 1.0,
     "robustness_score": 0.4406,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 0.01,
+    "max_dd_dollar": 38843.57,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 72
+    "rank": 72,
+    "drawdown_now": 68.63
   },
   {
     "address": "0xbe421ec5af0be9ea2b2a53b38a089ee352c9f325",
@@ -4482,7 +4554,7 @@
     ],
     "vol_score": 19.23,
     "sharpe_ratio": 2.481,
-    "max_drawdown": 67.82,
+    "max_drawdown": 6.36,
     "apr_30d": 24.24,
     "monthly_return": 2.02,
     "pnl_30d": 331.21,
@@ -4494,12 +4566,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3932,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 423.12,
+    "max_dd_dollar": 71.98,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 73
+    "rank": 73,
+    "drawdown_now": 1.41
   },
   {
     "address": "0xdc9955a83218b71713a83ee072055591bd4c7304",
@@ -4544,7 +4617,7 @@
     ],
     "vol_score": 310.34,
     "sharpe_ratio": 2.922,
-    "max_drawdown": 185.87,
+    "max_drawdown": 61.21,
     "apr_30d": 506.08,
     "monthly_return": 42.17,
     "pnl_30d": 4350.63,
@@ -4556,12 +4629,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.189,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 7836.98,
+    "max_dd_dollar": 9606.95,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 74
+    "rank": 74,
+    "drawdown_now": 6.6
   },
   {
     "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
@@ -4606,7 +4680,7 @@
     ],
     "vol_score": 168.55,
     "sharpe_ratio": 4.775,
-    "max_drawdown": 42.47,
+    "max_drawdown": 50.33,
     "apr_30d": 34.17,
     "monthly_return": 2.85,
     "pnl_30d": 572.88,
@@ -4618,12 +4692,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4551,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 3564.95,
+    "max_dd_dollar": 2745.71,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 75
+    "rank": 75,
+    "drawdown_now": 4.29
   },
   {
     "address": "0x5384bc21c19d8e154cdb4d9b6f3bb17dbf609d01",
@@ -4669,7 +4744,7 @@
     ],
     "vol_score": 70.7,
     "sharpe_ratio": 1.408,
-    "max_drawdown": 82.1,
+    "max_drawdown": 0.0,
     "apr_30d": 42.05,
     "monthly_return": 3.5,
     "pnl_30d": 730.76,
@@ -4681,12 +4756,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2724,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 3352.35,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 76
+    "rank": 76,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x2431edfcb662e6ff6deab113cc91878a0b53fb0f",
@@ -4730,7 +4806,7 @@
     ],
     "vol_score": 187.77,
     "sharpe_ratio": 4.034,
-    "max_drawdown": 55.76,
+    "max_drawdown": 51.06,
     "apr_30d": -356.41,
     "monthly_return": -29.7,
     "pnl_30d": -19740.74,
@@ -4742,12 +4818,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4354,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 24902.83,
+    "max_dd_dollar": 7658.59,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 77
+    "rank": 77,
+    "drawdown_now": 26.17
   },
   {
     "address": "0x66e541024ca4c50b8f6c0934b8947c487d211661",
@@ -4791,7 +4868,7 @@
     ],
     "vol_score": 358.24,
     "sharpe_ratio": 5.68,
-    "max_drawdown": 93.94,
+    "max_drawdown": 36.46,
     "apr_30d": -500.0,
     "monthly_return": -85.92,
     "pnl_30d": -59491.63,
@@ -4803,12 +4880,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4232,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 65043.63,
+    "max_dd_dollar": 69785.5,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 78
+    "rank": 78,
+    "drawdown_now": 36.46
   },
   {
     "address": "0xe6b679488d19045a5e4cf7815e35ddc98d0479fa",
@@ -4854,7 +4932,7 @@
     ],
     "vol_score": 72.66,
     "sharpe_ratio": 1.287,
-    "max_drawdown": 90.78,
+    "max_drawdown": 3.17,
     "apr_30d": 58.11,
     "monthly_return": 4.84,
     "pnl_30d": 704.3,
@@ -4866,12 +4944,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3459,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 1218.32,
+    "max_dd_dollar": 476.12,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 79
+    "rank": 79,
+    "drawdown_now": 2.26
   },
   {
     "address": "0x49a648936441b22f28f069d3c088928682b277ae",
@@ -4915,7 +4994,7 @@
     ],
     "vol_score": 64.47,
     "sharpe_ratio": -1.915,
-    "max_drawdown": 12.08,
+    "max_drawdown": 26.66,
     "apr_30d": 87.39,
     "monthly_return": 7.28,
     "pnl_30d": 29429.76,
@@ -4927,12 +5006,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2122,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 48811.48,
+    "max_dd_dollar": 58048.03,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 80
+    "rank": 80,
+    "drawdown_now": 8.76
   },
   {
     "address": "0x5e3e83cf2fba6e57586a73a5fa3643507c82f8b2",
@@ -4976,7 +5056,7 @@
     ],
     "vol_score": 93.61,
     "sharpe_ratio": 0.091,
-    "max_drawdown": 106.02,
+    "max_drawdown": 15.35,
     "apr_30d": 132.11,
     "monthly_return": 11.01,
     "pnl_30d": 2239.3,
@@ -4988,12 +5068,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2289,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 2515.75,
+    "max_dd_dollar": 3306.6,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 81
+    "rank": 81,
+    "drawdown_now": 11.64
   },
   {
     "address": "0x18db1cab14f2886cee69c11ae0ad5b0b691c3a60",
@@ -5098,7 +5179,7 @@
     ],
     "vol_score": 24.31,
     "sharpe_ratio": 3.527,
-    "max_drawdown": 15.81,
+    "max_drawdown": 0.57,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -5115,7 +5196,8 @@
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 83
+    "rank": 83,
+    "drawdown_now": 0.57
   },
   {
     "address": "0x82eba5dc675279cb5967952f0c4b5184505eb17c",
@@ -5160,7 +5242,7 @@
     ],
     "vol_score": 162.18,
     "sharpe_ratio": 0.954,
-    "max_drawdown": 93.26,
+    "max_drawdown": 37.04,
     "apr_30d": -155.54,
     "monthly_return": -12.96,
     "pnl_30d": -16126.98,
@@ -5172,12 +5254,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3255,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 31524.1,
+    "max_dd_dollar": 16817.58,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 84
+    "rank": 84,
+    "drawdown_now": 12.05
   },
   {
     "address": "0x867eb0b917a3082651d07090d6107f9690b605d6",
@@ -5221,7 +5304,7 @@
     ],
     "vol_score": 40.72,
     "sharpe_ratio": 1.581,
-    "max_drawdown": 161.99,
+    "max_drawdown": 7.93,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -5233,12 +5316,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2664,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 537.74,
+    "max_dd_dollar": 833.35,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 85
+    "rank": 85,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xbeebbbe817a69d60dd62e0a942032bc5414dae1c",
@@ -5284,7 +5368,7 @@
     ],
     "vol_score": 114.62,
     "sharpe_ratio": 0.921,
-    "max_drawdown": 186.04,
+    "max_drawdown": 44.65,
     "apr_30d": 31.41,
     "monthly_return": 2.62,
     "pnl_30d": 2991.06,
@@ -5301,7 +5385,8 @@
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 86
+    "rank": 86,
+    "drawdown_now": 3.4
   },
   {
     "address": "0x9a3006e0b7ffacf11729103098ff16fa6e17bd24",
@@ -5346,7 +5431,7 @@
     ],
     "vol_score": 170.82,
     "sharpe_ratio": 3.951,
-    "max_drawdown": 74.61,
+    "max_drawdown": 43.64,
     "apr_30d": -24.76,
     "monthly_return": -2.06,
     "pnl_30d": -360.29,
@@ -5358,12 +5443,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3572,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 4674.56,
+    "max_dd_dollar": 3429.48,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 87
+    "rank": 87,
+    "drawdown_now": 9.86
   },
   {
     "address": "0xf67ce303834b4066ff3cf8394f9035c96e8456f9",
@@ -5407,7 +5493,7 @@
     ],
     "vol_score": 20.08,
     "sharpe_ratio": -1.175,
-    "max_drawdown": 4.52,
+    "max_drawdown": 80.44,
     "apr_30d": -12.58,
     "monthly_return": -1.05,
     "pnl_30d": -112.48,
@@ -5419,12 +5505,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1326,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 484.76,
+    "max_dd_dollar": 410.83,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 88
+    "rank": 88,
+    "drawdown_now": 80.44
   },
   {
     "address": "0x071a1341c9d00a5537ff4bf8289049f045fe3abb",
@@ -5470,7 +5557,7 @@
     ],
     "vol_score": 278.19,
     "sharpe_ratio": 3.687,
-    "max_drawdown": 59.57,
+    "max_drawdown": 14.08,
     "apr_30d": -54.37,
     "monthly_return": -4.53,
     "pnl_30d": -756.72,
@@ -5482,12 +5569,13 @@
     "recovery_score": 0.4041,
     "robustness_score": 0.3593,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 9949.54,
+    "max_dd_dollar": 20615.56,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 89
+    "rank": 89,
+    "drawdown_now": 10.53
   },
   {
     "address": "0x15be61aef0ea4e4dc93c79b668f26b3f1be75a66",
@@ -5532,7 +5620,7 @@
     ],
     "vol_score": 367.18,
     "sharpe_ratio": -0.677,
-    "max_drawdown": 170.75,
+    "max_drawdown": 69.92,
     "apr_30d": 129.81,
     "monthly_return": 10.82,
     "pnl_30d": 14544.93,
@@ -5544,12 +5632,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2278,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 159050.6,
+    "max_dd_dollar": 177606.44,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 90
+    "rank": 90,
+    "drawdown_now": 55.23
   },
   {
     "address": "0x241ba250828c6a1289330aeec301e7bdcef31a43",
@@ -5594,7 +5683,7 @@
     ],
     "vol_score": 136.83,
     "sharpe_ratio": -0.386,
-    "max_drawdown": 130.3,
+    "max_drawdown": 29.01,
     "apr_30d": 13.02,
     "monthly_return": 1.09,
     "pnl_30d": 751.47,
@@ -5606,12 +5695,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2502,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 24025.18,
+    "max_dd_dollar": 30335.68,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 91
+    "rank": 91,
+    "drawdown_now": 27.87
   },
   {
     "address": "0x490af7d4a048a81db0f677517ed6373565b42349",
@@ -5654,7 +5744,7 @@
     ],
     "vol_score": 58.39,
     "sharpe_ratio": 0.672,
-    "max_drawdown": 150.19,
+    "max_drawdown": 8.62,
     "apr_30d": 34.14,
     "monthly_return": 2.85,
     "pnl_30d": 547.89,
@@ -5666,12 +5756,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2334,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 2120.89,
+    "max_dd_dollar": 2217.96,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 92
+    "rank": 92,
+    "drawdown_now": 4.6
   },
   {
     "address": "0x35b0ce1428c9fd6a23ff7c23734dd441d3824863",
@@ -5717,7 +5808,7 @@
     ],
     "vol_score": 12.33,
     "sharpe_ratio": 2.189,
-    "max_drawdown": 48.89,
+    "max_drawdown": 0.0,
     "apr_30d": 25.31,
     "monthly_return": 2.11,
     "pnl_30d": 229.75,
@@ -5729,12 +5820,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.4509,
     "equity_curve_grade": "B  (양호)",
-    "max_dd_dollar": 219.75,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 93
+    "rank": 93,
+    "drawdown_now": 0.0
   },
   {
     "address": "0xa7ed03d702d1c3fae1d3554295b2a13df54219f4",
@@ -5779,7 +5871,7 @@
     ],
     "vol_score": 86.71,
     "sharpe_ratio": 2.069,
-    "max_drawdown": 66.55,
+    "max_drawdown": 5.42,
     "apr_30d": 75.5,
     "monthly_return": 6.29,
     "pnl_30d": 680.76,
@@ -5791,12 +5883,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.3802,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 1622.38,
+    "max_dd_dollar": 598.52,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 94
+    "rank": 94,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x22a60014185f1486afb045219f76e4007fb71e4e",
@@ -5842,7 +5935,7 @@
     ],
     "vol_score": 92.16,
     "sharpe_ratio": -3.513,
-    "max_drawdown": 20.45,
+    "max_drawdown": 22.52,
     "apr_30d": 42.66,
     "monthly_return": 3.55,
     "pnl_30d": 3152.51,
@@ -5854,12 +5947,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1495,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 18139.16,
+    "max_dd_dollar": 23989.81,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 95
+    "rank": 95,
+    "drawdown_now": 18.18
   },
   {
     "address": "0xc18ad3b82d4ee7e3bb76512b5fcfae60be59bec0",
@@ -5903,7 +5997,7 @@
     ],
     "vol_score": 89.82,
     "sharpe_ratio": 0.05,
-    "max_drawdown": 209.41,
+    "max_drawdown": 1.08,
     "apr_30d": 8.87,
     "monthly_return": 0.74,
     "pnl_30d": 376.23,
@@ -5915,12 +6009,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1713,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 5458.15,
+    "max_dd_dollar": 561.49,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 96
+    "rank": 96,
+    "drawdown_now": 1.08
   },
   {
     "address": "0xf09f3f21bd1fab2fb88a5d96381f1707cc7956f0",
@@ -5965,7 +6060,7 @@
     ],
     "vol_score": 339.52,
     "sharpe_ratio": 2.107,
-    "max_drawdown": 124.59,
+    "max_drawdown": 31.18,
     "apr_30d": 121.83,
     "monthly_return": 10.15,
     "pnl_30d": 1593.67,
@@ -5977,12 +6072,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.279,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 16935.66,
+    "max_dd_dollar": 17164.11,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 97
+    "rank": 97,
+    "drawdown_now": 26.5
   },
   {
     "address": "0x2e1aa0af4d30673987b938e56fe5023b75cdfeb6",
@@ -6026,7 +6122,7 @@
     ],
     "vol_score": 34.01,
     "sharpe_ratio": 3.053,
-    "max_drawdown": 66.61,
+    "max_drawdown": 4.56,
     "apr_30d": -60.29,
     "monthly_return": -5.02,
     "pnl_30d": -622.92,
@@ -6038,12 +6134,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2308,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 702.81,
+    "max_dd_dollar": 609.96,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 98
+    "rank": 98,
+    "drawdown_now": 4.29
   },
   {
     "address": "0x45c42fbd450b5506f8dc819d46036630fe75b81e",
@@ -6087,7 +6184,7 @@
     ],
     "vol_score": 252.4,
     "sharpe_ratio": 5.41,
-    "max_drawdown": 48.56,
+    "max_drawdown": 38.88,
     "apr_30d": -379.81,
     "monthly_return": -31.65,
     "pnl_30d": -4890.01,
@@ -6099,12 +6196,13 @@
     "recovery_score": 0.0287,
     "robustness_score": 0.3169,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 8701.84,
+    "max_dd_dollar": 15638.54,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 99
+    "rank": 99,
+    "drawdown_now": 38.88
   },
   {
     "address": "0x208268096df2e76df84d50f5c4bf4d61d9c190d4",
@@ -6149,7 +6247,7 @@
     ],
     "vol_score": 99.27,
     "sharpe_ratio": 2.791,
-    "max_drawdown": 72.4,
+    "max_drawdown": 12.7,
     "apr_30d": -78.27,
     "monthly_return": -6.52,
     "pnl_30d": -1404.77,
@@ -6166,7 +6264,8 @@
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 100
+    "rank": 100,
+    "drawdown_now": 7.08
   },
   {
     "address": "0x572e97e63f80caacf5ae6dc242b180f807407b68",
@@ -6210,7 +6309,7 @@
     ],
     "vol_score": 459.53,
     "sharpe_ratio": -1.766,
-    "max_drawdown": 172.34,
+    "max_drawdown": 96.64,
     "apr_30d": 111.68,
     "monthly_return": 9.31,
     "pnl_30d": 2138.97,
@@ -6222,12 +6321,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1262,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 34277.07,
+    "max_dd_dollar": 6816.37,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 101
+    "rank": 101,
+    "drawdown_now": 75.42
   },
   {
     "address": "0xb1ccfdf7fd75c93bd549822a920626cc017a3c2d",
@@ -6276,7 +6376,7 @@
     ],
     "vol_score": 22.62,
     "sharpe_ratio": 2.152,
-    "max_drawdown": 113.71,
+    "max_drawdown": 0.0,
     "apr_30d": 28.95,
     "monthly_return": 2.41,
     "pnl_30d": 252.52,
@@ -6288,12 +6388,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2441,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 287.13,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 102
+    "rank": 102,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x1840bdb83caff17de910ec407cafb817678786b5",
@@ -6336,7 +6437,7 @@
     ],
     "vol_score": 265.95,
     "sharpe_ratio": -2.237,
-    "max_drawdown": 65.82,
+    "max_drawdown": 3589.01,
     "apr_30d": -162.15,
     "monthly_return": -13.51,
     "pnl_30d": -149464.4,
@@ -6348,12 +6449,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1489,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 728078.1,
+    "max_dd_dollar": 888395.2,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 103
+    "rank": 103,
+    "drawdown_now": 19.03
   },
   {
     "address": "0x8a5f220491911080fdcfa47e8d45c32c5afd2a31",
@@ -6397,7 +6499,7 @@
     ],
     "vol_score": 28.43,
     "sharpe_ratio": -4.099,
-    "max_drawdown": 9.71,
+    "max_drawdown": 8.98,
     "apr_30d": -39.0,
     "monthly_return": -3.25,
     "pnl_30d": -1851.86,
@@ -6409,12 +6511,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1292,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 5534.32,
+    "max_dd_dollar": 5116.92,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 104
+    "rank": 104,
+    "drawdown_now": 5.77
   },
   {
     "address": "0x5ba4c8d16464621608b7333fd44b1e74a1b8d189",
@@ -6458,7 +6561,7 @@
     ],
     "vol_score": 89.21,
     "sharpe_ratio": -0.986,
-    "max_drawdown": 199.58,
+    "max_drawdown": 21.76,
     "apr_30d": 51.82,
     "monthly_return": 4.32,
     "pnl_30d": 2557.92,
@@ -6470,12 +6573,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1889,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 12463.25,
+    "max_dd_dollar": 13432.41,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 105
+    "rank": 105,
+    "drawdown_now": 15.69
   },
   {
     "address": "0xcc40cd47d97f2570eb8befd8737de1488a472ad1",
@@ -6521,7 +6625,7 @@
     ],
     "vol_score": 123.29,
     "sharpe_ratio": -4.895,
-    "max_drawdown": 40.25,
+    "max_drawdown": 30.8,
     "apr_30d": 130.05,
     "monthly_return": 10.84,
     "pnl_30d": 1833.82,
@@ -6533,12 +6637,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2038,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 6810.47,
+    "max_dd_dollar": 6758.29,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 106
+    "rank": 106,
+    "drawdown_now": 22.56
   },
   {
     "address": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
@@ -6585,7 +6690,7 @@
     ],
     "vol_score": 197.19,
     "sharpe_ratio": -2.03,
-    "max_drawdown": 358.59,
+    "max_drawdown": 158.81,
     "apr_30d": 119.13,
     "monthly_return": 9.93,
     "pnl_30d": 472975.2,
@@ -6597,12 +6702,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2068,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1570585.91,
+    "max_dd_dollar": 7940.64,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 107
+    "rank": 107,
+    "drawdown_now": 67.56
   },
   {
     "address": "0x77a0f8bae276f489f0f7cc2752322805317dcbb1",
@@ -6646,7 +6752,7 @@
     ],
     "vol_score": 43.96,
     "sharpe_ratio": -0.218,
-    "max_drawdown": 326.66,
+    "max_drawdown": 12.25,
     "apr_30d": 37.23,
     "monthly_return": 3.1,
     "pnl_30d": 1828.31,
@@ -6658,12 +6764,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.181,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 4571.33,
+    "max_dd_dollar": 7820.99,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 108
+    "rank": 108,
+    "drawdown_now": 7.41
   },
   {
     "address": "0x7133e1a653790a03e83552dbfe78b50d6a18196a",
@@ -6706,7 +6813,7 @@
     ],
     "vol_score": 131.93,
     "sharpe_ratio": -1.763,
-    "max_drawdown": 278.6,
+    "max_drawdown": 31.66,
     "apr_30d": 142.74,
     "monthly_return": 11.9,
     "pnl_30d": 2665.59,
@@ -6718,12 +6825,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.182,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 9448.49,
+    "max_dd_dollar": 8991.56,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 109
+    "rank": 109,
+    "drawdown_now": 19.46
   },
   {
     "address": "0x4a01f1097a03495ac0054a845c991d9749f81a00",
@@ -6767,7 +6875,7 @@
     ],
     "vol_score": 242.63,
     "sharpe_ratio": -4.751,
-    "max_drawdown": 68.8,
+    "max_drawdown": 119.27,
     "apr_30d": 160.28,
     "monthly_return": 13.36,
     "pnl_30d": 7205.71,
@@ -6779,12 +6887,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2134,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 37116.13,
+    "max_dd_dollar": 38885.62,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 110
+    "rank": 110,
+    "drawdown_now": 84.68
   },
   {
     "address": "0x82832a7d0c07d93ed6ba586ba5e2aa57d198bac5",
@@ -6827,7 +6936,7 @@
     ],
     "vol_score": 14.65,
     "sharpe_ratio": 0.789,
-    "max_drawdown": 79.23,
+    "max_drawdown": 1.8,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -6844,7 +6953,8 @@
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": true,
-    "rank": 111
+    "rank": 111,
+    "drawdown_now": 1.8
   },
   {
     "address": "0x797327122c5ed1b1530e452b7f8723ba834b4c6a",
@@ -6888,7 +6998,7 @@
     ],
     "vol_score": 79.32,
     "sharpe_ratio": -6.322,
-    "max_drawdown": 28.12,
+    "max_drawdown": 24.34,
     "apr_30d": 42.84,
     "monthly_return": 3.57,
     "pnl_30d": 6143.83,
@@ -6900,12 +7010,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1711,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 48393.96,
+    "max_dd_dollar": 52708.23,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 112
+    "rank": 112,
+    "drawdown_now": 20.95
   },
   {
     "address": "0x914434e8a235cb608a94a5f70ab8c40927152a24",
@@ -6949,7 +7060,7 @@
     ],
     "vol_score": 390.32,
     "sharpe_ratio": -2.096,
-    "max_drawdown": 299.69,
+    "max_drawdown": 60.66,
     "apr_30d": 79.35,
     "monthly_return": 6.61,
     "pnl_30d": 62828.69,
@@ -6961,12 +7072,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2234,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1689296.96,
+    "max_dd_dollar": 1699741.7,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 113
+    "rank": 113,
+    "drawdown_now": 56.28
   },
   {
     "address": "0x149b47e62de45cd73b67054eaca8d2e77bab4c38",
@@ -7010,7 +7122,7 @@
     ],
     "vol_score": 84.41,
     "sharpe_ratio": -5.807,
-    "max_drawdown": 27.41,
+    "max_drawdown": 5429.59,
     "apr_30d": 59.23,
     "monthly_return": 4.94,
     "pnl_30d": 1597.28,
@@ -7022,12 +7134,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1004,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 8869.28,
+    "max_dd_dollar": 5432.52,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 114
+    "rank": 114,
+    "drawdown_now": 36.64
   },
   {
     "address": "0xa6a34f0bf2ccea9a1ddf9e9a973f17c498dc5e40",
@@ -7071,7 +7184,7 @@
     ],
     "vol_score": 38.27,
     "sharpe_ratio": -8.549,
-    "max_drawdown": 14.22,
+    "max_drawdown": 280.53,
     "apr_30d": -1.91,
     "monthly_return": -0.16,
     "pnl_30d": -3969.6,
@@ -7083,12 +7196,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.027,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 353807.28,
+    "max_dd_dollar": 355551.43,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 115
+    "rank": 115,
+    "drawdown_now": 280.53
   },
   {
     "address": "0xebc9865942ab666a57976a7768594b29133cbf53",
@@ -7133,7 +7247,7 @@
     ],
     "vol_score": 281.64,
     "sharpe_ratio": 1.993,
-    "max_drawdown": 66.01,
+    "max_drawdown": 234.33,
     "apr_30d": -249.4,
     "monthly_return": -20.78,
     "pnl_30d": -3149.85,
@@ -7145,12 +7259,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.345,
     "equity_curve_grade": "C  (보통)",
-    "max_dd_dollar": 6887.1,
+    "max_dd_dollar": 3262.41,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 116
+    "rank": 116,
+    "drawdown_now": 15.83
   },
   {
     "address": "0x73ce82fb75868af2a687e9889fcf058dd1cf8ce9",
@@ -7194,7 +7309,7 @@
     ],
     "vol_score": 327.73,
     "sharpe_ratio": -5.905,
-    "max_drawdown": 682.66,
+    "max_drawdown": 305.59,
     "apr_30d": 27.32,
     "monthly_return": 2.28,
     "pnl_30d": 20470.66,
@@ -7206,12 +7321,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1495,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1582943.72,
+    "max_dd_dollar": 1833784.12,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 117
+    "rank": 117,
+    "drawdown_now": 263.0
   },
   {
     "address": "0x5a733b25a17dc0f26b862ca9e32b439801b1a8c7",
@@ -7255,7 +7371,7 @@
     ],
     "vol_score": 421.63,
     "sharpe_ratio": -6.312,
-    "max_drawdown": 12219.86,
+    "max_drawdown": 302.19,
     "apr_30d": -85.67,
     "monthly_return": -7.14,
     "pnl_30d": -32556.02,
@@ -7267,12 +7383,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1165,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1632936.4,
+    "max_dd_dollar": 1915331.1,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 118
+    "rank": 118,
+    "drawdown_now": 302.19
   },
   {
     "address": "0x45e7014f092c5f9c39482caec131346f13ac5e73",
@@ -7316,7 +7433,7 @@
     ],
     "vol_score": 160.26,
     "sharpe_ratio": -2.238,
-    "max_drawdown": 453.23,
+    "max_drawdown": 24.82,
     "apr_30d": 125.25,
     "monthly_return": 10.44,
     "pnl_30d": 350785.98,
@@ -7328,12 +7445,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2538,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1185360.86,
+    "max_dd_dollar": 1302148.83,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 119
+    "rank": 119,
+    "drawdown_now": 15.23
   },
   {
     "address": "0xf0e40c4fbcebd73dfbe2361705a76febcc0150f7",
@@ -7379,7 +7497,7 @@
     ],
     "vol_score": 146.12,
     "sharpe_ratio": -2.561,
-    "max_drawdown": 237.33,
+    "max_drawdown": 28.92,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -7396,7 +7514,8 @@
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 120
+    "rank": 120,
+    "drawdown_now": 28.92
   },
   {
     "address": "0x4c8d55d78dbce034508e9855ffbc84ffdef6f685",
@@ -7440,7 +7559,7 @@
     ],
     "vol_score": 237.63,
     "sharpe_ratio": -5.201,
-    "max_drawdown": 74.59,
+    "max_drawdown": 55.97,
     "apr_30d": 6.14,
     "monthly_return": 0.51,
     "pnl_30d": 171.75,
@@ -7452,12 +7571,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0715,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 25024.57,
+    "max_dd_dollar": 28589.94,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 121
+    "rank": 121,
+    "drawdown_now": 45.94
   },
   {
     "address": "0x780825f3f0ad6799e304fb843387934c1fa06e70",
@@ -7501,7 +7621,7 @@
     ],
     "vol_score": 14.84,
     "sharpe_ratio": -1.634,
-    "max_drawdown": 381.68,
+    "max_drawdown": 11.44,
     "apr_30d": -14.13,
     "monthly_return": -1.18,
     "pnl_30d": -4632.62,
@@ -7513,12 +7633,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1307,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 13946.35,
+    "max_dd_dollar": 29588.67,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 122
+    "rank": 122,
+    "drawdown_now": 9.13
   },
   {
     "address": "0x060d01aa996003b3731a992462d7f0ba68bf3b04",
@@ -7564,7 +7685,7 @@
     ],
     "vol_score": 50.91,
     "sharpe_ratio": -8.453,
-    "max_drawdown": 24.17,
+    "max_drawdown": 23.46,
     "apr_30d": -4.84,
     "monthly_return": -0.4,
     "pnl_30d": -1032.02,
@@ -7576,12 +7697,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1602,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 61866.39,
+    "max_dd_dollar": 74585.12,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 123
+    "rank": 123,
+    "drawdown_now": 20.58
   },
   {
     "address": "0x0512943ce80e9ff832c3b4a3b25df9e9ed64d911",
@@ -7627,7 +7749,7 @@
     ],
     "vol_score": 15.48,
     "sharpe_ratio": -2.067,
-    "max_drawdown": 3.92,
+    "max_drawdown": 428.17,
     "apr_30d": 27.2,
     "monthly_return": 2.27,
     "pnl_30d": 237.45,
@@ -7639,12 +7761,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0437,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 411.04,
+    "max_dd_dollar": 537.9,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 124
+    "rank": 124,
+    "drawdown_now": 151.99
   },
   {
     "address": "0x15a141990fc6591838646467273c41c92999772f",
@@ -7688,7 +7811,7 @@
     ],
     "vol_score": 293.76,
     "sharpe_ratio": -2.906,
-    "max_drawdown": 469.79,
+    "max_drawdown": 61.9,
     "apr_30d": 328.01,
     "monthly_return": 27.33,
     "pnl_30d": 23141.32,
@@ -7700,12 +7823,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1638,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 94769.22,
+    "max_dd_dollar": 92662.18,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 125
+    "rank": 125,
+    "drawdown_now": 39.02
   },
   {
     "address": "0xb11fe7f2e97bd02b2da909b32f4a5e7fcb0df099",
@@ -7751,7 +7875,7 @@
     ],
     "vol_score": 107.81,
     "sharpe_ratio": -3.366,
-    "max_drawdown": 233.41,
+    "max_drawdown": 57.07,
     "apr_30d": 72.82,
     "monthly_return": 6.07,
     "pnl_30d": 8851.09,
@@ -7763,12 +7887,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1844,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 50392.01,
+    "max_dd_dollar": 53630.1,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 126
+    "rank": 126,
+    "drawdown_now": 53.64
   },
   {
     "address": "0xa7f152a5f79bb5483c079610203d8fc03fd77c8e",
@@ -7812,7 +7937,7 @@
     ],
     "vol_score": 334.66,
     "sharpe_ratio": -3.933,
-    "max_drawdown": 409.24,
+    "max_drawdown": 183.35,
     "apr_30d": -126.22,
     "monthly_return": -10.52,
     "pnl_30d": -13916.61,
@@ -7824,12 +7949,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1612,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 108599.85,
+    "max_dd_dollar": 59283.46,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 127
+    "rank": 127,
+    "drawdown_now": 104.35
   },
   {
     "address": "0x5048900eb10b569e77f515efe85f8da5cfd5fb3a",
@@ -7871,7 +7997,7 @@
     ],
     "vol_score": 11.33,
     "sharpe_ratio": -4.51,
-    "max_drawdown": 1155.15,
+    "max_drawdown": 1.07,
     "apr_30d": -28.66,
     "monthly_return": -2.39,
     "pnl_30d": -2589.24,
@@ -7883,12 +8009,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1581,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 4303.83,
+    "max_dd_dollar": 1171.37,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 128
+    "rank": 128,
+    "drawdown_now": 1.07
   },
   {
     "address": "0x3df9769bbbb335340872f01d8157c779d73c6ed0",
@@ -7932,7 +8059,7 @@
     ],
     "vol_score": 53.55,
     "sharpe_ratio": -1.336,
-    "max_drawdown": 274.33,
+    "max_drawdown": 19.11,
     "apr_30d": -33.43,
     "monthly_return": -2.79,
     "pnl_30d": -763.77,
@@ -7944,12 +8071,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1867,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 3566.24,
+    "max_dd_dollar": 959.47,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 129
+    "rank": 129,
+    "drawdown_now": 18.5
   },
   {
     "address": "0x36dc8d4188c57008b7ddbc21662ef28a88a9c684",
@@ -7994,7 +8122,7 @@
     ],
     "vol_score": 84.68,
     "sharpe_ratio": -2.331,
-    "max_drawdown": 284.32,
+    "max_drawdown": 8.03,
     "apr_30d": -278.63,
     "monthly_return": -23.22,
     "pnl_30d": -21156.32,
@@ -8006,12 +8134,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1468,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 15188.59,
+    "max_dd_dollar": 8297.93,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 130
+    "rank": 130,
+    "drawdown_now": 7.38
   },
   {
     "address": "0x4391c22edeece3a9aa5b8f3c1a3a25378980ff10",
@@ -8054,7 +8183,7 @@
     ],
     "vol_score": 299.21,
     "sharpe_ratio": -3.067,
-    "max_drawdown": 1799.17,
+    "max_drawdown": 59.53,
     "apr_30d": -223.58,
     "monthly_return": -18.63,
     "pnl_30d": -35960.35,
@@ -8066,12 +8195,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1367,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 155104.64,
+    "max_dd_dollar": 167010.75,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 131
+    "rank": 131,
+    "drawdown_now": 43.01
   },
   {
     "address": "0xd56c2517f2c2fb040cd20259490c7511493d4ed5",
@@ -8117,7 +8247,7 @@
     ],
     "vol_score": 10.61,
     "sharpe_ratio": -2.274,
-    "max_drawdown": 393.51,
+    "max_drawdown": 1.34,
     "apr_30d": -14.93,
     "monthly_return": -1.24,
     "pnl_30d": -1015.81,
@@ -8129,12 +8259,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1915,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1394.82,
+    "max_dd_dollar": 1118.5,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 132
+    "rank": 132,
+    "drawdown_now": 1.34
   },
   {
     "address": "0xc497f1f8840dd65affbab1a610b6e558844743d4",
@@ -8179,7 +8310,7 @@
     ],
     "vol_score": 457.13,
     "sharpe_ratio": -1.186,
-    "max_drawdown": 212.44,
+    "max_drawdown": 61.14,
     "apr_30d": -500.0,
     "monthly_return": -100.0,
     "pnl_30d": -81704.39,
@@ -8191,12 +8322,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2122,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 111362.52,
+    "max_dd_dollar": 124113.32,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 133
+    "rank": 133,
+    "drawdown_now": 61.14
   },
   {
     "address": "0x239f1ba2dc337485f691e326fca45f8f11f7900a",
@@ -8240,7 +8372,7 @@
     ],
     "vol_score": 158.53,
     "sharpe_ratio": -3.878,
-    "max_drawdown": 38.77,
+    "max_drawdown": 25.77,
     "apr_30d": -289.12,
     "monthly_return": -24.09,
     "pnl_30d": -9901.9,
@@ -8252,12 +8384,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1713,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 15932.61,
+    "max_dd_dollar": 10589.53,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 134
+    "rank": 134,
+    "drawdown_now": 24.75
   },
   {
     "address": "0xfb7b73ff7c93f5552541de37454ffa0f8b76462a",
@@ -8302,7 +8435,7 @@
     ],
     "vol_score": 320.56,
     "sharpe_ratio": -4.18,
-    "max_drawdown": 741.98,
+    "max_drawdown": 36.5,
     "apr_30d": 363.58,
     "monthly_return": 30.3,
     "pnl_30d": 22974.82,
@@ -8314,12 +8447,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.168,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 175941.71,
+    "max_dd_dollar": 199768.5,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 135
+    "rank": 135,
+    "drawdown_now": 30.91
   },
   {
     "address": "0x5c3fba9aace240d18348a3297655a25a5f7e8a26",
@@ -8413,7 +8547,7 @@
     ],
     "vol_score": 265.14,
     "sharpe_ratio": 0.046,
-    "max_drawdown": 106.69,
+    "max_drawdown": 43.13,
     "apr_30d": -99.35,
     "monthly_return": -8.28,
     "pnl_30d": -1120.01,
@@ -8425,12 +8559,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1367,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 9330.13,
+    "max_dd_dollar": 9300.15,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 137
+    "rank": 137,
+    "drawdown_now": 42.22
   },
   {
     "address": "0x7d97f7cb48ecc966d75a746b811ca93f1fd6e7ef",
@@ -8474,7 +8609,7 @@
     ],
     "vol_score": 153.84,
     "sharpe_ratio": -4.264,
-    "max_drawdown": 49.08,
+    "max_drawdown": 29.93,
     "apr_30d": -275.93,
     "monthly_return": -22.99,
     "pnl_30d": -27674.0,
@@ -8486,12 +8621,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2038,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 59071.64,
+    "max_dd_dollar": 44050.45,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 138
+    "rank": 138,
+    "drawdown_now": 29.93
   },
   {
     "address": "0x3f4f05e0fec7b8d6aad2e48ab74f80c8ca77eca3",
@@ -8535,7 +8671,7 @@
     ],
     "vol_score": 486.42,
     "sharpe_ratio": -2.644,
-    "max_drawdown": 181.94,
+    "max_drawdown": 93.65,
     "apr_30d": -70.05,
     "monthly_return": -5.84,
     "pnl_30d": -2628.91,
@@ -8547,12 +8683,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1092,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 139089.23,
+    "max_dd_dollar": 146094.78,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 139
+    "rank": 139,
+    "drawdown_now": 83.14
   },
   {
     "address": "0x7cd7ea8a61e48fc48f5a18502c0622e53d159347",
@@ -8596,7 +8733,7 @@
     ],
     "vol_score": 101.71,
     "sharpe_ratio": -9.156,
-    "max_drawdown": 1749.0,
+    "max_drawdown": 71.0,
     "apr_30d": -119.82,
     "monthly_return": -9.99,
     "pnl_30d": -6542.83,
@@ -8608,12 +8745,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.163,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 30151.49,
+    "max_dd_dollar": 38289.36,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 140
+    "rank": 140,
+    "drawdown_now": 71.0
   },
   {
     "address": "0x8f78da3fdb3b1dd3eb02529a802a02855d950746",
@@ -8657,7 +8795,7 @@
     ],
     "vol_score": 276.38,
     "sharpe_ratio": 0.435,
-    "max_drawdown": 203.2,
+    "max_drawdown": 151.49,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -8669,12 +8807,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2352,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 6663.14,
+    "max_dd_dollar": 7511.14,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 141
+    "rank": 141,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x8813dba4eb786d61de01d5a53bdd793fb33dfea1",
@@ -8718,7 +8857,7 @@
     ],
     "vol_score": 31.51,
     "sharpe_ratio": -0.619,
-    "max_drawdown": 713.56,
+    "max_drawdown": 9.22,
     "apr_30d": 53.31,
     "monthly_return": 4.44,
     "pnl_30d": 2203.57,
@@ -8730,12 +8869,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2434,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 3792.77,
+    "max_dd_dollar": 4682.17,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 142
+    "rank": 142,
+    "drawdown_now": 1.85
   },
   {
     "address": "0x0c4933c830c0ff84783d38f68d9284ba77638add",
@@ -8781,7 +8921,7 @@
     ],
     "vol_score": 61.03,
     "sharpe_ratio": -1.987,
-    "max_drawdown": 18.64,
+    "max_drawdown": 8.03,
     "apr_30d": -56.91,
     "monthly_return": -4.74,
     "pnl_30d": -635.92,
@@ -8793,12 +8933,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1317,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 2498.81,
+    "max_dd_dollar": 1105.42,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 143
+    "rank": 143,
+    "drawdown_now": 8.03
   },
   {
     "address": "0xd69c30123f407b2965b924a0a31f3993e8d66be1",
@@ -8843,7 +8984,7 @@
     ],
     "vol_score": 43.17,
     "sharpe_ratio": -0.688,
-    "max_drawdown": 118.39,
+    "max_drawdown": 0.0,
     "apr_30d": -21.24,
     "monthly_return": -1.77,
     "pnl_30d": -188.4,
@@ -8855,12 +8996,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1517,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1212.97,
+    "max_dd_dollar": 0.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 144
+    "rank": 144,
+    "drawdown_now": 0.0
   },
   {
     "address": "0x1be80f7ff3939b443234183f569f8deb7e77cd42",
@@ -8903,7 +9045,7 @@
     ],
     "vol_score": 141.45,
     "sharpe_ratio": -1.984,
-    "max_drawdown": 472.0,
+    "max_drawdown": 33.74,
     "apr_30d": -68.33,
     "monthly_return": -5.69,
     "pnl_30d": -2710.23,
@@ -8915,12 +9057,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1668,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 15591.67,
+    "max_dd_dollar": 23915.25,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 145
+    "rank": 145,
+    "drawdown_now": 22.63
   },
   {
     "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
@@ -8964,7 +9107,7 @@
     ],
     "vol_score": 11.03,
     "sharpe_ratio": -2.009,
-    "max_drawdown": 6617.23,
+    "max_drawdown": 5.33,
     "apr_30d": -9.37,
     "monthly_return": -0.78,
     "pnl_30d": -457.57,
@@ -8976,12 +9119,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1656,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1351.84,
+    "max_dd_dollar": 2681.99,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 146
+    "rank": 146,
+    "drawdown_now": 4.27
   },
   {
     "address": "0x8b0f84433ca5f287f0f09f84c5a378beb9d11b05",
@@ -9026,7 +9170,7 @@
     ],
     "vol_score": 232.2,
     "sharpe_ratio": -5.815,
-    "max_drawdown": 92.58,
+    "max_drawdown": 194.84,
     "apr_30d": -137.79,
     "monthly_return": -11.48,
     "pnl_30d": -5701.37,
@@ -9038,12 +9182,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1424,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 45970.58,
+    "max_dd_dollar": 60481.96,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 147
+    "rank": 147,
+    "drawdown_now": 105.42
   },
   {
     "address": "0x3fe404ae27cc5eef4a08e226ae2ac4f5be7a06c4",
@@ -9087,7 +9232,7 @@
     ],
     "vol_score": 356.84,
     "sharpe_ratio": -5.919,
-    "max_drawdown": 126.78,
+    "max_drawdown": 38.99,
     "apr_30d": -445.38,
     "monthly_return": -37.11,
     "pnl_30d": -14828.94,
@@ -9099,12 +9244,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1463,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 50655.97,
+    "max_dd_dollar": 50393.03,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 148
+    "rank": 148,
+    "drawdown_now": 38.34
   },
   {
     "address": "0x368eafa587cdc5b5f79eb40eae18c62286ab8f9d",
@@ -9149,7 +9295,7 @@
     ],
     "vol_score": 78.62,
     "sharpe_ratio": -2.37,
-    "max_drawdown": 1795.15,
+    "max_drawdown": 69.56,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -9161,12 +9307,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1301,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 4660.05,
+    "max_dd_dollar": 5621.3,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 149
+    "rank": 149,
+    "drawdown_now": 61.52
   },
   {
     "address": "0x800b3a897847d35835b41e986ef50c153861f1bf",
@@ -9211,7 +9358,7 @@
     ],
     "vol_score": 72.83,
     "sharpe_ratio": -3.039,
-    "max_drawdown": 402.52,
+    "max_drawdown": 15.49,
     "apr_30d": 9.03,
     "monthly_return": 0.75,
     "pnl_30d": 281.61,
@@ -9223,12 +9370,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1236,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 7598.35,
+    "max_dd_dollar": 9919.17,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 150
+    "rank": 150,
+    "drawdown_now": 13.29
   },
   {
     "address": "0x565ab99e1515c6dd3b8852b15354638d467f999a",
@@ -9273,7 +9421,7 @@
     ],
     "vol_score": 138.38,
     "sharpe_ratio": -5.797,
-    "max_drawdown": 970.14,
+    "max_drawdown": 38.84,
     "apr_30d": 48.64,
     "monthly_return": 4.05,
     "pnl_30d": 15590.92,
@@ -9285,12 +9433,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1934,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 204704.93,
+    "max_dd_dollar": 230171.49,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 151
+    "rank": 151,
+    "drawdown_now": 34.35
   },
   {
     "address": "0x62d4c3cbc1dd765b66059b6a304532a35f8e7cee",
@@ -9335,7 +9484,7 @@
     ],
     "vol_score": 149.51,
     "sharpe_ratio": -7.117,
-    "max_drawdown": 1775.51,
+    "max_drawdown": 111.46,
     "apr_30d": -112.88,
     "monthly_return": -9.41,
     "pnl_30d": -3413.48,
@@ -9347,12 +9496,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1375,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 23836.73,
+    "max_dd_dollar": 24212.59,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 152
+    "rank": 152,
+    "drawdown_now": 111.46
   },
   {
     "address": "0x13d0a9def6357d08241bc10163807d6e037bc3ca",
@@ -9396,7 +9546,7 @@
     ],
     "vol_score": 185.45,
     "sharpe_ratio": -7.717,
-    "max_drawdown": 79.25,
+    "max_drawdown": 48.99,
     "apr_30d": -182.73,
     "monthly_return": -15.23,
     "pnl_30d": -4404.46,
@@ -9408,12 +9558,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1777,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 22922.27,
+    "max_dd_dollar": 22352.35,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 153
+    "rank": 153,
+    "drawdown_now": 45.3
   },
   {
     "address": "0xffce2c2d59f30f26ba8b4b1c980480f12a245047",
@@ -9458,7 +9609,7 @@
     ],
     "vol_score": 106.36,
     "sharpe_ratio": -5.922,
-    "max_drawdown": 29.08,
+    "max_drawdown": 24.1,
     "apr_30d": -78.45,
     "monthly_return": -6.54,
     "pnl_30d": -1913.84,
@@ -9470,12 +9621,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1329,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 8513.25,
+    "max_dd_dollar": 10974.41,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 154
+    "rank": 154,
+    "drawdown_now": 24.1
   },
   {
     "address": "0x6e4ccb8114c8157417b4ebb3ac8d62f8d2d70a25",
@@ -9519,7 +9671,7 @@
     ],
     "vol_score": 513.85,
     "sharpe_ratio": -6.277,
-    "max_drawdown": 128.46,
+    "max_drawdown": 81.74,
     "apr_30d": -93.77,
     "monthly_return": -7.81,
     "pnl_30d": -2069.1,
@@ -9531,12 +9683,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0698,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 111444.64,
+    "max_dd_dollar": 111174.51,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 155
+    "rank": 155,
+    "drawdown_now": 81.74
   },
   {
     "address": "0x5a9e0f6c1a702b039de10c757e5ac0670d798eec",
@@ -9579,7 +9732,7 @@
     ],
     "vol_score": 24.5,
     "sharpe_ratio": -3.533,
-    "max_drawdown": 220.0,
+    "max_drawdown": 28.67,
     "apr_30d": -52.17,
     "monthly_return": -4.35,
     "pnl_30d": -1088.83,
@@ -9591,12 +9744,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.142,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1750.03,
+    "max_dd_dollar": 2034.68,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 156
+    "rank": 156,
+    "drawdown_now": 28.52
   },
   {
     "address": "0x56a1be327c9aa80aff10777c7326c421a0e8a650",
@@ -9639,7 +9793,7 @@
     ],
     "vol_score": 157.79,
     "sharpe_ratio": -8.135,
-    "max_drawdown": 78.63,
+    "max_drawdown": 76.64,
     "apr_30d": 209.89,
     "monthly_return": 17.49,
     "pnl_30d": 3843.32,
@@ -9651,12 +9805,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1216,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 17276.6,
+    "max_dd_dollar": 16979.67,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 157
+    "rank": 157,
+    "drawdown_now": 57.29
   },
   {
     "address": "0xc077e4ad620c44fd79c5522edb5fe5d5f8b00150",
@@ -9700,7 +9855,7 @@
     ],
     "vol_score": 315.47,
     "sharpe_ratio": -8.17,
-    "max_drawdown": 37886.65,
+    "max_drawdown": 96.74,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -9712,12 +9867,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0155,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 6194732.07,
+    "max_dd_dollar": 8427614.15,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 158
+    "rank": 158,
+    "drawdown_now": 96.74
   },
   {
     "address": "0xd914c5164bc253676386269d90dcf56b441cf75b",
@@ -9763,7 +9919,7 @@
     ],
     "vol_score": 328.77,
     "sharpe_ratio": -1.299,
-    "max_drawdown": 434.64,
+    "max_drawdown": 72.06,
     "apr_30d": -353.31,
     "monthly_return": -29.44,
     "pnl_30d": -36737.18,
@@ -9775,12 +9931,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2051,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 97833.03,
+    "max_dd_dollar": 126545.29,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 159
+    "rank": 159,
+    "drawdown_now": 28.51
   },
   {
     "address": "0x1438d75830f530fd4d68ec650549dcc34ae987fa",
@@ -9823,7 +9980,7 @@
     ],
     "vol_score": 121.03,
     "sharpe_ratio": -4.037,
-    "max_drawdown": 420.73,
+    "max_drawdown": 33.22,
     "apr_30d": -330.38,
     "monthly_return": -27.53,
     "pnl_30d": -3722.49,
@@ -9835,12 +9992,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1534,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 3862.79,
+    "max_dd_dollar": 5119.59,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 160
+    "rank": 160,
+    "drawdown_now": 33.22
   },
   {
     "address": "0x93ad52177d0795de8c67c92b1a72035293cb7aac",
@@ -9886,7 +10044,7 @@
     ],
     "vol_score": 115.06,
     "sharpe_ratio": -4.37,
-    "max_drawdown": 269.12,
+    "max_drawdown": 33.79,
     "apr_30d": -102.21,
     "monthly_return": -8.52,
     "pnl_30d": -2921.09,
@@ -9898,12 +10056,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1036,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 17584.06,
+    "max_dd_dollar": 17481.27,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 161
+    "rank": 161,
+    "drawdown_now": 33.79
   },
   {
     "address": "0x6c0ce3f9ef94a038a6f13daf4a88fc3c93da8800",
@@ -9947,7 +10106,7 @@
     ],
     "vol_score": 117.12,
     "sharpe_ratio": -5.998,
-    "max_drawdown": 411.96,
+    "max_drawdown": 84.62,
     "apr_30d": -390.52,
     "monthly_return": -32.54,
     "pnl_30d": -8898.92,
@@ -9959,12 +10118,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1191,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 13063.12,
+    "max_dd_dollar": 13069.45,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 162
+    "rank": 162,
+    "drawdown_now": 84.62
   },
   {
     "address": "0x503b30b2eff8d62f07ab9fe5f1fb0e6a18e86bc1",
@@ -10007,7 +10167,7 @@
     ],
     "vol_score": 485.07,
     "sharpe_ratio": -6.035,
-    "max_drawdown": 726.83,
+    "max_drawdown": 126.29,
     "apr_30d": 864.34,
     "monthly_return": 72.03,
     "pnl_30d": 25250.81,
@@ -10019,12 +10179,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0879,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 244856.19,
+    "max_dd_dollar": 351091.9,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 163
+    "rank": 163,
+    "drawdown_now": 113.41
   },
   {
     "address": "0xa0cbceaac4dc736c457b7c340865695e2b3d0fc9",
@@ -10070,7 +10231,7 @@
     ],
     "vol_score": 254.87,
     "sharpe_ratio": -1.271,
-    "max_drawdown": 173.75,
+    "max_drawdown": 39.04,
     "apr_30d": -462.72,
     "monthly_return": -38.56,
     "pnl_30d": -34355.93,
@@ -10082,12 +10243,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2418,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 61096.54,
+    "max_dd_dollar": 68104.99,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 164
+    "rank": 164,
+    "drawdown_now": 39.04
   },
   {
     "address": "0x44ff912d0f88e27419ec0ddc950096609a9b6997",
@@ -10131,7 +10293,7 @@
     ],
     "vol_score": 394.63,
     "sharpe_ratio": -4.736,
-    "max_drawdown": 780.77,
+    "max_drawdown": 145.72,
     "apr_30d": -89.92,
     "monthly_return": -7.49,
     "pnl_30d": -6196.65,
@@ -10143,12 +10305,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1998,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 409983.49,
+    "max_dd_dollar": 427688.5,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 165
+    "rank": 165,
+    "drawdown_now": 144.3
   },
   {
     "address": "0xce56eb8261493462e3eb00a72c2bda2cb5fdccee",
@@ -10194,7 +10357,7 @@
     ],
     "vol_score": 57.61,
     "sharpe_ratio": -4.735,
-    "max_drawdown": 5361.43,
+    "max_drawdown": 42.32,
     "apr_30d": 12.55,
     "monthly_return": 1.05,
     "pnl_30d": 699.0,
@@ -10206,12 +10369,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1538,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 11601.17,
+    "max_dd_dollar": 12851.61,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 166
+    "rank": 166,
+    "drawdown_now": 30.61
   },
   {
     "address": "0x441c79888abd7c293dd095d891d6fe45cf8e5356",
@@ -10257,7 +10421,7 @@
     ],
     "vol_score": 309.82,
     "sharpe_ratio": -5.314,
-    "max_drawdown": 1373.73,
+    "max_drawdown": 63.17,
     "apr_30d": 105.81,
     "monthly_return": 8.82,
     "pnl_30d": 1097.76,
@@ -10269,12 +10433,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2034,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 13879.21,
+    "max_dd_dollar": 14137.03,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": true,
     "_ok_no_loss": false,
-    "rank": 167
+    "rank": 167,
+    "drawdown_now": 57.21
   },
   {
     "address": "0xbe9ee55bc95b43b6a31bad63d5934492b99c6a87",
@@ -10322,7 +10487,7 @@
     ],
     "vol_score": 82.35,
     "sharpe_ratio": -4.775,
-    "max_drawdown": 3520.14,
+    "max_drawdown": 10.05,
     "apr_30d": -230.24,
     "monthly_return": -19.19,
     "pnl_30d": -7794.49,
@@ -10334,12 +10499,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1585,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 11544.24,
+    "max_dd_dollar": 4892.39,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 168
+    "rank": 168,
+    "drawdown_now": 10.05
   },
   {
     "address": "0x0cfeaf978d691e35e86b46e7f8fa4582ff74e3d3",
@@ -10383,7 +10549,7 @@
     ],
     "vol_score": 381.72,
     "sharpe_ratio": -3.392,
-    "max_drawdown": 361.0,
+    "max_drawdown": 24.02,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -10395,12 +10561,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0346,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 24018.97,
+    "max_dd_dollar": 33857.95,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 169
+    "rank": 169,
+    "drawdown_now": 19.6
   },
   {
     "address": "0xb5f3cd71d689f964ed36ec287834093952c5da9f",
@@ -10444,7 +10611,7 @@
     ],
     "vol_score": 561.5,
     "sharpe_ratio": -3.038,
-    "max_drawdown": 315.37,
+    "max_drawdown": 102.49,
     "apr_30d": -78.02,
     "monthly_return": -6.5,
     "pnl_30d": -1580.14,
@@ -10456,12 +10623,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1711,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 261629.9,
+    "max_dd_dollar": 330656.63,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 170
+    "rank": 170,
+    "drawdown_now": 101.81
   },
   {
     "address": "0x0afebb3d2936d6c6144608155920e32b5c3fad85",
@@ -10504,7 +10672,7 @@
     ],
     "vol_score": 220.75,
     "sharpe_ratio": -7.302,
-    "max_drawdown": 92.59,
+    "max_drawdown": 83.94,
     "apr_30d": 69.02,
     "monthly_return": 5.75,
     "pnl_30d": 3066.96,
@@ -10516,12 +10684,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.125,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 49367.94,
+    "max_dd_dollar": 49906.22,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 171
+    "rank": 171,
+    "drawdown_now": 63.02
   },
   {
     "address": "0x48c139bc8ab05a3b87b3f82a9067e58fd3ce1537",
@@ -10566,7 +10735,7 @@
     ],
     "vol_score": 18.53,
     "sharpe_ratio": -1.427,
-    "max_drawdown": 170.24,
+    "max_drawdown": 2.84,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -10583,7 +10752,8 @@
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 172
+    "rank": 172,
+    "drawdown_now": 2.84
   },
   {
     "address": "0xe46f2b9deac9a8e9f7175a3ce57c5e02922bbae1",
@@ -10627,7 +10797,7 @@
     ],
     "vol_score": 116.22,
     "sharpe_ratio": -8.446,
-    "max_drawdown": 2900.58,
+    "max_drawdown": 33.65,
     "apr_30d": -0.4,
     "monthly_return": -0.03,
     "pnl_30d": -9.68,
@@ -10639,12 +10809,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.194,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 13718.73,
+    "max_dd_dollar": 14544.61,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 173
+    "rank": 173,
+    "drawdown_now": 32.75
   },
   {
     "address": "0x63c621a33714ec48660e32f2374895c8026a3a00",
@@ -10688,7 +10859,7 @@
     ],
     "vol_score": 252.83,
     "sharpe_ratio": -2.753,
-    "max_drawdown": 4326.57,
+    "max_drawdown": 24.27,
     "apr_30d": -0.0,
     "monthly_return": -0.0,
     "pnl_30d": -0.01,
@@ -10700,12 +10871,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0443,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 132792.6,
+    "max_dd_dollar": 152550.24,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 174
+    "rank": 174,
+    "drawdown_now": 24.27
   },
   {
     "address": "0x4732f9d1343a06dc835942809c980f9d58551dc0",
@@ -10748,7 +10920,7 @@
     ],
     "vol_score": 297.99,
     "sharpe_ratio": -8.981,
-    "max_drawdown": 1501.48,
+    "max_drawdown": 47.92,
     "apr_30d": -500.0,
     "monthly_return": -69.84,
     "pnl_30d": -12521.13,
@@ -10760,12 +10932,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1597,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 38349.58,
+    "max_dd_dollar": 42709.03,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 175
+    "rank": 175,
+    "drawdown_now": 47.92
   },
   {
     "address": "0xd1b96a909344d7a3e670b6383f03cc4bdbd36aca",
@@ -10809,7 +10982,7 @@
     ],
     "vol_score": 3.91,
     "sharpe_ratio": -0.158,
-    "max_drawdown": 1133.67,
+    "max_drawdown": 66.34,
     "apr_30d": -0.45,
     "monthly_return": -0.04,
     "pnl_30d": -6.54,
@@ -10821,12 +10994,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1829,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 131.98,
+    "max_dd_dollar": 93.38,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 176
+    "rank": 176,
+    "drawdown_now": 5.95
   },
   {
     "address": "0x8981f57f17d5fb2679dacbb8b7745651de961474",
@@ -10871,7 +11045,7 @@
     ],
     "vol_score": 221.85,
     "sharpe_ratio": -4.812,
-    "max_drawdown": 1069.36,
+    "max_drawdown": 117.08,
     "apr_30d": -57.09,
     "monthly_return": -4.76,
     "pnl_30d": -775.08,
@@ -10883,12 +11057,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1459,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 174214.07,
+    "max_dd_dollar": 184255.98,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 177
+    "rank": 177,
+    "drawdown_now": 107.86
   },
   {
     "address": "0xf182de5226dc4fe2f134c9b375281a6f50309416",
@@ -10933,7 +11108,7 @@
     ],
     "vol_score": 213.34,
     "sharpe_ratio": -2.215,
-    "max_drawdown": 183.5,
+    "max_drawdown": 38.59,
     "apr_30d": -428.43,
     "monthly_return": -35.7,
     "pnl_30d": -4272.86,
@@ -10945,12 +11120,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0917,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 4234.8,
+    "max_dd_dollar": 8054.79,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 178
+    "rank": 178,
+    "drawdown_now": 38.59
   },
   {
     "address": "0xf967239debef10dbc78e9bbbb2d8a16b72a614eb",
@@ -10995,7 +11171,7 @@
     ],
     "vol_score": 472.13,
     "sharpe_ratio": -9.604,
-    "max_drawdown": 209539.28,
+    "max_drawdown": 4249.64,
     "apr_30d": -500.0,
     "monthly_return": -100.0,
     "pnl_30d": -495653.07,
@@ -11007,12 +11183,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0902,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 23906306.9,
+    "max_dd_dollar": 24285907.62,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 179
+    "rank": 179,
+    "drawdown_now": 4195.53
   },
   {
     "address": "0x552c3f7fc867b182e3ae49ce96f2591191f8acbf",
@@ -11055,7 +11232,7 @@
     ],
     "vol_score": 563.57,
     "sharpe_ratio": -1.118,
-    "max_drawdown": 361.27,
+    "max_drawdown": 155.61,
     "apr_30d": 178.53,
     "monthly_return": 14.88,
     "pnl_30d": 2550.73,
@@ -11067,12 +11244,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1498,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 37021.64,
+    "max_dd_dollar": 37708.12,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 180
+    "rank": 180,
+    "drawdown_now": 144.4
   },
   {
     "address": "0x5cd23b904cfede8497872848c2792c5f1599a496",
@@ -11117,7 +11295,7 @@
     ],
     "vol_score": 178.32,
     "sharpe_ratio": -4.733,
-    "max_drawdown": 40.64,
+    "max_drawdown": 28.48,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -11134,7 +11312,8 @@
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 181
+    "rank": 181,
+    "drawdown_now": 28.48
   },
   {
     "address": "0xc5b4279c690ce9a45a09830e931a43422341fc25",
@@ -11177,7 +11356,7 @@
     ],
     "vol_score": 10.66,
     "sharpe_ratio": -5.86,
-    "max_drawdown": 4.12,
+    "max_drawdown": 0.7,
     "apr_30d": -35.52,
     "monthly_return": -2.96,
     "pnl_30d": -308.5,
@@ -11189,12 +11368,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0937,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 429.29,
+    "max_dd_dollar": 73.29,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 182
+    "rank": 182,
+    "drawdown_now": 0.7
   },
   {
     "address": "0x0e66ea30180ea13ee91ca1d4d340f993cfb874ec",
@@ -11237,7 +11417,7 @@
     ],
     "vol_score": 72.19,
     "sharpe_ratio": -5.048,
-    "max_drawdown": 17.2,
+    "max_drawdown": 34.62,
     "apr_30d": -130.12,
     "monthly_return": -10.84,
     "pnl_30d": -1132.3,
@@ -11249,12 +11429,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1467,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1795.94,
+    "max_dd_dollar": 1953.66,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 183
+    "rank": 183,
+    "drawdown_now": 34.62
   },
   {
     "address": "0xa152d6bed00ba8132c23d33ce5ac32d749ab7cdb",
@@ -11297,7 +11478,7 @@
     ],
     "vol_score": 116.26,
     "sharpe_ratio": 0.123,
-    "max_drawdown": 485.32,
+    "max_drawdown": 13.15,
     "apr_30d": 97.15,
     "monthly_return": 8.1,
     "pnl_30d": 832.03,
@@ -11309,12 +11490,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1685,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 2485.39,
+    "max_dd_dollar": 4063.71,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 184
+    "rank": 184,
+    "drawdown_now": 2.02
   },
   {
     "address": "0x69551d151ebc5808a4678a635231750d153393b4",
@@ -11359,7 +11541,7 @@
     ],
     "vol_score": 349.29,
     "sharpe_ratio": -8.049,
-    "max_drawdown": 271.28,
+    "max_drawdown": 53.52,
     "apr_30d": -209.09,
     "monthly_return": -17.42,
     "pnl_30d": -3911.63,
@@ -11371,12 +11553,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1343,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 60900.2,
+    "max_dd_dollar": 58082.3,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 185
+    "rank": 185,
+    "drawdown_now": 52.95
   },
   {
     "address": "0x2837c128734ade71c55085cbe556699f064ea4a4",
@@ -11420,7 +11603,7 @@
     ],
     "vol_score": 76.61,
     "sharpe_ratio": -3.239,
-    "max_drawdown": 348.3,
+    "max_drawdown": 19.23,
     "apr_30d": -128.22,
     "monthly_return": -10.68,
     "pnl_30d": -2368.98,
@@ -11432,12 +11615,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.173,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 3487.03,
+    "max_dd_dollar": 1564.57,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 186
+    "rank": 186,
+    "drawdown_now": 19.23
   },
   {
     "address": "0xe40cb11e79bc6c046a53df495b908b11864c75c2",
@@ -11481,7 +11665,7 @@
     ],
     "vol_score": 61.54,
     "sharpe_ratio": -4.233,
-    "max_drawdown": 508.76,
+    "max_drawdown": 192.24,
     "apr_30d": -141.1,
     "monthly_return": -11.76,
     "pnl_30d": -2545.89,
@@ -11493,12 +11677,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1309,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 3407.34,
+    "max_dd_dollar": 1706.47,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 187
+    "rank": 187,
+    "drawdown_now": 192.24
   },
   {
     "address": "0x5669371d2244a0b78626fa0ef5aec77eaed18892",
@@ -11542,7 +11727,7 @@
     ],
     "vol_score": 241.25,
     "sharpe_ratio": -3.731,
-    "max_drawdown": 47.37,
+    "max_drawdown": 38.04,
     "apr_30d": -351.3,
     "monthly_return": -29.28,
     "pnl_30d": -6150.56,
@@ -11554,12 +11739,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0913,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 9951.99,
+    "max_dd_dollar": 10465.84,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 188
+    "rank": 188,
+    "drawdown_now": 24.74
   },
   {
     "address": "0xb48526e72b11614df47f38be22c7a466adc19efd",
@@ -11603,7 +11789,7 @@
     ],
     "vol_score": 265.55,
     "sharpe_ratio": -1.135,
-    "max_drawdown": 36732.01,
+    "max_drawdown": 95.82,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -11615,12 +11801,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1747,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 9410.8,
+    "max_dd_dollar": 9582.0,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 189
+    "rank": 189,
+    "drawdown_now": 0.06
   },
   {
     "address": "0x03449eade411f84543752ba4352f48243bd743ce",
@@ -11666,7 +11853,7 @@
     ],
     "vol_score": 271.38,
     "sharpe_ratio": -6.689,
-    "max_drawdown": 197.55,
+    "max_drawdown": 362.42,
     "apr_30d": -324.58,
     "monthly_return": -27.05,
     "pnl_30d": -4873.71,
@@ -11678,12 +11865,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2189,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 35596.67,
+    "max_dd_dollar": 35933.83,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 190
+    "rank": 190,
+    "drawdown_now": 328.04
   },
   {
     "address": "0x632df0dbe24f3dac3e1c4e0596c96a0adc3ba86a",
@@ -11726,7 +11914,7 @@
     ],
     "vol_score": 407.32,
     "sharpe_ratio": -5.212,
-    "max_drawdown": 134.5,
+    "max_drawdown": 125.61,
     "apr_30d": -27.9,
     "monthly_return": -2.33,
     "pnl_30d": -405.19,
@@ -11738,12 +11926,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0703,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 49531.62,
+    "max_dd_dollar": 71499.13,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 191
+    "rank": 191,
+    "drawdown_now": 13.49
   },
   {
     "address": "0xcbbb26d5e622fb877e12745921ae8b1f820ffbed",
@@ -11789,7 +11978,7 @@
     ],
     "vol_score": 477.05,
     "sharpe_ratio": -1.831,
-    "max_drawdown": 1686.28,
+    "max_drawdown": 156.2,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -11801,12 +11990,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0802,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1904217.6,
+    "max_dd_dollar": 1916943.25,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 192
+    "rank": 192,
+    "drawdown_now": 156.2
   },
   {
     "address": "0x7948564e2cc692fe9ae42a8bc2cf535c18f141c1",
@@ -11851,7 +12041,7 @@
     ],
     "vol_score": 219.37,
     "sharpe_ratio": -4.743,
-    "max_drawdown": 196.39,
+    "max_drawdown": 180.25,
     "apr_30d": 0.0,
     "monthly_return": 0.0,
     "pnl_30d": 0.0,
@@ -11868,7 +12058,8 @@
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 193
+    "rank": 193,
+    "drawdown_now": 180.25
   },
   {
     "address": "0xd58857f7e00100417caa666b9ea57df19b13fdb0",
@@ -11913,7 +12104,7 @@
     ],
     "vol_score": 137.94,
     "sharpe_ratio": -4.816,
-    "max_drawdown": 422.31,
+    "max_drawdown": 65.24,
     "apr_30d": -333.92,
     "monthly_return": -27.83,
     "pnl_30d": -4120.37,
@@ -11925,12 +12116,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1452,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 6500.03,
+    "max_dd_dollar": 7417.27,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 194
+    "rank": 194,
+    "drawdown_now": 57.7
   },
   {
     "address": "0xe72ac0f30dca336d04c8417c3e513b0ff3a69d3e",
@@ -11975,7 +12167,7 @@
     ],
     "vol_score": 146.67,
     "sharpe_ratio": -6.456,
-    "max_drawdown": 44.04,
+    "max_drawdown": 60.55,
     "apr_30d": -47.15,
     "monthly_return": -3.93,
     "pnl_30d": -534.64,
@@ -11987,12 +12179,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.1137,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 5992.35,
+    "max_dd_dollar": 6097.27,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 195
+    "rank": 195,
+    "drawdown_now": 60.0
   },
   {
     "address": "0x85bb0eb7e35e3d5c6b5876c2906b7d35bc7b42e4",
@@ -12038,7 +12231,7 @@
     ],
     "vol_score": 223.87,
     "sharpe_ratio": -6.782,
-    "max_drawdown": 4637.05,
+    "max_drawdown": 52.41,
     "apr_30d": -186.0,
     "monthly_return": -15.5,
     "pnl_30d": -2150.77,
@@ -12050,12 +12243,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0546,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 14760.53,
+    "max_dd_dollar": 15282.4,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 196
+    "rank": 196,
+    "drawdown_now": 52.41
   },
   {
     "address": "0x3239549f4a2ef36c0d87317e9a24d7c71e421a92",
@@ -12099,7 +12293,7 @@
     ],
     "vol_score": 31.44,
     "sharpe_ratio": -4.927,
-    "max_drawdown": 459.77,
+    "max_drawdown": 60.49,
     "apr_30d": -82.32,
     "monthly_return": -6.86,
     "pnl_30d": -840.17,
@@ -12111,12 +12305,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0846,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 1155.39,
+    "max_dd_dollar": 60.96,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 197
+    "rank": 197,
+    "drawdown_now": 9.78
   },
   {
     "address": "0x8e108f7c619ab460885edd0f84e313daf119c779",
@@ -12160,7 +12355,7 @@
     ],
     "vol_score": 359.9,
     "sharpe_ratio": -9.315,
-    "max_drawdown": 9257.13,
+    "max_drawdown": 723.1,
     "apr_30d": 76.09,
     "monthly_return": 6.34,
     "pnl_30d": 745.02,
@@ -12172,12 +12367,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.149,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 75323.19,
+    "max_dd_dollar": 81513.59,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 198
+    "rank": 198,
+    "drawdown_now": 708.03
   },
   {
     "address": "0xcda26944fd286ab358fadab7ca5cb993f3671b65",
@@ -12223,7 +12419,7 @@
     ],
     "vol_score": 144.92,
     "sharpe_ratio": -16.661,
-    "max_drawdown": 193.41,
+    "max_drawdown": 63.94,
     "apr_30d": -500.0,
     "monthly_return": -100.0,
     "pnl_30d": -21981.01,
@@ -12235,12 +12431,13 @@
     "recovery_score": 0.0,
     "robustness_score": 0.0601,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 22344.39,
+    "max_dd_dollar": 21751.51,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 199
+    "rank": 199,
+    "drawdown_now": 63.94
   },
   {
     "address": "0x80f15d0bf76f5e7d77d958c5177c91f818036c94",
@@ -12284,7 +12481,7 @@
     ],
     "vol_score": 412.33,
     "sharpe_ratio": -3.048,
-    "max_drawdown": 264.6,
+    "max_drawdown": 66.32,
     "apr_30d": -500.0,
     "monthly_return": -96.77,
     "pnl_30d": -10289.9,
@@ -12296,11 +12493,12 @@
     "recovery_score": 0.0,
     "robustness_score": 0.2035,
     "equity_curve_grade": "D  (불안정)",
-    "max_dd_dollar": 56962.73,
+    "max_dd_dollar": 56998.5,
     "_filter_pass": false,
     "_ok_deposit": true,
     "_ok_leader": false,
     "_ok_no_loss": false,
-    "rank": 200
+    "rank": 200,
+    "drawdown_now": 65.08
   }
 ]

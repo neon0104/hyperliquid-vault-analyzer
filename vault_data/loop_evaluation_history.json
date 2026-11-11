@@ -2945,50 +2945,50 @@
   {
     "evaluated_date": "2026-11-11",
     "referenced_date": "2026-11-10",
-    "portfolio_24h_profit_usd": -1654.77,
-    "portfolio_24h_return_pct": -1.6548,
+    "portfolio_24h_profit_usd": 162.67,
+    "portfolio_24h_return_pct": 0.1627,
     "evaluated_holdings": [
       {
-        "vault_name": "Loop Fund",
-        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "vault_name": "Akka Hyper AI",
+        "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
         "allocated_usd": 25000.0,
-        "actual_24h_gain_usd": -537.21,
-        "actual_24h_return_pct": -2.1488
+        "actual_24h_gain_usd": 9.26,
+        "actual_24h_return_pct": 0.037
       },
       {
-        "vault_name": "Quant Mirror",
-        "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-        "allocated_usd": 6421.57,
-        "actual_24h_gain_usd": -76.0,
-        "actual_24h_return_pct": -1.1834
+        "vault_name": "Symphony",
+        "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+        "allocated_usd": 21554.51,
+        "actual_24h_gain_usd": 185.84,
+        "actual_24h_return_pct": 0.8622
       },
       {
-        "vault_name": "PF1",
-        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
-        "allocated_usd": 24970.05,
-        "actual_24h_gain_usd": -338.56,
-        "actual_24h_return_pct": -1.3559
+        "vault_name": "-VectorZero-",
+        "address": "0x241ba250828c6a1289330aeec301e7bdcef31a43",
+        "allocated_usd": 8808.57,
+        "actual_24h_gain_usd": 22.14,
+        "actual_24h_return_pct": 0.2513
       },
       {
-        "vault_name": "Mad Scientists",
-        "address": "0x565b1c32936bdaa526947178acc95c5b08cfacc4",
-        "allocated_usd": 11887.62,
-        "actual_24h_gain_usd": -338.78,
-        "actual_24h_return_pct": -2.8499
+        "vault_name": "Compounder Lab",
+        "address": "0xca7ccc77b32a91f76a00542a223d98aebc21eebb",
+        "allocated_usd": 17574.53,
+        "actual_24h_gain_usd": -190.29,
+        "actual_24h_return_pct": -1.0828
       },
       {
-        "vault_name": "Sentiment Edge ",
-        "address": "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18",
-        "allocated_usd": 18918.23,
-        "actual_24h_gain_usd": 204.66,
-        "actual_24h_return_pct": 1.0818
+        "vault_name": "Hypernova",
+        "address": "0x800b3a897847d35835b41e986ef50c153861f1bf",
+        "allocated_usd": 11352.62,
+        "actual_24h_gain_usd": 0.0,
+        "actual_24h_return_pct": 0.0
       },
       {
-        "vault_name": "Danny Ocean",
-        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-        "allocated_usd": 12802.53,
-        "actual_24h_gain_usd": -568.87,
-        "actual_24h_return_pct": -4.4435
+        "vault_name": "Sentiment Edge",
+        "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+        "allocated_usd": 15709.77,
+        "actual_24h_gain_usd": 135.72,
+        "actual_24h_return_pct": 0.8639
       }
     ]
   }
