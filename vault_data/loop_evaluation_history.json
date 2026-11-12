@@ -2945,49 +2945,35 @@
   {
     "evaluated_date": "2026-11-13",
     "referenced_date": "2026-11-12",
-    "portfolio_24h_profit_usd": 101.34,
-    "portfolio_24h_return_pct": 0.1013,
+    "portfolio_24h_profit_usd": -159.39,
+    "portfolio_24h_return_pct": -0.1594,
     "evaluated_holdings": [
-      {
-        "vault_name": "22Cap",
-        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
-        "allocated_usd": 19450.92,
-        "actual_24h_gain_usd": 22.91,
-        "actual_24h_return_pct": 0.1178
-      },
-      {
-        "vault_name": "Goon Edging",
-        "address": "0x2431edfcb662e6ff6deab113cc91878a0b53fb0f",
-        "allocated_usd": 15314.62,
-        "actual_24h_gain_usd": 127.42,
-        "actual_24h_return_pct": 0.832
-      },
       {
         "vault_name": "Akka Hyper AI",
         "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
-        "allocated_usd": 25000.0,
-        "actual_24h_gain_usd": 163.38,
+        "allocated_usd": 35000.0,
+        "actual_24h_gain_usd": 228.73,
         "actual_24h_return_pct": 0.6535
       },
       {
         "vault_name": "Loop Fund",
         "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
-        "allocated_usd": 16915.35,
-        "actual_24h_gain_usd": -250.05,
+        "allocated_usd": 24831.59,
+        "actual_24h_gain_usd": -367.08,
         "actual_24h_return_pct": -1.4783
       },
       {
         "vault_name": "Symphony",
         "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
-        "allocated_usd": 17213.84,
-        "actual_24h_gain_usd": 131.7,
+        "allocated_usd": 25922.78,
+        "actual_24h_gain_usd": 198.32,
         "actual_24h_return_pct": 0.7651
       },
       {
         "vault_name": "Quant Mirror",
         "address": "0xe65b9c86755e4b48ee56ef5960b364425c2e3e99",
-        "allocated_usd": 6105.27,
-        "actual_24h_gain_usd": -94.02,
+        "allocated_usd": 14245.63,
+        "actual_24h_gain_usd": -219.37,
         "actual_24h_return_pct": -1.5399
       }
     ]
