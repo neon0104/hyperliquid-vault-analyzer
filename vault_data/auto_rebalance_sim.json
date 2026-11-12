@@ -1,6 +1,6 @@
 {
-  "period": "2026-05-27 to 2026-11-12",
-  "days": 169,
+  "period": "2026-05-27 to 2026-11-13",
+  "days": 170,
   "dates": [
     "2026-05-27",
     "2026-05-28",
@@ -171,22 +171,23 @@
     "2026-11-09",
     "2026-11-10",
     "2026-11-11",
-    "2026-11-12"
+    "2026-11-12",
+    "2026-11-13"
   ],
   "initial_capital": 100000.0,
-  "final_value": 114382.87,
-  "total_return": 14.38,
-  "cagr": 33.67,
+  "final_value": 114040.67,
+  "total_return": 14.04,
+  "cagr": 32.59,
   "mdd": -2.02,
-  "mean_offset_mdd": -2.83,
-  "worst_offset_mdd": -3.53,
-  "sharpe": 3.0,
-  "sortino": 7.03,
-  "calmar": 11.92,
-  "win_rate": 50.9,
-  "fees": 2466.76,
+  "mean_offset_mdd": -2.88,
+  "worst_offset_mdd": -3.66,
+  "sharpe": 2.93,
+  "sortino": 6.82,
+  "calmar": 11.32,
+  "win_rate": 50.6,
+  "fees": 2495.19,
   "positive_offsets": "14/14",
-  "ejection_count": 4,
+  "ejection_count": 5,
   "rebalance_count": 13,
   "strategy": {
     "name": "🏆 SGRA+ v3 All-Weather Shield (저베타 앵커 · 고스킨 복리 · 10% HWM · 14-Offset 전위상 평균)",
@@ -360,9 +361,10 @@
       115236.39,
       114655.74,
       114047.61,
-      114382.87
+      114382.87,
+      114040.67
     ],
-    "fees": 2466.76,
+    "fees": 2495.19,
     "rebalance_events": [
       {
         "date": "2026-05-27",
@@ -598,6 +600,17 @@
         "realized_profit": 202.3,
         "fee_paid": 27.98,
         "action": "USDC 안전 회수 및 SGRA+ v3 저베타 코어 재배분"
+      },
+      {
+        "date": "2026-11-13",
+        "vault_name": "Loop Fund",
+        "vault_address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "type": "CORE_SGRA_V3",
+        "reason": "비상 리스크 가드 (14d -13.3%, DD 19.2%, MDD60 13.3%)",
+        "redeemed_amount": 27146.72,
+        "realized_profit": -1849.65,
+        "fee_paid": 13.58,
+        "action": "🛡️ BEAR 폭락장 USDC 현금 보호 보류"
       }
     ],
     "daily_details": {
@@ -13040,16 +13053,95 @@
             "return_pct": 0.49
           }
         ]
+      },
+      "2026-11-13": {
+        "total_value": 115153.13,
+        "total_return": 15.15,
+        "cash": 27148.72,
+        "holdings": [
+          {
+            "name": "Solus Capital",
+            "address": "0x4f5bbfe763c8ba4a8ea59e15d93d31e31a3a1631",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 9220.23,
+            "cost": 9381.76,
+            "profit": -161.53,
+            "return_pct": -1.72
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "CORE_SGRA_V3",
+            "amount": 19717.59,
+            "cost": 20045.03,
+            "profit": -327.44,
+            "return_pct": -1.63
+          },
+          {
+            "name": "22Cap",
+            "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 22556.88,
+            "cost": 22558.65,
+            "profit": -1.76,
+            "return_pct": -0.01
+          },
+          {
+            "name": "+convexity",
+            "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 6666.15,
+            "cost": 6286.28,
+            "profit": 379.87,
+            "return_pct": 6.04
+          },
+          {
+            "name": "Symphony",
+            "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+            "type": "CORE_SGRA_V3",
+            "amount": 6706.9,
+            "cost": 6681.93,
+            "profit": 24.97,
+            "return_pct": 0.37
+          },
+          {
+            "name": "Jay Pennies to Jay Dollars",
+            "address": "0x3b4f22366857da94f9346f88eac84718c8a8d48d",
+            "type": "CORE_SGRA_V3",
+            "amount": 8633.5,
+            "cost": 8631.42,
+            "profit": 2.08,
+            "return_pct": 0.02
+          },
+          {
+            "name": "acat.work",
+            "address": "0x8813dba4eb786d61de01d5a53bdd793fb33dfea1",
+            "type": "CORE_SGRA_V3",
+            "amount": 6675.96,
+            "cost": 6708.77,
+            "profit": -32.82,
+            "return_pct": -0.49
+          },
+          {
+            "name": "Stratwise Multi-Asset Public",
+            "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 7827.22,
+            "cost": 7861.37,
+            "profit": -34.15,
+            "return_pct": -0.43
+          }
+        ]
       }
     }
   },
   "benchmark": {
     "name": "Equal-Weight Universe Benchmark (TVL >= $10k)",
-    "final_value": 103631.13,
-    "total_return": 3.63,
-    "cagr": 8.01,
-    "mdd": -13.49,
-    "sharpe": 0.45,
+    "final_value": 100396.03,
+    "total_return": 0.4,
+    "cagr": 0.85,
+    "mdd": -14.81,
+    "sharpe": 0.15,
     "values": [
       100000.0,
       98779.88,
@@ -13220,14 +13312,15 @@
       106190.23,
       104360.61,
       101955.45,
-      103631.13
+      103631.13,
+      100396.03
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 50.9,
-    "cumulative_fees_paid": "$2,466.76",
-    "volatility_drag_reduction": "11.5% p.p. MDD 방어 (개별 오프셋 평균 2.83%)",
-    "alpha_over_benchmark": "+10.75% p.p.",
-    "status": "VALIDATED — 무결 패널(169일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·30% TVL 캡 차감 후 평균 순수익 +14.38% (CAGR +33.7%, Sharpe 3.00, 위상평균 MDD -2.02%, 개별오프셋 평균 MDD -2.83%)"
+    "accuracy_rate": 50.6,
+    "cumulative_fees_paid": "$2,495.19",
+    "volatility_drag_reduction": "12.8% p.p. MDD 방어 (개별 오프셋 평균 2.88%)",
+    "alpha_over_benchmark": "+13.64% p.p.",
+    "status": "VALIDATED — 무결 패널(170일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·30% TVL 캡 차감 후 평균 순수익 +14.04% (CAGR +32.6%, Sharpe 2.93, 위상평균 MDD -2.02%, 개별오프셋 평균 MDD -2.88%)"
   }
 }

@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-04 15:39:35",
-    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
-    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
-    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
-    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
-    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
-    "validation_dataset": "219 days (2026-02-27 ~ 2026-11-04)",
-    "top_discovered_vaults": [
-      {
-        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
-        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
-        "data_days": 218,
-        "hurst": 0.713,
-        "sortino": 6.12,
-        "kelly_f": 10.5,
-        "apr_30d": 269.87,
-        "mdd": 19.55,
-        "sharpe": 8.76,
-        "leader_usd": 796400.89
-      },
-      {
-        "name": "Buyback Spread Engine",
-        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
-        "data_days": 154,
-        "hurst": 0.48,
-        "sortino": 2.89,
-        "kelly_f": 8.8,
-        "apr_30d": 286.73,
-        "mdd": 10.4,
-        "sharpe": 8.04,
-        "leader_usd": 20497.2
-      },
-      {
-        "name": "Danny Ocean",
-        "address": "0x04c8e82bbd0a33d3179e767c262223f50e74f7d2",
-        "data_days": 191,
-        "hurst": 0.332,
-        "sortino": 6.05,
-        "kelly_f": 9.6,
-        "apr_30d": 126.2,
-        "mdd": 13.73,
-        "sharpe": 14.31,
-        "leader_usd": 27695.36
-      },
-      {
-        "name": "V4 Alpha Quantum",
-        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
-        "data_days": 84,
-        "hurst": 0.585,
-        "sortino": 6.79,
-        "kelly_f": 8.0,
-        "apr_30d": 147.11,
-        "mdd": 1.05,
-        "sharpe": 8.78,
-        "leader_usd": 8065.99
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-04 19:39:41",
     "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
     "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
@@ -2995,6 +2935,66 @@
         "mdd": 0.07,
         "sharpe": 8.13,
         "leader_usd": 2980.81
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-13 03:43:25",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "228 days (2026-02-27 ~ 2026-11-13)",
+    "top_discovered_vaults": [
+      {
+        "name": "Gen Wealth Algo",
+        "address": "0xdda7f4805dfdf145a74cd68992d90780f73cf6c7",
+        "data_days": 35,
+        "hurst": 0.554,
+        "sortino": 3.18,
+        "kelly_f": 1.8,
+        "apr_30d": 251.93,
+        "mdd": 11.12,
+        "sharpe": 3.42,
+        "leader_usd": 7323.05
+      },
+      {
+        "name": "[Bee] Line",
+        "address": "0xc360c0e450ea1347efe35b01c4c6d500e05aeb30",
+        "data_days": 71,
+        "hurst": 0.478,
+        "sortino": -0.01,
+        "kelly_f": 8.7,
+        "apr_30d": 193.38,
+        "mdd": 25.63,
+        "sharpe": 5.01,
+        "leader_usd": 2310.73
+      },
+      {
+        "name": "[ Systemic Strategies ] L/S Grids",
+        "address": "0x07fd993f0fa3a185f7207adccd29f7a87404689d",
+        "data_days": 227,
+        "hurst": 0.76,
+        "sortino": 0.9,
+        "kelly_f": 5.2,
+        "apr_30d": 200.21,
+        "mdd": 29.64,
+        "sharpe": 2.65,
+        "leader_usd": 777000.98
+      },
+      {
+        "name": "Bunny",
+        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
+        "data_days": 48,
+        "hurst": 0.618,
+        "sortino": 43.41,
+        "kelly_f": 27.0,
+        "apr_30d": 3.43,
+        "mdd": 0.07,
+        "sharpe": 8.01,
+        "leader_usd": 2980.6
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
