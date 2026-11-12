@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-03 23:39:51",
-    "topic_id": "TOPIC_GARCH_VOLATILITY",
-    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
-    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
-    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
-    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
-    "validation_dataset": "218 days (2026-02-27 ~ 2026-11-03)",
-    "top_discovered_vaults": [
-      {
-        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
-        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
-        "data_days": 217,
-        "hurst": 0.702,
-        "sortino": 6.02,
-        "kelly_f": 10.2,
-        "apr_30d": 227.78,
-        "mdd": 19.66,
-        "sharpe": 8.68,
-        "leader_usd": 788780.65
-      },
-      {
-        "name": "Buyback Spread Engine",
-        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
-        "data_days": 153,
-        "hurst": 0.571,
-        "sortino": 2.66,
-        "kelly_f": 8.0,
-        "apr_30d": 244.58,
-        "mdd": 11.06,
-        "sharpe": 7.7,
-        "leader_usd": 19587.02
-      },
-      {
-        "name": "Bunny",
-        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
-        "data_days": 13,
-        "hurst": 0.5,
-        "sortino": 50.0,
-        "kelly_f": 30.0,
-        "apr_30d": 5.56,
-        "mdd": 0.13,
-        "sharpe": 12.48,
-        "leader_usd": 2976.96
-      },
-      {
-        "name": "V4 Alpha Quantum",
-        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
-        "data_days": 83,
-        "hurst": 0.637,
-        "sortino": 6.82,
-        "kelly_f": 7.1,
-        "apr_30d": 145.58,
-        "mdd": 1.07,
-        "sharpe": 8.77,
-        "leader_usd": 8062.29
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-04 03:42:29",
     "topic_id": "TOPIC_HURST_EXPONENT",
     "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
@@ -2995,6 +2935,66 @@
         "mdd": 30.55,
         "sharpe": 3.21,
         "leader_usd": 29378.99
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-12 11:39:35",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "227 days (2026-02-27 ~ 2026-11-12)",
+    "top_discovered_vaults": [
+      {
+        "name": "Bunny",
+        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
+        "data_days": 47,
+        "hurst": 0.679,
+        "sortino": 44.42,
+        "kelly_f": 27.7,
+        "apr_30d": 3.69,
+        "mdd": 0.07,
+        "sharpe": 8.13,
+        "leader_usd": 2980.81
+      },
+      {
+        "name": "Algo1",
+        "address": "0x1ea5ac872b4170cdc1c9819231d1a25b73d971b7",
+        "data_days": 137,
+        "hurst": 0.476,
+        "sortino": 9.57,
+        "kelly_f": 16.2,
+        "apr_30d": 9.45,
+        "mdd": 5.64,
+        "sharpe": 3.42,
+        "leader_usd": 10282.24
+      },
+      {
+        "name": "Hindenburg Short Alpha",
+        "address": "0x161acffcd4b9a6c482c53c4b1a856e21a05f89f2",
+        "data_days": 101,
+        "hurst": 0.554,
+        "sortino": 6.85,
+        "kelly_f": 1.2,
+        "apr_30d": 27.23,
+        "mdd": 31.34,
+        "sharpe": 2.91,
+        "leader_usd": 14356.0
+      },
+      {
+        "name": "V4 Alpha Quantum",
+        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
+        "data_days": 92,
+        "hurst": 0.411,
+        "sortino": 6.68,
+        "kelly_f": 9.6,
+        "apr_30d": 144.27,
+        "mdd": 17.63,
+        "sharpe": 2.56,
+        "leader_usd": 8148.51
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
