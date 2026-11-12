@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-12 23:39:52
+### 🔬 주제: **칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링**
+* **레퍼런스 출처**: `GitHub: pykalman / R.E. Kalman (1960)`
+* **수학적 모델**: $y_t = \alpha_t + \beta_t x_t + \epsilon_t, \quad \beta_t = \beta_{t-1} + \eta_t$
+* **핵심 가설**: 비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.
+* **검증 데이터**: `227 days (2026-02-27 ~ 2026-11-12)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Gen Wealth Algo**: Hurst `0.503` | Sortino `6.18` | Kelly `5.6%` | 30일 APR `208.59%` | Sharpe `3.86`
+  - **[Bee] Line**: Hurst `0.59` | Sortino `0.17` | Kelly `10.9%` | 30일 APR `256.22%` | Sharpe `5.45`
+  - **[ Systemic Strategies ] L/S Grids**: Hurst `0.589` | Sortino `1.29` | Kelly `9.2%` | 30일 APR `322.38%` | Sharpe `2.77`
+  - **Bunny**: Hurst `0.679` | Sortino `44.42` | Kelly `27.7%` | 30일 APR `3.69%` | Sharpe `8.13`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-12 19:39:47
 ### 🔬 주제: **Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진**
 * **레퍼런스 출처**: `GitHub: skfolio / Shadwick & Keating (2002)`
@@ -230,23 +247,6 @@
 * **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
 * **수학적 모델**: $w_i = w_i \times \frac{V_i^{-1}}{\sum V_j^{-1}}$
 * **핵심 가설**: 전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.
-* **검증 데이터**: `225 days (2026-02-27 ~ 2026-11-10)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Gen Wealth Algo**: Hurst `0.471` | Sortino `5.91` | Kelly `0.0%` | 30일 APR `215.46%` | Sharpe `6.85`
-  - **Buyback Spread Engine**: Hurst `0.651` | Sortino `2.81` | Kelly `5.4%` | 30일 APR `280.07%` | Sharpe `8.23`
-  - **[ Systemic Strategies ] ♾️ HyperGrowth ♾**: Hurst `0.66` | Sortino `5.42` | Kelly `7.8%` | 30일 APR `171.68%` | Sharpe `8.36`
-  - **Bunny**: Hurst `0.5` | Sortino `50.0` | Kelly `30.0%` | 30일 APR `3.54%` | Sharpe `11.75`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-10 07:39:37
-### 🔬 주제: **알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍**
-* **레퍼런스 출처**: `GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)`
-* **수학적 모델**: $t_{1/2} = \frac{\ln(2)}{\lambda}$
-* **핵심 가설**: TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.
 * **검증 데이터**: `225 days (2026-02-27 ~ 2026-11-10)`
 
 #### 🧪 실증 발견 및 온체인 볼트 분석 결과:
