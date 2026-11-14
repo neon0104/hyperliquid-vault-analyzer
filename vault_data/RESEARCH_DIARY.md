@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-14 11:39:38
+### 🔬 주제: **알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍**
+* **레퍼런스 출처**: `GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)`
+* **수학적 모델**: $t_{1/2} = \frac{\ln(2)}{\lambda}$
+* **핵심 가설**: TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.
+* **검증 데이터**: `229 days (2026-02-27 ~ 2026-11-14)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[ Systemic Strategies ] L/S Grids**: Hurst `0.818` | Sortino `0.79` | Kelly `3.8%` | 30일 APR `156.16%` | Sharpe `2.72`
+  - **Bunny**: Hurst `0.627` | Sortino `40.78` | Kelly `27.1%` | 30일 APR `4.14%` | Sharpe `8.13`
+  - **V4 Alpha Quantum**: Hurst `0.544` | Sortino `6.89` | Kelly `8.4%` | 30일 APR `93.21%` | Sharpe `2.62`
+  - **+convexity**: Hurst `0.592` | Sortino `6.37` | Kelly `10.1%` | 30일 APR `82.29%` | Sharpe `3.12`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-14 07:39:34
 ### 🔬 주제: **칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링**
 * **레퍼런스 출처**: `GitHub: pykalman / R.E. Kalman (1960)`
@@ -237,23 +254,6 @@
   - **[Bee] Line**: Hurst `0.59` | Sortino `0.17` | Kelly `10.9%` | 30일 APR `256.22%` | Sharpe `5.45`
   - **[ Systemic Strategies ] L/S Grids**: Hurst `0.589` | Sortino `1.29` | Kelly `9.2%` | 30일 APR `322.38%` | Sharpe `2.77`
   - **Bunny**: Hurst `0.679` | Sortino `44.42` | Kelly `27.7%` | 30일 APR `3.69%` | Sharpe `8.13`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-11 23:39:40
-### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
-* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
-* **수학적 모델**: $w_i = w_i \times \frac{V_i^{-1}}{\sum V_j^{-1}}$
-* **핵심 가설**: 전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.
-* **검증 데이터**: `226 days (2026-02-27 ~ 2026-11-11)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **[Bee] Line**: Hurst `0.606` | Sortino `-0.28` | Kelly `8.3%` | 30일 APR `235.61%` | Sharpe `5.4`
-  - **Gen Wealth Algo**: Hurst `0.466` | Sortino `5.6` | Kelly `0.0%` | 30일 APR `187.66%` | Sharpe `3.73`
-  - **[ Systemic Strategies ] L/S Grids**: Hurst `0.593` | Sortino `1.14` | Kelly `9.9%` | 30일 APR `309.48%` | Sharpe `2.75`
-  - **Bunny**: Hurst `0.682` | Sortino `45.51` | Kelly `27.7%` | 30일 APR `3.8%` | Sharpe `8.13`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
