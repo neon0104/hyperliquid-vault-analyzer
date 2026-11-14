@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-06 03:42:12",
-    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
-    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
-    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
-    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
-    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
-    "validation_dataset": "221 days (2026-02-27 ~ 2026-11-06)",
-    "top_discovered_vaults": [
-      {
-        "name": "Gen Wealth Algo",
-        "address": "0xdda7f4805dfdf145a74cd68992d90780f73cf6c7",
-        "data_days": 28,
-        "hurst": 0.491,
-        "sortino": 6.74,
-        "kelly_f": 0.0,
-        "apr_30d": 225.16,
-        "mdd": 10.97,
-        "sharpe": 6.37,
-        "leader_usd": 7836.9
-      },
-      {
-        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
-        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
-        "data_days": 220,
-        "hurst": 0.658,
-        "sortino": 5.76,
-        "kelly_f": 6.1,
-        "apr_30d": 189.62,
-        "mdd": 19.66,
-        "sharpe": 8.54,
-        "leader_usd": 758561.26
-      },
-      {
-        "name": "Buyback Spread Engine",
-        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
-        "data_days": 156,
-        "hurst": 0.622,
-        "sortino": 2.97,
-        "kelly_f": 8.1,
-        "apr_30d": 352.72,
-        "mdd": 10.09,
-        "sharpe": 7.76,
-        "leader_usd": 10684.2
-      },
-      {
-        "name": "V4 Alpha Quantum",
-        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
-        "data_days": 86,
-        "hurst": 0.36,
-        "sortino": 6.88,
-        "kelly_f": 8.3,
-        "apr_30d": 181.7,
-        "mdd": 0.95,
-        "sharpe": 8.5,
-        "leader_usd": 8131.76
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-06 07:39:30",
     "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
     "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
@@ -2946,6 +2886,66 @@
     "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
     "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
     "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "229 days (2026-02-27 ~ 2026-11-14)",
+    "top_discovered_vaults": [
+      {
+        "name": "[ Systemic Strategies ] L/S Grids",
+        "address": "0x07fd993f0fa3a185f7207adccd29f7a87404689d",
+        "data_days": 228,
+        "hurst": 0.818,
+        "sortino": 0.79,
+        "kelly_f": 3.8,
+        "apr_30d": 156.16,
+        "mdd": 29.64,
+        "sharpe": 2.72,
+        "leader_usd": 765427.86
+      },
+      {
+        "name": "Bunny",
+        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
+        "data_days": 48,
+        "hurst": 0.627,
+        "sortino": 40.78,
+        "kelly_f": 27.1,
+        "apr_30d": 4.14,
+        "mdd": 0.07,
+        "sharpe": 8.13,
+        "leader_usd": 2984.02
+      },
+      {
+        "name": "V4 Alpha Quantum",
+        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
+        "data_days": 94,
+        "hurst": 0.544,
+        "sortino": 6.89,
+        "kelly_f": 8.4,
+        "apr_30d": 93.21,
+        "mdd": 17.63,
+        "sharpe": 2.62,
+        "leader_usd": 8266.49
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 228,
+        "hurst": 0.592,
+        "sortino": 6.37,
+        "kelly_f": 10.1,
+        "apr_30d": 82.29,
+        "mdd": 12.16,
+        "sharpe": 3.12,
+        "leader_usd": 352557.56
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-14 15:39:43",
+    "topic_id": "TOPIC_HRP_HIERARCHICAL",
+    "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
+    "reference_source": "GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)",
+    "mathematical_formula": "w_i = w_i \\times \\frac{V_i^{-1}}{\\sum V_j^{-1}}",
+    "hypothesis": "전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.",
     "validation_dataset": "229 days (2026-02-27 ~ 2026-11-14)",
     "top_discovered_vaults": [
       {
