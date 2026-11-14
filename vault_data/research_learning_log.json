@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-06 19:39:37",
-    "topic_id": "TOPIC_HURST_EXPONENT",
-    "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
-    "reference_source": "GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)",
-    "mathematical_formula": "H = \\lim_{\\tau \\to \\infty} \\frac{\\log(R/S)}{\\log(\\tau)}",
-    "hypothesis": "볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.",
-    "validation_dataset": "221 days (2026-02-27 ~ 2026-11-06)",
-    "top_discovered_vaults": [
-      {
-        "name": "69 Jump Street",
-        "address": "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802",
-        "data_days": 222,
-        "hurst": 0.703,
-        "sortino": 6.29,
-        "kelly_f": 9.3,
-        "apr_30d": 36.24,
-        "mdd": 30.49,
-        "sharpe": 8.31,
-        "leader_usd": 30507.22
-      },
-      {
-        "name": "Citadel",
-        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
-        "data_days": 220,
-        "hurst": 0.691,
-        "sortino": 6.71,
-        "kelly_f": 0.0,
-        "apr_30d": 3.17,
-        "mdd": 1.91,
-        "sharpe": 13.39,
-        "leader_usd": 157980.52
-      },
-      {
-        "name": "Quantitative Market Neutral Strategy",
-        "address": "0x14ecb3f4932522b8d508fa6e237e2746a4999feb",
-        "data_days": 191,
-        "hurst": 0.688,
-        "sortino": 1.04,
-        "kelly_f": 0.0,
-        "apr_30d": 0.17,
-        "mdd": 34.62,
-        "sharpe": 4.18,
-        "leader_usd": 93830.76
-      },
-      {
-        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
-        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
-        "data_days": 220,
-        "hurst": 0.658,
-        "sortino": 5.76,
-        "kelly_f": 6.1,
-        "apr_30d": 189.62,
-        "mdd": 19.66,
-        "sharpe": 8.54,
-        "leader_usd": 758561.26
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-06 23:39:34",
     "topic_id": "TOPIC_DOWN_RISK_SORTINO",
     "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
@@ -2995,6 +2935,66 @@
         "mdd": 31.34,
         "sharpe": 2.92,
         "leader_usd": 14581.09
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-15 07:39:39",
+    "topic_id": "TOPIC_FRACTIONAL_KELLY",
+    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
+    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
+    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
+    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
+    "validation_dataset": "230 days (2026-02-27 ~ 2026-11-15)",
+    "top_discovered_vaults": [
+      {
+        "name": "Bunny",
+        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
+        "data_days": 47,
+        "hurst": 0.62,
+        "sortino": 39.79,
+        "kelly_f": 27.1,
+        "apr_30d": 4.13,
+        "mdd": 0.07,
+        "sharpe": 8.35,
+        "leader_usd": 2984.68
+      },
+      {
+        "name": "V4 Alpha Quantum",
+        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
+        "data_days": 95,
+        "hurst": 0.633,
+        "sortino": 7.69,
+        "kelly_f": 15.6,
+        "apr_30d": 100.83,
+        "mdd": 17.63,
+        "sharpe": 2.81,
+        "leader_usd": 8605.81
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 229,
+        "hurst": 0.736,
+        "sortino": 7.65,
+        "kelly_f": 12.7,
+        "apr_30d": 128.53,
+        "mdd": 12.16,
+        "sharpe": 3.31,
+        "leader_usd": 368252.61
+      },
+      {
+        "name": "Jay Pennies to Jay Dollars",
+        "address": "0x3b4f22366857da94f9346f88eac84718c8a8d48d",
+        "data_days": 229,
+        "hurst": 0.538,
+        "sortino": 5.37,
+        "kelly_f": 12.7,
+        "apr_30d": 7.76,
+        "mdd": 12.19,
+        "sharpe": 1.79,
+        "leader_usd": 162302.69
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
