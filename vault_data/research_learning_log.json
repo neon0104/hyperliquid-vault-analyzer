@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-07 03:42:03",
-    "topic_id": "TOPIC_FRACTIONAL_KELLY",
-    "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
-    "reference_source": "GitHub: KellyPortfolio / J.L. Kelly (1956)",
-    "mathematical_formula": "f^* = \\gamma \\times \\frac{p(b+1) - 1}{b} \\quad (\\gamma = 0.30)",
-    "hypothesis": "각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.",
-    "validation_dataset": "222 days (2026-02-27 ~ 2026-11-07)",
-    "top_discovered_vaults": [
-      {
-        "name": "Bunny",
-        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
-        "data_days": 13,
-        "hurst": 0.5,
-        "sortino": 50.0,
-        "kelly_f": 30.0,
-        "apr_30d": 3.64,
-        "mdd": 0.06,
-        "sharpe": 11.54,
-        "leader_usd": 2979.83
-      },
-      {
-        "name": "Hype U-Boat",
-        "address": "0xccee00943de1dc5e9f80aad18d8a9fb6ff5b51b5",
-        "data_days": 12,
-        "hurst": 0.5,
-        "sortino": 31.47,
-        "kelly_f": 23.1,
-        "apr_30d": 32.84,
-        "mdd": 18.31,
-        "sharpe": 11.76,
-        "leader_usd": 1127.26
-      },
-      {
-        "name": "Passivbot Canon",
-        "address": "0x490af7d4a048a81db0f677517ed6373565b42349",
-        "data_days": 221,
-        "hurst": 0.454,
-        "sortino": 5.94,
-        "kelly_f": 13.8,
-        "apr_30d": 74.86,
-        "mdd": 29.06,
-        "sharpe": 9.08,
-        "leader_usd": 2532.04
-      },
-      {
-        "name": "FuturAI Labs - High Sharpe, Low Volatili",
-        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
-        "data_days": 219,
-        "hurst": 0.208,
-        "sortino": 3.67,
-        "kelly_f": 12.8,
-        "apr_30d": 14.93,
-        "mdd": 0.31,
-        "sharpe": 18.18,
-        "leader_usd": 24997.28
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-07 07:39:28",
     "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
     "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
@@ -2946,6 +2886,66 @@
     "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
     "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
     "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "230 days (2026-02-27 ~ 2026-11-15)",
+    "top_discovered_vaults": [
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 229,
+        "hurst": 0.736,
+        "sortino": 7.65,
+        "kelly_f": 12.7,
+        "apr_30d": 128.53,
+        "mdd": 12.16,
+        "sharpe": 3.31,
+        "leader_usd": 368252.61
+      },
+      {
+        "name": "Bunny",
+        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
+        "data_days": 47,
+        "hurst": 0.62,
+        "sortino": 39.79,
+        "kelly_f": 27.1,
+        "apr_30d": 4.13,
+        "mdd": 0.07,
+        "sharpe": 8.35,
+        "leader_usd": 2984.68
+      },
+      {
+        "name": "Dragon X1",
+        "address": "0x32f739e8acf185ca4b117070babbf66c14c8238f",
+        "data_days": 183,
+        "hurst": 0.748,
+        "sortino": 1.06,
+        "kelly_f": 8.0,
+        "apr_30d": 151.57,
+        "mdd": 22.6,
+        "sharpe": 1.99,
+        "leader_usd": 12611.78
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "data_days": 229,
+        "hurst": 0.574,
+        "sortino": 4.5,
+        "kelly_f": 10.6,
+        "apr_30d": 121.24,
+        "mdd": 15.14,
+        "sharpe": 2.59,
+        "leader_usd": 74749.49
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-15 15:39:34",
+    "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
+    "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
+    "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
+    "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
+    "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
     "validation_dataset": "230 days (2026-02-27 ~ 2026-11-15)",
     "top_discovered_vaults": [
       {
