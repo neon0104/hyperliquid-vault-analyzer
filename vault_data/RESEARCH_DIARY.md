@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-16 03:41:46
+### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
+* **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
+* **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
+* **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
+* **검증 데이터**: `231 days (2026-02-27 ~ 2026-11-16)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **+convexity**: Hurst `0.731` | Sortino `8.22` | Kelly `13.2%` | 30일 APR `145.93%` | Sharpe `3.24`
+  - **[ Systemic Strategies ] L/S Grids**: Hurst `0.841` | Sortino `0.7` | Kelly `4.1%` | 30일 APR `157.56%` | Sharpe `2.75`
+  - **Dragon X1**: Hurst `0.777` | Sortino `1.2` | Kelly `9.3%` | 30일 APR `149.82%` | Sharpe `2.06`
+  - **Bunny**: Hurst `0.742` | Sortino `39.24` | Kelly `23.2%` | 30일 APR `4.4%` | Sharpe `8.24`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-15 23:39:43
 ### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
 * **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
@@ -237,23 +254,6 @@
   - **Algo1**: Hurst `0.541` | Sortino `9.39` | Kelly `11.6%` | 30일 APR `7.39%` | Sharpe `3.4`
   - **22Cap**: Hurst `0.628` | Sortino `7.29` | Kelly `0.8%` | 30일 APR `1.04%` | Sharpe `3.81`
   - **Hindenburg Short Alpha**: Hurst `0.621` | Sortino `6.97` | Kelly `3.1%` | 30일 APR `28.17%` | Sharpe `2.92`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-13 15:39:43
-### 🔬 주제: **허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별**
-* **레퍼런스 출처**: `GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)`
-* **수학적 모델**: $H = \lim_{\tau \to \infty} \frac{\log(R/S)}{\log(\tau)}$
-* **핵심 가설**: 볼트의 PnL 시계열에서 H > 0.5(지속적 추세) 볼트는 모멘텀 가속 전략에 배분하고, H < 0.5(평균회귀) 볼트는 딥바잉(Dip-Buyer) 전략에 배분하여 알파를 극대화함.
-* **검증 데이터**: `228 days (2026-02-27 ~ 2026-11-13)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **[ Systemic Strategies ] L/S Grids**: Hurst `0.76` | Sortino `0.9` | Kelly `5.2%` | 30일 APR `200.21%` | Sharpe `2.65`
-  - **Cold Process**: Hurst `0.755` | Sortino `2.84` | Kelly `9.5%` | 30일 APR `76.48%` | Sharpe `4.88`
-  - **Pulse@Evo-α**: Hurst `0.693` | Sortino `0.54` | Kelly `1.0%` | 30일 APR `14.89%` | Sharpe `0.76`
-  - **BitRocket**: Hurst `0.692` | Sortino `3.72` | Kelly `9.1%` | 30일 APR `10.73%` | Sharpe `4.67`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
