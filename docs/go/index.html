@@ -2,20 +2,32 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="robots" content="noindex, nofollow">
-<title>Hyperliquid 보안 게이트웨이</title>
+<meta name="theme-color" content="#0b0f19">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HL 대시보드">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/svg+xml" href="../app-icon.svg">
+<link rel="apple-touch-icon" href="../app-icon.svg">
+<title>HL Vault Analyzer Pro</title>
 <style>
   :root { color-scheme: dark; }
-  body {
-    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100dvh; overflow: hidden;
     background: #0b0f19; color: #e2e8f0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
+  #app-frame { border: 0; width: 100%; height: 100dvh; display: none; background: #0b0f19; }
+  #gw-overlay {
+    width: 100%; height: 100dvh; display: flex; align-items: center; justify-content: center;
+    background: #0b0f19;
+  }
   .box {
-    max-width: 380px; width: calc(100% - 40px); background: #131b2e;
-    border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px;
-    padding: 28px 24px; text-align: center; box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+    max-width: 370px; width: calc(100% - 36px); background: #131b2e;
+    border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 18px;
+    padding: 28px 22px; text-align: center; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
   }
   .spin {
     width: 34px; height: 34px; border: 3px solid rgba(56, 189, 248, 0.2);
@@ -23,107 +35,44 @@
     animation: sp 0.8s linear infinite;
   }
   @keyframes sp { to { transform: rotate(360deg); } }
-  h2 { margin: 0 0 8px; font-size: 1.05rem; color: #f8fafc; }
-  p { margin: 0; font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
-  .key-form { display: none; margin-top: 16px; }
+  h2 { margin: 0 0 8px; font-size: 1.08rem; color: #f8fafc; }
+  p { margin: 0; font-size: 0.84rem; color: #94a3b8; line-height: 1.5; }
+  form { display: none; margin-top: 16px; text-align: left; }
+  label { display: block; font-size: 0.78rem; color: #94a3b8; margin: 0 0 5px; }
   input {
-    width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 8px;
-    border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 0.9rem; margin-bottom: 10px;
+    width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: 9px;
+    border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 0.92rem; margin-bottom: 12px;
   }
   button {
-    width: 100%; padding: 10px; border-radius: 8px; border: none;
-    background: #0284c7; color: #fff; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    width: 100%; padding: 11px; border-radius: 9px; border: none;
+    background: #2563eb; color: #fff; font-weight: 700; font-size: 0.92rem; cursor: pointer;
   }
+  #gw-retry-btn { display: none; margin-top: 16px; }
 </style>
+<script>window.__GW_DEFAULT_ROUTE = "/";</script>
+<script src="../gateway-shell.js" defer></script>
 </head>
 <body>
-<div class="box">
-  <div class="spin" id="sp"></div>
-  <h2 id="ttl">🔐 내 전용 서버로 연결 중...</h2>
-  <p id="msg">최신 암호화 터널 주소를 확인하고 있습니다.</p>
-  <form class="key-form" id="kf" onsubmit="saveAndRetry(event)">
-    <input type="password" id="ki" placeholder="보안 접속키 입력 (최초 1회)" required>
-    <button type="submit">저장 후 바로 접속</button>
-  </form>
+<iframe id="app-frame" title="Hyperliquid Dashboard"></iframe>
+<div id="gw-overlay">
+  <div class="box">
+    <div class="spin" id="gw-spin"></div>
+    <h2 id="gw-title">🔒 고정 보안 터널 연결 중...</h2>
+    <p id="gw-msg">실시간 온체인 서버와 동기화하고 있습니다.</p>
+    <form id="gw-key-form" onsubmit="window.__submitGatewayKey(event)">
+      <label>전용 보안키 (최초 1회)</label>
+      <input type="password" id="gw-key-input" placeholder="보안키 입력" required>
+      <button type="submit">저장 후 바로 열기</button>
+    </form>
+    <form id="gw-login-form" onsubmit="window.__submitGatewayLogin(event)">
+      <label>관리자 이메일</label>
+      <input type="email" id="gw-email" value="admin@hyperliquid.com" required autocomplete="username">
+      <label>비밀번호</label>
+      <input type="password" id="gw-pw" placeholder="비밀번호 입력" required autocomplete="current-password">
+      <button type="submit" id="gw-login-btn">로그인 (180일 자동유지)</button>
+    </form>
+    <button id="gw-retry-btn" onclick="window.__retryGateway()">🔄 다시 연결</button>
+  </div>
 </div>
-<script>
-const DEFAULT_PATH = "/";
-const RAW_GW = "https://raw.githubusercontent.com/neon0104/hyperliquid-vault-analyzer/main/docs/gateway.json";
-const LOCAL_GW = "../gateway.json";
-
-function b64ToBytes(b64) {
-  const bin = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
-  const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-  return arr;
-}
-
-async function decryptPayload(gwObj, secretKey) {
-  const enc = new TextEncoder();
-  const keyHash = await crypto.subtle.digest("SHA-256", enc.encode(secretKey));
-  const cKey = await crypto.subtle.importKey("raw", keyHash, { name: "AES-GCM" }, false, ["decrypt"]);
-  const iv = b64ToBytes(gwObj.iv);
-  const ct = b64ToBytes(gwObj.ct);
-  const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, cKey, ct);
-  return JSON.parse(new TextDecoder().decode(plainBuf));
-}
-
-async function fetchJson(url) {
-  const r = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
-  if (!r.ok) throw new Error("HTTP " + r.status);
-  return await r.json();
-}
-
-async function connectNow() {
-  const params = new URLSearchParams(window.location.search);
-  const targetPath = params.get("to") || DEFAULT_PATH;
-  let hashKey = decodeURIComponent((window.location.hash || "").replace(/^#/, "").trim());
-  if (hashKey.startsWith("k=")) hashKey = hashKey.slice(2);
-  if (hashKey) {
-    try { localStorage.setItem("hl_gw_key", hashKey); } catch (e) {}
-  } else {
-    try { hashKey = localStorage.getItem("hl_gw_key") || ""; } catch (e) {}
-  }
-
-  if (!hashKey) {
-    document.getElementById("sp").style.display = "none";
-    document.getElementById("ttl").textContent = "🔑 최초 1회 보안키 확인";
-    document.getElementById("msg").textContent = "전달받은 전용 전체 링크(#포함)로 접속하거나 보안키를 1회 입력해 주세요.";
-    document.getElementById("kf").style.display = "block";
-    return;
-  }
-
-  try {
-    const settled = await Promise.allSettled([fetchJson(RAW_GW), fetchJson(LOCAL_GW)]);
-    const candidates = settled.filter(s => s.status === "fulfilled" && s.value && s.value.ct).map(s => s.value);
-    if (!candidates.length) throw new Error("게이트웨이 정보를 불러오지 못했습니다.");
-    candidates.sort((a, b) => String(b.updated_at || "").localeCompare(String(a.updated_at || "")));
-
-    const data = await decryptPayload(candidates[0], hashKey);
-    if (!data || !data.url) throw new Error("유효하지 않은 터널 데이터");
-    const base = String(data.url).replace(/\/+$/, "");
-    const path = targetPath.startsWith("/") ? targetPath : ("/" + targetPath);
-    window.location.replace(base + path);
-  } catch (err) {
-    document.getElementById("sp").style.display = "none";
-    document.getElementById("ttl").textContent = "⚠️ 연결 확인 필요";
-    document.getElementById("msg").textContent = "보안키가 다르거나 PC 서버가 재시작 중입니다. 다시 시도해 주세요.";
-    document.getElementById("kf").style.display = "block";
-  }
-}
-
-function saveAndRetry(e) {
-  e.preventDefault();
-  const v = document.getElementById("ki").value.trim();
-  if (!v) return;
-  try { localStorage.setItem("hl_gw_key", v); } catch (err) {}
-  window.location.hash = v;
-  document.getElementById("kf").style.display = "none";
-  document.getElementById("sp").style.display = "block";
-  connectNow();
-}
-
-connectNow();
-</script>
 </body>
 </html>
