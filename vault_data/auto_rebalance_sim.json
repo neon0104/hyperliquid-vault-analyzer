@@ -1,6 +1,6 @@
 {
-  "period": "2026-05-27 to 2026-11-18",
-  "days": 175,
+  "period": "2026-05-27 to 2026-11-19",
+  "days": 176,
   "dates": [
     "2026-05-27",
     "2026-05-28",
@@ -177,20 +177,21 @@
     "2026-11-15",
     "2026-11-16",
     "2026-11-17",
-    "2026-11-18"
+    "2026-11-18",
+    "2026-11-19"
   ],
   "initial_capital": 100000.0,
-  "final_value": 134555.04,
-  "total_return": 34.56,
-  "cagr": 85.72,
+  "final_value": 134515.68,
+  "total_return": 34.52,
+  "cagr": 84.95,
   "mdd": -5.21,
   "mean_offset_mdd": -8.83,
   "worst_offset_mdd": -13.8,
-  "sharpe": 3.28,
-  "sortino": 5.82,
-  "calmar": 9.71,
-  "win_rate": 52.6,
-  "fees": 6016.49,
+  "sharpe": 3.27,
+  "sortino": 5.8,
+  "calmar": 9.62,
+  "win_rate": 52.3,
+  "fees": 6084.07,
   "positive_offsets": "14/14",
   "ejection_count": 6,
   "rebalance_count": 13,
@@ -372,9 +373,10 @@
       131912.06,
       133452.06,
       133392.74,
-      134555.04
+      134555.04,
+      134515.68
     ],
-    "fees": 6016.49,
+    "fees": 6084.07,
     "rebalance_events": [
       {
         "date": "2026-05-27",
@@ -8908,16 +8910,68 @@
             "return_pct": 0.39
           }
         ]
+      },
+      "2026-11-19": {
+        "total_value": 111055.15,
+        "total_return": 11.06,
+        "cash": 2.0,
+        "holdings": [
+          {
+            "name": "Sentiment Edge",
+            "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 37989.63,
+            "cost": 39366.39,
+            "profit": -1376.76,
+            "return_pct": -3.5
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 25908.62,
+            "cost": 25768.57,
+            "profit": 140.05,
+            "return_pct": 0.54
+          },
+          {
+            "name": "Akka Hyper AI",
+            "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
+            "type": "CORE_SGRA_V35",
+            "amount": 21065.58,
+            "cost": 20749.04,
+            "profit": 316.54,
+            "return_pct": 1.53
+          },
+          {
+            "name": "Symphony",
+            "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+            "type": "CORE_SGRA_V35",
+            "amount": 8577.1,
+            "cost": 8547.6,
+            "profit": 29.5,
+            "return_pct": 0.35
+          },
+          {
+            "name": "22Cap",
+            "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 17512.22,
+            "cost": 17423.78,
+            "profit": 88.44,
+            "return_pct": 0.51
+          }
+        ]
       }
     }
   },
   "benchmark": {
     "name": "Equal-Weight Universe Benchmark (TVL >= $10k)",
-    "final_value": 95603.52,
-    "total_return": -4.4,
-    "cagr": -8.95,
-    "mdd": -18.94,
-    "sharpe": -0.28,
+    "final_value": 95026.91,
+    "total_return": -4.97,
+    "cagr": -10.04,
+    "mdd": -19.37,
+    "sharpe": -0.34,
     "values": [
       100000.0,
       98779.88,
@@ -9094,14 +9148,15 @@
       95652.16,
       95532.91,
       95537.56,
-      95603.52
+      95603.52,
+      95026.91
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 52.6,
-    "cumulative_fees_paid": "$6,016.49",
-    "volatility_drag_reduction": "13.7% p.p. MDD 방어 (개별 오프셋 평균 8.83%)",
-    "alpha_over_benchmark": "+38.95% p.p.",
-    "status": "VALIDATED — 무결 패널(175일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·35% 캡 차감 후 평균 순수익 +34.56% (CAGR +85.7%, Sharpe 3.28, 위상평균 MDD -5.21%, 개별오프셋 평균 MDD -8.83%)"
+    "accuracy_rate": 52.3,
+    "cumulative_fees_paid": "$6,084.07",
+    "volatility_drag_reduction": "14.2% p.p. MDD 방어 (개별 오프셋 평균 8.83%)",
+    "alpha_over_benchmark": "+39.49% p.p.",
+    "status": "VALIDATED — 무결 패널(176일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·35% 캡 차감 후 평균 순수익 +34.52% (CAGR +85.0%, Sharpe 3.27, 위상평균 MDD -5.21%, 개별오프셋 평균 MDD -8.83%)"
   }
 }
