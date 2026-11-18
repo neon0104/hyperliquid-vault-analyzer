@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-09 23:39:29",
-    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
-    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
-    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
-    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
-    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
-    "validation_dataset": "224 days (2026-02-27 ~ 2026-11-09)",
-    "top_discovered_vaults": [
-      {
-        "name": "Gen Wealth Algo",
-        "address": "0xdda7f4805dfdf145a74cd68992d90780f73cf6c7",
-        "data_days": 31,
-        "hurst": 0.447,
-        "sortino": 6.55,
-        "kelly_f": 0.0,
-        "apr_30d": 228.78,
-        "mdd": 6.61,
-        "sharpe": 7.0,
-        "leader_usd": 7868.36
-      },
-      {
-        "name": "Buyback Spread Engine",
-        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
-        "data_days": 159,
-        "hurst": 0.547,
-        "sortino": 2.9,
-        "kelly_f": 7.3,
-        "apr_30d": 255.52,
-        "mdd": 10.24,
-        "sharpe": 8.3,
-        "leader_usd": 10147.44
-      },
-      {
-        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
-        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
-        "data_days": 223,
-        "hurst": 0.542,
-        "sortino": 5.67,
-        "kelly_f": 9.2,
-        "apr_30d": 178.23,
-        "mdd": 20.36,
-        "sharpe": 8.5,
-        "leader_usd": 754255.79
-      },
-      {
-        "name": "Bunny",
-        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
-        "data_days": 13,
-        "hurst": 0.5,
-        "sortino": 50.0,
-        "kelly_f": 27.2,
-        "apr_30d": 3.5,
-        "mdd": 0.04,
-        "sharpe": 11.79,
-        "leader_usd": 2979.92
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-10 03:42:12",
     "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
     "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
@@ -2946,6 +2886,66 @@
     "reference_source": "GitHub: pykalman / R.E. Kalman (1960)",
     "mathematical_formula": "y_t = \\alpha_t + \\beta_t x_t + \\epsilon_t, \\quad \\beta_t = \\beta_{t-1} + \\eta_t",
     "hypothesis": "비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.",
+    "validation_dataset": "233 days (2026-02-27 ~ 2026-11-18)",
+    "top_discovered_vaults": [
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 232,
+        "hurst": 0.734,
+        "sortino": 8.24,
+        "kelly_f": 13.9,
+        "apr_30d": 158.96,
+        "mdd": 12.16,
+        "sharpe": 3.29,
+        "leader_usd": 377188.4
+      },
+      {
+        "name": "Dragon X1",
+        "address": "0x32f739e8acf185ca4b117070babbf66c14c8238f",
+        "data_days": 186,
+        "hurst": 0.672,
+        "sortino": 1.41,
+        "kelly_f": 8.9,
+        "apr_30d": 155.84,
+        "mdd": 22.6,
+        "sharpe": 2.22,
+        "leader_usd": 12970.66
+      },
+      {
+        "name": "[ Systemic Strategies ] L/S Grids",
+        "address": "0x07fd993f0fa3a185f7207adccd29f7a87404689d",
+        "data_days": 232,
+        "hurst": 0.779,
+        "sortino": 0.81,
+        "kelly_f": 1.8,
+        "apr_30d": 136.99,
+        "mdd": 29.64,
+        "sharpe": 2.79,
+        "leader_usd": 774970.96
+      },
+      {
+        "name": "Crypto Trading Channel",
+        "address": "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8",
+        "data_days": 232,
+        "hurst": 0.539,
+        "sortino": 4.46,
+        "kelly_f": 9.3,
+        "apr_30d": 120.92,
+        "mdd": 15.14,
+        "sharpe": 2.57,
+        "leader_usd": 74907.36
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-18 11:39:48",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
     "validation_dataset": "233 days (2026-02-27 ~ 2026-11-18)",
     "top_discovered_vaults": [
       {
