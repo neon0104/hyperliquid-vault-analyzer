@@ -1,6 +1,6 @@
 {
-  "period": "2026-05-27 to 2026-11-19",
-  "days": 176,
+  "period": "2026-05-27 to 2026-11-20",
+  "days": 177,
   "dates": [
     "2026-05-27",
     "2026-05-28",
@@ -178,20 +178,21 @@
     "2026-11-16",
     "2026-11-17",
     "2026-11-18",
-    "2026-11-19"
+    "2026-11-19",
+    "2026-11-20"
   ],
   "initial_capital": 100000.0,
-  "final_value": 134515.68,
-  "total_return": 34.52,
-  "cagr": 84.95,
+  "final_value": 134666.23,
+  "total_return": 34.67,
+  "cagr": 84.74,
   "mdd": -5.21,
   "mean_offset_mdd": -8.83,
   "worst_offset_mdd": -13.8,
   "sharpe": 3.27,
-  "sortino": 5.8,
-  "calmar": 9.62,
-  "win_rate": 52.3,
-  "fees": 6084.07,
+  "sortino": 5.81,
+  "calmar": 9.6,
+  "win_rate": 52.5,
+  "fees": 6096.16,
   "positive_offsets": "14/14",
   "ejection_count": 6,
   "rebalance_count": 13,
@@ -374,9 +375,10 @@
       133452.06,
       133392.74,
       134555.04,
-      134515.68
+      134515.68,
+      134666.23
     ],
-    "fees": 6084.07,
+    "fees": 6096.16,
     "rebalance_events": [
       {
         "date": "2026-05-27",
@@ -8962,16 +8964,68 @@
             "return_pct": 0.51
           }
         ]
+      },
+      "2026-11-20": {
+        "total_value": 111122.75,
+        "total_return": 11.12,
+        "cash": 2.0,
+        "holdings": [
+          {
+            "name": "Sentiment Edge",
+            "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 37934.52,
+            "cost": 39366.39,
+            "profit": -1431.87,
+            "return_pct": -3.64
+          },
+          {
+            "name": "Citadel",
+            "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 25908.43,
+            "cost": 25768.57,
+            "profit": 139.86,
+            "return_pct": 0.54
+          },
+          {
+            "name": "Akka Hyper AI",
+            "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
+            "type": "CORE_SGRA_V35",
+            "amount": 21160.77,
+            "cost": 20749.04,
+            "profit": 411.73,
+            "return_pct": 1.98
+          },
+          {
+            "name": "Symphony",
+            "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+            "type": "CORE_SGRA_V35",
+            "amount": 8565.06,
+            "cost": 8547.6,
+            "profit": 17.46,
+            "return_pct": 0.2
+          },
+          {
+            "name": "22Cap",
+            "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 17551.97,
+            "cost": 17423.78,
+            "profit": 128.19,
+            "return_pct": 0.74
+          }
+        ]
       }
     }
   },
   "benchmark": {
     "name": "Equal-Weight Universe Benchmark (TVL >= $10k)",
-    "final_value": 95026.91,
-    "total_return": -4.97,
-    "cagr": -10.04,
+    "final_value": 95348.7,
+    "total_return": -4.65,
+    "cagr": -9.35,
     "mdd": -19.37,
-    "sharpe": -0.34,
+    "sharpe": -0.3,
     "values": [
       100000.0,
       98779.88,
@@ -9149,14 +9203,15 @@
       95532.91,
       95537.56,
       95603.52,
-      95026.91
+      95026.91,
+      95348.7
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 52.3,
-    "cumulative_fees_paid": "$6,084.07",
+    "accuracy_rate": 52.5,
+    "cumulative_fees_paid": "$6,096.16",
     "volatility_drag_reduction": "14.2% p.p. MDD 방어 (개별 오프셋 평균 8.83%)",
-    "alpha_over_benchmark": "+39.49% p.p.",
-    "status": "VALIDATED — 무결 패널(176일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·35% 캡 차감 후 평균 순수익 +34.52% (CAGR +85.0%, Sharpe 3.27, 위상평균 MDD -5.21%, 개별오프셋 평균 MDD -8.83%)"
+    "alpha_over_benchmark": "+39.32% p.p.",
+    "status": "VALIDATED — 무결 패널(177일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·35% 캡 차감 후 평균 순수익 +34.67% (CAGR +84.7%, Sharpe 3.27, 위상평균 MDD -5.21%, 개별오프셋 평균 MDD -8.83%)"
   }
 }

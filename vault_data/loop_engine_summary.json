@@ -1,55 +1,55 @@
 {
-  "timestamp": "2026-11-19T23:39:47.663571",
-  "latest_data_date": "2026-11-19",
+  "timestamp": "2026-11-20T03:41:51.470351",
+  "latest_data_date": "2026-11-20",
   "self_evaluation_24h": {
-    "evaluated_date": "2026-11-19",
-    "referenced_date": "2026-11-18",
-    "portfolio_24h_profit_usd": -54.22,
-    "portfolio_24h_return_pct": -0.0542,
+    "evaluated_date": "2026-11-20",
+    "referenced_date": "2026-11-19",
+    "portfolio_24h_profit_usd": 106.46,
+    "portfolio_24h_return_pct": 0.1065,
     "evaluated_holdings": [
       {
         "vault_name": "Akka Hyper AI",
         "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
         "allocated_usd": 35000.0,
-        "actual_24h_gain_usd": -72.11,
-        "actual_24h_return_pct": -0.206
+        "actual_24h_gain_usd": 175.43,
+        "actual_24h_return_pct": 0.5012
       },
       {
         "vault_name": "Symphony",
         "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
-        "allocated_usd": 17345.09,
-        "actual_24h_gain_usd": -5.92,
-        "actual_24h_return_pct": -0.0341
-      },
-      {
-        "vault_name": "acat.work",
-        "address": "0x8813dba4eb786d61de01d5a53bdd793fb33dfea1",
-        "allocated_usd": 28284.64,
-        "actual_24h_gain_usd": -7.76,
-        "actual_24h_return_pct": -0.0274
+        "allocated_usd": 24151.26,
+        "actual_24h_gain_usd": -37.65,
+        "actual_24h_return_pct": -0.1559
       },
       {
         "vault_name": "WDA | MCLS",
         "address": "0x73e5c11a8a9820afb1a25aa89787ba025b84e60e",
-        "allocated_usd": 19370.27,
-        "actual_24h_gain_usd": 31.55,
-        "actual_24h_return_pct": 0.1629
+        "allocated_usd": 19392.88,
+        "actual_24h_gain_usd": -0.2,
+        "actual_24h_return_pct": -0.001
+      },
+      {
+        "vault_name": "Sentiment Edge",
+        "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+        "allocated_usd": 21455.86,
+        "actual_24h_gain_usd": -31.13,
+        "actual_24h_return_pct": -0.1451
       }
     ]
   },
   "champion_model": {
     "strategy_name": "SGRA+ v3.5 High-Alpha Shield (목표 MDD 8.9%)",
     "description": "투트랙 고스킨(>=30%/$20k OR $40k/12%) · 핵심 4슬롯(35%) · 180d 체질개선 · 실질붕괴 비상가드",
-    "total_return_pct": 24.32,
-    "phase_min_return_pct": 1.01,
-    "phase_max_return_pct": 71.9,
+    "total_return_pct": 25.02,
+    "phase_min_return_pct": 2.04,
+    "phase_max_return_pct": 72.2,
     "positive_offsets": "14/14",
-    "cagr_pct": 62.02,
-    "sharpe_ratio": 1.7,
-    "sortino_ratio": 2.73,
+    "cagr_pct": 63.23,
+    "sharpe_ratio": 1.75,
+    "sortino_ratio": 2.79,
     "max_drawdown_pct": 11.73,
-    "calmar_ratio": 5.29,
-    "final_capital": 124315.16
+    "calmar_ratio": 5.39,
+    "final_capital": 125024.65
   },
   "recommended_portfolio": [
     {
@@ -57,112 +57,112 @@
       "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
       "allocation_pct": 35.0,
       "allocation_usd": 35000.0,
-      "apr_30d": -19.42,
+      "apr_30d": -11.48,
       "mdd": 5.33,
-      "sharpe_ratio": 1.81,
-      "leader_equity_usd": 89030.02
+      "sharpe_ratio": 1.93,
+      "leader_equity_usd": 89492.82
     },
     {
       "name": "Symphony",
       "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
-      "allocation_pct": 24.15,
-      "allocation_usd": 24151.26,
-      "apr_30d": -22.36,
+      "allocation_pct": 23.9,
+      "allocation_usd": 23903.23,
+      "apr_30d": -20.1,
       "mdd": 13.68,
-      "sharpe_ratio": 2.94,
-      "leader_equity_usd": 225352.26
+      "sharpe_ratio": 2.92,
+      "leader_equity_usd": 225627.32
     },
     {
-      "name": "Sentiment Edge",
-      "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
-      "allocation_pct": 21.46,
-      "allocation_usd": 21455.86,
-      "apr_30d": -28.31,
-      "mdd": 22.27,
-      "sharpe_ratio": 2.97,
-      "leader_equity_usd": 25403.68
+      "name": "Loop Fund",
+      "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+      "allocation_pct": 21.72,
+      "allocation_usd": 21715.48,
+      "apr_30d": -20.0,
+      "mdd": 63.6,
+      "sharpe_ratio": 3.26,
+      "leader_equity_usd": 88247.39
     },
     {
       "name": "WDA | MCLS",
       "address": "0x73e5c11a8a9820afb1a25aa89787ba025b84e60e",
-      "allocation_pct": 19.39,
-      "allocation_usd": 19392.88,
-      "apr_30d": -7.75,
+      "allocation_pct": 19.38,
+      "allocation_usd": 19381.28,
+      "apr_30d": -5.79,
       "mdd": 18.74,
       "sharpe_ratio": 0.8,
-      "leader_equity_usd": 18165.02
+      "leader_equity_usd": 18154.16
     }
   ],
   "all_tournament_results": [
     {
       "strategy_name": "SGRA+ v3.5 High-Alpha Shield (목표 MDD 8.9%)",
       "description": "투트랙 고스킨(>=30%/$20k OR $40k/12%) · 핵심 4슬롯(35%) · 180d 체질개선 · 실질붕괴 비상가드",
-      "total_return_pct": 24.32,
-      "phase_min_return_pct": 1.01,
-      "phase_max_return_pct": 71.9,
+      "total_return_pct": 25.02,
+      "phase_min_return_pct": 2.04,
+      "phase_max_return_pct": 72.2,
       "positive_offsets": "14/14",
-      "cagr_pct": 62.02,
-      "sharpe_ratio": 1.7,
-      "sortino_ratio": 2.73,
+      "cagr_pct": 63.23,
+      "sharpe_ratio": 1.75,
+      "sortino_ratio": 2.79,
       "max_drawdown_pct": 11.73,
-      "calmar_ratio": 5.29,
-      "final_capital": 124315.16
+      "calmar_ratio": 5.39,
+      "final_capital": 125024.65
     },
     {
       "strategy_name": "Dynamic Dual Momentum + Volatility Filter",
       "description": "단기 7일 가속도와 중기 30일 APR 모멘텀 추격 + 변동성 역가중",
-      "total_return_pct": -5.97,
-      "phase_min_return_pct": -39.28,
-      "phase_max_return_pct": 22.05,
+      "total_return_pct": -6.05,
+      "phase_min_return_pct": -39.25,
+      "phase_max_return_pct": 21.81,
       "positive_offsets": "4/14",
-      "cagr_pct": -8.97,
+      "cagr_pct": -9.13,
       "sharpe_ratio": -0.18,
-      "sortino_ratio": 0.04,
+      "sortino_ratio": 0.03,
       "max_drawdown_pct": 19.47,
-      "calmar_ratio": -0.46,
-      "final_capital": 94031.22
+      "calmar_ratio": -0.47,
+      "final_capital": 93952.2
     },
     {
       "strategy_name": "Fractional Kelly 0.3x Optimizer",
       "description": "승률과 손익비를 최적화한 0.3x 부분 켈리 비중 배분",
-      "total_return_pct": -3.43,
-      "phase_min_return_pct": -21.59,
-      "phase_max_return_pct": 2.6,
+      "total_return_pct": -3.29,
+      "phase_min_return_pct": -21.34,
+      "phase_max_return_pct": 2.62,
       "positive_offsets": "3/14",
-      "cagr_pct": -6.59,
-      "sharpe_ratio": -0.22,
-      "sortino_ratio": -0.23,
+      "cagr_pct": -6.29,
+      "sharpe_ratio": -0.19,
+      "sortino_ratio": -0.2,
       "max_drawdown_pct": 12.27,
-      "calmar_ratio": -0.54,
-      "final_capital": 96570.35
+      "calmar_ratio": -0.51,
+      "final_capital": 96707.87
     },
     {
       "strategy_name": "Mean-Reversion Dip-Buyer Alpha",
       "description": "우량 볼트의 일시적 -1%~-22% 낙폭 구간 역발상 매수",
-      "total_return_pct": -3.23,
-      "phase_min_return_pct": -7.74,
-      "phase_max_return_pct": 5.94,
+      "total_return_pct": -3.54,
+      "phase_min_return_pct": -8.31,
+      "phase_max_return_pct": 5.18,
       "positive_offsets": "1/14",
-      "cagr_pct": -6.46,
-      "sharpe_ratio": -0.24,
-      "sortino_ratio": -0.3,
+      "cagr_pct": -7.07,
+      "sharpe_ratio": -0.28,
+      "sortino_ratio": -0.36,
       "max_drawdown_pct": 11.15,
-      "calmar_ratio": -0.58,
-      "final_capital": 96772.06
+      "calmar_ratio": -0.63,
+      "final_capital": 96455.38
     },
     {
       "strategy_name": "Barbell Skin-In-Game Heavy (60:40)",
       "description": "리더 달러 예치금(log USD) + 초저낙폭 Core 60% + 고수익 Satellite 40%",
-      "total_return_pct": -6.34,
-      "phase_min_return_pct": -16.09,
-      "phase_max_return_pct": 0.18,
+      "total_return_pct": -6.59,
+      "phase_min_return_pct": -16.44,
+      "phase_max_return_pct": 0.32,
       "positive_offsets": "1/14",
-      "cagr_pct": -12.53,
-      "sharpe_ratio": -0.58,
-      "sortino_ratio": -0.7,
+      "cagr_pct": -12.94,
+      "sharpe_ratio": -0.61,
+      "sortino_ratio": -0.73,
       "max_drawdown_pct": 12.6,
-      "calmar_ratio": -0.99,
-      "final_capital": 93662.35
+      "calmar_ratio": -1.03,
+      "final_capital": 93413.98
     }
   ]
 }

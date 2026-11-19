@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-11 15:39:38",
-    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
-    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
-    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
-    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
-    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
-    "validation_dataset": "226 days (2026-02-27 ~ 2026-11-11)",
-    "top_discovered_vaults": [
-      {
-        "name": "Gen Wealth Algo",
-        "address": "0xdda7f4805dfdf145a74cd68992d90780f73cf6c7",
-        "data_days": 33,
-        "hurst": 0.466,
-        "sortino": 5.6,
-        "kelly_f": 0.0,
-        "apr_30d": 207.42,
-        "mdd": 6.86,
-        "sharpe": 6.72,
-        "leader_usd": 7709.78
-      },
-      {
-        "name": "Buyback Spread Engine",
-        "address": "0xce71894b42f5c31a6ae6ca4fb77441c68ab15086",
-        "data_days": 161,
-        "hurst": 0.543,
-        "sortino": 2.69,
-        "kelly_f": 3.8,
-        "apr_30d": 211.2,
-        "mdd": 11.99,
-        "sharpe": 7.68,
-        "leader_usd": 9645.94
-      },
-      {
-        "name": "Bunny",
-        "address": "0x5ce0ce4387679de0335a3e8a1c9a7abb4f150a71",
-        "data_days": 13,
-        "hurst": 0.5,
-        "sortino": 50.0,
-        "kelly_f": 30.0,
-        "apr_30d": 3.67,
-        "mdd": 0.07,
-        "sharpe": 11.78,
-        "leader_usd": 2980.64
-      },
-      {
-        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾",
-        "address": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
-        "data_days": 225,
-        "hurst": 0.601,
-        "sortino": 5.16,
-        "kelly_f": 6.9,
-        "apr_30d": 152.99,
-        "mdd": 20.36,
-        "sharpe": 8.18,
-        "leader_usd": 700012.54
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-11 23:39:40",
     "topic_id": "TOPIC_HRP_HIERARCHICAL",
     "topic_title": "계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분",
@@ -2995,6 +2935,66 @@
         "mdd": 29.74,
         "sharpe": 2.11,
         "leader_usd": 12295.38
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-20 03:41:54",
+    "topic_id": "TOPIC_GARCH_VOLATILITY",
+    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
+    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
+    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
+    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
+    "validation_dataset": "235 days (2026-02-27 ~ 2026-11-20)",
+    "top_discovered_vaults": [
+      {
+        "name": "[Bee] Line",
+        "address": "0xc360c0e450ea1347efe35b01c4c6d500e05aeb30",
+        "data_days": 78,
+        "hurst": 0.465,
+        "sortino": -0.25,
+        "kelly_f": 9.5,
+        "apr_30d": 236.93,
+        "mdd": 25.63,
+        "sharpe": 4.51,
+        "leader_usd": 2219.06
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 234,
+        "hurst": 0.768,
+        "sortino": 8.31,
+        "kelly_f": 14.8,
+        "apr_30d": 151.18,
+        "mdd": 12.16,
+        "sharpe": 3.26,
+        "leader_usd": 378939.97
+      },
+      {
+        "name": "Dragon X1",
+        "address": "0x32f739e8acf185ca4b117070babbf66c14c8238f",
+        "data_days": 188,
+        "hurst": 0.599,
+        "sortino": 1.57,
+        "kelly_f": 12.2,
+        "apr_30d": 163.36,
+        "mdd": 22.6,
+        "sharpe": 2.25,
+        "leader_usd": 13133.69
+      },
+      {
+        "name": "L/S Momentum Strategy",
+        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
+        "data_days": 236,
+        "hurst": 0.738,
+        "sortino": 1.59,
+        "kelly_f": 8.3,
+        "apr_30d": 120.71,
+        "mdd": 29.74,
+        "sharpe": 2.08,
+        "leader_usd": 12226.5
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
