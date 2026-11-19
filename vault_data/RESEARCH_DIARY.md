@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-19 23:39:49
+### 🔬 주제: **계층적 위험 패리티(Hierarchical Risk Parity, HRP) 머신러닝 군집화 자산 배분**
+* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Marcos Lopez de Prado (2016)`
+* **수학적 모델**: $w_i = w_i \times \frac{V_i^{-1}}{\sum V_j^{-1}}$
+* **핵심 가설**: 전통적 공분산 역행렬의 수치적 불안정성을 극복하기 위해, 머신러닝 트리 군집화(Dendrogram)를 통해 상호 상관관계가 낮은 볼트들로 포트폴리오의 분산 효과를 극대화함.
+* **검증 데이터**: `234 days (2026-02-27 ~ 2026-11-19)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **[Bee] Line**: Hurst `0.537` | Sortino `-0.28` | Kelly `9.9%` | 30일 APR `248.6%` | Sharpe `4.47`
+  - **+convexity**: Hurst `0.751` | Sortino `8.29` | Kelly `13.9%` | 30일 APR `166.39%` | Sharpe `3.3`
+  - **Dragon X1**: Hurst `0.694` | Sortino `1.55` | Kelly `11.2%` | 30일 APR `152.44%` | Sharpe `2.25`
+  - **L/S Momentum Strategy**: Hurst `0.654` | Sortino `1.64` | Kelly `9.5%` | 30일 APR `125.79%` | Sharpe `2.11`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-19 19:39:43
 ### 🔬 주제: **알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍**
 * **레퍼런스 출처**: `GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)`
@@ -236,23 +253,6 @@
   - **+convexity**: Hurst `0.828` | Sortino `8.12` | Kelly `13.0%` | 30일 APR `148.16%` | Sharpe `3.23`
   - **Hindenburg Short Alpha**: Hurst `0.809` | Sortino `6.83` | Kelly `1.6%` | 30일 APR `15.63%` | Sharpe `2.9`
   - **[ Systemic Strategies ] L/S Grids**: Hurst `0.752` | Sortino `0.72` | Kelly `2.4%` | 30일 APR `173.54%` | Sharpe `2.77`
-  - **Bunny**: Hurst `0.711` | Sortino `38.34` | Kelly `20.9%` | 30일 APR `4.32%` | Sharpe `8.12`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-17 11:39:53
-### 🔬 주제: **GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지**
-* **레퍼런스 출처**: `GitHub: arch / Tim Bollerslev (1986)`
-* **수학적 모델**: $\sigma_t^2 = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2$
-* **핵심 가설**: 볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.
-* **검증 데이터**: `232 days (2026-02-27 ~ 2026-11-17)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **[ Systemic Strategies ] L/S Grids**: Hurst `0.752` | Sortino `0.72` | Kelly `2.4%` | 30일 APR `173.54%` | Sharpe `2.77`
-  - **+convexity**: Hurst `0.828` | Sortino `8.12` | Kelly `13.0%` | 30일 APR `148.16%` | Sharpe `3.23`
-  - **Dragon X1**: Hurst `0.649` | Sortino `1.21` | Kelly `8.5%` | 30일 APR `147.68%` | Sharpe `2.05`
   - **Bunny**: Hurst `0.711` | Sortino `38.34` | Kelly `20.9%` | 30일 APR `4.32%` | Sharpe `8.12`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
