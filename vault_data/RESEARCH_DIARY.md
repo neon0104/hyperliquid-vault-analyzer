@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-20 11:39:30
+### 🔬 주제: **하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화**
+* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Frank Sortino (1994)`
+* **수학적 모델**: $Sortino = \frac{R_p - R_f}{\sqrt{\frac{1}{N}\sum_{t=1}^N \min(0, R_t - MAR)^2}}$
+* **핵심 가설**: 상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.
+* **검증 데이터**: `235 days (2026-02-27 ~ 2026-11-20)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **+convexity**: Hurst `0.768` | Sortino `8.31` | Kelly `14.8%` | 30일 APR `151.18%` | Sharpe `3.26`
+  - **22Cap**: Hurst `0.757` | Sortino `7.3` | Kelly `4.8%` | 30일 APR `8.55%` | Sharpe `3.79`
+  - **V4 Alpha Quantum**: Hurst `0.632` | Sortino `7.12` | Kelly `10.7%` | 30일 APR `63.96%` | Sharpe `2.67`
+  - **Passivbot Canon**: Hurst `0.363` | Sortino `6.86` | Kelly `13.3%` | 30일 APR `62.04%` | Sharpe `6.17`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-20 07:39:43
 ### 🔬 주제: **허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별**
 * **레퍼런스 출처**: `GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)`
@@ -237,23 +254,6 @@
   - **Dragon X1**: Hurst `0.672` | Sortino `1.41` | Kelly `8.9%` | 30일 APR `155.84%` | Sharpe `2.22`
   - **[ Systemic Strategies ] L/S Grids**: Hurst `0.779` | Sortino `0.81` | Kelly `1.8%` | 30일 APR `136.99%` | Sharpe `2.79`
   - **Crypto Trading Channel**: Hurst `0.539` | Sortino `4.46` | Kelly `9.3%` | 30일 APR `120.92%` | Sharpe `2.57`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-17 23:39:51
-### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
-* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
-* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
-* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
-* **검증 데이터**: `232 days (2026-02-27 ~ 2026-11-17)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Bunny**: Hurst `0.711` | Sortino `38.34` | Kelly `20.9%` | 30일 APR `4.32%` | Sharpe `8.12`
-  - **FuturAI Labs - High Sharpe, Low Volatili**: Hurst `0.54` | Sortino `4.54` | Kelly `15.5%` | 30일 APR `18.51%` | Sharpe `8.61`
-  - **Jay Pennies to Jay Dollars**: Hurst `0.311` | Sortino `5.34` | Kelly `13.6%` | 30일 APR `8.59%` | Sharpe `1.79`
-  - **Passivbot Canon**: Hurst `0.431` | Sortino `6.69` | Kelly `13.4%` | 30일 APR `65.85%` | Sharpe `6.11`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
