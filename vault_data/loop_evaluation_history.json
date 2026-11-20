@@ -1,55 +1,5 @@
 [
   {
-    "evaluated_date": "2026-09-22",
-    "referenced_date": "2026-09-21",
-    "portfolio_24h_profit_usd": 628.81,
-    "portfolio_24h_return_pct": 0.6288,
-    "evaluated_holdings": [
-      {
-        "vault_name": "PF1",
-        "address": "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": 54.74,
-        "actual_24h_return_pct": 0.2737
-      },
-      {
-        "vault_name": "FuturAI Labs - High Sharpe, Low Volatili",
-        "address": "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": -0.35,
-        "actual_24h_return_pct": -0.0018
-      },
-      {
-        "vault_name": "FuturAI Labs - High Sharpe, Medium Volat",
-        "address": "0x53375ca9a649f337d83d0834fec0db97640a2a06",
-        "allocated_usd": 20000.0,
-        "actual_24h_gain_usd": -0.39,
-        "actual_24h_return_pct": -0.0019
-      },
-      {
-        "vault_name": "Citadel",
-        "address": "0xda51323fe9800c8365646ad5c7ade0dd17fdc167",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": -0.59,
-        "actual_24h_return_pct": -0.0045
-      },
-      {
-        "vault_name": "Brob",
-        "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 568.77,
-        "actual_24h_return_pct": 4.2658
-      },
-      {
-        "vault_name": "Stratwise Multi-Asset Public",
-        "address": "0x0ff219ac20596b457558341bc410bc7a08a1394c",
-        "allocated_usd": 13333.33,
-        "actual_24h_gain_usd": 6.64,
-        "actual_24h_return_pct": 0.0498
-      }
-    ]
-  },
-  {
     "evaluated_date": "2026-09-23",
     "referenced_date": "2026-09-22",
     "portfolio_24h_profit_usd": 776.46,
@@ -2877,6 +2827,42 @@
         "allocated_usd": 21455.86,
         "actual_24h_gain_usd": -31.13,
         "actual_24h_return_pct": -0.1451
+      }
+    ]
+  },
+  {
+    "evaluated_date": "2026-11-21",
+    "referenced_date": "2026-11-20",
+    "portfolio_24h_profit_usd": -3270.78,
+    "portfolio_24h_return_pct": -3.2708,
+    "evaluated_holdings": [
+      {
+        "vault_name": "Akka Hyper AI",
+        "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
+        "allocated_usd": 35000.0,
+        "actual_24h_gain_usd": 212.29,
+        "actual_24h_return_pct": 0.6065
+      },
+      {
+        "vault_name": "Symphony",
+        "address": "0x9114a5161f18739ced233190861ea275c8b3a99b",
+        "allocated_usd": 23903.23,
+        "actual_24h_gain_usd": 30.67,
+        "actual_24h_return_pct": 0.1283
+      },
+      {
+        "vault_name": "Loop Fund",
+        "address": "0xfeab64de8cdf9dcebc0f49812499e396273efc06",
+        "allocated_usd": 21715.48,
+        "actual_24h_gain_usd": -3345.82,
+        "actual_24h_return_pct": -15.4075
+      },
+      {
+        "vault_name": "WDA | MCLS",
+        "address": "0x73e5c11a8a9820afb1a25aa89787ba025b84e60e",
+        "allocated_usd": 19381.28,
+        "actual_24h_gain_usd": -167.91,
+        "actual_24h_return_pct": -0.8664
       }
     ]
   }
