@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-21 23:39:45
+### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
+* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
+* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
+* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
+* **검증 데이터**: `236 days (2026-02-27 ~ 2026-11-21)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **+convexity**: Hurst `0.622` | Sortino `9.38` | Kelly `16.5%` | 30일 APR `191.48%` | Sharpe `3.61`
+  - **Jay Pennies to Jay Dollars**: Hurst `0.444` | Sortino `5.36` | Kelly `16.4%` | 30일 APR `9.21%` | Sharpe `1.79`
+  - **V4 Alpha Quantum**: Hurst `0.52` | Sortino `9.42` | Kelly `16.0%` | 30일 APR `199.01%` | Sharpe `3.21`
+  - **Bunny**: Hurst `0.501` | Sortino `4.46` | Kelly `14.9%` | 30일 APR `3.61%` | Sharpe `8.34`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-21 19:39:48
 ### 🔬 주제: **하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화**
 * **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Frank Sortino (1994)`
@@ -230,23 +247,6 @@
 * **레퍼런스 출처**: `GitHub: pykalman / R.E. Kalman (1960)`
 * **수학적 모델**: $y_t = \alpha_t + \beta_t x_t + \epsilon_t, \quad \beta_t = \beta_{t-1} + \eta_t$
 * **핵심 가설**: 비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.
-* **검증 데이터**: `234 days (2026-02-27 ~ 2026-11-19)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **[Bee] Line**: Hurst `0.537` | Sortino `-0.28` | Kelly `9.9%` | 30일 APR `248.6%` | Sharpe `4.47`
-  - **+convexity**: Hurst `0.751` | Sortino `8.29` | Kelly `13.9%` | 30일 APR `166.39%` | Sharpe `3.3`
-  - **Dragon X1**: Hurst `0.694` | Sortino `1.55` | Kelly `11.2%` | 30일 APR `152.44%` | Sharpe `2.25`
-  - **L/S Momentum Strategy**: Hurst `0.654` | Sortino `1.64` | Kelly `9.5%` | 30일 APR `125.79%` | Sharpe `2.11`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-19 11:39:39
-### 🔬 주제: **Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진**
-* **레퍼런스 출처**: `GitHub: skfolio / Shadwick & Keating (2002)`
-* **수학적 모델**: $\Omega(L) = \frac{\int_L^\infty (1-F(x))dx}{\int_{-\infty}^L F(x)dx}$
-* **핵심 가설**: MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.
 * **검증 데이터**: `234 days (2026-02-27 ~ 2026-11-19)`
 
 #### 🧪 실증 발견 및 온체인 볼트 분석 결과:
