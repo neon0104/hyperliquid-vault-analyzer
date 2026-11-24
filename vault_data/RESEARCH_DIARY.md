@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-24 11:39:37
+### 🔬 주제: **하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화**
+* **레퍼런스 출처**: `GitHub: Riskfolio-Lib / Frank Sortino (1994)`
+* **수학적 모델**: $Sortino = \frac{R_p - R_f}{\sqrt{\frac{1}{N}\sum_{t=1}^N \min(0, R_t - MAR)^2}}$
+* **핵심 가설**: 상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.
+* **검증 데이터**: `239 days (2026-02-27 ~ 2026-11-24)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Agent RockSteady**: Hurst `0.685` | Sortino `22.32` | Kelly `0.0%` | 30일 APR `24.72%` | Sharpe `2.31`
+  - **Bunny**: Hurst `0.694` | Sortino `8.02` | Kelly `19.2%` | 30일 APR `6.37%` | Sharpe `8.34`
+  - **+convexity**: Hurst `0.754` | Sortino `8.0` | Kelly `13.0%` | 30일 APR `158.36%` | Sharpe `3.41`
+  - **22Cap**: Hurst `0.428` | Sortino `7.27` | Kelly `3.6%` | 30일 APR `7.53%` | Sharpe `3.83`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-24 07:39:45
 ### 🔬 주제: **허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별**
 * **레퍼런스 출처**: `GitHub: pyquant / Benoit Mandelbrot (Fractal Market Hypothesis)`
@@ -237,23 +254,6 @@
   - **Dragon X1**: Hurst `0.727` | Sortino `2.31` | Kelly `13.6%` | 30일 APR `217.2%` | Sharpe `2.74`
   - **+convexity**: Hurst `0.764` | Sortino `8.43` | Kelly `14.2%` | 30일 APR `165.02%` | Sharpe `3.45`
   - **[Bee] Line**: Hurst `0.453` | Sortino `-0.48` | Kelly `3.4%` | 30일 APR `153.49%` | Sharpe `3.96`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-21 23:39:45
-### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
-* **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
-* **수학적 모델**: $f^* = \gamma \times \frac{p(b+1) - 1}{b} \quad (\gamma = 0.30)$
-* **핵심 가설**: 각 볼트의 최근 30일 승률(p)과 손익비(b)를 실시간 추정하여, 전체 자산의 파산 확률을 0%로 유지하면서 장기 복리 성장률을 극대화하는 수학적 최적 비중을 도출함.
-* **검증 데이터**: `236 days (2026-02-27 ~ 2026-11-21)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **+convexity**: Hurst `0.622` | Sortino `9.38` | Kelly `16.5%` | 30일 APR `191.48%` | Sharpe `3.61`
-  - **Jay Pennies to Jay Dollars**: Hurst `0.444` | Sortino `5.36` | Kelly `16.4%` | 30일 APR `9.21%` | Sharpe `1.79`
-  - **V4 Alpha Quantum**: Hurst `0.52` | Sortino `9.42` | Kelly `16.0%` | 30일 APR `199.01%` | Sharpe `3.21`
-  - **Bunny**: Hurst `0.501` | Sortino `4.46` | Kelly `14.9%` | 30일 APR `3.61%` | Sharpe `8.34`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
