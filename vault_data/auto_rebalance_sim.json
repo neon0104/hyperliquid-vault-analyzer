@@ -1,6 +1,6 @@
 {
-  "period": "2026-05-27 to 2026-11-24",
-  "days": 181,
+  "period": "2026-05-27 to 2026-11-25",
+  "days": 182,
   "dates": [
     "2026-05-27",
     "2026-05-28",
@@ -183,23 +183,24 @@
     "2026-11-21",
     "2026-11-22",
     "2026-11-23",
-    "2026-11-24"
+    "2026-11-24",
+    "2026-11-25"
   ],
   "initial_capital": 100000.0,
-  "final_value": 141096.69,
-  "total_return": 41.1,
-  "cagr": 100.22,
+  "final_value": 141549.97,
+  "total_return": 41.55,
+  "cagr": 100.75,
   "mdd": -4.98,
   "mean_offset_mdd": -7.06,
   "worst_offset_mdd": -11.75,
-  "sharpe": 3.53,
-  "sortino": 6.87,
-  "calmar": 14.19,
-  "win_rate": 52.5,
-  "fees": 6680.5,
+  "sharpe": 3.56,
+  "sortino": 6.92,
+  "calmar": 14.26,
+  "win_rate": 52.7,
+  "fees": 6686.98,
   "positive_offsets": "14/14",
   "ejection_count": 5,
-  "rebalance_count": 13,
+  "rebalance_count": 14,
   "strategy": {
     "name": "🏆 SGRA+ v3.5 High-Alpha Shield (목표 MDD 8.9% · 4슬롯 35% · 실질붕괴 비상가드 · 10% HWM · 14-Offset 전위상 평균)",
     "values": [
@@ -384,9 +385,10 @@
       140557.63,
       141304.89,
       141396.2,
-      141096.69
+      141096.69,
+      141549.97
     ],
-    "fees": 6680.5,
+    "fees": 6686.98,
     "rebalance_events": [
       {
         "date": "2026-05-27",
@@ -533,6 +535,17 @@
           "Akka Hyper AI": "16.4%",
           "22Cap": "16.4%",
           "Edge & Hedge": "16.4%"
+        }
+      },
+      {
+        "date": "2026-11-25",
+        "reason": "🔄 14일 정기 SGRA+ v3.5 4슬롯·HWM 보존 델타 리밸런싱 (BEAR)",
+        "details": "보유 4개 볼트 | 현금 예비금 0.5% | 수수료/슬리피지 $90.64",
+        "allocations": {
+          "Sentiment Edge": "34.5%",
+          "Akka Hyper AI": "22.9%",
+          "22Cap": "22.9%",
+          "WDA | MCLS": "19.3%"
         }
       }
     ],
@@ -9139,16 +9152,59 @@
             "return_pct": 0.79
           }
         ]
+      },
+      "2026-11-25": {
+        "total_value": 131740.33,
+        "total_return": 31.74,
+        "cash": 707.67,
+        "holdings": [
+          {
+            "name": "Sentiment Edge",
+            "address": "0x026a2e082a03200a00a97974b7bf7753ce33540f",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 45408.91,
+            "cost": 46738.81,
+            "profit": -1329.9,
+            "return_pct": -2.85
+          },
+          {
+            "name": "Akka Hyper AI",
+            "address": "0x0e008684ae576f280c5426a89d3f5e1da1fc7398",
+            "type": "CORE_SGRA_V35",
+            "amount": 30129.84,
+            "cost": 29653.64,
+            "profit": 476.2,
+            "return_pct": 1.61
+          },
+          {
+            "name": "22Cap",
+            "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
+            "type": "ANCHOR_LOW_BETA",
+            "amount": 30129.7,
+            "cost": 29927.7,
+            "profit": 202.0,
+            "return_pct": 0.67
+          },
+          {
+            "name": "WDA | MCLS",
+            "address": "0x73e5c11a8a9820afb1a25aa89787ba025b84e60e",
+            "type": "CORE_SGRA_V35",
+            "amount": 25364.2,
+            "cost": 25364.2,
+            "profit": 0.0,
+            "return_pct": 0.0
+          }
+        ]
       }
     }
   },
   "benchmark": {
     "name": "Equal-Weight Universe Benchmark (TVL >= $10k)",
-    "final_value": 93438.86,
-    "total_return": -6.56,
-    "cagr": -12.79,
+    "final_value": 91306.59,
+    "total_return": -8.69,
+    "cagr": -16.67,
     "mdd": -24.05,
-    "sharpe": -0.42,
+    "sharpe": -0.6,
     "values": [
       100000.0,
       98779.88,
@@ -9331,14 +9387,15 @@
       89508.06,
       90842.76,
       91750.98,
-      93438.86
+      93438.86,
+      91306.59
     ]
   },
   "prediction_inspector": {
-    "accuracy_rate": 52.5,
-    "cumulative_fees_paid": "$6,680.50",
+    "accuracy_rate": 52.7,
+    "cumulative_fees_paid": "$6,686.98",
     "volatility_drag_reduction": "19.1% p.p. MDD 방어 (개별 오프셋 평균 7.06%)",
-    "alpha_over_benchmark": "+47.66% p.p.",
-    "status": "VALIDATED — 무결 패널(181일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·35% 캡 차감 후 평균 순수익 +41.10% (CAGR +100.2%, Sharpe 3.53, 위상평균 MDD -4.98%, 개별오프셋 평균 MDD -7.06%)"
+    "alpha_over_benchmark": "+50.24% p.p.",
+    "status": "VALIDATED — 무결 패널(182일, 14개 전 오프셋 14/14 흑자) 10% HWM 수수료·5bps 슬리피지·24h 락업·35% 캡 차감 후 평균 순수익 +41.55% (CAGR +100.7%, Sharpe 3.56, 위상평균 MDD -4.98%, 개별오프셋 평균 MDD -7.06%)"
   }
 }
