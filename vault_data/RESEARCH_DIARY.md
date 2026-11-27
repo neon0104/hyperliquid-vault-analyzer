@@ -4,6 +4,23 @@
 
 ---
 
+## 📅 연구 기록: 2026-11-27 11:39:38
+### 🔬 주제: **Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진**
+* **레퍼런스 출처**: `GitHub: skfolio / Shadwick & Keating (2002)`
+* **수학적 모델**: $\Omega(L) = \frac{\int_L^\infty (1-F(x))dx}{\int_{-\infty}^L F(x)dx}$
+* **핵심 가설**: MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.
+* **검증 데이터**: `242 days (2026-02-27 ~ 2026-11-27)`
+
+#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
+  - **Cold Process**: Hurst `0.361` | Sortino `3.96` | Kelly `21.1%` | 30일 APR `204.43%` | Sharpe `5.29`
+  - **Dragon X1**: Hurst `0.709` | Sortino `1.92` | Kelly `9.5%` | 30일 APR `196.72%` | Sharpe `2.45`
+  - **+convexity**: Hurst `0.685` | Sortino `8.08` | Kelly `13.0%` | 30일 APR `154.1%` | Sharpe `3.39`
+  - **⚛️ Quantum Capital OFFICIAL Algo Vault ⚛**: Hurst `0.629` | Sortino `4.02` | Kelly `15.4%` | 30일 APR `131.58%` | Sharpe `1.88`
+
+**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
+
+---
+
 ## 📅 연구 기록: 2026-11-27 07:39:39
 ### 🔬 주제: **0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징**
 * **레퍼런스 출처**: `GitHub: KellyPortfolio / J.L. Kelly (1956)`
@@ -237,23 +254,6 @@
   - **Cold Process**: Hurst `0.512` | Sortino `3.4` | Kelly `19.9%` | 30일 APR `184.39%` | Sharpe `4.87`
   - **+convexity**: Hurst `0.789` | Sortino `8.18` | Kelly `13.1%` | 30일 APR `160.94%` | Sharpe `3.43`
   - **L/S Momentum Strategy**: Hurst `0.616` | Sortino `1.72` | Kelly `7.9%` | 30일 APR `141.09%` | Sharpe `2.15`
-
-**💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
-
----
-
-## 📅 연구 기록: 2026-11-24 23:39:47
-### 🔬 주제: **칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링**
-* **레퍼런스 출처**: `GitHub: pykalman / R.E. Kalman (1960)`
-* **수학적 모델**: $y_t = \alpha_t + \beta_t x_t + \epsilon_t, \quad \beta_t = \beta_{t-1} + \eta_t$
-* **핵심 가설**: 비트코인(BTC) 가격 변동에 수동적으로 끌려가는 '가짜 알파' 볼트를 제거하고, 시장과 무관하게 독립적 수익을 창출하는 '순수 알파(Pure Alpha)' 리더 볼트를 필터링함.
-* **검증 데이터**: `239 days (2026-02-27 ~ 2026-11-24)`
-
-#### 🧪 실증 발견 및 온체인 볼트 분석 결과:
-  - **Dragon X1**: Hurst `0.74` | Sortino `1.82` | Kelly `9.7%` | 30일 APR `186.02%` | Sharpe `2.32`
-  - **+convexity**: Hurst `0.754` | Sortino `8.0` | Kelly `13.0%` | 30일 APR `158.36%` | Sharpe `3.41`
-  - **Cold Process**: Hurst `0.464` | Sortino `3.51` | Kelly `21.8%` | 30일 APR `137.71%` | Sharpe `4.96`
-  - **⚛️ Quantum Capital OFFICIAL Algo Vault ⚛**: Hurst `0.509` | Sortino `3.9` | Kelly `10.0%` | 30일 APR `131.44%` | Sharpe `1.84`
 
 **💡 최종 판정**: **✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)**
 
