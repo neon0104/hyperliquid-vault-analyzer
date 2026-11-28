@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-20 11:39:30",
-    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
-    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
-    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
-    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
-    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
-    "validation_dataset": "235 days (2026-02-27 ~ 2026-11-20)",
-    "top_discovered_vaults": [
-      {
-        "name": "+convexity",
-        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
-        "data_days": 234,
-        "hurst": 0.768,
-        "sortino": 8.31,
-        "kelly_f": 14.8,
-        "apr_30d": 151.18,
-        "mdd": 12.16,
-        "sharpe": 3.26,
-        "leader_usd": 378939.97
-      },
-      {
-        "name": "22Cap",
-        "address": "0xba939edf38c0ae0cc689c98b492e0535f43e4550",
-        "data_days": 236,
-        "hurst": 0.757,
-        "sortino": 7.3,
-        "kelly_f": 4.8,
-        "apr_30d": 8.55,
-        "mdd": 21.44,
-        "sharpe": 3.79,
-        "leader_usd": 103059.66
-      },
-      {
-        "name": "V4 Alpha Quantum",
-        "address": "0x4b00ddfdfdaf6295b6d809a5c5d035859e29bb46",
-        "data_days": 100,
-        "hurst": 0.632,
-        "sortino": 7.12,
-        "kelly_f": 10.7,
-        "apr_30d": 63.96,
-        "mdd": 17.63,
-        "sharpe": 2.67,
-        "leader_usd": 8507.29
-      },
-      {
-        "name": "Passivbot Canon",
-        "address": "0x490af7d4a048a81db0f677517ed6373565b42349",
-        "data_days": 234,
-        "hurst": 0.363,
-        "sortino": 6.86,
-        "kelly_f": 13.3,
-        "apr_30d": 62.04,
-        "mdd": 8.62,
-        "sharpe": 6.17,
-        "leader_usd": 2627.07
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-20 15:39:41",
     "topic_id": "TOPIC_FRACTIONAL_KELLY",
     "topic_title": "0.25x ~ 0.33x Fractional Kelly 기준 포지션 사이징",
@@ -2995,6 +2935,66 @@
         "mdd": 10.99,
         "sharpe": 2.0,
         "leader_usd": 5183.18
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-28 19:39:44",
+    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
+    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
+    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
+    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
+    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
+    "validation_dataset": "243 days (2026-02-27 ~ 2026-11-28)",
+    "top_discovered_vaults": [
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "data_days": 228,
+        "hurst": 0.438,
+        "sortino": 4.09,
+        "kelly_f": 21.4,
+        "apr_30d": 171.26,
+        "mdd": 13.04,
+        "sharpe": 5.34,
+        "leader_usd": 13491.98
+      },
+      {
+        "name": "Dragon X1",
+        "address": "0x32f739e8acf185ca4b117070babbf66c14c8238f",
+        "data_days": 196,
+        "hurst": 0.793,
+        "sortino": 1.93,
+        "kelly_f": 9.5,
+        "apr_30d": 188.76,
+        "mdd": 22.6,
+        "sharpe": 2.36,
+        "leader_usd": 13650.83
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 242,
+        "hurst": 0.722,
+        "sortino": 8.06,
+        "kelly_f": 12.3,
+        "apr_30d": 157.61,
+        "mdd": 12.16,
+        "sharpe": 3.41,
+        "leader_usd": 387019.03
+      },
+      {
+        "name": "L/S Momentum Strategy",
+        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
+        "data_days": 244,
+        "hurst": 0.68,
+        "sortino": 1.64,
+        "kelly_f": 8.6,
+        "apr_30d": 142.26,
+        "mdd": 29.74,
+        "sharpe": 2.08,
+        "leader_usd": 12402.31
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
