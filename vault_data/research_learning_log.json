@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-20 19:39:39",
-    "topic_id": "TOPIC_CALMAR_OMEGA_BARBELL",
-    "topic_title": "Calmar Ratio & Omega Ratio 결합형 바벨 알파 엔진",
-    "reference_source": "GitHub: skfolio / Shadwick & Keating (2002)",
-    "mathematical_formula": "\\Omega(L) = \\frac{\\int_L^\\infty (1-F(x))dx}{\\int_{-\\infty}^L F(x)dx}",
-    "hypothesis": "MDD 대비 수익률(Calmar)로 초안정 Core 60%를 고정하고, 수익-손실 확률 분포 비율(Omega)로 Satellite 40%의 단기 폭발력을 결합하여 샤프 지수를 2배 이상 견인함.",
-    "validation_dataset": "235 days (2026-02-27 ~ 2026-11-20)",
-    "top_discovered_vaults": [
-      {
-        "name": "[Bee] Line",
-        "address": "0xc360c0e450ea1347efe35b01c4c6d500e05aeb30",
-        "data_days": 78,
-        "hurst": 0.465,
-        "sortino": -0.25,
-        "kelly_f": 9.5,
-        "apr_30d": 236.93,
-        "mdd": 25.63,
-        "sharpe": 4.51,
-        "leader_usd": 2219.06
-      },
-      {
-        "name": "+convexity",
-        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
-        "data_days": 234,
-        "hurst": 0.768,
-        "sortino": 8.31,
-        "kelly_f": 14.8,
-        "apr_30d": 151.18,
-        "mdd": 12.16,
-        "sharpe": 3.26,
-        "leader_usd": 378939.97
-      },
-      {
-        "name": "Dragon X1",
-        "address": "0x32f739e8acf185ca4b117070babbf66c14c8238f",
-        "data_days": 188,
-        "hurst": 0.599,
-        "sortino": 1.57,
-        "kelly_f": 12.2,
-        "apr_30d": 163.36,
-        "mdd": 22.6,
-        "sharpe": 2.25,
-        "leader_usd": 13133.69
-      },
-      {
-        "name": "L/S Momentum Strategy",
-        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
-        "data_days": 236,
-        "hurst": 0.738,
-        "sortino": 1.59,
-        "kelly_f": 8.3,
-        "apr_30d": 120.71,
-        "mdd": 29.74,
-        "sharpe": 2.08,
-        "leader_usd": 12226.5
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-20 23:39:49",
     "topic_id": "TOPIC_KALMAN_DYNAMIC_BETA",
     "topic_title": "칼만 필터(Kalman Filter) 기반 볼트 리더의 시장 베타 추종도 실시간 필터링",
@@ -2995,6 +2935,66 @@
         "mdd": 29.74,
         "sharpe": 2.08,
         "leader_usd": 12402.31
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-29 03:41:37",
+    "topic_id": "TOPIC_ALPHA_DECAY_HALF_LIFE",
+    "topic_title": "알파 감쇄 반감기(Alpha Decay Half-Life) 모델을 통한 선제적 익절/손절 타이밍",
+    "reference_source": "GitHub: QuantConnect / Z. Kakushadze & J.A. Serur (2018)",
+    "mathematical_formula": "t_{1/2} = \\frac{\\ln(2)}{\\lambda}",
+    "hypothesis": "TVL 급증으로 인한 슬리피지 증가 및 전략 복제로 발생하는 알파 감쇄 곡선을 지수 감쇄 모델($A(t) = A_0 e^{-\\lambda t}$)로 추적하여 최적의 이탈 시점을 산출함.",
+    "validation_dataset": "244 days (2026-02-27 ~ 2026-11-29)",
+    "top_discovered_vaults": [
+      {
+        "name": "Dragon X1",
+        "address": "0x32f739e8acf185ca4b117070babbf66c14c8238f",
+        "data_days": 197,
+        "hurst": 0.781,
+        "sortino": 2.17,
+        "kelly_f": 10.0,
+        "apr_30d": 208.65,
+        "mdd": 22.6,
+        "sharpe": 2.48,
+        "leader_usd": 13913.19
+      },
+      {
+        "name": "Cold Process",
+        "address": "0xc3b1bf1f1e6fb8161ef4dc2f34e2c56f70b94b11",
+        "data_days": 229,
+        "hurst": 0.36,
+        "sortino": 4.12,
+        "kelly_f": 21.3,
+        "apr_30d": 174.1,
+        "mdd": 13.04,
+        "sharpe": 5.43,
+        "leader_usd": 13518.94
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 243,
+        "hurst": 0.686,
+        "sortino": 8.1,
+        "kelly_f": 13.2,
+        "apr_30d": 159.37,
+        "mdd": 12.16,
+        "sharpe": 3.49,
+        "leader_usd": 387455.29
+      },
+      {
+        "name": "L/S Momentum Strategy",
+        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
+        "data_days": 245,
+        "hurst": 0.572,
+        "sortino": 1.66,
+        "kelly_f": 8.2,
+        "apr_30d": 150.45,
+        "mdd": 29.74,
+        "sharpe": 2.09,
+        "leader_usd": 12451.88
       }
     ],
     "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
