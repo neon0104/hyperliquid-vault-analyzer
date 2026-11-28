@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-11-20 03:41:54",
-    "topic_id": "TOPIC_GARCH_VOLATILITY",
-    "topic_title": "GARCH(1,1) 조건부 이분산성 모델을 이용한 볼트 변동성 스퀴즈 감지",
-    "reference_source": "GitHub: arch / Tim Bollerslev (1986)",
-    "mathematical_formula": "\\sigma_t^2 = \\omega + \\alpha \\epsilon_{t-1}^2 + \\beta \\sigma_{t-1}^2",
-    "hypothesis": "볼트의 단기 변동성 클러스터링(Volatility Clustering)을 사전에 예측하여, 변동성 폭발 직전의 눌림목 볼트를 선취매하고 급격한 변동성 확장 시 비중을 자동 축소함.",
-    "validation_dataset": "235 days (2026-02-27 ~ 2026-11-20)",
-    "top_discovered_vaults": [
-      {
-        "name": "[Bee] Line",
-        "address": "0xc360c0e450ea1347efe35b01c4c6d500e05aeb30",
-        "data_days": 78,
-        "hurst": 0.465,
-        "sortino": -0.25,
-        "kelly_f": 9.5,
-        "apr_30d": 236.93,
-        "mdd": 25.63,
-        "sharpe": 4.51,
-        "leader_usd": 2219.06
-      },
-      {
-        "name": "+convexity",
-        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
-        "data_days": 234,
-        "hurst": 0.768,
-        "sortino": 8.31,
-        "kelly_f": 14.8,
-        "apr_30d": 151.18,
-        "mdd": 12.16,
-        "sharpe": 3.26,
-        "leader_usd": 378939.97
-      },
-      {
-        "name": "Dragon X1",
-        "address": "0x32f739e8acf185ca4b117070babbf66c14c8238f",
-        "data_days": 188,
-        "hurst": 0.599,
-        "sortino": 1.57,
-        "kelly_f": 12.2,
-        "apr_30d": 163.36,
-        "mdd": 22.6,
-        "sharpe": 2.25,
-        "leader_usd": 13133.69
-      },
-      {
-        "name": "L/S Momentum Strategy",
-        "address": "0x394c57ac43a9cbd5fffce1c7e681c650154a2b0b",
-        "data_days": 236,
-        "hurst": 0.738,
-        "sortino": 1.59,
-        "kelly_f": 8.3,
-        "apr_30d": 120.71,
-        "mdd": 29.74,
-        "sharpe": 2.08,
-        "leader_usd": 12226.5
-      }
-    ],
-    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
-  },
-  {
     "timestamp": "2026-11-20 07:39:43",
     "topic_id": "TOPIC_HURST_EXPONENT",
     "topic_title": "허스트 지수(Hurst Exponent) 기반 추세 vs 평균회귀 볼트 자동 판별",
@@ -2983,6 +2923,66 @@
         "mdd": 6.37,
         "sharpe": -2.3,
         "leader_usd": 23164.69
+      },
+      {
+        "name": "+convexity",
+        "address": "0x5661a070eb13c7c55ac3210b2447d4bea426cbf5",
+        "data_days": 242,
+        "hurst": 0.722,
+        "sortino": 8.06,
+        "kelly_f": 12.3,
+        "apr_30d": 157.61,
+        "mdd": 12.16,
+        "sharpe": 3.41,
+        "leader_usd": 387019.03
+      }
+    ],
+    "decision": "✅ 모델 알고리즘 반영 (Adopted into Dynamic Alpha Engine)"
+  },
+  {
+    "timestamp": "2026-11-28 11:39:47",
+    "topic_id": "TOPIC_DOWN_RISK_SORTINO",
+    "topic_title": "하방 편차(Downside Deviation) 기반 Sortino Ratio 최적화",
+    "reference_source": "GitHub: Riskfolio-Lib / Frank Sortino (1994)",
+    "mathematical_formula": "Sortino = \\frac{R_p - R_f}{\\sqrt{\\frac{1}{N}\\sum_{t=1}^N \\min(0, R_t - MAR)^2}}",
+    "hypothesis": "상승 변동성은 수익 기회이므로 페널티를 주지 않고, 오직 '손실 변동성'만을 측정하는 Sortino Ratio로 볼트 위험도를 재평가하여 불필요한 저수익 배분을 제거함.",
+    "validation_dataset": "243 days (2026-02-27 ~ 2026-11-28)",
+    "top_discovered_vaults": [
+      {
+        "name": "Spencer Capital 🐲",
+        "address": "0x3f08aa5ba8876e41418c89ee39525f94e42b7e6b",
+        "data_days": 11,
+        "hurst": 0.5,
+        "sortino": 30.52,
+        "kelly_f": 11.7,
+        "apr_30d": 26.19,
+        "mdd": 0.76,
+        "sharpe": 4.65,
+        "leader_usd": 9592.01
+      },
+      {
+        "name": "Agent RockSteady",
+        "address": "0xd321ad79041bdad719ba5ff42fe950e1977df439",
+        "data_days": 19,
+        "hurst": 0.647,
+        "sortino": 14.28,
+        "kelly_f": 0.0,
+        "apr_30d": 23.81,
+        "mdd": 9.98,
+        "sharpe": 2.23,
+        "leader_usd": 744.83
+      },
+      {
+        "name": "OpenClaw",
+        "address": "0x103609a881b6777febfc1520cc4922f736b828c2",
+        "data_days": 44,
+        "hurst": 0.553,
+        "sortino": 10.34,
+        "kelly_f": 19.5,
+        "apr_30d": 41.98,
+        "mdd": 9.03,
+        "sharpe": 3.02,
+        "leader_usd": 21020.13
       },
       {
         "name": "+convexity",
